@@ -1,0 +1,115 @@
+<ion-header>
+  <ion-navbar hideBackButton>
+    <ion-buttons left>
+      <button ion-button icon-only (click)="dismiss()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+    </ion-buttons>
+
+    <ion-title>
+      {{ 'MEMBER.DETAILS_TITLE' | translate }}
+    </ion-title>
+
+    <ion-buttons end>
+      <button ion-button icon-only (click)="editModeClicks$.next()" *ngIf="canEdit()">
+        <ion-icon name="create" [color]="(editMode$ | async) ? 'primary' : 'inactive'"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <pre *ngIf="error$ | async as error" style="font-size: xx-small;">{{ error }}</pre>
+
+  <div *ngIf="member$ | async as member">
+
+    <ion-list>
+      <ion-list-header>
+        Persons
+        <ion-buttons item-right *ngIf="editMode$ | async">
+          <button ion-button small clear (click)="createPerson()">
+            <ion-icon name="add"></ion-icon>
+          </button>
+        </ion-buttons>
+      </ion-list-header>
+      <ion-item *ngFor="let person of member.persons; let index=index; let isFirst=first">
+        <h3>
+          {{ person.firstname }} {{ person.lastname }}
+        </h3>
+        <p *ngIf="person.address">
+          Address: {{ person.address }}
+        </p>
+        <p *ngIf="person.phoneNumber">
+          Phone: {{ person.phoneNumber }}
+        </p>
+        <p *ngIf="person.emailAddress">
+          Email: {{ person.emailAddress }}
+        </p>
+
+        <ion-buttons item-right *ngIf="editMode$ | async">
+          <button ion-button small clear
+                  (click)="editPerson(person, index)">
+            <ion-icon name="create"></ion-icon>
+          </button>
+          <button ion-button small clear
+                  (click)="deletePerson(person, index)"
+                  [disabled]="member.persons.length == 1">
+            <ion-icon name="trash"></ion-icon>
+          </button>
+        </ion-buttons>
+      </ion-item>
+    </ion-list>
+
+    <ion-list>
+      <ion-list-header>
+        Contracts
+        <!-- TODO Enable button only in case a new season exists and no contracts exist for it yet -->
+        <ion-buttons item-right *ngIf="editMode$ | async">
+          <button ion-button small clear (click)="createContract()">
+            <ion-icon name="add"></ion-icon>
+          </button>
+        </ion-buttons>
+      </ion-list-header>
+      <ion-item *ngFor="let contract of contracts$ | async; let index=index; let isFirst=first">
+        <contracts-view [contract]="contract"></contracts-view>
+
+        <!-- TODO Enable buttons only in case the contract is not validated -->
+        <ion-buttons item-right *ngIf="isFirst && (editMode$ | async)">
+          <button ion-button small clear
+                  (click)="editContract(contract, index)">
+            <ion-icon name="create"></ion-icon>
+          </button>
+          <button ion-button small clear
+                  (click)="deleteContract(contract, index)">
+            <ion-icon name="trash"></ion-icon>
+          </button>
+        </ion-buttons>
+      </ion-item>
+    </ion-list>
+
+    <ion-list>
+      <ion-list-header>
+        Trial Baskets
+        <ion-buttons item-right *ngIf="editMode$ | async">
+          <button ion-button small clear (click)="addTrialBasket()">
+            <ion-icon name="add"></ion-icon>
+          </button>
+        </ion-buttons>
+      </ion-list-header>
+      <ion-item *ngFor="let trialBasket of member.trialBaskets">
+        <h3>
+          Season: {{ trialBasket.season }};
+          Week: {{ trialBasket.week }}
+        </h3>
+        <p>
+          Paid: {{ trialBasket.paid }}
+        </p>
+        <p *ngFor="let section of trialBasket.sections">
+          Kind: {{ section.kind }};
+          Count: {{ section.count }}
+        </p>
+      </ion-item>
+    </ion-list>
+
+  </div>
+</ion-content>

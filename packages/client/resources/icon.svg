@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="42mm"
+   height="42mm"
+   viewBox="0 0 42 42"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   sodipodi:docname="icon.svg"
+   inkscape:export-filename="/home/didier/Documents/Personal/Associative/Cabas Vert/App/Logo/cabasvert.png"
+   inkscape:export-xdpi="619.28003"
+   inkscape:export-ydpi="619.28003">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="8"
+     inkscape:cx="67.442244"
+     inkscape:cy="77.362993"
+     inkscape:document-units="mm"
+     inkscape:current-layer="g4473"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     inkscape:window-width="2560"
+     inkscape:window-height="1485"
+     inkscape:window-x="0"
+     inkscape:window-y="41"
+     inkscape:window-maximized="1"
+     fit-margin-top="3"
+     fit-margin-left="3"
+     fit-margin-right="3"
+     fit-margin-bottom="3" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-11.080535,-43.37789)">
+    <g
+       id="g4473"
+       transform="translate(20.328345,23.130761)">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4438"
+         d="m -6.2289363,41.213592 a 18.074379,18.074379 0 0 0 -0.0088,0.180351 18.074379,18.074379 0 0 0 18.0743643,18.074349 18.074379,18.074379 0 0 0 18.074354,-18.074349 18.074379,18.074379 0 0 0 -0.006,-0.180351 z"
+         style="opacity:1;vector-effect:none;fill:#11801a;fill-opacity:1;stroke:none;stroke-width:0.02014766;stroke-opacity:1" />
+      <path
+         sodipodi:nodetypes="ccccsscccscsssccc"
+         inkscape:connector-curvature="0"
+         id="path4399"
+         d="m -2.7931802,39.471631 c -0.377712,-0.23448 -0.843677,-0.677608 -1.035477,-0.984729 -0.510433,-0.817332 -1.3362751,-4.221153 -1.0850881,-4.472339 0.3198641,-0.319865 2.9459532,-0.974945 3.92281709,-0.97855 1.2827259,-0.0047 2.64645801,0.760677 3.11517801,1.748432 0.509566,1.07383 1.044404,3.650681 0.858349,4.135532 -0.165295,0.430752 -2.44715211,0.994825 -3.984735,0.985022 -0.6073619,-0.0039 -1.413332,-0.198887 -1.791044,-0.433368 z m 6.054384,-4.410836 c -4.20896711,-3.972932 -4.16419591,-6.705121 0.180535,-11.017342 l 1.9928731,-1.97796 2.136305,2.110252 c 1.174967,1.16064 2.374003,2.568664 2.6645231,3.128945 0.664546,1.281604 0.699277,3.496716 0.07389,4.712589 -0.5202711,1.011505 -4.2934771,4.988033 -4.7225791,4.977059 -0.156666,-0.004 -1.203161,-0.874101 -2.3255471,-1.933543 z"
+         style="fill:#acc00d;stroke-width:0.26458338;stroke:none" />
+      <path
+         inkscape:connector-curvature="0"
+         style="opacity:1;vector-effect:none;fill:#11801a;fill-opacity:1;stroke:none;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 11.848289,27.378509 c -0.0069,0 -0.01373,5.29e-4 -0.02066,5.29e-4 v 4.000272 c 0.0069,-1.6e-5 0.01373,-5.29e-4 0.02066,-5.29e-4 4.867693,3e-6 8.77462,3.88615 8.807214,8.745721 h 4.000273 C 24.62252,33.10256 18.877741,27.378511 11.848289,27.378509 Z"
+         id="rect4475-3" />
+    </g>
+    <g
+       id="g4395"
+       transform="translate(-67.830776,2.2126247)" />
+  </g>
+</svg>

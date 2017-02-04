@@ -1,0 +1,31 @@
+page-welcome {
+
+  ion-item[small] {
+    min-height: 32px !important;
+    border-top: groove 1px rgba(0, 0, 0, 0.2);
+  }
+
+  ion-item[small]:last-of-type {
+    border-bottom: ridge 1px rgba(0, 0, 0, 0.2);
+  }
+
+  ion-item[small] .item-inner {
+    margin-left: 0px !important;
+  }
+
+  ion-item[small] ion-icon {
+    min-width: 32px !important;
+    margin-top: 3px !important;
+    margin-bottom: 3px !important;
+    margin-right: 3px !important;
+  }
+
+  ion-item[small] ion-label {
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+  }
+
+  ion-item[small] ion-label h3 {
+    margin-bottom: 0px !important;
+  }
+}

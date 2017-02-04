@@ -1,0 +1,80 @@
+ion-item-expanding {
+  position: relative;
+  overflow: hidden;
+
+  display: block;
+  width: 100%;
+}
+
+ion-item-expanding .item {
+  position: static;
+  height: 54px;
+}
+
+ion-item-actions {
+  position: relative;
+  z-index: $z-index-item-options;
+
+  display: flex;
+  width: 100%;
+
+  padding-left: 16px;
+  padding-right: 16px;
+  background-color: darken($list-background-color, 5%);
+  font-size: 14px;
+
+  height: 0;
+  opacity: 0;
+
+  transition: all 150ms ease-in-out;
+
+  .button {
+    @include margin(0);
+    @include padding(0);
+    @include border-radius(0);
+
+    flex-grow: 1;
+    height: inherit;
+
+    box-shadow: none;
+
+    box-sizing: content-box;
+
+    .button-inner {
+      display: block;
+      line-height: 8px;
+      height: unset;
+    }
+
+    .icon {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 1px;
+      padding-bottom: 0;
+    }
+
+    .label {
+      @include margin(0);
+      font-size: 8px;
+      line-height: 8px;
+      text-transform: none;
+      font-weight: normal;
+    }
+  }
+}
+
+ion-item-expanding.expanded {
+
+  .item,
+  .item.activated {
+    position: relative;
+    z-index: $z-index-item-options + 1;
+
+    opacity: 1;
+  }
+
+  ion-item-actions {
+    height: 54px;
+    opacity: 1;
+  }
+}

@@ -1,0 +1,14 @@
+sliding-panes {
+  height: 100%;
+  width: 100%;
+
+  .sliding-panes-slider {
+    height: 100%;
+    transition: transform 300ms ease-in-out;
+  }
+
+  sliding-pane {
+    height: 100%;
+    display: inline-block;
+  }
+}

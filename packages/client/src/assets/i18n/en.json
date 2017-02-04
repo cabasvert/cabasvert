@@ -1,0 +1,115 @@
+{
+  "language": "English (en)",
+  "SIDEMENU": {
+    "WELCOME": "Welcome",
+    "PROFILE": "Profile",
+    "DISTRIBUTION": "Distribution",
+    "CHECK_DISTRIBUTION": "Track distribution",
+    "VEGETABLES": "Vegetables",
+    "EGGS": "Eggs",
+    "ADMINISTRATION": "Administration",
+    "ADHERENTS": "Members",
+    "REPORTS": "Reports"
+  },
+  "DIALOGS": {
+    "CANCEL": "Cancel",
+    "SAVE": "Save"
+  },
+  "REF": {
+    "SEASON": "Season",
+    "WEEK": "Week",
+    "VEGETABLES": "Vegetables",
+    "EGGS": "Eggs",
+    "BASKETTREATED": "Treated baskets",
+    "BASKETPREPARED": "Prepared baskets",
+    "COUNT": "Count"
+  },
+  "WELCOME": {
+    "TITLE": "Welcome",
+    "DISTRIBUTION_DATE": "Distribution of",
+    "DISTRIBUTORS": "Distributed by",
+    "CUMULATIVE_COUNTS": "{{allBasketCount}} persons",
+    "CUMULATIVE_TRIAL_COUNTS": "(of which {{trialBasketCount}} in trial)",
+    "VEGETABLE_COUNTS": "{{allBasketCount}} vegetable baskets",
+    "VEGETABLE_TRIAL_COUNTS": "(of which {{trialBasketCount}} in trial)",
+    "EGG_COUNTS": "{{allBasketCount}} egg boxes",
+    "EGG_TRIAL_COUNTS": "(of which {{trialBasketCount}} in trial)",
+    "CHECK_DISTRIBUTION": "Track distribution"
+  },
+  "LOGIN": {
+    "TITLE": "Sign in",
+    "USERNAME": "Username",
+    "PASSWORD": "Password",
+    "STORE_PASSWORD": "Store password",
+    "LOGIN": "Login",
+    "FORGOT_PASSWORD": "Forgot password"
+  },
+  "RESET_PASSWORD": {
+    "TITLE": "Reset password",
+    "NEW_PASSWORD": "New password",
+    "CONFIRMED_PASSWORD": "Confirm password",
+    "RESET_PASSWORD": "Reset password"
+  },
+  "PROFILE": {
+    "TITLE": "Profile",
+    "CHANGE_PASSWORD": "Change password",
+    "OLD_PASSWORD": "Old password",
+    "NEW_PASSWORD": "New password",
+    "CONFIRMED_PASSWORD": "Confirm new password",
+    "STORE_PASSWORD": "Store password"
+  },
+  "MEMBER": {
+    "PLURAL": "members",
+    "SINGULAR": "member",
+    "LIST_TITLE": "Members",
+    "DETAILS_TITLE": "Member Details",
+    "CREATION_TITLE": "New Member"
+  },
+  "CONTRACT": {
+  "SINGULAR_TITLE": "Contract",
+  "PLURAL_TITLE": "Contracts"
+  },
+  "PERSON": {
+    "TITLE": "Person",
+    "EDITION_TITLE": "Edit Person",
+    "CREATION_TITLE": "New Person",
+    "FIRSTNAME": "Firstname",
+    "LASTNAME": "Lastname",
+    "ADDRESS": "Address",
+    "PHONE_NUMBER": "Phone Number",
+    "EMAIL_ADDRESS": "Email Address",
+    "FIRSTNAME_PLACEHOLDER": "Enter person's firstname",
+    "LASTNAME_PLACEHOLDER": "Enter person's lastname",
+    "ADDRESS_PLACEHOLDER": "Enter person's address",
+    "PHONE_NUMBER_PLACEHOLDER": "Enter person's phone number",
+    "EMAIL_ADDRESS_PLACEHOLDER": "Enter person's email address"
+  },
+  "REPORTS": {
+    "TITLE": "Reports",
+    "GENERATE": "Generate",
+    "BASKETS_PER_MONTH_TITLE": "Baskets per month",
+    "BASKETS_PER_MONTH_DESCRIPTION": "The basket per month statistics for the end of year assembly.",
+    "DISTRIBUTION_CHECKLIST_TITLE": "Distribution checklist",
+    "DISTRIBUTION_CHECKLIST_DESCRIPTION": "The distribution checklist can be used to make a printed checklist."
+  },
+  "TRIAL_BASKET": {
+    "TITLE": "Trial Basket",
+    "CREATION_TITLE": "Trial Basket",
+    "WEEK_PLACEHOLDER": "Enter trial basket's week",
+    "COUNT_PLACEHOLDER": "Enter trial basket's count"
+  },
+  "DISTRIBUTION": {
+    "DISTRIBUTED_PLURAL": "Distributed",
+    "REMAINING_PLURAL": "Remaining",
+    "TO_PREPARE_PLURAL": "To Prepare",
+    "DETAILS": "Details",
+    "NOTES": "Notes",
+    "PAID": "Paid",
+    "DISTRIBUTED": "Distributed",
+    "REMAINING": "Remaining",
+    "TO_PREPARE": "To Prepare"
+  },
+  "NOTES": {
+    "EDIT_NOTES": "Edit notes"
+  }
+}

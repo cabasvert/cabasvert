@@ -1,0 +1,292 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+
+    <ion-title>
+      <span *ngIf="week$ | async as week">
+        {{ week.distributionDate | date: 'shortDate' }} ({{ week.seasonWeek }})
+      </span>
+    </ion-title>
+
+    <ion-buttons end>
+      <button ion-button icon-only
+              (click)="previousWeekClicks$.next()"
+              [disabled]="previousDisablement$ | async">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+      <button ion-button icon-only
+              (click)="nextWeekClicks$.next()"
+              [disabled]="nextDisablement$ | async">
+        <ion-icon name="arrow-forward"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+  <ion-toolbar class="toolbar-thinner">
+    <ion-segment [(ngModel)]="filter">
+      <ion-segment-button value="distributed">
+        {{ 'DISTRIBUTION.DISTRIBUTED_PLURAL' | translate }}
+        <ion-badge item-right color="primary">
+          {{ distributedBasketsCount$ | async }}
+        </ion-badge>
+      </ion-segment-button>
+      <ion-segment-button value="remaining">
+        {{ 'DISTRIBUTION.REMAINING_PLURAL' | translate }}
+        <ion-badge item-right color="danger">
+          {{ remainingBasketsCount$ | async }}
+        </ion-badge>
+      </ion-segment-button>
+      <ion-segment-button value="toPrepare">
+        {{ 'DISTRIBUTION.TO_PREPARE_PLURAL' | translate }}
+        <ion-badge item-right color="warning">
+          {{ delayedBasketsCount$ | async }}
+        </ion-badge>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <sliding-panes ion-fixed [selectedPane]="filter">
+
+    <sliding-pane name="distributed">
+      <ion-content>
+
+        <ion-fab bottom center mini scroll-to-top>
+          <button ion-fab color="light">
+            <ion-icon name="arrow-dropup"></ion-icon>
+          </button>
+        </ion-fab>
+
+        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution">
+          <ion-item-expanding #item *ngFor="let basket of distributedBaskets$ | async">
+
+            <ion-item>
+              <ion-note *ngIf="distribution.getBasketDistributionDate(basket) as date"
+                    item-start class="distribution-date">
+                {{ date | date: 'shortTime' }}
+              </ion-note>
+              <ng-template #noDate>
+                <span item-start>–</span>
+              </ng-template>
+
+              <member-view [member]="basket.member"></member-view>
+
+              <ion-icon *ngIf="basket.isTrial"
+                        name="cash" item-right
+                        color="{{ !isTrialBasketPaid(basket, item) ? 'danger' : 'primary' }}"></ion-icon>
+              <ion-icon *ngIf="(!basket.isTrial && contractProblems(basket.member)) as severity"
+                        name="warning" item-right [color]="severity"></ion-icon>
+              <ion-icon *ngIf="distribution.isBasketDelayed(basket)"
+                        name="clock" item-right color="warning"></ion-icon>
+              <ion-icon *ngIf="distribution.isBasketHaveNote(basket)"
+                        name="create" item-right></ion-icon>
+
+              <ng-container item-right *ngFor="let kind of Kinds.ALL">
+                <ng-container *ngIf="basket.sections[kind] as section">
+                  <ion-icon *ngFor="let i of range(section.count)"
+                            item-right [name]="Kinds.icon(kind)">
+                  </ion-icon>
+                </ng-container>
+              </ng-container>
+            </ion-item>
+
+            <ion-item-actions>
+              <button ion-button clear
+                      color="dark"
+                      (click)="goToMemberPage(basket.member, item)">
+                <ion-icon name="information-circle"></ion-icon>
+                <ion-label>{{ 'DISTRIBUTION.DETAILS' | translate }}</ion-label>
+              </button>
+              <button ion-button clear
+                      color="{{ distribution.isBasketHaveNote(basket) ? 'danger' : 'dark' }}"
+                      (click)="setNote(basket, item)">
+                <ion-icon name="create"></ion-icon>
+                <ion-label>{{ 'DISTRIBUTION.NOTES' | translate }}</ion-label>
+              </button>
+              <button ion-button clear *ngIf="basket.isTrial"
+                      color="{{ !isTrialBasketPaid(basket, item) ? 'primary' : 'danger' }}"
+                      (click)="toggleTrialBasketPaid(basket, item)">
+                <ion-icon name="cash"></ion-icon>
+                <ion-label>{{ 'DISTRIBUTION.PAID' | translate }}</ion-label>
+              </button>
+              <button ion-button clear
+                      color="{{ distribution.isBasketDistributed(basket) ? 'danger' : 'primary' }}"
+                      (click)="toggleBasketDistributed(basket, item)">
+                <ion-icon name="{{ distribution.isBasketDistributed(basket) ? 'close' : 'checkmark' }}"></ion-icon>
+                <ion-label>{{ 'DISTRIBUTION.DISTRIBUTED' | translate }}</ion-label>
+              </button>
+              <button ion-button clear
+                      color="{{ distribution.isBasketDelayed(basket) ? 'warning' : 'dark' }}"
+                      (click)="toggleBasketDelayed(basket, item)">
+                <ion-icon name="clock"></ion-icon>
+                <ion-label>{{ 'DISTRIBUTION.TO_PREPARE' | translate }}</ion-label>
+              </button>
+            </ion-item-actions>
+
+          </ion-item-expanding>
+        </ion-list>
+      </ion-content>
+    </sliding-pane>
+
+    <sliding-pane name="remaining">
+      <ion-content #secondPaneContent>
+        <indexed-scroller #secondPaneScroller ion-fixed [indexesLabels]="alphabeticLabels">
+        </indexed-scroller>
+
+        <ion-fab bottom center mini scroll-to-top>
+          <button ion-fab color="light">
+            <ion-icon name="arrow-dropup"></ion-icon>
+          </button>
+        </ion-fab>
+
+        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution">
+          <ng-container *ngFor="let group of remainingBaskets$ | async">
+            <ion-item-divider id="divider-{{ group.key }}">{{ group.key }}</ion-item-divider>
+
+            <ion-item-expanding #item *ngFor="let basket of group.values">
+
+              <ion-item>
+                <member-view [member]="basket.member"></member-view>
+
+                <ion-icon *ngIf="basket.isTrial"
+                          name="cash" item-right
+                          color="{{ !isTrialBasketPaid(basket, item) ? 'danger' : 'primary' }}"></ion-icon>
+                <ion-icon *ngIf="(!basket.isTrial && contractProblems(basket.member)) as severity"
+                          name="warning" item-right [color]="severity"></ion-icon>
+                <ion-icon *ngIf="distribution.isBasketDelayed(basket)"
+                          name="clock" item-right color="warning"></ion-icon>
+                <ion-icon *ngIf="distribution.isBasketHaveNote(basket)"
+                          name="create" item-right></ion-icon>
+
+                <ng-container item-right *ngFor="let kind of Kinds.ALL">
+                  <ng-container *ngIf="basket.sections[kind] as section">
+                    <ion-icon *ngFor="let i of range(section.count)"
+                              item-right [name]="Kinds.icon(kind)">
+                    </ion-icon>
+                  </ng-container>
+                </ng-container>
+              </ion-item>
+
+              <ion-item-actions>
+                <button ion-button clear
+                        color="dark"
+                        (click)="goToMemberPage(basket.member, item)">
+                  <ion-icon name="information-circle"></ion-icon>
+                  <ion-label>{{ 'DISTRIBUTION.DETAILS' | translate }}</ion-label>
+                </button>
+                <button ion-button clear
+                        color="{{ distribution.isBasketHaveNote(basket) ? 'danger' : 'dark' }}"
+                        (click)="setNote(basket, item)">
+                  <ion-icon name="create"></ion-icon>
+                  <ion-label>{{ 'DISTRIBUTION.NOTES' | translate }}</ion-label>
+                </button>
+                <button ion-button clear *ngIf="basket.isTrial"
+                        color="{{ !isTrialBasketPaid(basket, item) ? 'primary' : 'danger' }}"
+                        (click)="toggleTrialBasketPaid(basket, item)">
+                  <ion-icon name="cash"></ion-icon>
+                  <ion-label>{{ 'DISTRIBUTION.PAID' | translate }}</ion-label>
+                </button>
+                <button ion-button clear
+                        color="{{ distribution.isBasketDistributed(basket) ? 'danger' : 'primary' }}"
+                        (click)="toggleBasketDistributed(basket, item)">
+                  <ion-icon name="{{ distribution.isBasketDistributed(basket) ? 'close' : 'checkmark' }}"></ion-icon>
+                  <ion-label>{{ 'DISTRIBUTION.DISTRIBUTED' | translate }}</ion-label>
+                </button>
+                <button ion-button clear
+                        color="{{ distribution.isBasketDelayed(basket) ? 'warning' : 'dark' }}"
+                        (click)="toggleBasketDelayed(basket, item)">
+                  <ion-icon name="clock"></ion-icon>
+                  <ion-label>{{ 'DISTRIBUTION.TO_PREPARE' | translate }}</ion-label>
+                </button>
+              </ion-item-actions>
+
+            </ion-item-expanding>
+          </ng-container>
+        </ion-list>
+      </ion-content>
+    </sliding-pane>
+
+    <sliding-pane name="toPrepare">
+      <ion-content>
+
+        <ion-fab bottom center mini scroll-to-top>
+          <button ion-fab color="light">
+            <ion-icon name="arrow-dropup"></ion-icon>
+          </button>
+        </ion-fab>
+
+        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution">
+          <ion-item-expanding #item *ngFor="let basket of delayedBaskets$ | async">
+
+            <ion-item>
+              <member-view [member]="basket.member"></member-view>
+
+              <ion-icon *ngIf="basket.isTrial"
+                        name="cash" item-right
+                        color="{{ !isTrialBasketPaid(basket, item) ? 'danger' : 'primary' }}"></ion-icon>
+              <ion-icon *ngIf="!basket.isTrial && contractProblems(basket.member) as severity"
+                        name="warning" item-right [color]="severity"></ion-icon>
+              <ion-icon *ngIf="distribution.isBasketDelayed(basket)"
+                        name="clock" item-right color="warning"></ion-icon>
+              <ion-icon *ngIf="distribution.isBasketHaveNote(basket)"
+                        name="create" item-right></ion-icon>
+
+              <ng-container item-right *ngFor="let kind of Kinds.ALL">
+                <ng-container *ngIf="basket.sections[kind] as section">
+                  <ion-icon *ngFor="let i of range(section.count)"
+                            item-right [name]="Kinds.icon(kind)">
+                  </ion-icon>
+                </ng-container>
+              </ng-container>
+            </ion-item>
+
+            <ion-item-actions>
+              <button ion-button clear
+                      color="dark"
+                      (click)="goToMemberPage(basket.member, item)">
+                <ion-icon name="information-circle"></ion-icon>
+                <ion-label>{{ 'DISTRIBUTION.DETAILS' | translate }}</ion-label>
+              </button>
+              <button ion-button clear
+                      color="{{ distribution.isBasketHaveNote(basket) ? 'danger' : 'dark' }}"
+                      (click)="setNote(basket, item)">
+                <ion-icon name="create"></ion-icon>
+                <ion-label>{{ 'DISTRIBUTION.NOTES' | translate }}</ion-label>
+              </button>
+              <button ion-button clear *ngIf="basket.isTrial"
+                      color="{{ !isTrialBasketPaid(basket, item) ? 'primary' : 'danger' }}"
+                      (click)="toggleTrialBasketPaid(basket, item)">
+                <ion-icon name="cash"></ion-icon>
+                <ion-label>{{ 'DISTRIBUTION.PAID' | translate }}</ion-label>
+              </button>
+              <button ion-button clear
+                      color="{{ distribution.isBasketDistributed(basket) ? 'danger' : 'primary' }}"
+                      (click)="toggleBasketDistributed(basket, item)">
+                <ion-icon name="{{ distribution.isBasketDistributed(basket) ? 'close' : 'checkmark' }}"></ion-icon>
+                <ion-label>{{ 'DISTRIBUTION.DISTRIBUTED' | translate }}</ion-label>
+              </button>
+              <button ion-button clear
+                      color="{{ distribution.isBasketDelayed(basket) ? 'warning' : 'dark' }}"
+                      (click)="toggleBasketDelayed(basket, item)">
+                <ion-icon name="clock"></ion-icon>
+                <ion-label>{{ 'DISTRIBUTION.TO_PREPARE' | translate }}</ion-label>
+              </button>
+            </ion-item-actions>
+
+          </ion-item-expanding>
+        </ion-list>
+      </ion-content>
+    </sliding-pane>
+
+  </sliding-panes>
+</ion-content>
+
+<ng-template #noDistribution>
+  <ion-list>
+    <ion-item text-center>
+      <ion-spinner icon="dots"></ion-spinner>
+    </ion-item>
+  </ion-list>
+</ng-template>

@@ -1,0 +1,114 @@
+<ion-header>
+  <ion-navbar hideBackButton>
+    <ion-buttons left>
+      <button ion-button icon-only (click)="dismiss()">
+        <ion-icon name="arrow-back"></ion-icon>
+        {{ 'DIALOGS.CANCEL' | translate }}
+      </button>
+    </ion-buttons>
+
+    <ion-title>
+      {{ 'CONTRACT.PLURAL_TITLE' | translate }}
+    </ion-title>
+
+    <ion-buttons end>
+      <button ion-button icon-only (click)="submit.click()" [disabled]="!form.valid">
+        {{ 'DIALOGS.SAVE' | translate }}
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="form" novalidate (ngSubmit)="save()">
+    <input #submit type="submit" value="Submit" style="display:none"/>
+
+    <ion-list *ngIf="contract">
+      <ion-item-group>
+        <ion-item>
+          <ion-label color="primary" stacked>{{ 'REF.SEASON' | translate }}</ion-label>
+          <ion-select formControlName="season" interface="popover">
+            <ion-option value="season:2017S">Été 2017</ion-option>
+            <ion-option value="season:2017W">Hiver 2017-2018</ion-option>
+          </ion-select>
+          <!--<ion-input type="string" disabled="true" [value]="contract.season"></ion-input>-->
+        </ion-item>
+        <ion-item>
+          <ion-label color="primary" stacked>Member</ion-label>
+          <ion-input type="string" disabled="true" [value]="contract.member"></ion-input>
+        </ion-item>
+      </ion-item-group>
+
+      <ng-container formArrayName="sections">
+        <ion-item-group *ngFor="let section of contract.sections; let i=index" [formGroupName]="i">
+          <ion-item-divider>Contract {{ section.kind }}</ion-item-divider>
+          <input type="text" style="display: none;" formControlName="kind"/>
+
+          <ion-item>
+            <ion-label color="primary" stacked>Formula</ion-label>
+            <ion-select formControlName="formula" interface="popover">
+              <ion-option *ngFor="let f of formulasFor(section.kind)" [value]="f.value">
+                {{f.label}}
+              </ion-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label color="primary" stacked>First Week</ion-label>
+            <ion-input type="number" placeholder="Enter contract's first week"
+                       formControlName="firstWeek"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label color="primary" stacked>Last Week</ion-label>
+            <ion-input type="number" placeholder="Enter contract's last week"
+                       formControlName="lastWeek"></ion-input>
+          </ion-item>
+        </ion-item-group>
+      </ng-container>
+
+      <ion-item>
+        <ion-label color="primary" stacked>Wish</ion-label>
+        <ion-checkbox formControlName="wish"></ion-checkbox>
+      </ion-item>
+
+      <ng-container formGroupName="validation" >
+        <ion-list-header>Validation</ion-list-header>
+
+        <ion-item-group formGroupName="paperCopies">
+          <ion-item-divider>Paper Copies</ion-item-divider>
+          <ion-item>
+            <ion-label color="primary" stacked>For association</ion-label>
+            <ion-checkbox formControlName="forAssociation"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label color="primary" stacked>For farmer</ion-label>
+            <ion-checkbox formControlName="forFarmer"></ion-checkbox>
+          </ion-item>
+        </ion-item-group>
+
+        <ion-item-group formGroupName="cheques">
+          <ion-item-divider>Cheques</ion-item-divider>
+          <ion-item>
+            <ion-label color="primary" stacked>Membership</ion-label>
+            <ion-checkbox formControlName="membership"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label color="primary" stacked>Vegetables</ion-label>
+            <ion-checkbox formControlName="vegetables"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label color="primary" stacked>Eggs</ion-label>
+            <ion-checkbox formControlName="eggs"></ion-checkbox>
+          </ion-item>
+        </ion-item-group>
+
+        <ion-item>
+          <ion-label color="primary" stacked>Validated By</ion-label>
+          <ion-input type="text" placeholder="Enter contract's validator's name"
+                     formControlName="validatedBy"></ion-input>
+        </ion-item>
+      </ng-container>
+
+    </ion-list>
+
+  </form>
+</ion-content>

@@ -1,0 +1,115 @@
+{
+  "language": "Français (fr)",
+  "SIDEMENU": {
+    "WELCOME": "Accueil",
+    "PROFILE": "Profil",
+    "DISTRIBUTION": "Suivi distribution",
+    "CHECK_DISTRIBUTION": "Suivre la distribution",
+    "VEGETABLES": "Légumes",
+    "EGGS": "Œufs",
+    "ADMINISTRATION": "Administration",
+    "ADHERENTS": "Adhérents",
+    "REPORTS": "Rapports"
+  },
+  "DIALOGS": {
+    "CANCEL": "Annuler",
+    "SAVE": "Enregistrer"
+  },
+  "REF": {
+    "SEASON": "Saison",
+    "WEEK": "Semaine",
+    "VEGETABLES": "Légumes",
+    "EGGS": "Œufs",
+    "BASKETTREATED": "Paniers traités",
+    "BASKETPREPARED": "Paniers préparés",
+    "COUNT": "Nombre"
+  },
+  "WELCOME": {
+    "TITLE": "Accueil",
+    "DISTRIBUTION_DATE": "Distribution du",
+    "DISTRIBUTORS": "Assurée par",
+    "CUMULATIVE_COUNTS": "{{allBasketCount}} personnes",
+    "CUMULATIVE_TRIAL_COUNTS": "(dont {{trialBasketCount}} en essai)",
+    "VEGETABLE_COUNTS": "{{allBasketCount}} paniers de légumes",
+    "VEGETABLE_TRIAL_COUNTS": "(dont {{trialBasketCount}} en essai)",
+    "EGG_COUNTS": "{{allBasketCount}} boîtes d'œufs",
+    "EGG_TRIAL_COUNTS": "(dont {{trialBasketCount}} en essai)",
+    "CHECK_DISTRIBUTION": "Suivre la distribution"
+  },
+  "LOGIN": {
+    "TITLE": "Connexion",
+    "USERNAME": "Identifiant",
+    "PASSWORD": "Mot de passe",
+    "STORE_PASSWORD": "Enregistrer le mot de passe",
+    "LOGIN": "Se connecter",
+    "FORGOT_PASSWORD": "Mot de passe oublié"
+  },
+  "RESET_PASSWORD": {
+    "TITLE": "Réinitialisation mot de passe",
+    "NEW_PASSWORD": "Nouveau mot de passe",
+    "CONFIRMED_PASSWORD": "Confirmer mot de passe",
+    "RESET_PASSWORD": "Réinitialiser"
+  },
+  "PROFILE": {
+    "TITLE": "Profil",
+    "CHANGE_PASSWORD": "Changer de mot de passe",
+    "OLD_PASSWORD": "Ancien mot de passe",
+    "NEW_PASSWORD": "Nouveau mot de passe",
+    "CONFIRMED_PASSWORD": "Confirmer le nouveau mot de passe",
+    "STORE_PASSWORD": "Enregistrer le mot de passe"
+  },
+  "MEMBER": {
+    "PLURAL": "adhérents",
+    "SINGULAR": "adhérent",
+    "LIST_TITLE": "Adhérents",
+    "DETAILS_TITLE": "Détails Adhérent",
+    "CREATION_TITLE": "Nouvel Adhérent"
+  },
+  "CONTRACT": {
+    "SINGULAR_TITLE": "Contrat",
+    "PLURAL_TITLE": "Contrats"
+  },
+  "PERSON": {
+    "TITLE": "Personne",
+    "EDITION_TITLE": "Édition Personne",
+    "CREATION_TITLE": "Nouvelle Personne",
+    "FIRSTNAME": "Prénom",
+    "LASTNAME": "Nom",
+    "ADDRESS": "Adresse",
+    "PHONE_NUMBER": "Téléphone",
+    "EMAIL_ADDRESS": "Courriel",
+    "FIRSTNAME_PLACEHOLDER": "Entrez le prénom de la personne",
+    "LASTNAME_PLACEHOLDER": "Entrez le nom de la personne",
+    "ADDRESS_PLACEHOLDER": "Entrez l'adresse de la personne",
+    "PHONE_NUMBER_PLACEHOLDER": "Entrez le téléphone de la personne",
+    "EMAIL_ADDRESS_PLACEHOLDER": "Entrez le courriel de la personne"
+  },
+  "REPORTS": {
+    "TITLE": "Rapports",
+    "GENERATE": "Générer",
+    "BASKETS_PER_MONTH_TITLE": "Paniers par mois",
+    "BASKETS_PER_MONTH_DESCRIPTION": "Les statistiques de paniers par mois pour l'assemblée générale ordinaire.",
+    "DISTRIBUTION_CHECKLIST_TITLE": "Cochage distribution",
+    "DISTRIBUTION_CHECKLIST_DESCRIPTION": "La liste de cochage peut être utilisée pour faire une liste imprimée."
+  },
+  "TRIAL_BASKET": {
+    "TITLE": "Panier d'essai",
+    "CREATION_TITLE": "Panier d'essai",
+    "WEEK_PLACEHOLDER": "Entrez la semaine du panier",
+    "COUNT_PLACEHOLDER": "Entrez le nombre de paniers"
+  },
+  "DISTRIBUTION": {
+    "DISTRIBUTED_PLURAL": "Distribués",
+    "REMAINING_PLURAL": "Restants",
+    "TO_PREPARE_PLURAL": "À Préparer",
+    "DETAILS": "Détails",
+    "NOTES": "Notes",
+    "PAID": "Payé",
+    "DISTRIBUTED": "Distribué",
+    "REMAINING": "Restant",
+    "TO_PREPARE": "À Préparer"
+  },
+  "NOTES": {
+    "EDIT_NOTES": "Éditer les notes"
+  }
+}

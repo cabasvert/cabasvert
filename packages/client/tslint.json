@@ -1,0 +1,16 @@
+{
+  "extends": [
+    "rxjs-tslint-rules"
+  ],
+  "rules": {
+    "no-duplicate-variable": true,
+    "rxjs-no-add": true,
+    "rxjs-no-operator": true,
+    "rxjs-no-patched": true,
+    "rxjs-no-subject-unsubscribe": true,
+    "rxjs-no-wholesale": true
+  },
+  "rulesDirectory": [
+    "node_modules/tslint-eslint-rules/dist/rules"
+  ]
+}

@@ -1,0 +1,23 @@
+contracts-view {
+  ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    font-size: 1.3rem;
+
+    li {
+      list-style-type: none;
+    }
+  }
+
+  ion-icon {
+    min-width: 18px;
+    text-align: center;
+  }
+
+  .problem-warning {
+    color: map-get($colors, "warning")
+  }
+  .problem-danger {
+    color: map-get($colors, "danger")
+  }
+}

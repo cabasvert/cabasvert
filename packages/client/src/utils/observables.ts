@@ -1,0 +1,87 @@
+import { NgZone } from "@angular/core"
+import { MonoTypeOperatorFunction } from "rxjs/interfaces"
+import { empty } from "rxjs/observable/empty"
+import { of } from "rxjs/observable/of"
+import { Observer } from "rxjs/Observer"
+import { catchError, filter, ignoreElements, map, observeOn, pairwise, tap } from "rxjs/operators"
+import { pipe } from "rxjs/util/pipe"
+import { Scheduler } from "rxjs/Scheduler"
+import { async } from "rxjs/scheduler/async"
+import { Subscription } from "rxjs/Subscription"
+
+export function previous<T>(): MonoTypeOperatorFunction<T> {
+  return pipe(pairwise(), map(([previous, _]) => previous))
+}
+
+export function filterNotNull<T>(): MonoTypeOperatorFunction<T> {
+  return filter(element => !!element)
+}
+
+export function errors() {
+  return pipe(ignoreElements(), catchError(e => of(e)))
+}
+
+export function ignoreErrors<T>(): MonoTypeOperatorFunction<T> {
+  return catchError(_ => empty<T>())
+}
+
+export function debug<T>(prefix, f): MonoTypeOperatorFunction<T> {
+  return tap(debugObservable<T>(prefix, f))
+}
+
+export function debugObservable<T>(prefix: string, f: (T) => any): Observer<T> {
+  return new DebugObserver(prefix, f)
+}
+
+class DebugObserver<T> implements Observer<T> {
+
+  constructor(private prefix: string,
+              private f: (T) => any = v => v) {
+  }
+
+  next: (value: T) => void = v => console.debug(`${this.prefix} - Next value:`, this.f(v))
+  error: (err: any) => void = e => console.error(`${this.prefix} - Error:`, e)
+  complete: () => void = () => console.debug(`${this.prefix} - Complete!`)
+}
+
+export function observeInsideAngular<T>(zone: NgZone): MonoTypeOperatorFunction<T> {
+  return observeOn(enterZone(zone))
+}
+
+export function observeOutsideAngular<T>(zone: NgZone): MonoTypeOperatorFunction<T> {
+  return observeOn(leaveZone(zone))
+}
+
+export function leaveZone(zone: NgZone, scheduler: Scheduler = async): Scheduler {
+  return new LeaveZoneScheduler(zone, scheduler) as any
+}
+
+export function enterZone(zone: NgZone, scheduler: Scheduler = async): Scheduler {
+  return new EnterZoneScheduler(zone, scheduler) as any
+}
+
+class LeaveZoneScheduler {
+  constructor(private zone: NgZone, private scheduler: Scheduler) {
+  }
+
+  schedule(...args: any[]): Subscription {
+    return this.zone.runOutsideAngular(() =>
+      this.scheduler.schedule.apply(this.scheduler, args),
+    )
+  }
+}
+
+class EnterZoneScheduler {
+  constructor(private zone: NgZone, private scheduler: Scheduler) {
+  }
+
+  schedule(...args: any[]): Subscription {
+    return this.zone.run(() =>
+      this.scheduler.schedule.apply(this.scheduler, args),
+    )
+  }
+}
+
+export const zoneName: () => string = typeof Zone !== 'undefined' && Zone.current
+  ? () => Zone.current.name
+  : () => 'no zone'

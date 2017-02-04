@@ -1,0 +1,34 @@
+page-distribution {
+  .content .list {
+    // Make the list above bottom with margin 10px + 56px (fab-button) + 10px + 54px (expanded item actions)
+    margin-bottom: 2 * 10px + 56px + 54px;
+  }
+
+  .item.item-divider {
+    height: 31px;
+  }
+
+  .item.item-block {
+    height: 56px;
+
+    .input-wrapper .label {
+      margin: 0;
+    }
+  }
+
+  sliding-pane[name="remaining"] {
+    ion-item-expanding {
+      ion-item {
+        padding-right: 30px !important;
+      }
+      ion-item-actions {
+        padding-right: 40px;
+      }
+    }
+  }
+
+  ion-note.distribution-date {
+    font-size: 1.1rem;
+    color: map_get($colors, 'inactive');
+  }
+}

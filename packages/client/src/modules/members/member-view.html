@@ -1,0 +1,10 @@
+<ng-container *ngIf="member.persons.length >= 1">
+  <h3 *ngIf="member.persons[0] as person">
+    <span text-uppercase>{{ person.lastname }}</span> {{ person.firstname }}
+  </h3>
+  <p *ngIf="member.persons.length > 1">
+        <span *ngFor="let person of member.persons.slice(1); let isLast=last">
+          <span text-uppercase>{{ person.lastname }}</span> {{ person.firstname }}{{isLast ? '' : ', '}}
+        </span>
+  </p>
+</ng-container>

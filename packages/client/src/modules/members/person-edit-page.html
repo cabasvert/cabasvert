@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-navbar hideBackButton>
+    <ion-buttons left>
+      <button ion-button icon-only (click)="dismiss()">
+        <ion-icon name="arrow-back"></ion-icon>
+        {{ 'DIALOGS.CANCEL' | translate }}
+      </button>
+    </ion-buttons>
+
+    <ion-title>
+      {{ title | translate }}
+    </ion-title>
+
+    <ion-buttons end>
+      <button ion-button icon-only (click)="submit.click()" [disabled]="!form.valid">
+        {{ 'DIALOGS.SAVE' | translate }}
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="form" novalidate (ngSubmit)="save()">
+    <input #submit type="submit" value="Submit" style="display:none"/>
+
+    <ion-list>
+      <ion-item>
+        <ion-label color="primary" stacked>{{ 'PERSON.FIRSTNAME' | translate }}</ion-label>
+        <ion-input type="text" placeholder="{{ 'PERSON.FIRSTNAME_PLACEHOLDER' | translate }}"
+                   formControlName="firstname"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label color="primary" stacked>{{ 'PERSON.LASTNAME' | translate }}</ion-label>
+        <ion-input type="text" placeholder="{{ 'PERSON.LASTNAME_PLACEHOLDER' | translate }}"
+                   formControlName="lastname"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label color="primary" stacked>{{ 'PERSON.ADDRESS' | translate }}</ion-label>
+        <ion-textarea placeholder="{{ 'PERSON.ADDRESS_PLACEHOLDER' | translate }}"
+                      formControlName="address"></ion-textarea>
+      </ion-item>
+      <ion-item>
+        <ion-label color="primary" stacked>{{ 'PERSON.PHONE_NUMBER' | translate }}</ion-label>
+        <ion-input type="tel" placeholder="{{ 'PERSON.PHONE_NUMBER_PLACEHOLDER' | translate }}"
+                   formControlName="phoneNumber"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label color="primary" stacked>{{ 'PERSON.EMAIL_ADDRESS' | translate }}</ion-label>
+        <ion-input type="email" placeholder="{{ 'PERSON.EMAIL_ADDRESS_PLACEHOLDER' | translate }}"
+                   formControlName="emailAddress"></ion-input>
+      </ion-item>
+    </ion-list>
+  </form>
+</ion-content>
