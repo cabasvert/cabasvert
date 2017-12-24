@@ -2,13 +2,20 @@ language: node_js
 
 sudo: false
 
+services:
+  - docker
+
 node_js:
   - "6"
   - "8"
 
-before_script: 
+before_script:
+  # Check we build and lint correctly first
   - npm run build
   - npm run lint
+
+  # Launch CouchDB docker image
+  - docker run -p 5984:5984 -d couchdb:2
 
 script: npm run test
 
