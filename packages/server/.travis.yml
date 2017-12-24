@@ -9,10 +9,20 @@ node_js:
   - "6"
   - "8"
 
+before_install:
+  # package-lock.json was introduced in npm@5
+  - npm install -g npm@5 # skip this if you are using node 9
+  - npm install -g greenkeeper-lockfile@1
+
 before_script:
+  - greenkeeper-lockfile-update
+
   # Check we build and lint correctly first
   - npm run build
   - npm run lint
+
+after_script:
+  - greenkeeper-lockfile-upload
 
 script: npm run test
 
