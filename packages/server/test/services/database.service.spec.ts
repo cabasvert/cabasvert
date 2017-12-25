@@ -1,14 +1,22 @@
 import 'jasmine'
+
+import * as PouchHttp from 'pouchdb-adapter-http'
+import * as PouchAuth from 'pouchdb-authentication'
+import * as PouchDB from 'pouchdb-core'
+import * as PouchFind from 'pouchdb-find'
+import * as PouchSecurity from 'pouchdb-security-helper'
+
 import * as winston from 'winston'
+
 import { defaultConfiguration } from '../../src/config'
 
 import { DatabaseService } from '../../src/services/database.service'
 
-const PouchDB = require('pouchdb-core')
-  .plugin(require('pouchdb-adapter-http'))
-  .plugin(require('pouchdb-find'))
-  .plugin(require('pouchdb-authentication'))
-  .plugin(require('pouchdb-security-helper'))
+PouchDB
+  .plugin(PouchHttp)
+  .plugin(PouchFind)
+  .plugin(PouchAuth)
+  .plugin(PouchSecurity)
 
 describe('DatabaseService', () => {
 

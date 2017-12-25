@@ -1,4 +1,10 @@
 import { inject, injectable } from 'inversify'
+
+import * as PouchHttp from 'pouchdb-adapter-http'
+import * as PouchAuth from 'pouchdb-authentication'
+import * as PouchDB from 'pouchdb-core'
+import * as PouchFind from 'pouchdb-find'
+
 import { LoggerInstance } from 'winston'
 
 import { Configuration } from '../config'
@@ -7,10 +13,10 @@ import { User, UserMetadata } from '../models/user.model'
 
 import { Services } from '../types'
 
-const PouchDB = require('pouchdb-core')
-  .plugin(require('pouchdb-adapter-http'))
-  .plugin(require('pouchdb-find'))
-  .plugin(require('pouchdb-authentication'))
+PouchDB
+  .plugin(PouchHttp)
+  .plugin(PouchFind)
+  .plugin(PouchAuth)
 
 @injectable()
 export class DatabaseService {
