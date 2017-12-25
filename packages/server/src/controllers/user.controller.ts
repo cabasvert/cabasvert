@@ -2,7 +2,7 @@ import * as express from 'express'
 import { inject } from 'inversify'
 import { controller, httpGet, httpPost, request, requestParam, response } from 'inversify-express-utils'
 import { LoggerInstance } from 'winston'
-import { CLIENT_APP_URL } from '../config'
+import { Configuration } from '../config'
 
 import { UserMetadata } from '../models/user.model'
 import { DatabaseService } from '../services/database.service'
@@ -17,7 +17,8 @@ const EXPIRY_TIME = 24 // hours
 @controller('/user')
 export class UserController {
 
-  constructor(@inject(Services.Logger) private logger: LoggerInstance,
+  constructor(@inject(Services.Config) private config: Configuration,
+              @inject(Services.Logger) private logger: LoggerInstance,
               @inject(Services.Database) private userDatabase: DatabaseService,
               @inject(Services.Mail) private mailSender: MailService,
               @inject(Services.Token) private tokenGenerator: TokenService) {
@@ -105,7 +106,8 @@ export class UserController {
   }
 
   makeClientAppConfirmFormUrl(userId: string, token: string) {
-    return `${CLIENT_APP_URL}/confirm-password-reset?userId=${userId}&token=${token}`
+    let baseUrl = this.config.clientApplication.url
+    return `${baseUrl}/confirm-password-reset?userId=${userId}&token=${token}`
   }
 
   sendPasswordResetMail(metadata: UserMetadata, userId: string, token: string) {

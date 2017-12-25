@@ -1,0 +1,22 @@
+{
+  "port": 8080,
+  "clientApplication": {
+    "url": "http://localhost:8080"
+  },
+  "database": {
+    "url": "http://localhost:5984",
+    "auth": {
+      "username": "server-username",
+      "password": "server-password"
+    }
+  },
+  "smtpConnection": {
+    "host": "smtp.free.fr",
+    "port": 587,
+    "secure": true,
+    "auth": {
+      "password": "email-username",
+      "pass": "email-password"
+    }
+  }
+}

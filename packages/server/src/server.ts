@@ -7,12 +7,18 @@ import { Container } from 'inversify'
 import { InversifyExpressServer } from 'inversify-express-utils'
 import * as morgan from 'morgan'
 import { LoggerInstance } from 'winston'
+import { Configuration } from './config'
 
-import { PORT } from './config'
+import './controllers/user.controller'
+
 import { DatabaseService } from './services/database.service'
 import { Services } from './types'
 
-export async function initializeServer(container: Container) {
+export async function initializeServer(containerPromise: Promise<Container>) {
+
+  let container = await containerPromise
+
+  let config = container.get<Configuration>(Services.Config)
 
   let databaseService = container.get<DatabaseService>(Services.Database)
   await databaseService.initialize()
@@ -47,8 +53,8 @@ export async function initializeServer(container: Container) {
 
   return new Promise<http.Server>((resolve) => {
     // start the server
-    let httpServer = app.listen(PORT, () => {
-      logger.info(`Starter server listening on port ${PORT}`)
+    let httpServer = app.listen(config.port, () => {
+      logger.info(`Starter server listening on port ${config.port}`)
       resolve(httpServer)
     })
   })

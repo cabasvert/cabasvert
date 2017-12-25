@@ -3,11 +3,12 @@ import { Container } from 'inversify'
 import 'jasmine'
 import * as Mail from 'nodemailer/lib/mailer'
 import 'reflect-metadata'
-import { LoggerInstance } from 'winston'
 import * as winston from 'winston'
+import { LoggerInstance } from 'winston'
+
+import { Configuration, configuration } from '../../src/config'
 
 import '../../src/controllers/user.controller'
-import { CLIENT_APP_URL } from '../../src/config'
 
 import { User, UserMetadata } from '../../src/models/user.model'
 import { initializeServer } from '../../src/server'
@@ -21,11 +22,6 @@ const request = require('supertest')
 type UserWithPassword = User & { password?: string }
 
 class DatabaseServiceMock extends DatabaseService {
-
-
-  constructor(logger: winston.LoggerInstance) {
-    super(logger)
-  }
 
   private _users: { [id: string]: UserWithPassword }
 
@@ -85,9 +81,9 @@ class MailServiceMock extends MailService {
 describe('UserController', () => {
 
   let nullLogger = new winston.Logger()
-  let databaseServiceMock = new DatabaseServiceMock(nullLogger)
+  let databaseServiceMock = new DatabaseServiceMock(configuration, nullLogger)
   let tokenServiceMock = new TokenServiceMock()
-  let mailServiceMock = new MailServiceMock(nullLogger)
+  let mailServiceMock = new MailServiceMock(configuration, nullLogger)
 
   let server: http.Server
 
@@ -97,12 +93,13 @@ describe('UserController', () => {
     // load everything needed to the Container
     let container = new Container()
 
+    container.bind<Configuration>(Services.Config).toConstantValue(configuration)
     container.bind<LoggerInstance>(Services.Logger).toConstantValue(nullLogger)
     container.bind<DatabaseService>(Services.Database).toConstantValue(databaseServiceMock)
     container.bind<MailService>(Services.Mail).toConstantValue(mailServiceMock)
     container.bind<TokenService>(Services.Token).toConstantValue(tokenServiceMock)
 
-    server = await initializeServer(container)
+    server = await initializeServer(Promise.resolve(container))
   })
 
   afterEach(async () => {
@@ -119,8 +116,9 @@ describe('UserController', () => {
       .expect({ ok: true })
 
     expect(mailServiceMock.sentMail.to).toContain(userId)
+    let baseUrl = configuration.clientApplication.url
     expect(mailServiceMock.sentMail.text).toContain(
-      `${CLIENT_APP_URL}/confirm-password-reset?userId=${userId}&token=fake-token`)
+      `${baseUrl}/confirm-password-reset?userId=${userId}&token=fake-token`)
 
     let user = await databaseServiceMock.getUser(userId)
     let prt = user.metadata['password-reset-token']

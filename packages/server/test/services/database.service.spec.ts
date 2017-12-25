@@ -1,7 +1,7 @@
 import 'jasmine'
 import * as winston from 'winston'
+import { configuration } from '../../src/config'
 
-import { DATABASE_URL, DATABASE_USER } from '../../src/config'
 import { DatabaseService } from '../../src/services/database.service'
 
 const PouchDB = require('pouchdb-core')
@@ -12,18 +12,18 @@ const PouchDB = require('pouchdb-core')
 
 describe('DatabaseService', () => {
 
-  let databaseService
+  let serverUser = configuration.database.auth
 
+  let databaseService
   let database
-  let serverUser = DATABASE_USER
 
   beforeEach(async () => {
 
     let nullLogger = new winston.Logger()
-    databaseService = new DatabaseService(nullLogger)
+    databaseService = new DatabaseService(configuration, nullLogger)
 
     // Create user database
-    database = new PouchDB(DATABASE_URL + '_users', { skip_setup: true })
+    database = new PouchDB(configuration.database.url + '/_users', { skip_setup: true })
 
     await database.signUpAdmin('admin', 'password')
     await database.logIn('admin', 'password')

@@ -1,7 +1,8 @@
 import { inject, injectable } from 'inversify'
 import { LoggerInstance } from 'winston'
 
-import { DATABASE_URL, DATABASE_USER } from '../config'
+import { Configuration } from '../config'
+
 import { User, UserMetadata } from '../models/user.model'
 
 import { Services } from '../types'
@@ -16,12 +17,13 @@ export class DatabaseService {
 
   private db: any
 
-  constructor(@inject(Services.Logger) private logger: LoggerInstance) {
-    this.db = new PouchDB(DATABASE_URL + '_users', { skip_setup: true })
+  constructor(@inject(Services.Config) private config: Configuration,
+              @inject(Services.Logger) private logger: LoggerInstance) {
+    this.db = new PouchDB(this.config.database.url + '/_users', { skip_setup: true })
   }
 
   async initialize() {
-    let user = DATABASE_USER
+    let user = this.config.database.auth
     await this.loginDatabase(user.username, user.password)
   }
 

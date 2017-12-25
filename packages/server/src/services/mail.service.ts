@@ -4,21 +4,30 @@ import { createTransport } from 'nodemailer'
 import * as Mail from 'nodemailer/lib/mailer'
 import { LoggerInstance } from 'winston'
 
-import { SMTP_CONNECTION_DATA } from '../config'
+import { Configuration } from '../config'
 import { Services } from '../types'
 
 @injectable()
 export class MailService {
 
-  constructor(@inject(Services.Logger) private logger: LoggerInstance) {
+  constructor(@inject(Services.Config) private config: Configuration,
+              @inject(Services.Logger) private logger: LoggerInstance) {
   }
 
   async sendMail(mail: Mail.Options) {
-    let connectionData = SMTP_CONNECTION_DATA
+    let connection = this.config.smtpConnection
 
-    mail['from'] = `Cabas Vert <${connectionData.auth.user}>`
+    mail['from'] = `Cabas Vert <${connection.auth.username}>`
 
-    let smtpTransport = createTransport(connectionData)
+    let smtpTransport = createTransport({
+      host: connection.host,
+      port: connection.port,
+      secure: connection.secure,
+      auth: {
+        user: connection.auth.username,
+        pass: connection.auth.password,
+      },
+    })
 
     try {
       return await smtpTransport.sendMail(mail)

@@ -1,22 +1,34 @@
-import * as SMTPTransport from 'nodemailer/lib/smtp-transport'
+import { readFileSync } from 'graceful-fs'
 
-export const PORT = process.env['PORT'] || 8080
+export type Configuration = {
+  port: number
 
-export const DATABASE_URL = process.env['COUCHDB_URL'] || 'http://localhost:5984/'
+  clientApplication: {
+    url: string
+  }
 
-export const CLIENT_APP_URL = process.env['CLIENT_APP_URL'] || 'http://localhost:8080/'
+  database: {
+    url: string
+    auth: {
+      username: string
+      password: string
+    }
+  }
 
-export const DATABASE_USER = {
-  username: process.env['COUCHDB_SERVER_USERNAME'] || 'server-username',
-  password: process.env['COUCHDB_SERVER_PASSWORD'] || 'server-password',
+  smtpConnection: {
+    host: string
+    port: number
+    secure: boolean
+    auth: {
+      username: string
+      password: string
+    }
+  }
 }
 
-export const SMTP_CONNECTION_DATA: SMTPTransport.Options = {
-  host: process.env['SERVER_EMAIL_HOST'],
-  port: Number.parseInt(process.env['SERVER_EMAIL_PORT']),
-  secure: process.env['SERVER_EMAIL_USE_TLS'] === 'true',
-  auth: {
-    user: process.env['SERVER_EMAIL_USERNAME'],
-    pass: process.env['SERVER_EMAIL_PASSWORD'],
-  },
+export const configuration = parseJsonFile<Configuration>('config.json')
+
+export function parseJsonFile<T>(path: string): T {
+  let data = readFileSync(path, 'utf8')
+  return JSON.parse(data)
 }
