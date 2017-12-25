@@ -1,6 +1,6 @@
 import 'jasmine'
 import * as winston from 'winston'
-import { configuration } from '../../src/config'
+import { defaultConfiguration } from '../../src/config'
 
 import { DatabaseService } from '../../src/services/database.service'
 
@@ -11,6 +11,8 @@ const PouchDB = require('pouchdb-core')
   .plugin(require('pouchdb-security-helper'))
 
 describe('DatabaseService', () => {
+
+  let configuration = defaultConfiguration()
 
   let serverUser = configuration.database.auth
 

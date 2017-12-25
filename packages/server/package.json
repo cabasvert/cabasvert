@@ -4,18 +4,26 @@
   "version": "0.1.0",
   "description": "The server app for Cabas Vert",
   "private": true,
-  "main": "index.js",
+  "main": "dist/index.js",
+  "bin": {
+    "cabasvert-server": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "public",
+    "config.json"
+  ],
   "scripts": {
     "clean": "rm -rf dist/ && rm -rf .nyc_output/ && rm -rf coverage/ && rm -rf logs/",
     "prestart": "npm install",
-    "start": "node dist/index",
+    "start": "node dist/cli",
     "prebuild": "npm run lint",
     "build": "tsc",
     "build-test": "tsc",
     "test": "nyc -r lcov -e .ts -x \"**/*.spec.ts\" jasmine-ts --config=jasmine.json \"test/**/*.spec.ts\"",
     "monitor": "snyk test",
     "lint": "tslint 'src/**/*.ts' 'test/**/*.ts'",
-    "serve": "nodemon --inspect dist/index --watch dist",
+    "serve": "nodemon --inspect dist/cli --watch dist",
     "watch:test": "watch 'npm run test' dist --wait=0.1",
     "watch:ts": "tsc -w"
   },

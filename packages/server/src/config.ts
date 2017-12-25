@@ -26,7 +26,9 @@ export type Configuration = {
   }
 }
 
-export const configuration = parseJsonFile<Configuration>('config.json')
+export function defaultConfiguration() {
+  return parseJsonFile<Configuration>('config.json')
+}
 
 export function parseJsonFile<T>(path: string): T {
   let data = readFileSync(path, 'utf8')

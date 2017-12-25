@@ -6,7 +6,7 @@ import 'reflect-metadata'
 import * as winston from 'winston'
 import { LoggerInstance } from 'winston'
 
-import { Configuration, configuration } from '../../src/config'
+import { Configuration, defaultConfiguration } from '../../src/config'
 
 import '../../src/controllers/user.controller'
 
@@ -79,6 +79,8 @@ class MailServiceMock extends MailService {
 }
 
 describe('UserController', () => {
+
+  let configuration = defaultConfiguration()
 
   let nullLogger = new winston.Logger()
   let databaseServiceMock = new DatabaseServiceMock(configuration, nullLogger)
