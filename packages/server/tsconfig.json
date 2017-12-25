@@ -4,7 +4,8 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "lib": [
-      "es6"
+      "es6",
+      "dom"
     ],
     "types": [
       "reflect-metadata"
