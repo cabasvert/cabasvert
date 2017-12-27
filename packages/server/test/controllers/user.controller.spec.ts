@@ -133,7 +133,7 @@ describe('UserController', () => {
     expect(mailServiceMock.sentMail.to).toContain(userId)
     let baseUrl = configuration.clientApplication.url
     expect(mailServiceMock.sentMail.text).toContain(
-      `${baseUrl}/confirm-password-reset?userId=${userId}&token=fake-token`)
+      `${baseUrl}/#/reset-password/${userId}/fake-token`)
 
     let user = await databaseServiceMock.getUser(userId)
     let prt = user.metadata['password-reset-token']

@@ -131,7 +131,7 @@ export class UserController {
 
   makeClientAppConfirmFormUrl(userId: string, token: string) {
     let baseUrl = this.config.clientApplication.url
-    return `${baseUrl}/confirm-password-reset?userId=${userId}&token=${token}`
+    return `${baseUrl}/#/reset-password/${userId}/${token}`
   }
 
   sendPasswordResetMail(metadata: UserMetadata, userId: string, token: string) {
