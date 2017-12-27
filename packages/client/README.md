@@ -1,10 +1,10 @@
 # Serve
 
-Run `NODE_ENV=prod ionic serve`.
+Run `NODE_ENV=prod DATABASE_URL="https://db.example.com" SERVER_URL="https://api.example.com" ionic serve`.
 
 # Browser Builds
 
-Run `NODE_ENV=prod ionic cordova build browser --prod`.
+Run `NODE_ENV=prod DATABASE_URL="https://db.example.com" SERVER_URL="https://api.example.com" ionic cordova build browser --prod`.
 
 The result is in `platform/browser/www/`.
 
@@ -12,7 +12,7 @@ The result is in `platform/browser/www/`.
 
 ## Debug Builds
 
-Run `NODE_ENV=prod ionic cordova build android --prod`.
+Run `NODE_ENV=prod DATABASE_URL="https://db.example.com" SERVER_URL="https://api.example.com" ionic cordova build android --prod`.
 
 The result is in `platform/android/builds/output/apk/`.
 
@@ -30,6 +30,6 @@ keyPassword=<keyPassword>
 2. Check there is no `android:debuggable` attribute on the `application` tag in the `platforms/android/AndroidManifest.xml`
 file.
 
-3. Run `NODE_ENV=prod ionic cordova build android --prod --release`.
+3. Run `NODE_ENV=prod DATABASE_URL="https://db.example.com" SERVER_URL="https://api.example.com" ionic cordova build android --prod --release`.
 
 The result is in `platform/android/builds/output/apk/`.
