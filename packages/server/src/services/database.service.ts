@@ -61,7 +61,7 @@ export class DatabaseService {
   }
 
   updateUser(userId: string, data: { metadata: UserMetadata }): Promise<any> {
-    return this.db.putUser(userId, data)
+    return this.db.putUser(userId, { metadata: data })
   }
 
   changePassword(userId: string, password: string): Promise<boolean> {

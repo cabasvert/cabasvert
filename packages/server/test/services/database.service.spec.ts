@@ -142,7 +142,9 @@ describe('DatabaseService', () => {
       let user = await databaseService.getUser('john.doe@example.com')
 
       expect(user).toEqual(jasmine.objectContaining({
-        newMetadata: 'metadata',
+        metadata: {
+          newMetadata: 'metadata',
+        },
       }))
     } finally {
       await databaseService.logOut()
