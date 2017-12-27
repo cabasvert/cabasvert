@@ -17,12 +17,13 @@
     "clean": "rm -rf dist/ && rm -rf .nyc_output/ && rm -rf coverage/ && rm -rf logs/",
     "prestart": "npm install",
     "start": "node dist/cli",
-    "prebuild": "npm run lint",
+    "prebuild": "npm run lint && npm run license-check",
     "build": "tsc",
     "build-test": "tsc",
     "test": "nyc -r lcov -e .ts -x \"**/*.spec.ts\" jasmine-ts --config=jasmine.json \"test/**/*.spec.ts\"",
     "monitor": "snyk test",
     "lint": "tslint 'src/**/*.ts' 'test/**/*.ts'",
+    "license-check": "license-check",
     "serve": "nodemon --inspect dist/cli --watch dist",
     "watch:test": "watch 'npm run test' dist --wait=0.1",
     "watch:ts": "tsc -w"
@@ -63,6 +64,7 @@
     "jasmine": "^2.8.0",
     "jasmine-spec-reporter": "^4.2.1",
     "jasmine-ts": "^0.2.1",
+    "license-check": "^1.1.5",
     "nodemon": "^1.14.3",
     "nyc": "^11.4.1",
     "pouchdb-security-helper": "^1.1.1",
@@ -72,5 +74,18 @@
     "tslint": "^5.8.0",
     "typescript": "^2.6.2",
     "watch": "^1.0.2"
+  },
+  "license-check-config": {
+    "src": [
+      "src/**/*.js",
+      "src/**/*.ts",
+      "test/**/*.js",
+      "test/**/*.ts",
+      "!./node_modules/**/*"
+    ],
+    "path": "config/header.txt",
+    "blocking": false,
+    "logInfo": false,
+    "logError": true
   }
 }
