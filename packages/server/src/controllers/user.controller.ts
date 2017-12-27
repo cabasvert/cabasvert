@@ -33,6 +33,8 @@ export class UserController {
     this.logger.debug(`Received request for password reset for user '${userId}'`)
 
     try {
+      await this.userDatabase.logIn()
+
       let doc = await this.userDatabase.getUser(userId)
       if (!doc) throw new Error('Unknown user')
 
@@ -52,6 +54,8 @@ export class UserController {
       res.json({ ok: true })
     } catch (error) {
       res.json({ ok: false, error: error.message })
+    } finally {
+      await this.userDatabase.logOut()
     }
   }
 
@@ -70,6 +74,8 @@ export class UserController {
     this.logger.debug(`Received confirmation for password reset for user '${userId}'`)
 
     try {
+      await this.userDatabase.logIn()
+
       let doc = await this.userDatabase.getUser(userId)
       if (!doc) throw new Error('Unknown user')
 
@@ -102,6 +108,8 @@ export class UserController {
       res.json({ ok })
     } catch (error) {
       res.json({ ok: false, error: error.message })
+    } finally {
+      await this.userDatabase.logOut()
     }
   }
 

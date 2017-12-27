@@ -29,22 +29,27 @@ export class DatabaseService {
   }
 
   async initialize() {
-    let user = this.config.database.auth
-    await this.loginDatabase(user.username, user.password)
+    await this.logIn()
+    await this.logOut()
   }
 
-  private loginDatabase(username: string, password: string) {
-    return this.db.login(username, password)
+  async logIn() {
+    let user = this.config.database.auth
+    await this.db.login(user.username, user.password)
       .then(() => {
         return this.db.getSession()
           .then(res => {
-            this.logger.info(`Successfully logged user '${username}' in.`)
+            this.logger.info(`Successfully logged user '${user.username}' in.`)
             this.logger.debug(`Session: ${JSON.stringify(res)}`)
           })
       })
       .catch((error: any) => {
-        this.logger.error(`Failed to log user '${username}' in: ${JSON.stringify(error)}`)
+        this.logger.error(`Failed to log user '${user.username}' in: ${JSON.stringify(error)}`)
       })
+  }
+
+  async logOut() {
+    await this.db.logOut()
   }
 
   getUser(userId: string): Promise<User> {

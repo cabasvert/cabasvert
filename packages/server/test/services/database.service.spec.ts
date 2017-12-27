@@ -110,45 +110,55 @@ describe('DatabaseService', () => {
   })
 
   it('can retrieve users by their id', async () => {
-    await databaseService.initialize()
+    try {
+      await databaseService.logIn()
 
-    let user = await databaseService.getUser('john.doe@example.com')
+      let user = await databaseService.getUser('john.doe@example.com')
 
-    expect(user).toEqual(jasmine.objectContaining({
-      _id: 'org.couchdb.user:john.doe@example.com',
-      name: 'john.doe@example.com',
-      roles: [],
-      type: 'user',
-      metadata: { name: 'John Doe', email: 'john.doe@example.com' },
-    }))
+      expect(user).toEqual(jasmine.objectContaining({
+        _id: 'org.couchdb.user:john.doe@example.com',
+        name: 'john.doe@example.com',
+        roles: [],
+        type: 'user',
+        metadata: { name: 'John Doe', email: 'john.doe@example.com' },
+      }))
+    } finally {
+      await databaseService.logOut()
+    }
   })
 
   it('can update users\' metadata', async () => {
-    await databaseService.initialize()
+    try {
+      await databaseService.logIn()
 
-    expect(
-      await databaseService.updateUser('john.doe@example.com', {
-        metadata: {
-          newMetadata: 'metadata',
-        },
-      }),
-    ).toEqual(jasmine.objectContaining({ ok: true }))
+      expect(
+        await databaseService.updateUser('john.doe@example.com', {
+          metadata: {
+            newMetadata: 'metadata',
+          },
+        }),
+      ).toEqual(jasmine.objectContaining({ ok: true }))
 
-    let user = await databaseService.getUser('john.doe@example.com')
+      let user = await databaseService.getUser('john.doe@example.com')
 
-    expect(user).toEqual(jasmine.objectContaining({
-      newMetadata: 'metadata',
-    }))
+      expect(user).toEqual(jasmine.objectContaining({
+        newMetadata: 'metadata',
+      }))
+    } finally {
+      await databaseService.logOut()
+    }
   })
 
   it('can change users\' passwords', async () => {
-    await databaseService.initialize()
+    try {
+      await databaseService.logIn()
 
-    expect(
-      await databaseService.changePassword('john.doe@example.com', 'newPassword'),
-    ).toEqual(true)
-
-    await database.logOut()
+      expect(
+        await databaseService.changePassword('john.doe@example.com', 'newPassword'),
+      ).toEqual(true)
+    } finally {
+      await databaseService.logOut()
+    }
 
     expect(
       await database.logIn('john.doe@example.com', 'newPassword'),
