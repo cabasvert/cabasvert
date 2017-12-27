@@ -18,6 +18,7 @@
  */
 
 import { Component, Input } from '@angular/core'
+import { SeasonService } from "../seasons/season.service"
 import { ContractService } from "./contract.service"
 import { Contract, ContractKind } from "./contract.model"
 
@@ -34,6 +35,9 @@ export class ContractsView {
   Kinds = ContractKind
 
   JSON = JSON
+
+  constructor(public seasonService: SeasonService) {
+  }
 
   ngOnInit() {
     let problems = ContractService.validateContract(this.contract)

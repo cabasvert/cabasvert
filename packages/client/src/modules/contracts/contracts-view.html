@@ -1,8 +1,8 @@
 <h3>
-  {{ contract.season }}
+  {{ seasonService.seasonNameById$(contract.season) | async }}
 </h3>
-<p *ngIf="contract.validation && contract.validation.validatedBy">
-  Validated By: {{ contract.validation.validatedBy }}
+<p *ngIf="contract.validation && contract.validation.validatedBy" style="font-size: 1.1rem;">
+  Validated by {{ contract.validation.validatedBy }}
 </p>
 <h3 *ngFor="let problem of messages" [class]="'problem-' + severity">
   {{ problem }}

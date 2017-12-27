@@ -120,7 +120,8 @@
       </ion-list-header>
       <ion-item *ngFor="let trialBasket of member.trialBaskets">
         <h3>
-          Season {{ trialBasket.season }}; Week {{ trialBasket.week }}
+          Season {{ seasons.seasonNameById$(trialBasket.season) | async }};
+          Week {{ trialBasket.week }}
         </h3>
         <ul>
           <li>
