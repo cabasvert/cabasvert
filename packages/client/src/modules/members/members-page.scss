@@ -57,3 +57,59 @@ page-members {
     color: map_get($colors, 'inactive');
   }
 }
+
+page-member-detail {
+  .list-header-md {
+    padding-top: 5px;
+    margin-bottom: 5px;
+    min-height: 3.6rem;
+    font-size: 1.8rem;
+
+    .item-inner {
+      padding-right: 8px;
+    }
+
+    ion-buttons.bar-buttons-md {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+  }
+
+  .item-md {
+    ion-buttons ion-row button {
+      margin-top: 2px;
+      margin-bottom: 2px;
+    }
+
+    h3 {
+      font-weight: bold;
+    }
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 2px;
+    font-size: 1.3rem;
+    border-left: .5px solid map_get($colors, 'inactive');
+  }
+
+  ul li {
+    list-style-type: none;
+    padding-left: 21px;
+    text-indent: -21px;
+
+    ion-icon {
+      text-indent: 0;
+    }
+  }
+
+  ion-icon {
+    min-width: 18px;
+    text-align: center;
+  }
+
+  ion-label.label-md {
+    margin-top: 1px;
+    margin-bottom: 6px;
+  }
+}

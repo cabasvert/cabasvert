@@ -67,6 +67,8 @@ export class MemberDetailsPage {
   user: User
   private subscription: Subscription
 
+  Kinds = ContractKind
+
   constructor(public navParams: NavParams,
               public nav: Navigation,
               public viewCtrl: ViewController,

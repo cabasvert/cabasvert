@@ -27,7 +27,7 @@
       <ion-list-header>
         Persons
         <ion-buttons item-right *ngIf="editMode$ | async">
-          <button ion-button small clear (click)="createPerson()">
+          <button ion-button small outline (click)="createPerson()">
             <ion-icon name="add"></ion-icon>
           </button>
         </ion-buttons>
@@ -36,38 +36,49 @@
         <h3>
           {{ person.firstname }} {{ person.lastname }}
         </h3>
-        <p *ngIf="person.address">
-          Address: {{ person.address }}
-        </p>
-        <p *ngIf="person.phoneNumber">
-          Phone: {{ person.phoneNumber }}
-        </p>
-        <p *ngIf="person.emailAddress">
-          Email: {{ person.emailAddress }}
-        </p>
 
-        <ion-buttons item-right *ngIf="editMode$ | async">
-          <button ion-button small clear
-                  (click)="editPerson(person, index)">
-            <ion-icon name="create"></ion-icon>
-          </button>
-          <button ion-button small clear
-                  (click)="deletePerson(person, index)"
-                  [disabled]="member.persons.length == 1">
-            <ion-icon name="trash"></ion-icon>
-          </button>
+        <ul>
+          <li *ngIf="person.phoneNumber">
+            <ion-icon small name="call"></ion-icon>
+            {{ person.phoneNumber }}
+          </li>
+          <li *ngIf="person.emailAddress">
+            <ion-icon small name="mail"></ion-icon>
+            {{ person.emailAddress }}
+          </li>
+          <li *ngIf="person.address" style="font-size: small;">
+            <ion-icon small name="home"></ion-icon>
+            <ng-container *ngFor="let line of person.address.split('\n')">
+              {{ line }}<br/>
+            </ng-container>
+          </li>
+        </ul>
+
+        <ion-buttons item-right>
+          <ion-row *ngIf="editMode$ | async">
+            <button ion-button small outline
+                    (click)="editPerson(person, index)">
+              <ion-icon name="create"></ion-icon>
+            </button>
+            <button ion-button small outline
+                    (click)="deletePerson(person, index)"
+                    [disabled]="member.persons.length == 1">
+              <ion-icon name="trash"></ion-icon>
+            </button>
+          </ion-row>
+
+          <ion-row *ngIf="person.phoneNumber">
+            <button ion-button small outline
+                    (click)="textPerson(person)">
+              <ion-icon name="text"></ion-icon>
+            </button>
+            <button ion-button small outline
+                    (click)="callPerson(person)">
+              <ion-icon name="call"></ion-icon>
+            </button>
+          </ion-row>
         </ion-buttons>
 
-        <ion-buttons item-right *ngIf="person.phoneNumber">
-          <button ion-button small clear
-                  (click)="textPerson(person)">
-            <ion-icon name="text"></ion-icon>
-          </button>
-          <button ion-button small clear
-                  (click)="callPerson(person)">
-            <ion-icon name="call"></ion-icon>
-          </button>
-        </ion-buttons>
       </ion-item>
     </ion-list>
 
@@ -76,7 +87,7 @@
         Contracts
         <!-- TODO Enable button only in case a new season exists and no contracts exist for it yet -->
         <ion-buttons item-right *ngIf="editMode$ | async">
-          <button ion-button small clear (click)="createContract()">
+          <button ion-button small outline (click)="createContract()">
             <ion-icon name="add"></ion-icon>
           </button>
         </ion-buttons>
@@ -86,11 +97,11 @@
 
         <!-- TODO Enable buttons only in case the contract is not validated -->
         <ion-buttons item-right *ngIf="isFirst && (editMode$ | async)">
-          <button ion-button small clear
+          <button ion-button small outline
                   (click)="editContract(contract, index)">
             <ion-icon name="create"></ion-icon>
           </button>
-          <button ion-button small clear
+          <button ion-button small outline
                   (click)="deleteContract(contract, index)">
             <ion-icon name="trash"></ion-icon>
           </button>
@@ -102,23 +113,26 @@
       <ion-list-header>
         Trial Baskets
         <ion-buttons item-right *ngIf="editMode$ | async">
-          <button ion-button small clear (click)="addTrialBasket()">
+          <button ion-button small outline (click)="addTrialBasket()">
             <ion-icon name="add"></ion-icon>
           </button>
         </ion-buttons>
       </ion-list-header>
       <ion-item *ngFor="let trialBasket of member.trialBaskets">
         <h3>
-          Season: {{ trialBasket.season }};
-          Week: {{ trialBasket.week }}
+          Season {{ trialBasket.season }}; Week {{ trialBasket.week }}
         </h3>
-        <p>
-          Paid: {{ trialBasket.paid }}
-        </p>
-        <p *ngFor="let section of trialBasket.sections">
-          Kind: {{ section.kind }};
-          Count: {{ section.count }}
-        </p>
+        <ul>
+          <li>
+            <ion-icon small name="cash"
+                      color="{{ !trialBasket.paid ? 'danger' : 'primary' }}"></ion-icon>
+            {{ trialBasket.paid ? 'Paid' : 'Not yet paid' }}
+          </li>
+          <li *ngFor="let section of trialBasket.sections">
+            <ion-icon small [name]="Kinds.icon(section.kind)"></ion-icon>
+            {{ section.count }}
+          </li>
+        </ul>
       </ion-item>
     </ion-list>
 
