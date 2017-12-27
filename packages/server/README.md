@@ -11,7 +11,7 @@
     </td>
     <td>
       <p>
-        <b>Cabas Vert</b> is a management application for associations that participates to the distribution of organic, local and seasonal, vegetable baskets.
+        <b>Cabas Vert</b> is a management application for associations that participate in the distribution of organic, local and seasonal, vegetable baskets.
         It is used by our association in Marseille (France) but aims to be used by other AMAPs (Associations for the Maintenance of Family Farming).
       </p>
       <p>
