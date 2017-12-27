@@ -56,6 +56,7 @@ export class UserController {
 
       res.json({ ok: true })
     } catch (error) {
+      this.logger.error(`An error occurred while processing request: ${error.message}`)
       res.status(500).json({ ok: false, error: error.message })
     } finally {
       await this.userDatabase.logOut()
@@ -121,6 +122,7 @@ export class UserController {
 
       res.json({ ok })
     } catch (error) {
+      this.logger.error(`An error occurred while processing request: ${error.message}`)
       res.status(500).json({ ok: false, error: error.message })
     } finally {
       await this.userDatabase.logOut()
