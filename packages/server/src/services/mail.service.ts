@@ -33,6 +33,7 @@ export class MailService {
       return await smtpTransport.sendMail(mail)
     } catch (error) {
       this.logger.error(`Email sending failed: ${error.message}`)
+      throw error
     } finally {
       smtpTransport.close()
     }

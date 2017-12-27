@@ -36,7 +36,10 @@ export class UserController {
       await this.userDatabase.logIn()
 
       let doc = await this.userDatabase.getUser(userId)
-      if (!doc) throw new Error('Unknown user')
+      if (!doc) {
+        res.status(400).json({ ok: false, error: 'Unknown user' })
+        return
+      }
 
       let metadata: UserMetadata = doc.metadata
 
@@ -53,7 +56,7 @@ export class UserController {
 
       res.json({ ok: true })
     } catch (error) {
-      res.json({ ok: false, error: error.message })
+      res.status(500).json({ ok: false, error: error.message })
     } finally {
       await this.userDatabase.logOut()
     }
@@ -77,10 +80,15 @@ export class UserController {
       await this.userDatabase.logIn()
 
       let doc = await this.userDatabase.getUser(userId)
-      if (!doc) throw new Error('Unknown user')
+      if (!doc) {
+        res.status(400).json({ ok: false, error: 'Unknown user' })
+        return
+      }
 
-      if (!doc.metadata || !doc.metadata[PASSWORD_RESET_TOKEN_KEY])
-        throw new Error('No password reset request done')
+      if (!doc.metadata || !doc.metadata[PASSWORD_RESET_TOKEN_KEY]) {
+        res.status(400).json({ ok: false, error: 'No password reset request done' })
+        return
+      }
 
       // Get expected hash and expiryDate in database based on userId
       let tokenData = doc.metadata[PASSWORD_RESET_TOKEN_KEY]
@@ -89,8 +97,14 @@ export class UserController {
 
       let hash = await this.tokenGenerator.hashToken(token)
 
-      if (expiryDate < new Date()) throw new Error('Token has expired')
-      if (expectedHash !== hash) throw new Error('Token is invalid')
+      if (expiryDate < new Date()) {
+        res.status(400).json({ ok: false, error: 'Token has expired' })
+        return
+      }
+      if (expectedHash !== hash) {
+        res.status(400).json({ ok: false, error: 'Token is invalid' })
+        return
+      }
 
       // Update the password
       let ok = await this.userDatabase.changePassword(userId, newPassword)
@@ -107,7 +121,7 @@ export class UserController {
 
       res.json({ ok })
     } catch (error) {
-      res.json({ ok: false, error: error.message })
+      res.status(500).json({ ok: false, error: error.message })
     } finally {
       await this.userDatabase.logOut()
     }

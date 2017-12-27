@@ -71,10 +71,22 @@ class TokenServiceMock extends TokenService {
 class MailServiceMock extends MailService {
 
   public sentMail: Mail.Options
+  private failing: boolean
+
+  reset() {
+    this.sentMail = null
+    this.failing = false
+  }
 
   async sendMail(mail: Mail.Options) {
+    if (this.failing) throw new Error('Email sending failed')
+
     this.sentMail = mail
     return {}
+  }
+
+  setFailing(failing: boolean) {
+    this.failing = failing
   }
 }
 
@@ -91,6 +103,7 @@ describe('UserController', () => {
 
   beforeEach(async () => {
     databaseServiceMock.reset()
+    mailServiceMock.reset()
 
     // load everything needed to the Container
     let container = new Container()
@@ -141,6 +154,22 @@ describe('UserController', () => {
     expect(user.password).toBe('newPassword')
   })
 
+  it('does not store token if mail sending failed', async () => {
+    mailServiceMock.setFailing(true)
+
+    let userId = 'john.doe@example.com'
+
+    await request(server)
+      .get('/user/request-password-reset/' + userId)
+      .expect(500)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect({ ok: false, error: 'Email sending failed' })
+
+    let user = await databaseServiceMock.getUser(userId)
+    let prt = user.metadata['password-reset-token']
+    expect(prt).toBeUndefined()
+  })
+
   it('rejects confirmations with invalid token', async () => {
     let userId = 'john.doe@example.com'
 
@@ -156,7 +185,7 @@ describe('UserController', () => {
         'token': 'invalid-token',
         'new-password': 'newPassword',
       })
-      .expect(200)
+      .expect(400)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect({ ok: false, error: 'Token is invalid' })
 
@@ -185,7 +214,7 @@ describe('UserController', () => {
         'token': 'invalid-token',
         'new-password': 'newPassword',
       })
-      .expect(200)
+      .expect(400)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect({ ok: false, error: 'Token has expired' })
 
@@ -198,7 +227,7 @@ describe('UserController', () => {
 
     await request(server)
       .get('/user/request-password-reset/' + userId)
-      .expect(200)
+      .expect(400)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect({ ok: false, error: 'Unknown user' })
   })
@@ -212,7 +241,7 @@ describe('UserController', () => {
         'token': 'fake-token',
         'new-password': 'newPassword',
       })
-      .expect(200)
+      .expect(400)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect({ ok: false, error: 'Unknown user' })
   })
@@ -226,7 +255,7 @@ describe('UserController', () => {
         'token': 'fake-token',
         'new-password': 'newPassword',
       })
-      .expect(200)
+      .expect(400)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect({ ok: false, error: 'No password reset request done' })
   })
