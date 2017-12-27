@@ -11,9 +11,10 @@
   },
   "scripts": {
     "clean": "ionic-app-scripts clean",
-    "build": "ionic-app-scripts build",
+    "build": "ionic-app-scripts build && npm run license-check",
     "ionic:build": "ionic-app-scripts build",
-    "ionic:serve": "ionic-app-scripts serve --sourceMap source-map --iscordovaserve --wwwDir platforms/browser/www/ --buildDir platforms/browser/www/build --nobrowser"
+    "ionic:serve": "ionic-app-scripts serve --sourceMap source-map --iscordovaserve --wwwDir platforms/browser/www/ --buildDir platforms/browser/www/build --nobrowser",
+    "license-check": "license-check"
   },
   "dependencies": {
     "@angular/common": "^5.0.1",
@@ -75,6 +76,7 @@
     "babel-core": "^6.26.0",
     "babel-loader": "7.1.1",
     "babel-plugin-transform-imports": "^1.4.1",
+    "license-check": "^1.1.5",
     "rxjs-tslint-rules": "^3.1.0",
     "typescript": "2.4.2",
     "webpack-merge": "^4.1.1"
@@ -111,5 +113,18 @@
     "cordova-plugin-file-opener2",
     "cordova-plugin-network-information",
     "cordova-plugin-app-version"
-  ]
+  ],
+  "license-check-config": {
+    "src": [
+      "src/**/*.js",
+      "src/**/*.ts",
+      "test/**/*.js",
+      "test/**/*.ts",
+      "!./node_modules/**/*"
+    ],
+    "path": "config/header.txt",
+    "blocking": false,
+    "logInfo": false,
+    "logError": true
+  }
 }
