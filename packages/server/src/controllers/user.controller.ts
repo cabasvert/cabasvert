@@ -63,19 +63,24 @@ export class UserController {
     }
   }
 
-  // POST /user/confirm-password-reset/:userId
-  // Body is of the form { token, new-password }
+  // POST /user/confirm-password-reset
+  // Body is of the form { username, token, new-password }
   // Confirm a password reset
-  @httpPost('/confirm-password-reset/:userId')
-  async confirmPasswordReset(@requestParam('userId') userId: string,
-                             @request() req: express.Request,
+  @httpPost('/confirm-password-reset')
+  async confirmPasswordReset(@request() req: express.Request,
                              @response() res: express.Response): Promise<void> {
 
     let body = req.body
+    let userId = body['username']
     let token = body['token']
     let newPassword = body['new-password']
 
     this.logger.debug(`Received confirmation for password reset for user '${userId}'`)
+
+    if (!userId || !token || !newPassword) {
+      res.status(400).json({ ok: false, error: 'Missing data for password reset' })
+      return
+    }
 
     try {
       await this.userDatabase.logIn()

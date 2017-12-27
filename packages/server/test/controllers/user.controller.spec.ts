@@ -141,8 +141,9 @@ describe('UserController', () => {
     expect(prt.hash).toEqual('fake-hash')
 
     await request(server)
-      .post('/user/confirm-password-reset/' + userId)
+      .post('/user/confirm-password-reset')
       .send({
+        'username': userId,
         'token': 'fake-token',
         'new-password': 'newPassword',
       })
@@ -180,8 +181,9 @@ describe('UserController', () => {
       .expect({ ok: true })
 
     await request(server)
-      .post('/user/confirm-password-reset/' + userId)
+      .post('/user/confirm-password-reset')
       .send({
+        'username': userId,
         'token': 'invalid-token',
         'new-password': 'newPassword',
       })
@@ -209,9 +211,10 @@ describe('UserController', () => {
     await databaseServiceMock.updateUser(userId, user)
 
     await request(server)
-      .post('/user/confirm-password-reset/' + userId)
+      .post('/user/confirm-password-reset')
       .send({
-        'token': 'invalid-token',
+        'username': userId,
+        'token': 'fake-token',
         'new-password': 'newPassword',
       })
       .expect(400)
@@ -236,8 +239,9 @@ describe('UserController', () => {
     let userId = 'jane.smith@example.com'
 
     await request(server)
-      .post('/user/confirm-password-reset/' + userId)
+      .post('/user/confirm-password-reset')
       .send({
+        'username': userId,
         'token': 'fake-token',
         'new-password': 'newPassword',
       })
@@ -250,8 +254,9 @@ describe('UserController', () => {
     let userId = 'john.doe@example.com'
 
     await request(server)
-      .post('/user/confirm-password-reset/' + userId)
+      .post('/user/confirm-password-reset')
       .send({
+        'username': userId,
         'token': 'fake-token',
         'new-password': 'newPassword',
       })
