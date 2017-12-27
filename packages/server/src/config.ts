@@ -15,6 +15,8 @@ export type Configuration = {
     }
   }
 
+  email: string
+
   smtpConnection: {
     host: string
     port: number

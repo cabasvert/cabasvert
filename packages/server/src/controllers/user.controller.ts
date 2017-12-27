@@ -134,6 +134,7 @@ export class UserController {
 
   sendPasswordResetMail(metadata: UserMetadata, userId: string, token: string) {
     return this.mailSender.sendMail({
+      from: `Cabas Vert <${this.config.email}>`,
       to: `${metadata.name} <${metadata.email}>`,
       subject: `Cabas Vert: Password reset for ${metadata.name}`,
       text: `Dear ${metadata.name},

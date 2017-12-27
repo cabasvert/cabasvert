@@ -17,8 +17,6 @@ export class MailService {
   async sendMail(mail: Mail.Options) {
     let connection = this.config.smtpConnection
 
-    mail['from'] = `Cabas Vert <${connection.auth.username}>`
-
     let smtpTransport = createTransport({
       host: connection.host,
       port: connection.port,

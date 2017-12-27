@@ -10,13 +10,14 @@
       "password": "server-password"
     }
   },
+  "email": "email@example.com",
   "smtpConnection": {
-    "host": "smtp.free.fr",
+    "host": "smtp.example.com",
     "port": 587,
     "secure": true,
     "auth": {
-      "password": "email-username",
-      "pass": "email-password"
+      "username": "email-username",
+      "password": "email-password"
     }
   }
 }
