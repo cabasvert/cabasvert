@@ -129,25 +129,45 @@ export class UserController {
     }
   }
 
-  makeClientAppConfirmFormUrl(userId: string, token: string) {
-    let baseUrl = this.config.clientApplication.url
-    return `${baseUrl}/#/reset-password/${userId}/${token}`
-  }
-
   sendPasswordResetMail(metadata: UserMetadata, userId: string, token: string) {
+    let baseUrl = this.config.clientApplication.url
+
     return this.mailSender.sendMail({
       from: `Cabas Vert <${this.config.email}>`,
       to: `${metadata.name} <${metadata.email}>`,
-      subject: `Cabas Vert: Password reset for ${metadata.name}`,
-      text: `Dear ${metadata.name},
+      subject: `[Cabas Vert] Réinitialisation du mot de passe du compte de ${metadata.name} (${metadata.email})`,
+      text: `
+Le ${new Date().toString()}
 
-You requested a password reset.
-You can confirm your request and change your password by visiting the following link:
+Cher adhérent ${metadata.name},
 
-${this.makeClientAppConfirmFormUrl(userId, token)}
 
-Best regards,
-the Cabas Vert server.`,
+Vous recevez cet e-mail parce qu'un changement mot de passe a été demandé sur
+notre site pour l'identifiant adhérent ${metadata.email}.
+
+Si vous êtes à l'origine de cette demande, et si vous êtes toujours d'accord
+pour obtenir un nouveau mot de passe. Vous serez alors redirigé vers une page
+sécurisée où vous devrez entrer votre identifiant client :
+
+${baseUrl}/#/reset-password/${userId}/${token}
+
+Vous pourrez alors choisir votre nouveau mot de passe.
+
+
+Attention:
+Chaque lien est valable uniquement une heure. Passé ce délai, vous devrez
+faire une nouvelle demande. Pour cela, veuillez vous rendre sur la page
+d'identification d'adhérent :
+
+${baseUrl}/#/login
+
+Il vous sera nécessaire de cliquer sur le lien "Mot de passe oublié".
+
+
+Amicalement,
+
+l'équipe du Cabas Vert.
+`,
     })
   }
 }
