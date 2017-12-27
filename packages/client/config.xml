@@ -111,6 +111,8 @@
   <plugin name="cordova-plugin-file-opener2" spec="^2.0.19"/>
   <plugin name="cordova-plugin-network-information" spec="^1.3.3"/>
   <plugin name="cordova-plugin-app-version" spec="^0.1.9"/>
+  <plugin name="cordova-sms-plugin" spec="^0.1.11"/>
+  <plugin name="mx.ferreyra.callnumber" spec="~0.0.2"/>
   <engine name="android" spec="^6.3.0"/>
   <engine name="browser" spec="^5.0.2"/>
   <engine name="ios" spec="^4.5.3"/>

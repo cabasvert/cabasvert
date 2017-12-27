@@ -57,6 +57,17 @@
             <ion-icon name="trash"></ion-icon>
           </button>
         </ion-buttons>
+
+        <ion-buttons item-right *ngIf="person.phoneNumber">
+          <button ion-button small clear
+                  (click)="textPerson(person)">
+            <ion-icon name="text"></ion-icon>
+          </button>
+          <button ion-button small clear
+                  (click)="callPerson(person)">
+            <ion-icon name="call"></ion-icon>
+          </button>
+        </ion-buttons>
       </ion-item>
     </ion-list>
 
