@@ -1,4 +1,5 @@
 import * as bodyParser from 'body-parser'
+import * as cors from 'cors'
 import * as express from 'express'
 import * as helmet from 'helmet'
 import * as http from 'http'
@@ -34,6 +35,9 @@ export async function initializeServer(containerPromise: Promise<Container>) {
       extended: true,
     }))
     app.use(bodyParser.json())
+
+    // enable CORS headers
+    app.use(cors())
 
     // set http security headers
     app.use(helmet())
