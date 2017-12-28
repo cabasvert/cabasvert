@@ -43,6 +43,7 @@ type UserWithPassword = User & { password?: string }
 class DatabaseServiceMock extends DatabaseService {
 
   private _users: { [id: string]: UserWithPassword }
+  private failing: boolean
 
   reset() {
     this._users = {
@@ -56,23 +57,42 @@ class DatabaseServiceMock extends DatabaseService {
         password: 'password',
       },
     }
+    this.failing = false
   }
 
   async initialize() {
+    if (this.failing) throw new Error('Database failed')
+  }
+
+  async logIn() {
+    if (this.failing) throw new Error('Database failed')
+  }
+
+  async logOut() {
   }
 
   async getUser(userId: string): Promise<UserWithPassword> {
+    if (this.failing) throw new Error('Database failed')
+
     return this._users[userId]
   }
 
   async updateUser(userId: string, data: { metadata: UserMetadata }): Promise<any> {
+    if (this.failing) throw new Error('Database failed')
+
     this._users[userId].metadata = data.metadata
     return { ok: true }
   }
 
   async changePassword(userId: string, password: string): Promise<boolean> {
+    if (this.failing) throw new Error('Database failed')
+
     this._users[userId].password = password
     return true
+  }
+
+  setFailing(failing: boolean) {
+    this.failing = failing
   }
 }
 
@@ -113,7 +133,7 @@ describe('UserController', () => {
 
   let configuration = defaultConfiguration()
 
-  let nullLogger = new winston.Logger()
+  let nullLogger = new winston.Logger({ })
   let databaseServiceMock = new DatabaseServiceMock(configuration, nullLogger)
   let tokenServiceMock = new TokenServiceMock()
   let mailServiceMock = new MailServiceMock(configuration, nullLogger)
@@ -325,5 +345,30 @@ describe('UserController', () => {
       .expect(400)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect({ ok: false, error: 'No password reset request done' })
+  })
+
+  it('errors requests if database fails', async () => {
+    databaseServiceMock.setFailing(true)
+
+    await request(server)
+      .get('/user/request-password-reset/' + 'john.doe@example.com')
+      .expect(500)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect({ ok: false, error: 'Database failed' })
+  })
+
+  it('errors confirmations if database fails', async () => {
+    databaseServiceMock.setFailing(true)
+
+    await request(server)
+      .post('/user/confirm-password-reset')
+      .send({
+        'username': 'john.doe@example.com',
+        'token': 'fake-token',
+        'new-password': 'newPassword',
+      })
+      .expect(500)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect({ ok: false, error: 'Database failed' })
   })
 })
