@@ -191,56 +191,34 @@ describe('UserController', () => {
   })
 
   it('rejects confirmations with invalid token', async () => {
-    let userId = 'john.doe@example.com'
-
-    await request(server)
-      .get('/user/request-password-reset/' + userId)
-      .expect(200)
-      .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ ok: true })
-
-    await request(server)
-      .post('/user/confirm-password-reset')
-      .send({
-        'username': userId,
+    await testRequestConfirmFailure(
+      'john.doe@example.com',
+      {
+        'username': 'john.doe@example.com',
         'token': 'invalid-token',
         'new-password': 'newPassword',
-      })
-      .expect(400)
-      .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ ok: false, error: 'Token is invalid' })
-
-    let user = await databaseServiceMock.getUser(userId)
-    expect(user.password).toBe('password')
+      },
+      'Token is invalid',
+    )
   })
 
   it('rejects confirmations with expired token', async () => {
     let userId = 'john.doe@example.com'
-
-    await request(server)
-      .get('/user/request-password-reset/' + userId)
-      .expect(200)
-      .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ ok: true })
-
-    // Tamper with token's expiry date !
-    let user = await databaseServiceMock.getUser(userId)
-    user.metadata['password-reset-token'].expiryDate = new Date().toISOString()
-    await databaseServiceMock.updateUser(userId, user)
-
-    await request(server)
-      .post('/user/confirm-password-reset')
-      .send({
-        'username': userId,
-        'token': 'fake-token',
+    await testRequestConfirmFailure(
+      'john.doe@example.com',
+      {
+        'username': 'john.doe@example.com',
+        'token': 'invalid-token',
         'new-password': 'newPassword',
-      })
-      .expect(400)
-      .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ ok: false, error: 'Token has expired' })
-
-    user = await databaseServiceMock.getUser(userId)
-    expect(user.password).toBe('password')
+      },
+      'Token has expired',
+      async () => {
+        // Tamper with token's expiry date !
+        let user = await databaseServiceMock.getUser(userId)
+        user.metadata['password-reset-token'].expiryDate = new Date().toISOString()
+        await databaseServiceMock.updateUser(userId, user)
+      },
+    )
   })
 
   it('rejects confirmations with missing username data', async () => {
@@ -276,12 +254,20 @@ describe('UserController', () => {
     )
   })
 
-  async function testRequestConfirmFailure(userId: string, confirmData: any, errorMessage: string) {
+  let noop: () => Promise<void> = async () => {
+  }
+
+  async function testRequestConfirmFailure(userId: string,
+                                           confirmData: any,
+                                           errorMessage: string,
+                                           beforeConfirm: () => Promise<void> = noop) {
     await request(server)
       .get('/user/request-password-reset/' + userId)
       .expect(200)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect({ ok: true })
+
+    await beforeConfirm()
 
     await request(server)
       .post('/user/confirm-password-reset')
