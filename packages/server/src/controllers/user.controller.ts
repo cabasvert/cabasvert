@@ -23,7 +23,7 @@ import { controller, httpGet, httpPost, request, requestParam, response } from '
 import { LoggerInstance } from 'winston'
 import { Configuration } from '../config'
 
-import { UserMetadata } from '../models/user.model'
+import { User, UserMetadata } from '../models/user.model'
 import { DatabaseService } from '../services/database.service'
 
 import { MailService } from '../services/mail.service'
@@ -130,11 +130,13 @@ export class UserController {
       if (expiryDate < new Date()) {
         res.status(400).json({ ok: false, error: 'Token has expired' })
         this.logger.warn(`Failed processing request: Token has expired for ${userId}`)
+        await this.clearPasswordResetToken(userId, doc)
         return
       }
       if (expectedHash !== hash) {
         res.status(400).json({ ok: false, error: 'Token is invalid' })
         this.logger.warn(`Failed processing request: Token is invalid for ${userId}`)
+        await this.clearPasswordResetToken(userId, doc)
         return
       }
 
@@ -145,13 +147,7 @@ export class UserController {
       // Remove hash in database along to userId and expiryDate
       /* istanbul ignore else */
       if (ok) {
-        let metadata: UserMetadata = doc.metadata
-        /* istanbul ignore else */
-        if (metadata) {
-          delete metadata['password-reset-token']
-          await this.userDatabase.updateUser(userId, { metadata })
-          this.logger.debug(`Updated user '${userId}' to clear password reset token`)
-        }
+        await this.clearPasswordResetToken(userId, doc)
       }
 
       res.json({ ok })
@@ -163,7 +159,17 @@ export class UserController {
     }
   }
 
-  sendPasswordResetMail(metadata: UserMetadata, userId: string, token: string) {
+  private async clearPasswordResetToken(userId: any, doc: User) {
+    let metadata: UserMetadata = doc.metadata
+    /* istanbul ignore else */
+    if (metadata) {
+      delete metadata['password-reset-token']
+      await this.userDatabase.updateUser(userId, { metadata })
+      this.logger.debug(`Updated user '${userId}' to clear password reset token`)
+    }
+  }
+
+  private sendPasswordResetMail(metadata: UserMetadata, userId: string, token: string) {
     let baseUrl = this.config.clientApplication.url
 
     return this.mailSender.sendMail({
