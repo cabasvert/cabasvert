@@ -57,6 +57,7 @@ export class UserController {
       let doc = await this.userDatabase.getUser(userId)
       if (!doc) {
         res.status(400).json({ ok: false, error: 'Unknown user' })
+        this.logger.warn(`Failed processing request: Unknown user '${userId}'`)
         return
       }
 
@@ -72,6 +73,7 @@ export class UserController {
       // Store hash in database along to userId and expiryDate
       metadata[PASSWORD_RESET_TOKEN_KEY] = { hash, expiryDate }
       await this.userDatabase.updateUser(userId, { metadata })
+      this.logger.debug(`Updated user '${userId}' to store password reset token`)
 
       res.json({ ok: true })
     } catch (error) {
@@ -98,6 +100,7 @@ export class UserController {
 
     if (!userId || !token || !newPassword) {
       res.status(400).json({ ok: false, error: 'Missing data for password reset' })
+      this.logger.warn(`Failed processing request: Missing data for password reset in '${JSON.stringify(body)}'`)
       return
     }
 
@@ -107,11 +110,13 @@ export class UserController {
       let doc = await this.userDatabase.getUser(userId)
       if (!doc) {
         res.status(400).json({ ok: false, error: 'Unknown user' })
+        this.logger.warn(`Failed processing request: Unknown user '${userId}'`)
         return
       }
 
       if (!doc.metadata || !doc.metadata[PASSWORD_RESET_TOKEN_KEY]) {
         res.status(400).json({ ok: false, error: 'No password reset request done' })
+        this.logger.warn(`Failed processing request: No password reset request done for ${userId}`)
         return
       }
 
@@ -124,10 +129,12 @@ export class UserController {
 
       if (expiryDate < new Date()) {
         res.status(400).json({ ok: false, error: 'Token has expired' })
+        this.logger.warn(`Failed processing request: Token has expired for ${userId}`)
         return
       }
       if (expectedHash !== hash) {
         res.status(400).json({ ok: false, error: 'Token is invalid' })
+        this.logger.warn(`Failed processing request: Token is invalid for ${userId}`)
         return
       }
 
@@ -140,8 +147,11 @@ export class UserController {
       if (ok) {
         let metadata: UserMetadata = doc.metadata
         /* istanbul ignore else */
-        if (metadata) delete metadata['password-reset-token']
-        await this.userDatabase.updateUser(userId, { metadata })
+        if (metadata) {
+          delete metadata['password-reset-token']
+          await this.userDatabase.updateUser(userId, { metadata })
+          this.logger.debug(`Updated user '${userId}' to clear password reset token`)
+        }
       }
 
       res.json({ ok })
