@@ -214,7 +214,6 @@ describe('UserController', () => {
     expect(user.password).toBe('password')
   })
 
-
   it('rejects confirmations with expired token', async () => {
     let userId = 'john.doe@example.com'
 
@@ -243,6 +242,57 @@ describe('UserController', () => {
     user = await databaseServiceMock.getUser(userId)
     expect(user.password).toBe('password')
   })
+
+  it('rejects confirmations with missing username data', async () => {
+    await testRequestConfirmFailure(
+      'john.doe@example.com',
+      {
+        'token': 'invalid-token',
+        'new-password': 'newPassword',
+      },
+      'Missing data for password reset',
+    )
+  })
+
+  it('rejects confirmations with missing token data', async () => {
+    await testRequestConfirmFailure(
+      'john.doe@example.com',
+      {
+        'username': 'john.doe@example.com',
+        'new-password': 'newPassword',
+      },
+      'Missing data for password reset',
+    )
+  })
+
+  it('rejects confirmations with missing new-password data', async () => {
+    await testRequestConfirmFailure(
+      'john.doe@example.com',
+      {
+        'username': 'john.doe@example.com',
+        'token': 'invalid-token',
+      },
+      'Missing data for password reset',
+    )
+  })
+
+  async function testRequestConfirmFailure(userId: string, confirmData: any, errorMessage: string) {
+    await request(server)
+      .get('/user/request-password-reset/' + userId)
+      .expect(200)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect({ ok: true })
+
+    await request(server)
+      .post('/user/confirm-password-reset')
+      .send(confirmData)
+      .expect(400)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect({ ok: false, error: errorMessage })
+
+    let user = await databaseServiceMock.getUser(userId)
+    expect(user.password).toBe('password')
+  }
 
   it('rejects requests for unknown users', async () => {
     let userId = 'jane.smith@example.com'
