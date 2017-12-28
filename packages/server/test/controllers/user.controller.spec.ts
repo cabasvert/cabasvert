@@ -199,6 +199,7 @@ describe('UserController', () => {
         'new-password': 'newPassword',
       },
       'Token is invalid',
+      true,
     )
   })
 
@@ -212,6 +213,7 @@ describe('UserController', () => {
         'new-password': 'newPassword',
       },
       'Token has expired',
+      true,
       async () => {
         // Tamper with token's expiry date !
         let user = await databaseServiceMock.getUser(userId)
@@ -260,6 +262,7 @@ describe('UserController', () => {
   async function testRequestConfirmFailure(userId: string,
                                            confirmData: any,
                                            errorMessage: string,
+                                           testTokenHasBeenCleared: boolean = false,
                                            beforeConfirm: () => Promise<void> = noop) {
     await request(server)
       .get('/user/request-password-reset/' + userId)
@@ -278,6 +281,10 @@ describe('UserController', () => {
 
     let user = await databaseServiceMock.getUser(userId)
     expect(user.password).toBe('password')
+    if (testTokenHasBeenCleared) {
+      let prt = user.metadata['password-reset-token']
+      expect(prt).toBeUndefined()
+    }
   }
 
   it('rejects requests for unknown users', async () => {
