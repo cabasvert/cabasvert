@@ -67,15 +67,15 @@
             </button>
           </ion-row>
 
-          <ion-row *ngIf="person.phoneNumber">
-            <button ion-button small outline
-                    (click)="textPerson(person)">
+          <ion-row *ngIf="person.phoneNumber as phoneNumber">
+            <a ion-button small outline
+               [href]="'sms:' + phoneNumber | safeUrl">
               <ion-icon name="text"></ion-icon>
-            </button>
-            <button ion-button small outline
-                    (click)="callPerson(person)">
+            </a>
+            <a ion-button small outline
+               [href]="'tel:' + phoneNumber | safeUrl">
               <ion-icon name="call"></ion-icon>
-            </button>
+            </a>
           </ion-row>
         </ion-buttons>
 

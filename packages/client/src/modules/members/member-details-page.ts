@@ -18,8 +18,6 @@
  */
 
 import { Component } from "@angular/core"
-import { CallNumber } from "@ionic-native/call-number"
-import { SMS } from "@ionic-native/sms"
 import { NavParams, ViewController } from "ionic-angular"
 import { Observable } from "rxjs/Observable"
 import {
@@ -75,9 +73,7 @@ export class MemberDetailsPage {
               public authService: AuthService,
               public seasons: SeasonService,
               public members: MemberService,
-              public contracts: ContractService,
-              private textService: SMS,
-              private callService: CallNumber) {
+              public contracts: ContractService) {
   }
 
   ionViewDidLoad() {
@@ -154,26 +150,6 @@ export class MemberDetailsPage {
       ),
       switchMap(m => this.members.putMember$(m)),
     ).subscribe()
-  }
-
-  async textPerson(person: Person) {
-    // Should not be called if person.phoneNumber is undefined
-    if (!person.phoneNumber) return
-
-    let ok = await this.textService.hasPermission()
-    if (ok) {
-      await this.textService.send(person.phoneNumber, '', { android: { intent: 'INTENT' } })
-    }
-  }
-
-  async callPerson(person: Person) {
-    // Should not be called if person.phoneNumber is undefined
-    if (!person.phoneNumber) return
-
-    let ok = await this.callService.isCallSupported()
-    if (ok) {
-      await this.callService.callNumber(person.phoneNumber, true)
-    }
   }
 
   createContract() {

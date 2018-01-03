@@ -21,12 +21,10 @@ import { HttpClient, HttpClientModule } from "@angular/common/http"
 import { APP_INITIALIZER, ErrorHandler, NgModule } from "@angular/core"
 import { BrowserModule } from "@angular/platform-browser"
 import { AppVersion } from "@ionic-native/app-version"
-import { CallNumber } from "@ionic-native/call-number"
 import { Deeplinks } from "@ionic-native/deeplinks"
 import { File } from '@ionic-native/file'
 import { FileOpener } from "@ionic-native/file-opener"
 import { SecureStorage } from "@ionic-native/secure-storage"
-import { SMS } from "@ionic-native/sms"
 import { SplashScreen } from "@ionic-native/splash-screen"
 import { StatusBar } from "@ionic-native/status-bar"
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core"
@@ -107,8 +105,6 @@ registerLocales()
     FileOpener,
     networkProvider,
     AppVersion,
-    SMS,
-    CallNumber,
 
     // App Initializer
     {

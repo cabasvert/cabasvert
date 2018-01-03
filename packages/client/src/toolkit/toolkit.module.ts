@@ -33,6 +33,7 @@ import { ElasticDirective } from "./directives/elastic"
 import { LongPressDirective } from "./directives/long-press"
 import { ScrollToTopDirective } from "./directives/scroll-to-top"
 import { ShowOnMediaDirective } from "./directives/show-on-media"
+import { SafeUrlPipe } from "./pipes/safe-url.pipe"
 
 import { AuthService } from "./providers/auth-service"
 import { DatabaseHelper } from "./providers/database-helper"
@@ -61,6 +62,9 @@ import { Navigation } from "./providers/navigation"
     LongPressDirective,
     ScrollToTopDirective,
     ShowOnMediaDirective,
+
+    // Pipes
+    SafeUrlPipe,
   ],
   exports: [
     // Components
@@ -77,6 +81,9 @@ import { Navigation } from "./providers/navigation"
     LongPressDirective,
     ScrollToTopDirective,
     ShowOnMediaDirective,
+
+    // Pipes
+    SafeUrlPipe,
   ],
   providers: [
     LogService,
