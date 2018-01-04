@@ -5,24 +5,13 @@ var rxPaths = require('rxjs/_esm5/path-mapping')();
 
 const environmentVariables = [
   'NODE_ENV',
-  'IONIC_ENV',
-  'DATABASE_URL',
-  'SERVER_URL'
+  'IONIC_ENV'
 ];
 
 console.log('Building with environment:');
 environmentVariables.forEach(function (variable) {
   console.log('  - ' + variable + '=' + process.env[variable]);
 });
-
-if (process.env.IONIC_ENV === 'prod') {
-  if (!process.env.DATABASE_URL) {
-    console.error('This is a production build but DATABASE_URL is not set!')
-  }
-  if (!process.env.SERVER_URL) {
-    console.error('This is a production build but SERVER_URL is not set!')
-  }
-}
 
 var devLoaders = [
   {
