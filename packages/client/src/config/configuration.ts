@@ -44,7 +44,7 @@ export interface Configuration {
 }
 
 export function defaultConfiguration() {
-  let ionicProd = environment().ionic
+  let ionicProd = environment().ionic == 'prod'
   let defaultLogLevel = ionicProd ? LogLevel.WARN : LogLevel.DEBUG
 
   return {
