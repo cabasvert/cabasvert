@@ -91,7 +91,8 @@ export class AuthService {
   }
 
   initialize() {
-    let devEnv = false && environment().ionic !== 'prod'
+    // TODO create unsafeBrowserStorePassword configuration ?
+    let devEnv = false && !environment().isIonicProd
     let safeSecureStorage = devEnv || this.platform.is('android') || this.platform.is('ios')
     this._hasPasswordStorage = !safeSecureStorage ? Promise.resolve(false) :
       this.platform.ready()

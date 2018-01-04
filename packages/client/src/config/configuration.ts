@@ -21,12 +21,37 @@ import { LogLevel } from "../toolkit/providers/log.model"
 
 declare const process: any
 
-type Environment = { node: string, ionic: string }
+class Environment {
+  public readonly node: string
+  public readonly ionic: string
+
+  constructor(node: string, ionic: string) {
+    this.node = Environment.shortenEnvVar(node)
+    this.ionic = Environment.shortenEnvVar(ionic)
+  }
+
+  get isNodeProd() {
+    return Environment.isProd(this.node)
+  }
+
+  get isIonicProd() {
+    return Environment.isProd(this.ionic)
+  }
+
+  private static shortenEnvVar(envVar: string) {
+    return envVar === 'development' ? 'dev' :
+      envVar === 'production' ? 'prod' : envVar
+  }
+
+  private static isProd(envVar: string) {
+    return envVar === 'prod'
+  }
+}
 
 export function environment(): Environment {
   let node = process.env.NODE_ENV || 'dev'
   let ionic = process.env.IONIC_ENV || 'dev'
-  return { node, ionic }
+  return new Environment(node, ionic)
 }
 
 export interface Configuration {
@@ -44,7 +69,7 @@ export interface Configuration {
 }
 
 export function defaultConfiguration() {
-  let ionicProd = environment().ionic == 'prod'
+  let ionicProd = environment().isIonicProd
   let defaultLogLevel = ionicProd ? LogLevel.WARN : LogLevel.DEBUG
 
   return {
