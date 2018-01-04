@@ -1,0 +1,15 @@
+{
+  "base": {
+    "databaseUrl": "http://localhost:5984",
+    "serverUrl": "http://localhost:8080",
+    "remoteDBOnly": false,
+    "wipeLocalDB": false,
+    "debugPouch": false
+  },
+  "log": {
+    "Database": 4,
+    "Database|Remote": 4,
+    "Database|Local": 4,
+    "Auth": 4
+  }
+}

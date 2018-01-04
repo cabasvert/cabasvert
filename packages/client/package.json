@@ -7,7 +7,8 @@
   "config": {
     "ionic_bundler": "webpack",
     "ionic_source_map": "source-map",
-    "ionic_webpack": "./config/webpack.config.js"
+    "ionic_webpack": "./config/webpack.config.js",
+    "ionic_copy": "./config/copy.config.js"
   },
   "scripts": {
     "clean": "ionic-app-scripts clean",

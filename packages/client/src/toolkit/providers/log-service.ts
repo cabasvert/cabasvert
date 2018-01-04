@@ -17,28 +17,18 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Inject, InjectionToken } from "@angular/core"
+import { Injectable } from "@angular/core"
+import { ConfigurationService } from "../../config/configuration.service"
+import { LogConfiguration, LogLevel } from "./log.model"
 
-export enum LogLevel {
-  ERROR = 1,
-  WARN = 2,
-  INFO = 3,
-  DEBUG = 4,
-}
-
-export let LogConfig = new InjectionToken("log-configuration")
-
-type LogConfiguration = {
-  [name: string]: LogLevel
-}
-
+@Injectable()
 export class LogService {
 
-  constructor(@Inject(LogConfig) private config: LogConfiguration) {
+  constructor(private config: ConfigurationService) {
   }
 
   logger(name: string) {
-    return new Logger(name, this.config)
+    return new Logger(name, this.config.log)
   }
 }
 

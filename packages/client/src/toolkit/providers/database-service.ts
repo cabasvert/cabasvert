@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Inject, Injectable, OnDestroy } from "@angular/core"
+import { Injectable, OnDestroy, OnInit } from "@angular/core"
 import { Network } from "@ionic-native/network"
 import { Platform } from "ionic-angular"
 
@@ -31,25 +31,14 @@ import { merge } from "rxjs/observable/merge"
 import { of } from "rxjs/observable/of"
 import { _throw } from "rxjs/observable/throw"
 import {
-  catchError,
-  delay,
-  filter,
-  map,
-  mapTo,
-  publishReplay,
-  refCount,
-  retryWhen,
-  startWith,
-  switchAll,
-  switchMap,
-  switchMapTo,
-  take,
-  withLatestFrom,
+  catchError, delay, filter, map, mapTo, publishReplay, refCount, retryWhen, startWith,
+  switchAll, switchMap, switchMapTo, take, withLatestFrom,
 } from "rxjs/operators"
 import { Subject } from "rxjs/Subject"
 import { Subscription } from "rxjs/Subscription"
 
-import { Config } from "../../config/configuration.token"
+import { ConfigurationService } from "../../config/configuration.service"
+
 import { filterNotNull, previous } from "../../utils/observables"
 import { SyncState } from "../components/sync-state-listener"
 import { AuthService } from "./auth-service"
@@ -72,12 +61,14 @@ export class DatabaseService implements OnDestroy {
 
   private _subscription: Subscription = new Subscription()
 
-  constructor(@Inject(Config) private config,
+  constructor(private config: ConfigurationService,
               private dbHelper: DatabaseHelper,
               private authService: AuthService,
               private platform: Platform,
               private network: Network) {
+  }
 
+  initialize() {
     let loggedInUser$ = this.authService.loggedInUser$
     let loggedIn$ = loggedInUser$.pipe(map(user => !!user))
 
@@ -185,7 +176,7 @@ export class DatabaseService implements OnDestroy {
       maintainSync$.subscribe(),
     )
 
-    this._database$ = this.config.remoteDBOnly ? remoteDb$ : localDb$
+    this._database$ = this.config.base.remoteDBOnly ? remoteDb$ : localDb$
     this._syncState$ = this._database$.pipe(
       switchMap(d => d ? d.syncState$ : of(null)),
     )
@@ -200,7 +191,7 @@ export class DatabaseService implements OnDestroy {
   }
 
   public withIndex$(index: any): Observable<Database | any> {
-    if (this.config.remoteDBOnly) return this.database$
+    if (this.config.base.remoteDBOnly) return this.database$
     return this.database$.pipe(
       switchMap(db => fromPromise(db.withIndex(index))),
     )
@@ -225,7 +216,7 @@ export class DatabaseService implements OnDestroy {
   }
 
   private maybeWipeLocalDB(dbName: string): Promise<void> {
-    if (this.config.wipeLocalDB) {
+    if (this.config.base.wipeLocalDB) {
       let tempDB = this.dbHelper.newLocalDatabase(dbName)
       console.log("For debugging purposes, wiping local database !")
       return tempDB.destroy()

@@ -28,7 +28,7 @@ import { Observable } from "rxjs/Observable"
 import { timer } from "rxjs/observable/timer"
 import { map, merge, switchMap, take } from "rxjs/operators"
 import { Subject } from "rxjs/Subject"
-import { Config } from "../../../config/configuration.token"
+import { ConfigurationService } from "../../../config/configuration.service"
 import { AuthService } from "../../../toolkit/providers/auth-service"
 
 import { MainPage } from "../main-page"
@@ -63,7 +63,7 @@ export class LoginPage {
               private formBuilder: FormBuilder,
               private navParams: NavParams,
               private http: HttpClient,
-              @Inject(Config) private config) {
+              private config: ConfigurationService) {
 
     this.form = this.formBuilder.group({
       username: ['', Validators.required],
@@ -148,7 +148,7 @@ export class LoginPage {
 
   private async requestPasswordReset(email: string) {
     this.showLoading()
-    let serverUrl = this.config.serverUrl
+    let serverUrl = this.config.base.serverUrl
 
     type ResetResponse = { ok: boolean, error?: string }
 

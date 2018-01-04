@@ -17,29 +17,18 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AfterViewInit, Component, Inject, OnDestroy, ViewChild } from '@angular/core'
+import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core'
 
 import { Content, ModalController, NavController, NavParams, } from 'ionic-angular'
 import { Observable } from "rxjs/Observable"
 import { combineLatest as combineAllLatest } from "rxjs/observable/combineLatest"
 import { of } from "rxjs/observable/of"
 import {
-  combineLatest,
-  map,
-  mapTo,
-  merge,
-  mergeScan,
-  publishReplay,
-  refCount,
-  startWith,
-  switchAll,
-  switchMap,
-  withLatestFrom,
+  combineLatest, map, mapTo, merge, mergeScan, publishReplay, refCount, startWith, switchAll,
+  switchMap, withLatestFrom,
 } from "rxjs/operators"
 import { Subject } from "rxjs/Subject"
 import { Subscription } from "rxjs/Subscription"
-
-import { Config } from "../../config/configuration.token"
 import { IndexedScroller } from "../../toolkit/components/indexed-scroller"
 import { ItemExpanding } from "../../toolkit/components/item-expanding"
 import { SlidingPanes } from "../../toolkit/components/sliding-panes"
@@ -97,8 +86,7 @@ export class DistributionPage implements AfterViewInit, OnDestroy {
   distribution: Distribution
   private perMemberIdProblemSeverity: { [memberId: string]: string }
 
-  constructor(@Inject(Config) private config,
-              public nav: Navigation,
+  constructor(public nav: Navigation,
               public navCtrl: NavController,
               public modalCtrl: ModalController,
               public navParams: NavParams,

@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Inject, Injectable } from "@angular/core"
+import { Injectable, OnInit } from "@angular/core"
 
 import PouchHttp from 'pouchdb-adapter-http'
 import PouchIdb from 'pouchdb-adapter-idb'
@@ -32,19 +32,10 @@ import { fromPromise } from "rxjs/observable/fromPromise"
 import { merge } from "rxjs/observable/merge"
 import { of } from "rxjs/observable/of"
 import {
-  catchError,
-  combineLatest,
-  filter,
-  map,
-  mergeMap,
-  publishReplay,
-  refCount,
-  startWith,
-  switchMap,
-  tap,
+  catchError, combineLatest, filter, map, mergeMap, publishReplay, refCount, startWith,
+  switchMap, tap,
 } from "rxjs/operators"
-
-import { Config } from "../../config/configuration.token"
+import { ConfigurationService } from "../../config/configuration.service"
 import { SyncState, SyncStateListener } from "../components/sync-state-listener"
 import { Logger, LogService } from './log-service'
 
@@ -58,21 +49,29 @@ PouchDB
 @Injectable()
 export class DatabaseHelper {
 
-  private log = this.logService.logger('Database')
+  private _logger: Logger
+
+  private get log() {
+    if (this._logger == null) this._logger = this.logService.logger('Database')
+    return this._logger
+  }
 
   constructor(private logService: LogService,
-              @Inject(Config) private config) {
+              private config: ConfigurationService) {
+  }
+
+  initialize() {
     window['PouchDB'] = PouchDB
 
-    if (this.config.debugPouch) PouchDB.debug.enable('*')
+    if (this.config.base.debugPouch) PouchDB.debug.enable('*')
     else PouchDB.debug.disable()
   }
 
   newRemoteDatabase(dbName: string): Database {
     this.log.debug(`Creating remote database '${dbName}'`)
     let pouchOpts = { skip_setup: true }
-    let pouchDB = new PouchDB(this.config.databaseUrl + '/' + dbName, pouchOpts)
-    let maxLimit = this.config.remoteDBOnly ? Number.MAX_SAFE_INTEGER : null
+    let pouchDB = new PouchDB(this.config.base.databaseUrl + '/' + dbName, pouchOpts)
+    let maxLimit = this.config.base.remoteDBOnly ? Number.MAX_SAFE_INTEGER : null
     return new Database(pouchDB, this.log.subLogger('Remote'), maxLimit)
   }
 
@@ -335,7 +334,7 @@ export class Database {
     let changes$ = this.dbChanges$({
       since: 'now', live: true, include_docs: true,
       filter: '_selector',
-      selector: query.selector
+      selector: query.selector,
     }).pipe(
       map(c => c.deleted ? null : c.doc),
     )
@@ -352,10 +351,10 @@ export class Database {
     let changes$ = this.dbChanges$({
       since: 'now', live: true, include_docs: true,
       filter: '_selector',
-      selector: query.selector
+      selector: query.selector,
     })
     let removals$ = this.dbRemovals$({
-      since: 'now', live: true, include_docs: true
+      since: 'now', live: true, include_docs: true,
     })
 
     return found$.pipe(
@@ -471,7 +470,7 @@ export class PouchError extends Error {
   public constructor(opts: any, methodName: string = null) {
     super(
       (methodName ? `While calling ${methodName}(): ` : "")
-      + `[${opts.status}] ${opts.reason}`
+      + `[${opts.status}] ${opts.reason}`,
     )
     this.status = opts.status
     this.name = opts.error

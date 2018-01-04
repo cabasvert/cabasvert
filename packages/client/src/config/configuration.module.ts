@@ -17,24 +17,18 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { HttpClientModule } from "@angular/common/http"
 import { NgModule } from '@angular/core'
 
-import { LogConfig } from "../toolkit/providers/log-service"
-
-import { configuration, logConfiguration } from "./configuration"
-import { Config } from './configuration.token'
+import { ConfigurationService } from "./configuration.service"
 
 @NgModule({
+  imports: [
+    HttpClientModule,
+  ],
   providers: [
-    {
-      provide: Config,
-      useFactory: configuration
-    },
-    {
-      provide: LogConfig,
-      useFactory: logConfiguration
-    }
-  ]
+    ConfigurationService,
+  ],
 })
 export class ConfigurationModule {
 }

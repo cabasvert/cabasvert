@@ -17,19 +17,19 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Inject, Injectable } from '@angular/core'
+import { Inject, Injectable, OnInit } from '@angular/core'
 import { Network } from "@ionic-native/network"
 import { SecureStorage } from "@ionic-native/secure-storage"
 import { Platform } from "ionic-angular"
 import { Observable } from "rxjs/Observable"
 import { ReplaySubject } from "rxjs/ReplaySubject"
 import { Subject } from "rxjs/Subject"
-import { environment } from "../../config/configuration"
 
-import { Config } from "../../config/configuration.token"
+import { environment } from "../../config/configuration"
+import { ConfigurationService } from "../../config/configuration.service"
 
 import { Database, DatabaseHelper } from "./database-helper"
-import { LogService } from "./log-service"
+import { Logger, LogService } from "./log-service"
 
 export class User {
   constructor(public username: string,
@@ -67,7 +67,12 @@ const SECURE_STORAGE_KEY = 'credentials'
 @Injectable()
 export class AuthService {
 
-  private log = this.logService.logger('Auth')
+  private _logger: Logger
+
+  private get log() {
+    if (this._logger == null) this._logger = this.logService.logger('Auth')
+    return this._logger
+  }
 
   private userDatabase: Database
 
@@ -81,9 +86,11 @@ export class AuthService {
               private secureStorage: SecureStorage,
               private network: Network,
               private logService: LogService,
-              @Inject(Config) private config,
+              private config: ConfigurationService,
               private dbHelper: DatabaseHelper) {
+  }
 
+  initialize() {
     let devEnv = false && environment().ionic !== 'prod'
     let safeSecureStorage = devEnv || this.platform.is('android') || this.platform.is('ios')
     this._hasPasswordStorage = !safeSecureStorage ? Promise.resolve(false) :

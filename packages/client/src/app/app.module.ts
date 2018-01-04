@@ -30,6 +30,7 @@ import { StatusBar } from "@ionic-native/status-bar"
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core"
 import { TranslateHttpLoader } from "@ngx-translate/http-loader"
 import { IonicApp, IonicErrorHandler, IonicModule } from "ionic-angular"
+import { ConfigurationService } from "../config/configuration.service"
 
 import { ConfigurationModule } from "../config/configuration.module"
 
@@ -43,6 +44,8 @@ import { MemberModule } from "../modules/members/member.module"
 import { ProfileModule } from "../modules/profiles/profile.module"
 import { ReportModule } from "../modules/reports/report.module"
 import { SeasonModule } from "../modules/seasons/season.module"
+import { AuthService } from "../toolkit/providers/auth-service"
+import { DatabaseHelper } from "../toolkit/providers/database-helper"
 
 import { DatabaseService } from "../toolkit/providers/database-service"
 import { networkProvider } from "../toolkit/providers/network"
@@ -61,7 +64,11 @@ registerLocales()
     IonicModule.forRoot(MyApp, {}, {
       links: [
         { component: LoginPage, name: 'login', segment: 'login' },
-        { component: ResetPasswordPage, name: 'reset-password', segment: 'reset-password/:username/:token' },
+        {
+          component: ResetPasswordPage,
+          name: 'reset-password',
+          segment: 'reset-password/:username/:token',
+        },
         { component: MainPage, name: 'main', segment: 'main' },
       ],
     }),
@@ -109,11 +116,23 @@ registerLocales()
     // App Initializer
     {
       provide: APP_INITIALIZER,
-      useFactory: () => () => null,
-      deps: [DatabaseService],
+      deps: [ConfigurationService, DatabaseHelper, AuthService, DatabaseService],
+      useFactory: initializeApplication,
       multi: true,
     },
   ],
 })
 export class AppModule {
+}
+
+function initializeApplication(configuration: ConfigurationService,
+                               databaseHelper: DatabaseHelper,
+                               authService: AuthService,
+                               databaseService: DatabaseService) {
+  return async () => {
+    await configuration.loadConfiguration()
+    await databaseHelper.initialize()
+    await authService.initialize()
+    await databaseService.initialize()
+  }
 }

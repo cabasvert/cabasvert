@@ -18,8 +18,8 @@
  */
 
 import { HttpClient } from "@angular/common/http"
-import { Component, Inject } from "@angular/core"
-import { FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from "@angular/forms"
+import { Component } from "@angular/core"
+import { FormBuilder, FormGroup, ValidatorFn, Validators } from "@angular/forms"
 import {
   AlertController, IonicPage, Loading, LoadingController, NavController,
   NavParams,
@@ -30,7 +30,7 @@ import { timer } from "rxjs/observable/timer"
 import { mapTo, switchMap, take } from "rxjs/operators"
 import { mergeStatic } from "rxjs/operators/merge"
 import { Subject } from "rxjs/Subject"
-import { Config } from "../../../config/configuration.token"
+import { ConfigurationService } from "../../../config/configuration.service"
 
 import { LoginPage } from "../login/login-page"
 
@@ -64,7 +64,7 @@ export class ResetPasswordPage {
               private alertCtrl: AlertController,
               private loadingCtrl: LoadingController,
               private http: HttpClient,
-              @Inject(Config) private config) {
+              private config: ConfigurationService) {
 
     this.form = this.formBuilder.group({
       username: [null, Validators.required],
@@ -119,7 +119,7 @@ export class ResetPasswordPage {
       this.showFeedback(`Passwords don't match`, true)
     } else {
       this.showLoading()
-      let serverUrl = this.config.serverUrl
+      let serverUrl = this.config.base.serverUrl
 
       type ResetResponse = { ok: boolean, error?: string }
 

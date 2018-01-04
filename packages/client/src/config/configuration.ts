@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { LogLevel } from "../toolkit/providers/log-service"
+import { LogLevel } from "../toolkit/providers/log.model"
 
 declare const process: any
 
@@ -29,35 +29,38 @@ export function environment(): Environment {
   return { node, ionic }
 }
 
-export function configuration() {
-  let env = environment()
-  if (env.ionic === 'prod') {
-    if (!process.env.DATABASE_URL) {
-      console.error('This is a production build but DATABASE_URL is not set!')
-    }
-    if (!process.env.SERVER_URL) {
-      console.error('This is a production build but SERVER_URL is not set!')
-    }
+export interface Configuration {
+  base: {
+    databaseUrl: string
+    serverUrl: string
+
+    remoteDBOnly: boolean
+    wipeLocalDB: boolean
+    debugPouch: boolean
   }
-
-  return {
-    databaseUrl: process.env.DATABASE_URL || 'http://localhost:5984',
-    serverUrl: process.env.SERVER_URL || 'http://localhost:8080',
-
-    remoteDBOnly: false,
-    wipeLocalDB: false,
-    debugPouch: false,
+  log: {
+    [name: string]: LogLevel
   }
 }
 
-export function logConfiguration() {
-  let env = environment()
-  let ionicProd = env.ionic == 'prod'
+export function defaultConfiguration() {
+  let ionicProd = environment().ionic
+  let defaultLogLevel = ionicProd ? LogLevel.WARN : LogLevel.DEBUG
 
   return {
-    'Database': ionicProd ? LogLevel.WARN : LogLevel.DEBUG,
-    'Database|Remote': ionicProd ? LogLevel.WARN : LogLevel.DEBUG,
-    'Database|Local': ionicProd ? LogLevel.WARN : LogLevel.DEBUG,
-    'Auth': ionicProd ? LogLevel.WARN : LogLevel.DEBUG,
+    base: {
+      databaseUrl: 'http://localhost:5984',
+      serverUrl: 'http://localhost:8080',
+
+      remoteDBOnly: false,
+      wipeLocalDB: false,
+      debugPouch: false,
+    },
+    log: {
+      'Database': defaultLogLevel,
+      'Database|Remote': defaultLogLevel,
+      'Database|Local': defaultLogLevel,
+      'Auth': defaultLogLevel,
+    },
   }
 }
