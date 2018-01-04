@@ -3,7 +3,7 @@ const webpackMerge = require('webpack-merge');
 
 var commonConfig = {
   copyConfigs: {
-    src: ['{{SRC}}/config.json'],
+    src: ['{{SRC}}/config.*.json'],
     dest: '{{WWW}}'
   }
 };

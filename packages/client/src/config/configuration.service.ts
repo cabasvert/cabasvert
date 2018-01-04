@@ -22,7 +22,7 @@ import { Injectable } from "@angular/core"
 import { of } from "rxjs/observable/of"
 import { catchError, take, tap } from "rxjs/operators"
 
-import { Configuration, defaultConfiguration } from "./configuration"
+import { Configuration, defaultConfiguration, environment } from "./configuration"
 
 @Injectable()
 export class ConfigurationService {
@@ -35,7 +35,8 @@ export class ConfigurationService {
   async loadConfiguration() {
     console.log('Loading configuration...')
 
-    let fromFile = await this.http.get<Configuration>('config.json')
+    let nodeEnv = environment().node
+    let fromFile = await this.http.get<Configuration>(`config.${nodeEnv}.json`)
       .pipe(
         take(1),
         tap({

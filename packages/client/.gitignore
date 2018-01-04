@@ -34,3 +34,5 @@ Thumbs.db
 UserInterfaceState.xcuserstate
 
 .sourcemaps
+
+src/config.prod.json
