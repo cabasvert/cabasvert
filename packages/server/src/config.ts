@@ -17,12 +17,16 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { readFileSync } from 'graceful-fs'
+import { readFileSync, writeFileSync } from 'graceful-fs'
 
 export type Configuration = {
   port: number
 
   clientApplication: {
+    url: string
+  }
+
+  serverApplication: {
     url: string
   }
 
@@ -54,4 +58,17 @@ export function defaultConfiguration() {
 export function parseJsonFile<T>(path: string): T {
   let data = readFileSync(path, 'utf8')
   return JSON.parse(data)
+}
+
+export function writeClientConfiguration(configuration: Configuration, envName: string) {
+  // Shorten name if necessary
+  envName = envName === 'development' ? 'dev' : envName === 'production' ? 'prod' : envName
+
+  let clientConfiguration = {
+    base: {
+      databaseUrl: configuration.database.url,
+      serverUrl: configuration.serverApplication.url,
+    },
+  }
+  writeFileSync(`public/config.${envName}.json`, JSON.stringify(clientConfiguration, null, 2), 'utf8')
 }

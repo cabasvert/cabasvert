@@ -3,6 +3,9 @@
   "clientApplication": {
     "url": "http://localhost:8080"
   },
+  "serverApplication": {
+    "url": "http://localhost:8080"
+  },
   "database": {
     "url": "http://localhost:5984",
     "auth": {

@@ -19,11 +19,16 @@
 
 import * as http from 'http'
 import * as parseCli from 'minimist'
-import { Configuration, parseJsonFile } from './config'
+import { Configuration, parseJsonFile, writeClientConfiguration } from './config'
 import { startServer } from './index'
 
 let argv = parseCli(process.argv.slice(2))
 let configPath = argv['config'] || 'config.json'
 let configuration = parseJsonFile<Configuration>(configPath)
+
+let generateClientConfig = argv['generate-client-config']
+if (generateClientConfig !== null) {
+  writeClientConfiguration(configuration, generateClientConfig)
+}
 
 let server: Promise<http.Server> = startServer(configuration)
