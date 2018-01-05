@@ -125,7 +125,7 @@ registerLocales()
 export class AppModule {
 }
 
-function initializeApplication(configuration: ConfigurationService,
+export function initializeApplication(configuration: ConfigurationService,
                                databaseHelper: DatabaseHelper,
                                authService: AuthService,
                                databaseService: DatabaseService) {
