@@ -1,0 +1,27 @@
+/*
+ * This file is part of CabasVert.
+ *
+ * Copyright 2017, 2018 Didier Villevalois
+ *
+ * CabasVert is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * CabasVert is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import { readFile } from 'mz/fs'
+
+export async function loadNames() {
+  let firstnames = JSON.parse((await readFile('assets/firstnames.json')).toString())
+  let lastnames = JSON.parse((await readFile('assets/lastnames.json')).toString())
+    .filter(name => name.length < 15)
+  return { firstnames, lastnames }
+}

@@ -1,0 +1,79 @@
+/*
+ * This file is part of CabasVert.
+ *
+ * Copyright 2017, 2018 Didier Villevalois
+ *
+ * CabasVert is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * CabasVert is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+interface Date {
+
+  addDays(days: number): Date
+
+  substract(other: Date): number
+
+  getWeek(): [number, number]
+
+  isBefore(other: Date): boolean
+}
+
+interface DateConstructor {
+
+  fromWeek(week: [number, number]): Date
+}
+
+const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24
+
+Date.prototype.addDays = function (days) {
+  let date = new Date(this.valueOf())
+  date.setDate(date.getDate() + days)
+  return date
+}
+
+Date.prototype.substract = function (other) {
+  return Math.round((this.getTime() - other.getTime()) / MILLISECONDS_IN_A_DAY)
+}
+
+Date.prototype.getWeek = function () {
+  // Copy date so don't modify original
+  let d = new Date(+this)
+  d.setHours(0, 0, 0, 0)
+  // Set to nearest Thursday: current date + 4 - current day number
+  // Make Sunday's day number 7
+  d.setDate(d.getDate() + 4 - (d.getDay() || 7))
+  // Get first day of year
+  let yearStart = new Date(d.getFullYear(), 0, 1)
+  // Calculate full weeks to nearest Thursday
+  let weekNo = Math.ceil((((d.getTime() - yearStart.getTime()) / MILLISECONDS_IN_A_DAY) + 1) / 7)
+  // Return array of year and week number
+  return [d.getFullYear(), weekNo]
+}
+
+Date.prototype.isBefore = function (other) {
+  return this.toISOString() < other.toISOString()
+}
+
+Date.fromWeek = function (week) {
+  let year = week[0]
+  let weekNumber = week[1]
+
+  let simple = new Date(Date.UTC(year, 0, 1 + (weekNumber - 1) * 7))
+  let dow = simple.getDay()
+  let isoWeekStart = simple
+  if (dow <= 4)
+    isoWeekStart.setDate(simple.getDate() - simple.getDay() + 1)
+  else
+    isoWeekStart.setDate(simple.getDate() + 8 - simple.getDay())
+  return isoWeekStart
+}
