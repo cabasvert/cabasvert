@@ -101,7 +101,8 @@ export class DistributionService {
       else return formula * 2
     }
 
-    let isMainWeek = section.firstWeek % 2 == (week.otherWeek ? 0 : 1)
+    let firstWeek = week.season.seasonWeekByNumber(section.firstWeek)
+    let isMainWeek = firstWeek.otherWeek === week.otherWeek
     if (formula instanceof Array) return formula[isMainWeek ? 0 : 1]
     else {
       if (formula != parseInt('' + formula)) formula += (isMainWeek ? .5 : -.5)
