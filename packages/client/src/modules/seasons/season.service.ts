@@ -22,7 +22,6 @@ import { Observable } from "rxjs/Observable"
 import { timer } from "rxjs/observable/timer"
 import { distinct, map, publishReplay, refCount, switchMap, take } from "rxjs/operators"
 import { DatabaseService } from "../../toolkit/providers/database-service"
-import { Member } from "../members/member.model"
 import { Season, SeasonWeek } from "./season.model"
 
 @Injectable()
@@ -60,6 +59,39 @@ export class SeasonService {
   private _seasonsIndexed$: Observable<{ [id: string]: Season }>
 
   constructor(private mainDatabase: DatabaseService) {
+
+    // All seasons
+    this._seasons$ = this.mainDatabase
+      .withIndex$({
+        index: {
+          fields: ['type'],
+        },
+      })
+      .pipe(
+        switchMap(db => db.findAll$({
+          selector: {
+            type: 'season',
+          },
+        })),
+        map((ss: any[]) => ss.map(s => new Season(this, s))),
+        publishReplay(1),
+        refCount(),
+      )
+
+    // TODO Make more optimal by using changes directly and not mapping the result of findAll
+    this._seasonsIndexed$ = this.seasons$.pipe(
+      map(
+        ss => ss.reduce(
+          (acc, s) => {
+            acc[s.id] = s
+            return acc
+          },
+          {},
+        ),
+      ),
+      publishReplay(1),
+      refCount(),
+    )
   }
 
   lastSeasons$(count: number = 1): Observable<Season[]> {
@@ -124,52 +156,15 @@ export class SeasonService {
   }
 
   get seasons$(): Observable<Season[]> {
-    if (this._seasons$ != null) return this._seasons$
-
-    let query = {
-      selector: {
-        type: 'season',
-      },
-    }
-
-    let db$ = this.mainDatabase.withIndex$({
-      index: {
-        fields: ['type'],
-      },
-    })
-    this._seasons$ = db$.pipe(
-      switchMap(db => db.findAll$(query)),
-      map((ss: any[]) => ss.map(s => new Season(this, s))),
-      publishReplay(1),
-      refCount(),
-    )
-
     return this._seasons$
   }
 
   get seasonsIndexed$(): Observable<{ [id: string]: Season }> {
-    if (this._seasonsIndexed$ != null) return this._seasonsIndexed$
-
-    // TODO Make more optimal by using changes directly and not mapping the result of findAll
-    this._seasonsIndexed$ = this.seasons$.pipe(
-      map(
-        ss => ss.reduce(
-          (acc, s) => {
-            acc[s.id] = s
-            return acc
-          },
-          {},
-        ),
-      ),
-      publishReplay(1),
-      refCount(),
-    )
-
     return this._seasonsIndexed$
   }
 
   seasonById$(id: string): Observable<Season> {
-    return this.seasonsIndexed$.pipe(take(1), map(ss => ss[id]))
+    return this.seasonsIndexed$.pipe(map(ss => ss[id]))
   }
 
   seasonNameById$(id: string): Observable<string> {

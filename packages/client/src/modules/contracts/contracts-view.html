@@ -1,5 +1,5 @@
 <h3>
-  {{ seasonService.seasonNameById$(contract.season) | async }}
+  {{ seasonName | async }}
 </h3>
 <p *ngIf="contract.validation && contract.validation.validatedBy" style="font-size: 1.1rem;">
   Validated by {{ contract.validation.validatedBy }}

@@ -119,21 +119,7 @@
         </ion-buttons>
       </ion-list-header>
       <ion-item *ngFor="let trialBasket of member.trialBaskets">
-        <h3>
-          Season {{ seasons.seasonNameById$(trialBasket.season) | async }};
-          Week {{ trialBasket.week }}
-        </h3>
-        <ul>
-          <li>
-            <ion-icon small name="cash"
-                      color="{{ !trialBasket.paid ? 'danger' : 'primary' }}"></ion-icon>
-            {{ trialBasket.paid ? 'Paid' : 'Not yet paid' }}
-          </li>
-          <li *ngFor="let section of trialBasket.sections">
-            <ion-icon small [name]="Kinds.icon(section.kind)"></ion-icon>
-            {{ section.count }}
-          </li>
-        </ul>
+        <trial-basket [trialBasket]="trialBasket"></trial-basket>
       </ion-item>
     </ion-list>
 

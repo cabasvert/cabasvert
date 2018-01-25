@@ -19,16 +19,16 @@
 
 import { Component, Input } from '@angular/core'
 import { Observable } from "rxjs/Observable"
+import { TrialBasket } from "../members/member.model"
 import { SeasonService } from "../seasons/season.service"
-import { ContractService } from "./contract.service"
-import { Contract, ContractKind } from "./contract.model"
+import { ContractKind } from "./contract.model"
 
 @Component({
-  selector: 'contracts-view',
-  templateUrl: './contracts-view.html',
+  selector: 'trial-basket',
+  templateUrl: './trial-basket-view.html',
 })
-export class ContractsView {
-  @Input() contract: Contract
+export class TrialBasketView {
+  @Input() trialBasket: TrialBasket
   seasonName: Observable<string>
 
   messages: string[]
@@ -42,10 +42,6 @@ export class ContractsView {
   }
 
   ngOnInit() {
-    let problems = ContractService.validateContract(this.contract)
-    this.messages = ContractService.contractValidationMessages(problems)
-    this.severity = ContractService.contractValidationSeverity(problems)
-
-    this.seasonName = this.seasonService.seasonNameById$(this.contract.season)
+    this.seasonName = this.seasonService.seasonNameById$(this.trialBasket.season)
   }
 }

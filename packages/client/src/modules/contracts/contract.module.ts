@@ -25,6 +25,7 @@ import { ReactiveFormsModule } from "@angular/forms"
 import { ContractsView } from "./contracts-view"
 import { ContractsEditPage } from "./contracts-edit-page"
 import { ContractService } from "./contract.service"
+import { TrialBasketView } from "./trial-basket-view"
 
 @NgModule({
   imports: [
@@ -35,6 +36,7 @@ import { ContractService } from "./contract.service"
   declarations: [
     ContractsView,
     ContractsEditPage,
+    TrialBasketView,
   ],
   entryComponents: [
     ContractsEditPage,
@@ -42,6 +44,7 @@ import { ContractService } from "./contract.service"
   exports: [
     ContractsView,
     ContractsEditPage,
+    TrialBasketView,
   ],
   providers: [
     ContractService,
