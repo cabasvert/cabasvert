@@ -5,6 +5,10 @@ var commonConfig = {
   copyConfigs: {
     src: ['{{SRC}}/config.*.json'],
     dest: '{{WWW}}'
+  },
+  copyServiceWorkerRegistration: {
+    src: ['{{SRC}}/service-worker-registration.js'],
+    dest: '{{WWW}}'
   }
 };
 
