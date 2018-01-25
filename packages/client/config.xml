@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.lespaniersmarseillais.cabasvert" version="0.2.0"
+<widget id="org.lespaniersmarseillais.cabasvert" version="0.2.2"
         xmlns="http://www.w3.org/ns/widgets">
   <name>Cabas Vert</name>
   <description>A vegetable basket manager app.</description>
