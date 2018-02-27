@@ -61,7 +61,7 @@
   },
   "devDependencies": {
     "@types/jasmine": "^2.8.2",
-    "jasmine": "^2.8.0",
+    "jasmine": "^3.1.0",
     "jasmine-spec-reporter": "^4.2.1",
     "jasmine-ts": "^0.2.1",
     "license-check": "^1.1.5",
