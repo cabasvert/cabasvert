@@ -21,7 +21,11 @@ import { Component } from "@angular/core"
 import { FormBuilder, FormGroup, Validators } from "@angular/forms"
 
 import { NavParams, ViewController } from "ionic-angular"
+import { Observable } from "rxjs/Observable"
+import { map } from "rxjs/operators"
 import { objectAssignNoNulls } from "../../utils/objects"
+import { Season } from "../seasons/season.model"
+import { SeasonService } from "../seasons/season.service"
 import { ContractKind } from "./contract.model"
 import { Contract } from "./contract.model"
 import { Forms } from "../../toolkit/utils/forms"
@@ -35,11 +39,21 @@ export class ContractsEditPage {
 
   contract: Contract
 
+  seasons$: Observable<Season[]>
+
   constructor(public navParams: NavParams,
               public viewCtrl: ViewController,
-              public formBuilder: FormBuilder) {
+              public formBuilder: FormBuilder,
+              private seasonService: SeasonService) {
+
+    this.initializeForm()
+
+    this.seasons$ = this.seasonService.lastSeasons$(2)
+  }
+
+  private initializeForm() {
     this.form = this.formBuilder.group({
-      season: ['season:2017S', Validators.required],
+      season: [null, Validators.required],
       sections: this.formBuilder.array(
         [ContractKind.VEGETABLES, ContractKind.EGGS].map(kind => {
           let section = this.formBuilder.group({
@@ -53,7 +67,7 @@ export class ContractsEditPage {
           return section
         })
       ),
-      wish: false,
+      wish: true,
       validation: this.formBuilder.group({
         paperCopies: this.formBuilder.group({
           forAssociation: false,
@@ -72,16 +86,23 @@ export class ContractsEditPage {
   }
 
   ionViewWillLoad() {
-    this.form.get('wish').valueChanges.subscribe(v => {
-      let validation = this.form.get('validation')
-      if (v) validation.disable()
-      else validation.enable()
+
+    let wishControl = this.form.get('wish')
+    this.wishValueChanged(wishControl.value)
+    wishControl.valueChanges.subscribe(v => {
+      this.wishValueChanged(v)
     })
 
     if (this.navParams.data) {
       this.contract = this.navParams.data.contract
       this.form.patchValue(this.contract)
     }
+  }
+
+  private wishValueChanged(v) {
+    let validation = this.form.get('validation')
+    if (v) validation.disable()
+    else validation.enable()
   }
 
   dismiss() {

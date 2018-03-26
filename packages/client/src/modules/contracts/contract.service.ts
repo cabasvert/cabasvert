@@ -135,6 +135,6 @@ export class ContractService {
   /* A regular formula is one where you get the same quantity every week */
   public static hasRegularFormula(section: ContractSection) {
     let formula = section.formula
-    return (formula instanceof Array && formula[0] == formula[1]) || formula != parseInt('' + formula)
+    return (formula instanceof Array && formula[0] == formula[1]) || formula == parseInt('' + formula)
   }
 }

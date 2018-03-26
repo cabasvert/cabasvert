@@ -28,8 +28,10 @@
         <ion-item>
           <ion-label color="primary" stacked>{{ 'REF.SEASON' | translate }}</ion-label>
           <ion-select formControlName="season" interface="popover">
-            <ion-option value="season:2017S">Été 2017</ion-option>
-            <ion-option value="season:2017W">Hiver 2017-2018</ion-option>
+            <ion-option *ngFor="let season of seasons$ | async" [value]="season.id">
+              {{ season.name }}
+            </ion-option>
+            <!--<ion-option value="season:2017W">Hiver 2017-2018</ion-option>-->
           </ion-select>
           <!--<ion-input type="string" disabled="true" [value]="contract.season"></ion-input>-->
         </ion-item>

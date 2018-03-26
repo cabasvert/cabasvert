@@ -41,6 +41,7 @@ import { Contract, ContractKind, ContractSection } from "../contracts/contract.m
 import { ContractService } from "../contracts/contract.service"
 import { ContractsEditPage } from "../contracts/contracts-edit-page"
 import { TrialBasketEditPage } from "../distributions/trial-basket-edit-page"
+import { Season } from "../seasons/season.model"
 import { SeasonService } from "../seasons/season.service"
 
 import { Member, Person } from "./member.model"
@@ -153,17 +154,14 @@ export class MemberDetailsPage {
   }
 
   createContract() {
-    // TODO Season might not be the current but the next season
-    // Check if last contract is the for the current season
-    // if yes defaults to the next season
-    // TODO Put a combo in the form ?
     this.seasons.seasonForDate$().pipe(
-      take(1),
+      // take(1),
       withLatestFrom(
+        this.seasons.lastSeasons$(1).pipe(map(ss => ss[0])),
         this.member$,
         this.contracts$.pipe(map(cs => cs.length == 0 ? null : cs[0])),
-        (currentSeason, member, lastContract) => ({
-          contract: this.inferNewContract(currentSeason, member, lastContract),
+        (currentSeason, lastSeason, member, lastContract) => ({
+          contract: this.inferNewContract(currentSeason, lastSeason, member, lastContract),
         }),
       ),
       switchMap(data => this.nav.push(ContractsEditPage, data)),
@@ -178,8 +176,15 @@ export class MemberDetailsPage {
     ).subscribe()
   }
 
-  private inferNewContract(currentSeason, member, lastContract) {
-    let seasonId = currentSeason.id.substring('season:'.length)
+  private inferNewContract(currentSeason: Season, lastSeason: Season,
+                           member: Member, lastContract: Contract) {
+
+    // If last contract is the for the current season,
+    // then prepare a contract for the last season
+    let season =
+      lastContract && lastContract.season == currentSeason.id ? lastSeason : currentSeason
+
+    let seasonId = season.id.substring('season:'.length)
     let memberId = member._id.substring('member:'.length)
 
     let lastVegetableContract = !lastContract ? null :
