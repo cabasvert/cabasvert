@@ -310,7 +310,22 @@ export class Database {
 
   public put(doc: any): Promise<PouchDB.Core.Response> {
     this.log.info('Put doc: ' + JSON.stringify({ _id: doc._id, _rev: doc._rev }))
-    return this.wrapErrors("put", this.db.put(doc))
+    return this._doPut(doc)
+  }
+
+  public remove(doc: any): Promise<PouchDB.Core.Response> {
+    this.log.info('Remove doc: ' + JSON.stringify({ _id: doc._id, _rev: doc._rev }))
+    doc._deleted = true
+    return this._doPut(doc)
+  }
+
+  private _doPut(doc: any) {
+    return this.wrapErrors("put",
+      this.db.put(doc).then(response => {
+        doc._rev = response.rev
+        return response
+      }),
+    )
   }
 
   private wrapErrors(methodName: string, promise) {
@@ -354,9 +369,6 @@ export class Database {
       filter: '_selector',
       selector: query.selector,
     })
-    let removals$ = this.dbRemovals$({
-      since: 'now', live: true, include_docs: true,
-    })
 
     return found$.pipe(
       catchError(_ => of([])),
@@ -378,15 +390,6 @@ export class Database {
 
         return docs
       }),
-      combineLatest(removals$.pipe(startWith(null)), (docs, change) => {
-        if (change == null) return docs
-
-        let docIndex = docs.findIndex(d => d._id == change.id)
-        if (docIndex != -1) {
-          docs.splice(docIndex, 1)
-        }
-        return docs
-      }),
       publishReplay(1),
       refCount(),
     )
@@ -400,7 +403,12 @@ export class Database {
     // TODO We mutate the original doc...
     return fromPromise(this.put(doc)).pipe(
       map(response => response.rev),
-      tap(rev => doc._rev = rev),
+    )
+  }
+
+  public remove$(doc: any): Observable<string> {
+    return fromPromise(this.remove(doc)).pipe(
+      map(response => response.rev),
     )
   }
 
@@ -450,10 +458,6 @@ export class Database {
         }
       }
     })
-  }
-
-  private dbRemovals$(options?: {}): Observable<Change> {
-    return this.dbChanges$(options).pipe(filter(c => c.deleted))
   }
 }
 
