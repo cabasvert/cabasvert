@@ -61,8 +61,11 @@ const ALPHA_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 export class MembersPage {
 
   filter: string
-  todaysSeasonFilter$ = new BehaviorSubject(true)
-  season$: Observable<Season>
+  seasonFilter$ = new BehaviorSubject('all')
+
+  todaysSeason$: Observable<Season>
+
+  seasons$: Observable<Season[]>
 
   createdMember = new Subject<void>()
   searchQuery = new Subject<string>()
@@ -87,12 +90,15 @@ export class MembersPage {
               private seasons: SeasonService,
               private contracts: ContractService) {
 
-    this.filter = this.todaysSeasonFilter$.getValue() ? 'season' : 'all'
+    this.filter = this.seasonFilter$.getValue()
   }
 
   ionViewDidLoad() {
-    this.season$ = this.seasons.todaysSeason$
-    let seasonContracts$ = this.season$.pipe(
+    this.todaysSeason$ = this.seasons.todaysSeason$
+    this.seasons$ = this.seasons.lastSeasons$(2).pipe(map(ss => ss.reverse()))
+
+    let seasonContracts$ = this.seasons$.pipe(
+      combineLatest(this.seasonFilter$, this.todaysSeason$, (ss, f, ts) => f == 'all' ? ts : ss.find(s => s.id == f)),
       switchMap(s => this.contracts.getSeasonContracts$(s)),
       publishReplay(1),
       refCount(),
@@ -103,10 +109,10 @@ export class MembersPage {
 
     let allMembers$ = this.members.getMembers$()
     let filteredMembers$ = allMembers$.pipe(
-      combineLatest(seasonMemberIds$, this.todaysSeasonFilter$, (ms, mids, todaysSeasonFilter) => {
-        if (todaysSeasonFilter) return ms.filter(m => contains(mids, m._id))
+      combineLatest(seasonMemberIds$, this.seasonFilter$, (ms, mids, seasonFilter) => {
+        if (seasonFilter != 'all') return ms.filter(m => contains(mids, m._id))
         else return ms
-      })
+      }),
     )
 
     let members$ = filteredMembers$.pipe(

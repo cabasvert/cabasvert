@@ -14,14 +14,14 @@
     </ion-buttons>
   </ion-navbar>
   <ion-toolbar class="toolbar-thinner">
-    <ion-segment *ngIf="season$ | async as season"
-                 [(ngModel)]="filter">
+    <ion-segment *ngIf="seasons$ | async as seasons" [(ngModel)]="filter">
       <ion-segment-button value="all"
-                          (click)="todaysSeasonFilter$.next(false)">
+                          (click)="seasonFilter$.next('all')">
         Tous
       </ion-segment-button>
-      <ion-segment-button value="season"
-                          (click)="todaysSeasonFilter$.next(true)">
+      <ion-segment-button *ngFor="let season of seasons; let index=index"
+                          value="{{ season.id }}"
+                          (click)="seasonFilter$.next(season.id)">
         {{ season.name }}
       </ion-segment-button>
     </ion-segment>
