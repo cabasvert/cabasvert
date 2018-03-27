@@ -69,6 +69,10 @@ export class ContractService {
     return this.mainDatabase.database$.pipe(switchMap(db => db.put$(contracts)))
   }
 
+  removeContracts$(contracts: Contract): Observable<string> {
+    return this.mainDatabase.database$.pipe(switchMap(db => db.remove$(contracts)))
+  }
+
   static contractValidationMessages(problems: { [key: string]: boolean }): string[] {
     var messages = []
 

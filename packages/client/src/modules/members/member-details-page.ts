@@ -227,18 +227,18 @@ export class MemberDetailsPage {
   }
 
   deleteContract(contract: Contract, index: number) {
-    // this.nav.alert({
-    //   title: "Confirm Deletion",
-    //   message: `Are you sure you want to delete these contracts ?`,
-    //   buttons: [
-    //     { text: "Cancel", role: 'cancel' },
-    //     { text: "Delete" }
-    //   ]
-    // })
-    //   .withLatestFrom(this.member$,
-    //     (p, m) => Object.assign({}, m, { persons: copyRemove(m.persons, index) })
-    //   )
-    //   .subscribe(m => this.members.putMember$(m))
+    this.nav.alert({
+        title: "Confirm Deletion",
+        message: `Are you sure you want to delete these contracts ?`,
+        buttons: [
+          { text: "Cancel", role: 'cancel' },
+          { text: "Delete" },
+        ],
+      })
+      .pipe(
+        switchMap(() => this.contracts.removeContracts$(contract))
+      )
+      .subscribe()
   }
 
   addTrialBasket() {
