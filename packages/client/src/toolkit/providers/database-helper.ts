@@ -96,7 +96,7 @@ export class Database {
   private sync: PouchDB.Replication.Sync<{}>
   private _syncStateListener: SyncStateListener
 
-  constructor(private db: any, log: Logger, private maxLimit?: number) {
+  constructor(private db: PouchDB.Database<{}>, log: Logger, private maxLimit?: number) {
     this.log = log.withPrefix(`(${this._id})`)
     this._syncStateListener = new SyncStateListener()
     this.log.debug(`Created database`)
@@ -128,8 +128,8 @@ export class Database {
     })
   }
 
-  public signUp(username: string, password: string, options?: any) {
-    return this.db.signup(username, password, options).catch((e) => {
+  public signUp(username: string, password: string, options?: PouchDB.Authentication.PutUserOptions) {
+    return this.db.signUp(username, password, options).catch((e) => {
       return Promise.reject(new PouchError(e, "signUp"))
     })
   }
@@ -139,7 +139,7 @@ export class Database {
     return Promise.resolve().then(() => {
       options = options || {}
       this.addAjaxHeaders(options, username, password)
-      return this.db.login(username, password, options).then((r) => {
+      return this.db.logIn(username, password, options).then((r) => {
         if (r.ok) {
           this.log.info(`Successfully logged user '${username}' in.`)
           this.setupAuthenticationCookieRenewer()
@@ -192,7 +192,7 @@ export class Database {
 
   public logout(): Promise<boolean> {
     this.cancelAuthenticationCookieRenewer()
-    return this.wrapErrors("logout", this.db.logout()).then((r) => {
+    return this.wrapErrors("logout", this.db.logOut()).then((r) => {
       if (r.ok) this.log.info(`Successfully logged user out.`)
       else this.log.error(`Failed to log user out.`)
       return r.ok
@@ -296,8 +296,9 @@ export class Database {
   public find(query: any): Promise<PouchDB.Find.FindResponse<any>> {
     if (this.maxLimit && !query.limit) query.limit = this.maxLimit
     return this.wrapErrors("find", this.db.find(query).then(result => {
-      if (result.warning) {
-        this.log.warn(`Warning message "${result.warning}" while processing find: ${JSON.stringify(query)}`)
+      let warning = result['warning']
+      if (warning) {
+        this.log.warn(`Warning message "${warning}" while processing find: ${JSON.stringify(query)}`)
       }
       return result
     }))
@@ -432,10 +433,11 @@ export class Database {
         .on('change', change => {
           observer.next(change)
         })
-        .on('completed', info => {
-          info.results.forEach(change => {
-            observer.next(change)
-          })
+        .on('complete', info => {
+          if (info.results)
+            info.results.forEach(change => {
+              observer.next(change)
+            })
           observer.complete()
         })
         .on('error', error => {
