@@ -49,17 +49,20 @@ export class ContractService {
     return db$.pipe(switchMap(db => db.findAll$(query)))
   }
 
-  getContracts$(member: Member): Observable<Contract[]> {
+  getContracts$(member: Member = null): Observable<Contract[]> {
     let query = {
       selector: {
         type: 'contract',
-        member: member._id,
       }
+    }
+
+    if (member) {
+      query.selector['member'] = member._id
     }
 
     let db$ = this.mainDatabase.withIndex$({
       index: {
-        fields: ['type', 'member']
+        fields: member ? ['type', 'member'] : ['type']
       }
     })
     return db$.pipe(switchMap(db => db.findAll$(query)))
@@ -90,13 +93,13 @@ export class ContractService {
     return messages
   }
 
-  static contractValidationSeverity(problems: { [key: string]: boolean }): string {
-    if (Object.keys(problems).length == 0) return null
+  static contractValidationSeverity(problems: { [key: string]: boolean }, otherSeverity: string = null): string {
+    if (Object.keys(problems).length == 0) return otherSeverity
     if (problems['wish']
       || problems['missingChequesForVegetables']
       || problems['missingChequesForEggs'])
       return 'danger'
-    else return 'warning'
+    else return otherSeverity ? otherSeverity : 'warning'
   }
 
   static validateContract(contract: Contract): { [key: string]: boolean } {

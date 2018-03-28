@@ -19,8 +19,9 @@
 
 import { Component, ViewChild } from "@angular/core"
 import { Content } from "ionic-angular"
-import { Observable } from "rxjs/Observable"
 import { BehaviorSubject } from "rxjs/BehaviorSubject"
+import { Observable } from "rxjs/Observable"
+import { combineLatest as combine } from "rxjs/observable/combineLatest"
 import {
   combineLatest,
   distinctUntilChanged,
@@ -30,6 +31,7 @@ import {
   merge,
   publishReplay,
   refCount,
+  scan,
   startWith,
   switchMap,
 } from "rxjs/operators"
@@ -39,7 +41,7 @@ import { Subscription } from "rxjs/Subscription"
 import { IndexedScroller } from "../../toolkit/components/indexed-scroller"
 import { Navigation } from "../../toolkit/providers/navigation"
 import { contains, Group, groupBy } from "../../utils/arrays"
-import { errors, filterNotNull, ignoreErrors } from "../../utils/observables"
+import { debug, errors, filterNotNull, ignoreErrors } from "../../utils/observables"
 
 import { ContractService } from "../contracts/contract.service"
 import { Season } from "../seasons/season.model"
@@ -60,10 +62,8 @@ const ALPHA_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 })
 export class MembersPage {
 
-  filter: string
-  seasonFilter$ = new BehaviorSubject('all')
-
-  todaysSeason$: Observable<Season>
+  seasonFilterToggle$ = new Subject<string>()
+  seasonFilter$: Observable<SeasonFilter>
 
   seasons$: Observable<Season[]>
 
@@ -89,30 +89,57 @@ export class MembersPage {
               private members: MemberService,
               private seasons: SeasonService,
               private contracts: ContractService) {
-
-    this.filter = this.seasonFilter$.getValue()
   }
 
-  ionViewDidLoad() {
-    this.todaysSeason$ = this.seasons.todaysSeason$
-    this.seasons$ = this.seasons.lastSeasons$(2).pipe(map(ss => ss.reverse()))
-
-    let seasonContracts$ = this.seasons$.pipe(
-      combineLatest(this.seasonFilter$, this.todaysSeason$, (ss, f, ts) => f == 'all' ? ts : ss.find(s => s.id == f)),
-      switchMap(s => this.contracts.getSeasonContracts$(s)),
+  ionViewWillLoad() {
+    this.seasons$ = this.seasons.lastSeasons$(2).pipe(
+      map(ss => ss.reverse()),
       publishReplay(1),
       refCount(),
     )
-    let seasonMemberIds$ = seasonContracts$.pipe(
-      map(cs => cs.map(c => c.member)),
+
+    let seasonMemberFilters$ = this.seasons$.pipe(
+      switchMap(ss => combine(ss.map(s =>
+        this.contracts.getSeasonContracts$(s).pipe(
+          map(cs => cs.map(c => c.member)),
+          map(mids => m => contains(mids, m._id)),
+          startWith(null),
+        ),
+      ))),
+      publishReplay(1),
+      refCount(),
+    )
+
+    this.seasonFilter$ = this.seasonFilterToggle$.pipe(
+      scan<string, SeasonFilter>((acc, id) => acc.toggle(id), new SeasonFilter()),
+      startWith(new SeasonFilter()),
+      publishReplay(1),
+      refCount(),
+    )
+
+    let seasonMemberFilter$ = this.seasonFilter$.pipe(
+      combineLatest(this.seasons$, seasonMemberFilters$, (f, ss, scs) =>
+        f.hasNone() ? null : ss.reduce<(m: Member) => boolean>(
+          (acc, s, i) => {
+            let flag = f.get(s.id)
+            console.log(s.id + ': ' + flag)
+            return m => acc(m) && (flag === undefined || scs[i](m) == flag)
+          },
+          m => true,
+        )
+      ),
+      publishReplay(1),
+      refCount(),
     )
 
     let allMembers$ = this.members.getMembers$()
     let filteredMembers$ = allMembers$.pipe(
-      combineLatest(seasonMemberIds$, this.seasonFilter$, (ms, mids, seasonFilter) => {
-        if (seasonFilter != 'all') return ms.filter(m => contains(mids, m._id))
+      combineLatest(seasonMemberFilter$, (ms, filter) => {
+        if (filter) return ms.filter(m => filter(m))
         else return ms
       }),
+      publishReplay<Member[]>(1),
+      refCount(),
     )
 
     let members$ = filteredMembers$.pipe(
@@ -139,11 +166,11 @@ export class MembersPage {
     )
 
     this.subscription.add(
-      seasonContracts$.pipe(
+      this.contracts.getContracts$().pipe(
         map(cs =>
           cs.reduce((acc, c) => {
             let problems = ContractService.validateContract(c)
-            let severity = ContractService.contractValidationSeverity(problems)
+            let severity = ContractService.contractValidationSeverity(problems, acc[c.member])
 
             if (severity) acc[c.member] = severity
             return acc
@@ -189,7 +216,9 @@ export class MembersPage {
     )
 
     this.error$ = members$.pipe(errors())
+  }
 
+  ionViewDidLoad() {
     this.subscription.add(
       this.scroller.scrollToIndex$.pipe(
         combineLatest(this.members$, (i, groups) => {
@@ -228,5 +257,31 @@ export class MembersPage {
     let firstLetter = member.persons[0].lastname.charAt(0).toLocaleUpperCase()
     if (firstLetter == ' ') return STAR_CHAR
     else return firstLetter
+  }
+}
+
+class SeasonFilter {
+
+  constructor(private flags: { [id: string]: boolean } = {}) {
+  }
+
+  toggle(id: string): this {
+    if (this.flags[id] === undefined) this.flags[id] = true
+    else if (this.flags[id]) this.flags[id] = false
+    else this.flags[id] = undefined
+
+    return this
+  }
+
+  hasNone(): boolean {
+    return Object.getOwnPropertyNames(this.flags).every(id => this.flags[id] === undefined)
+  }
+
+  get(id: string): boolean | undefined {
+    return this.flags[id] == null ? undefined : this.flags[id]
+  }
+
+  colorFor(id: string): string {
+    return this.flags[id] === undefined ? 'light' : this.flags[id] ? 'primary' : 'danger'
   }
 }

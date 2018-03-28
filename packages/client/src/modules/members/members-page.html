@@ -13,18 +13,14 @@
       </searchbar-expanding>
     </ion-buttons>
   </ion-navbar>
-  <ion-toolbar class="toolbar-thinner">
-    <ion-segment *ngIf="seasons$ | async as seasons" [(ngModel)]="filter">
-      <ion-segment-button value="all"
-                          (click)="seasonFilter$.next('all')">
-        Tous
-      </ion-segment-button>
-      <ion-segment-button *ngFor="let season of seasons; let index=index"
-                          value="{{ season.id }}"
-                          (click)="seasonFilter$.next(season.id)">
+  <ion-toolbar>
+    <ng-container *ngIf="seasons$ | async as seasons">
+      <button ion-button *ngFor="let season of seasons" outline
+              (click)="seasonFilterToggle$.next(season.id)"
+              [color]="(seasonFilter$ | async).colorFor(season.id)">
         {{ season.name }}
-      </ion-segment-button>
-    </ion-segment>
+      </button>
+    </ng-container>
   </ion-toolbar>
 </ion-header>
 
@@ -56,7 +52,7 @@
 
         <member-view [member]="member"></member-view>
 
-        <ion-icon *ngIf="perMemberIdProblemSeverity[member._id] as severity"
+        <ion-icon *ngIf="perMemberIdProblemSeverity && perMemberIdProblemSeverity[member._id] as severity"
                   name="warning" item-right [color]="severity"></ion-icon>
       </button>
 

@@ -18,11 +18,21 @@
  */
 
 import { NgZone } from "@angular/core"
-import { MonoTypeOperatorFunction } from "rxjs/interfaces"
+import { MonoTypeOperatorFunction, OperatorFunction } from "rxjs/interfaces"
+import { Observable } from "rxjs/Observable"
 import { empty } from "rxjs/observable/empty"
 import { of } from "rxjs/observable/of"
 import { Observer } from "rxjs/Observer"
-import { catchError, filter, ignoreElements, map, observeOn, pairwise, tap } from "rxjs/operators"
+import {
+  catchError,
+  filter,
+  ignoreElements,
+  map,
+  mapTo,
+  observeOn,
+  pairwise,
+  tap,
+} from "rxjs/operators"
 import { pipe } from "rxjs/util/pipe"
 import { Scheduler } from "rxjs/Scheduler"
 import { async } from "rxjs/scheduler/async"
@@ -36,15 +46,15 @@ export function filterNotNull<T>(): MonoTypeOperatorFunction<T> {
   return filter(element => !!element)
 }
 
-export function errors() {
-  return pipe(ignoreElements(), catchError(e => of(e)))
+export function errors<T>(): OperatorFunction<T, string> {
+  return pipe(mapTo(null), ignoreElements(), catchError(e => of(e.message + '\n' + e.stack)))
 }
 
 export function ignoreErrors<T>(): MonoTypeOperatorFunction<T> {
   return catchError(_ => empty<T>())
 }
 
-export function debug<T>(prefix, f): MonoTypeOperatorFunction<T> {
+export function debug<T>(prefix: string, f: (T) => any = v => v): MonoTypeOperatorFunction<T> {
   return tap(debugObservable<T>(prefix, f))
 }
 
