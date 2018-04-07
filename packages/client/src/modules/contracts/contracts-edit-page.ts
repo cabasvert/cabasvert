@@ -58,7 +58,7 @@ export class ContractsEditPage {
         [ContractKind.VEGETABLES, ContractKind.EGGS].map(kind => {
           let section = this.formBuilder.group({
             kind: [kind, Validators.required],
-            formula: [1, Validators.required],
+            formulaIndex: [1, Validators.required],
             firstWeek: [1, Validators.required],
             lastWeek: null,
           })
@@ -95,6 +95,12 @@ export class ContractsEditPage {
 
     if (this.navParams.data) {
       this.contract = this.navParams.data.contract
+
+      // Clone
+      this.contract = JSON.parse(JSON.stringify(this.contract))
+      // Compute formula index in formulas list
+      this.formulasToForm(this.contract)
+
       this.form.patchValue(this.contract)
     }
   }
@@ -110,16 +116,20 @@ export class ContractsEditPage {
   }
 
   save() {
+    // Recompute formula
+    this.formulasFromForm(this.form.value)
+
     this.viewCtrl.dismiss(objectAssignNoNulls({}, this.contract, this.form.value))
   }
 
-  formulas = [
+  formulas: Formulas = [
     {
       value: 2,
       label: "2 every week"
     },
     {
-      value: 1.5,
+      value: [2, 1],
+      alternativeValue: 1.5,
       label: "alternating 2 and 1"
     },
     {
@@ -127,7 +137,12 @@ export class ContractsEditPage {
       label: "1 every week"
     },
     {
-      value: .5,
+      value: [2, 0],
+      label: "2 every other week"
+    },
+    {
+      value: [1, 0],
+      alternativeValue: .5,
       label: "1 every other week"
     },
     {
@@ -138,5 +153,43 @@ export class ContractsEditPage {
 
   formulasFor(kind: string) {
     return this.formulas
+  }
+
+  findFormula(value): number {
+    return this.formulas.findIndex(f =>
+      deepEquals(f.value, value) || (f.alternativeValue && f.alternativeValue == value)
+    )
+  }
+
+  formulasToForm(contracts) {
+    contracts.sections.forEach(s => {
+      s.formulaIndex = this.findFormula(s.formula)
+    })
+  }
+
+  formulasFromForm(contracts) {
+    contracts.sections.forEach(s => {
+      s.formula = this.formulas[s.formulaIndex].value
+    })
+  }
+}
+
+type Formulas = {
+  value: number | [number, number]
+  alternativeValue?: number
+  label: string
+}[]
+
+
+function deepEquals(a, b): boolean {
+  if (a instanceof Array && b instanceof Array) {
+    if (a.length != b.length)
+      return false
+    for (var i = 0; i < a.length; i++)
+      if (!deepEquals(a[i], b[i]))
+        return false
+    return true
+  } else {
+    return a == b
   }
 }

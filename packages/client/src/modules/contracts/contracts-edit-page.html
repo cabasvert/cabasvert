@@ -48,8 +48,8 @@
 
           <ion-item>
             <ion-label color="primary" stacked>Formula</ion-label>
-            <ion-select formControlName="formula" interface="popover">
-              <ion-option *ngFor="let f of formulasFor(section.kind)" [value]="f.value">
+            <ion-select formControlName="formulaIndex" interface="popover">
+              <ion-option *ngFor="let f of formulasFor(section.kind); let j=index" [value]="j">
                 {{f.label}}
               </ion-option>
             </ion-select>
