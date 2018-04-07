@@ -108,7 +108,16 @@ export class ContractsEditPage {
   private wishValueChanged(v) {
     let validation = this.form.get('validation')
     if (v) validation.disable()
-    else validation.enable()
+    else {
+      validation.enable()
+
+      // This is a temporary hack until ionic-team/ionic#12359 is fixed
+      let field = document.getElementById("validatedBy");
+      let children = field.getElementsByTagName("input");
+      if(children.length > 0){
+        children[0].removeAttribute("disabled");
+      }
+    }
   }
 
   dismiss() {
