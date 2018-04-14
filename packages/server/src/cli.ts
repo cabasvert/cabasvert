@@ -22,6 +22,11 @@ import * as parseCli from 'minimist'
 import { Configuration, parseJsonFile, writeClientConfiguration } from './config'
 import { startServer } from './index'
 
+process.on('unhandledRejection', (reason, p) => {
+  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
+  // application specific logging, throwing an error, or other logic here
+})
+
 let argv = parseCli(process.argv.slice(2))
 let configPath = argv['config'] || 'config.json'
 let configuration = parseJsonFile<Configuration>(configPath)

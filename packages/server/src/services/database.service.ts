@@ -54,7 +54,7 @@ export class DatabaseService {
 
   async logIn() {
     let user = this.config.database.auth
-    await this.db.login(user.username, user.password)
+    await this.db.logIn(user.username, user.password)
       .then(() => {
         return this.db.getSession()
           .then(res => {
@@ -69,6 +69,9 @@ export class DatabaseService {
 
   async logOut() {
     await this.db.logOut()
+      .catch((error: any) => {
+        this.logger.error(`Failed to log out: ${JSON.stringify(error)}`)
+      })
   }
 
   getUser(userId: string): Promise<User> {

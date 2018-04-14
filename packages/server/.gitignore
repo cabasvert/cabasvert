@@ -45,3 +45,5 @@ dist
 .idea
 
 *.js
+
+public
