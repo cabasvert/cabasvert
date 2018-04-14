@@ -33,18 +33,21 @@ export class MailService {
               @inject(Services.Logger) private logger: LoggerInstance) {
   }
 
-  async sendMail(mail: Mail.Options) {
-    let connection = this.config.smtpConnection
+  async status(): Promise<{ ok: boolean, error?: any }> {
+    let smtpTransport = this.createTransport()
 
-    let smtpTransport = createTransport({
-      host: connection.host,
-      port: connection.port,
-      secure: connection.secure,
-      auth: {
-        user: connection.auth.username,
-        pass: connection.auth.password,
-      },
-    })
+    try {
+      await smtpTransport.verify()
+      return { ok: true }
+    } catch (error) {
+      return { ok: false, error: error }
+    } finally {
+      smtpTransport.close()
+    }
+  }
+
+  async sendMail(mail: Mail.Options) {
+    let smtpTransport = this.createTransport()
 
     try {
       return await smtpTransport.sendMail(mail)
@@ -54,5 +57,19 @@ export class MailService {
     } finally {
       smtpTransport.close()
     }
+  }
+
+  private createTransport() {
+    let connection = this.config.smtpConnection
+
+    return createTransport({
+      host: connection.host,
+      port: connection.port,
+      secure: connection.secure,
+      auth: {
+        user: connection.auth.username,
+        pass: connection.auth.password,
+      },
+    })
   }
 }

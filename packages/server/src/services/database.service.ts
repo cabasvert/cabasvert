@@ -52,6 +52,21 @@ export class DatabaseService {
     await this.logOut()
   }
 
+  async status(): Promise<{ ok: boolean, error?: any }> {
+    let user = this.config.database.auth
+    try {
+      try {
+        await this.db.logIn(user.username, user.password)
+        let session = await this.db.getSession()
+        return { ok: session.ok && session.userCtx.name != null }
+      } finally {
+        this.db.logOut()
+      }
+    } catch (error) {
+      return { ok: false, error: error }
+    }
+  }
+
   async logIn() {
     let user = this.config.database.auth
     await this.db.logIn(user.username, user.password)

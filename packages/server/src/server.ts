@@ -30,6 +30,7 @@ import { LoggerInstance } from 'winston'
 import { Configuration } from './config'
 
 import './controllers/user.controller'
+import './controllers/status.controller'
 
 import { DatabaseService } from './services/database.service'
 import { Services } from './types'
