@@ -282,6 +282,6 @@ class SeasonFilter {
   }
 
   colorFor(id: string): string {
-    return this.flags[id] === undefined ? 'light' : this.flags[id] ? 'primary' : 'danger'
+    return this.flags[id] === undefined ? 'inactive' : this.flags[id] ? 'primary' : 'danger'
   }
 }
