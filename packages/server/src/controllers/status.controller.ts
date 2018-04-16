@@ -41,22 +41,15 @@ export class StatusController {
   @httpGet('/check')
   async get(@response() res: express.Response): Promise<void> {
 
-    this.logger.debug(`Received request for status check`)
+    let databaseStatus = await this.userDatabase.status()
+    let mailStatus = await this.mailSender.status()
 
-    try {
-      let databaseStatus = await this.userDatabase.status()
-      let mailStatus = await this.mailSender.status()
+    let allStatuses: { ok: boolean, error?: any }[] = [databaseStatus, mailStatus]
 
-      let allStatuses: { ok: boolean, error?: any }[] = [databaseStatus, mailStatus]
-
-      res.json({
-        ok: allStatuses.every(s => s.ok),
-        database: databaseStatus,
-        mail: mailStatus,
-      })
-    } catch (error) {
-      this.logger.error(`An error occurred while processing request: ${error.message}`)
-      res.status(500).json({ ok: false, error: error.message })
-    }
+    res.json({
+      ok: allStatuses.every(s => s.ok),
+      database: databaseStatus,
+      mail: mailStatus,
+    })
   }
 }
