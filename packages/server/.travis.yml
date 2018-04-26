@@ -8,6 +8,7 @@ services:
 node_js:
   - "6"
   - "8"
+  - "10"
 
 before_install:
   # package-lock.json was introduced in npm@5
