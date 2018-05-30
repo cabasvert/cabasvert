@@ -51,9 +51,12 @@ export class ReportService {
     })
   }
 
-  public static monthAsString(month: [number, number]) {
-    let formattedMonth = (month[0] < 10 ? "0" : "") + month[0]
-    return `${month[1]}:${formattedMonth}`
+  public static monthFor(week): Date {
+    return new Date(
+      week.distributionDate.getFullYear(),
+      week.distributionDate.getMonth(),
+      1,
+    )
   }
 
   public writeFile(fileName: string, csv$: Observable<string>) {

@@ -46,7 +46,7 @@ export class BasketPerMonthReport implements Report {
   }
 
   private basketsPerMonth(basketType$: Observable<string>, generator: ReportService): Observable<string> {
-    let seasons$ = generator.seasons.lastSeasons$(2)
+    let seasons$ = generator.seasons.lastSeasons$(3)
 
     let membersIndexed$ = generator.members.getMembersIndexed$()
     let css$: Observable<Contract[][]> = seasons$.pipe(
@@ -66,7 +66,7 @@ export class BasketPerMonthReport implements Report {
     return combineAllLatest(basketType$, membersIndexed$, scss$,
       (basketType, ms, scss: SeasonContractsPair[]) => {
 
-        let sms = []
+        let sms: { season: Season, month: Date, member: Member, formula: number, }[] = []
 
         scss.forEach(scs => {
           let season = scs[0]
@@ -83,45 +83,98 @@ export class BasketPerMonthReport implements Report {
               if (!s.formula) return
 
               let member = ms[c.member]
-              let monthlyPresence = new Map<string, [number, number]>()
+              let monthlyPresence = new Map<string, Date>()
               seasonWeeks.forEach(week => {
-                let month: [number, number] = [
-                  week.distributionDate.getMonth(),
-                  week.distributionDate.getFullYear(),
-                ]
+                let month: Date = ReportService.monthFor(week)
 
                 let count = DistributionService.basketCount(c, s, week)
                 if (count > 0) {
-                  monthlyPresence.set(ReportService.monthAsString(month), month)
+                  monthlyPresence.set(month.toISOString(), month)
                 }
               })
               monthlyPresence.forEach(month => {
-                sms.push({ season: season, month: month, member: member, formula: s.formula })
+                sms.push({
+                  season: season, month: month, member: member,
+                  formula: this.findFormula(s.formula),
+                })
               })
             })
           })
         })
 
-        let bsByMonth = groupBy(sms, sm => ReportService.monthAsString(sm.month))
+        let bsByMonth = groupBy(sms, sm => sm.month.toISOString())
           .map(group => ({
             month: group.values[0].month,
             total: group.values.length,
-            half: group.values.reduce((acc, v) => v.formula == .5 ? acc + 1 : acc, 0),
-            one: group.values.reduce((acc, v) => v.formula == 1 ? acc + 1 : acc, 0),
-            oneAndHalf: group.values.reduce((acc, v) => v.formula == 1.5 ? acc + 1 : acc, 0),
-            two: group.values.reduce((acc, v) => v.formula == 2 ? acc + 1 : acc, 0),
+            counts: this.formulas.map((f, i) =>
+              group.values.reduce((acc, v) => v.formula == i ? acc + 1 : acc, 0)
+            ),
           }))
-          .sort((sm1, sm2) =>
-            ReportService.monthAsString(sm1.month)
-              .localeCompare(ReportService.monthAsString(sm2.month)))
+          .sort((sm1, sm2) => sm1.month.toISOString().localeCompare(sm2.month.toISOString()))
 
         // TODO Update to take trial baskets in account
 
-        let csv = bsByMonth.map(mc =>
-          `${mc.month},${mc.total},${mc.half},${mc.one},${mc.oneAndHalf},${mc.two}`).join('\n')
+        let csv =
+          'Mois,Total,' + this.formulas.map(f => f.label).join(',') + '\n' +
+          bsByMonth.map(mc => `${this.formatDate(mc.month)},${mc.total},${mc.counts.map(c => '' + c).join(',')}`).join('\n')
         return csv
       },
     )
+  }
+
+  formulas: Formulas = [
+    {
+      value: 2,
+      label: "2 every week"
+    },
+    {
+      value: [2, 1],
+      alternativeValue: 1.5,
+      label: "alternating 2 and 1"
+    },
+    {
+      value: 1,
+      label: "1 every week"
+    },
+    {
+      value: [2, 0],
+      label: "2 every other week"
+    },
+    {
+      value: [1, 0],
+      alternativeValue: .5,
+      label: "1 every other week"
+    }
+  ]
+
+  findFormula(value): number {
+    return this.formulas.findIndex(f =>
+      deepEquals(f.value, value) || (f.alternativeValue && f.alternativeValue == value)
+    )
+  }
+
+  formatDate(date: Date) {
+    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+  }
+}
+
+type Formulas = {
+  value: number | [number, number]
+  alternativeValue?: number
+  label: string
+}[]
+
+
+function deepEquals(a, b): boolean {
+  if (a instanceof Array && b instanceof Array) {
+    if (a.length != b.length)
+      return false
+    for (var i = 0; i < a.length; i++)
+      if (!deepEquals(a[i], b[i]))
+        return false
+    return true
+  } else {
+    return a == b
   }
 }
 
