@@ -1,7 +1,7 @@
 {
   "name": "cabasvert-node",
   "author": "Cabas Vert",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "The server app for Cabas Vert",
   "private": true,
   "main": "dist/index.js",
