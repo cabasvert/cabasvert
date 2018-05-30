@@ -24,7 +24,7 @@
 
 
 // Version flag to force service worker to be reloaded
-// v0.2.5
+// v0.2.6
 
 'use strict';
 importScripts('./build/sw-toolbox.js');
