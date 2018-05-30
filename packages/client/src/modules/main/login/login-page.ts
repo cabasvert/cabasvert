@@ -154,7 +154,7 @@ export class LoginPage {
 
     try {
       let response = await this.http.get<ResetResponse>(
-        `${serverUrl}/user/request-password-reset/${email}`,
+        `${serverUrl}/api/user/request-password-reset/${email}`,
       ).pipe(take(1)).toPromise()
 
       if (response.ok) {

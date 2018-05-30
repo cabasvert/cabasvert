@@ -125,7 +125,7 @@ export class ResetPasswordPage {
 
       try {
         let response = await this.http.post<ResetResponse>(
-          `${serverUrl}/user/confirm-password-reset`,
+          `${serverUrl}/api/user/confirm-password-reset`,
           { 'username': this.username, 'token': this.token, 'new-password': password },
         ).pipe(take(1)).toPromise()
 

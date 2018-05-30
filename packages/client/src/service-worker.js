@@ -24,7 +24,7 @@
 
 
 // Version flag to force service worker to be reloaded
-// v0.2.2 snthousnth
+// v0.2.4
 
 'use strict';
 importScripts('./build/sw-toolbox.js');
@@ -45,8 +45,11 @@ self.toolbox.precache(
   ]
 );
 
+// do not cache server APIs
+self.toolbox.router.any('/api/*', self.toolbox.networkOnly);
+
 // dynamically cache any other local assets
-self.toolbox.router.any('/*', self.toolbox.cacheFirst);
+self.toolbox.router.any(new RegExp('^(?!/api)/.*$'), self.toolbox.cacheFirst);
 
 // for any other requests go to the network, cache,
 // and then only use that cached resource if your user goes offline
