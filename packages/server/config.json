@@ -17,10 +17,11 @@
   "smtpConnection": {
     "host": "smtp.example.com",
     "port": 587,
-    "secure": true,
+    "secure": false,
     "auth": {
-      "username": "email-username",
-      "password": "email-password"
-    }
+      "user": "email-username",
+      "pass": "email-password"
+    },
+    "requireTLS": true
   }
 }

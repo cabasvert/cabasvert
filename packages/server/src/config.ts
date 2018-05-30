@@ -18,6 +18,7 @@
  */
 
 import { readFileSync, writeFileSync } from 'graceful-fs'
+import * as SMTPTransport from 'nodemailer/lib/smtp-transport'
 
 export type Configuration = {
   port: number
@@ -40,15 +41,7 @@ export type Configuration = {
 
   email: string
 
-  smtpConnection: {
-    host: string
-    port: number
-    secure: boolean
-    auth: {
-      username: string
-      password: string
-    }
-  }
+  smtpConnection: SMTPTransport.Options
 }
 
 export function defaultConfiguration() {

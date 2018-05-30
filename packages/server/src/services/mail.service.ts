@@ -60,16 +60,6 @@ export class MailService {
   }
 
   private createTransport() {
-    let connection = this.config.smtpConnection
-
-    return createTransport({
-      host: connection.host,
-      port: connection.port,
-      secure: connection.secure,
-      auth: {
-        user: connection.auth.username,
-        pass: connection.auth.password,
-      },
-    })
+    return createTransport(this.config.smtpConnection)
   }
 }
