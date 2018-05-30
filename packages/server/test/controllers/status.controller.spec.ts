@@ -107,7 +107,7 @@ describe('StatusController', () => {
 
   it('correctly reports OK status when no errors', async () => {
     await request(server)
-      .get('/status/check')
+      .get('/api/status/check')
       .expect(200)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect({ ok: true, database: { ok: true }, mail: { ok: true } })
@@ -117,7 +117,7 @@ describe('StatusController', () => {
     databaseServiceMock.setFailing('error')
 
     await request(server)
-      .get('/status/check')
+      .get('/api/status/check')
       .expect(200)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect({ ok: false, database: { ok: false, error: 'error' }, mail: { ok: true } })
@@ -127,7 +127,7 @@ describe('StatusController', () => {
     mailServiceMock.setFailing('error')
 
     await request(server)
-      .get('/status/check')
+      .get('/api/status/check')
       .expect(200)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect({ ok: false, database: { ok: true }, mail: { ok: false, error: 'error' } })

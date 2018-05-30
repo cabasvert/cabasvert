@@ -164,7 +164,7 @@ describe('UserController', () => {
 
   it('correctly resets password', async () => {
     await request(server)
-      .get('/user/request-password-reset/' + fakeUserId)
+      .get('/api/user/request-password-reset/' + fakeUserId)
       .expect(200)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect({ ok: true })
@@ -180,7 +180,7 @@ describe('UserController', () => {
     expect(prt.hash).toEqual('fake-hash')
 
     await request(server)
-      .post('/user/confirm-password-reset')
+      .post('/api/user/confirm-password-reset')
       .send({
         'username': fakeUserId,
         'token': 'fake-token',
@@ -198,7 +198,7 @@ describe('UserController', () => {
     mailServiceMock.setFailing(true)
 
     await request(server)
-      .get('/user/request-password-reset/' + fakeUserId)
+      .get('/api/user/request-password-reset/' + fakeUserId)
       .expect(500)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect({ ok: false, error: 'Email sending failed' })
@@ -282,7 +282,7 @@ describe('UserController', () => {
                                            testTokenHasBeenCleared: boolean = false,
                                            beforeConfirm: () => Promise<void> = noop) {
     await request(server)
-      .get('/user/request-password-reset/' + userId)
+      .get('/api/user/request-password-reset/' + userId)
       .expect(200)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect({ ok: true })
@@ -290,7 +290,7 @@ describe('UserController', () => {
     await beforeConfirm()
 
     await request(server)
-      .post('/user/confirm-password-reset')
+      .post('/api/user/confirm-password-reset')
       .send(confirmData)
       .expect(400)
       .expect('Content-Type', 'application/json; charset=utf-8')
@@ -306,7 +306,7 @@ describe('UserController', () => {
 
   it('rejects requests for unknown users', async () => {
     await request(server)
-      .get('/user/request-password-reset/' + wrongUserId)
+      .get('/api/user/request-password-reset/' + wrongUserId)
       .expect(400)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect({ ok: false, error: 'Unknown user' })
@@ -314,7 +314,7 @@ describe('UserController', () => {
 
   it('rejects confirmations for unknown users', async () => {
     await request(server)
-      .post('/user/confirm-password-reset')
+      .post('/api/user/confirm-password-reset')
       .send({
         'username': wrongUserId,
         'token': 'fake-token',
@@ -327,7 +327,7 @@ describe('UserController', () => {
 
   it('rejects confirmations without prior request', async () => {
     await request(server)
-      .post('/user/confirm-password-reset')
+      .post('/api/user/confirm-password-reset')
       .send({
         'username': fakeUserId,
         'token': 'fake-token',
@@ -342,7 +342,7 @@ describe('UserController', () => {
     databaseServiceMock.setFailing(true)
 
     await request(server)
-      .get('/user/request-password-reset/' + fakeUserId)
+      .get('/api/user/request-password-reset/' + fakeUserId)
       .expect(500)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect({ ok: false, error: 'Database failed' })
@@ -352,7 +352,7 @@ describe('UserController', () => {
     databaseServiceMock.setFailing(true)
 
     await request(server)
-      .post('/user/confirm-password-reset')
+      .post('/api/user/confirm-password-reset')
       .send({
         'username': fakeUserId,
         'token': 'fake-token',
