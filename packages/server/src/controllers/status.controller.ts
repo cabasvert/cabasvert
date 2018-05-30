@@ -27,7 +27,7 @@ import { DatabaseService } from '../services/database.service'
 import { MailService } from '../services/mail.service'
 import { Services } from '../types'
 
-@controller('/status')
+@controller('/api/status')
 export class StatusController {
 
   constructor(@inject(Services.Config) private config: Configuration,

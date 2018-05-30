@@ -33,7 +33,7 @@ import { Services } from '../types'
 const PASSWORD_RESET_TOKEN_KEY = 'password-reset-token'
 const EXPIRY_TIME = 24 // hours
 
-@controller('/user')
+@controller('/api/user')
 export class UserController {
 
   constructor(@inject(Services.Config) private config: Configuration,
