@@ -94,10 +94,10 @@ export class ContractsEditPage {
     })
 
     if (this.navParams.data) {
-      this.contract = this.navParams.data.contract
+      let contract = this.navParams.data.contract
 
       // Clone
-      this.contract = JSON.parse(JSON.stringify(this.contract))
+      this.contract = JSON.parse(JSON.stringify(contract))
       // Compute formula index in formulas list
       this.formulasToForm(this.contract)
 
@@ -112,10 +112,11 @@ export class ContractsEditPage {
       validation.enable()
 
       // This is a temporary hack until ionic-team/ionic#12359 is fixed
-      let field = document.getElementById("validatedBy");
-      let children = field.getElementsByTagName("input");
-      if(children.length > 0){
-        children[0].removeAttribute("disabled");
+      let field = document.getElementById("validatedBy")
+      if (field === null) return
+      let children = field.getElementsByTagName("input")
+      if(children.length > 0) {
+        children[0].removeAttribute("disabled")
       }
     }
   }
