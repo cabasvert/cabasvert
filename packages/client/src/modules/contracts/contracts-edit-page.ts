@@ -22,9 +22,18 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms"
 
 import { NavParams, ViewController } from "ionic-angular"
 import { Observable } from "rxjs/Observable"
-import { map } from "rxjs/operators"
+import {
+  combineLatest,
+  filter,
+  map,
+  publishReplay,
+  refCount,
+  startWith,
+  withLatestFrom,
+} from "rxjs/operators"
 import { objectAssignNoNulls } from "../../utils/objects"
-import { Season } from "../seasons/season.model"
+import { debug, debugObservable } from "../../utils/observables"
+import { Season, SeasonWeek } from "../seasons/season.model"
 import { SeasonService } from "../seasons/season.service"
 import { ContractKind } from "./contract.model"
 import { Contract } from "./contract.model"
@@ -40,6 +49,7 @@ export class ContractsEditPage {
   contract: Contract
 
   seasons$: Observable<Season[]>
+  weeks$: Observable<SeasonWeek[]>
 
   constructor(public navParams: NavParams,
               public viewCtrl: ViewController,
@@ -103,6 +113,18 @@ export class ContractsEditPage {
 
       this.form.patchValue(this.contract)
     }
+
+    let selectedSeasonId = this.form.get('season').valueChanges.pipe(
+      startWith(this.form.get('season').value),
+    )
+
+    this.weeks$ = this.seasons$.pipe(
+      combineLatest(selectedSeasonId,
+        (ss, seasonId) => seasonId == null ? [] : ss.find(s => s.id == seasonId).seasonWeeks(),
+      ),
+      publishReplay(1),
+      refCount(),
+    )
   }
 
   private wishValueChanged(v) {

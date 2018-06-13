@@ -56,13 +56,22 @@
           </ion-item>
           <ion-item>
             <ion-label color="primary" stacked>First Week</ion-label>
-            <ion-input type="number" placeholder="Enter contract's first week"
-                       formControlName="firstWeek"></ion-input>
+            <ion-select formControlName="firstWeek" interface="popover">
+              <ion-option *ngFor="let week of weeks$ | async" [value]="week.seasonWeek">
+                {{ week.distributionDate | date: 'shortDate' }} ({{ week.seasonWeek }})
+              </ion-option>
+            </ion-select>
           </ion-item>
           <ion-item>
             <ion-label color="primary" stacked>Last Week</ion-label>
-            <ion-input type="number" placeholder="Enter contract's last week"
-                       formControlName="lastWeek"></ion-input>
+            <ion-select formControlName="lastWeek" interface="popover">
+              <ion-option [value]="">
+                -
+              </ion-option>
+              <ion-option *ngFor="let week of weeks$ | async" [value]="week.seasonWeek">
+                {{ week.distributionDate | date: 'shortDate' }} ({{ week.seasonWeek }})
+              </ion-option>
+            </ion-select>
           </ion-item>
         </ion-item-group>
       </ng-container>
