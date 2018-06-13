@@ -122,7 +122,6 @@ export class MembersPage {
         f.hasNone() ? null : ss.reduce<(m: Member) => boolean>(
           (acc, s, i) => {
             let flag = f.get(s.id)
-            console.log(s.id + ': ' + flag)
             return m => acc(m) && (flag === undefined || (scs[i] && scs[i](m) == flag))
           },
           m => true,
