@@ -63,14 +63,17 @@
       <ng-container formArrayName="trialBasket">
         <ion-item-group>
           <ion-item-divider>{{ 'TRIAL_BASKET.TITLE' | translate }}</ion-item-divider>
-          <ion-item>
+          <ion-item *ngIf="(season$ | async) as season">
             <ion-label color="primary" stacked>{{ 'REF.SEASON' | translate }}</ion-label>
-            <ion-input type="string" disabled="true" [value]="trialBasket.season"></ion-input>
+            <ion-input type="string" disabled="true" [value]="season.name"></ion-input>
           </ion-item>
           <ion-item>
             <ion-label color="primary" stacked>{{ 'REF.WEEK' | translate }}</ion-label>
-            <ion-input type="number" placeholder="{{ 'TRIAL_BASKET.WEEK_PLACEHOLDER' | translate }}"
-                       formControlName="week"></ion-input>
+            <ion-select formControlName="week" interface="popover">
+              <ion-option *ngFor="let week of weeks$ | async" [value]="week.seasonWeek">
+                {{ week.distributionDate | date: 'shortDate' }} ({{ week.seasonWeek }})
+              </ion-option>
+            </ion-select>
           </ion-item>
         </ion-item-group>
 

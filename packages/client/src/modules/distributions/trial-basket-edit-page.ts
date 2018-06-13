@@ -21,6 +21,7 @@ import { Component } from "@angular/core"
 import { AsyncValidatorFn, FormBuilder, FormGroup, Validators } from "@angular/forms"
 
 import { NavParams, ViewController } from "ionic-angular"
+import { Observable } from "rxjs/Observable"
 import { of } from "rxjs/observable/of"
 import { map, take } from "rxjs/operators"
 
@@ -30,6 +31,8 @@ import { objectAssignNoNulls } from "../../utils/objects"
 import { ContractKind } from "../contracts/contract.model"
 import { Person, TrialBasket } from "../members/member.model"
 import { MemberService } from "../members/member.service"
+import { Season, SeasonWeek } from "../seasons/season.model"
+import { SeasonService } from "../seasons/season.service"
 
 @Component({
   selector: 'page-edit-trial-basket',
@@ -43,10 +46,14 @@ export class TrialBasketEditPage {
   person: Person
   trialBasket: TrialBasket
 
+  season$: Observable<Season>
+  weeks$: Observable<SeasonWeek[]>
+
   constructor(public navParams: NavParams,
               public viewCtrl: ViewController,
               public formBuilder: FormBuilder,
-              private members: MemberService) {
+              private members: MemberService,
+              private seasons: SeasonService) {
 
     this.form = this.formBuilder.group({
       person: this.formBuilder.group({
@@ -89,6 +96,9 @@ export class TrialBasketEditPage {
         this.form.get('person').disable()
       }
     }
+
+    this.season$ = this.seasons.seasonById$(this.trialBasket.season)
+    this.weeks$ = this.season$.pipe(map(s => s.seasonWeeks()))
   }
 
   personDoesNotAlreadyExist: AsyncValidatorFn = c => {
