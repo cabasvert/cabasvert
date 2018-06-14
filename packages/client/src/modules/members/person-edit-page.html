@@ -24,6 +24,12 @@
     <input #submit type="submit" value="Submit" style="display:none"/>
 
     <ion-list>
+      <ion-item *ngIf="problems() as problems">
+        <ion-label *ngIf="problems.memberAlreadyExists" color="danger">
+          A member with this person already exists.
+        </ion-label>
+      </ion-item>
+
       <ion-item>
         <ion-label color="primary" stacked>{{ 'PERSON.FIRSTNAME' | translate }}</ion-label>
         <ion-input type="text" placeholder="{{ 'PERSON.FIRSTNAME_PLACEHOLDER' | translate }}"

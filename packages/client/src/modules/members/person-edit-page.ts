@@ -18,11 +18,14 @@
  */
 
 import { Component } from "@angular/core"
-import { FormBuilder, FormGroup, Validators } from "@angular/forms"
+import { AsyncValidatorFn, FormBuilder, FormGroup, Validators } from "@angular/forms"
 
 import { NavParams, ViewController } from "ionic-angular"
+import { of } from "rxjs/observable/of"
+import { map, take } from "rxjs/operators"
 import { Person } from "./member.model"
 import { objectAssignNoNulls } from "../../utils/objects"
+import { MemberService } from "./member.service"
 
 @Component({
   selector: 'page-edit-person',
@@ -36,14 +39,15 @@ export class PersonEditPage {
 
   constructor(public navParams: NavParams,
               public viewCtrl: ViewController,
-              public formBuilder: FormBuilder) {
+              public formBuilder: FormBuilder,
+              private members: MemberService) {
     this.form = this.formBuilder.group({
       firstname: ['', Validators.required],
       lastname: ['', Validators.required],
       address: null,
       phoneNumber: null,
       emailAddress: null,
-    })
+    }, { asyncValidator: this.personDoesNotAlreadyExist })
   }
 
   ionViewDidLoad() {
@@ -52,6 +56,24 @@ export class PersonEditPage {
       this.person = this.navParams.data.person
       this.form.patchValue(this.person)
     }
+  }
+
+  personDoesNotAlreadyExist: AsyncValidatorFn = c => {
+    let lastname = c.get("lastname")
+    let firstname = c.get("firstname")
+
+    if (!lastname.value || !firstname.value) return of(null)
+
+    return this.members.getMember$(lastname.value, firstname.value).pipe(
+      map(m => !m ? null : { "memberAlreadyExists": true }),
+      take(1),
+    )
+  }
+
+  problems() {
+    let control = this.form
+    return (control.invalid && (control.dirty || control.touched) && control.errors) ?
+      control.errors : null
   }
 
   dismiss() {
