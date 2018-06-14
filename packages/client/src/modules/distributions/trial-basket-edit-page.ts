@@ -29,7 +29,7 @@ import { Forms } from "../../toolkit/utils/forms"
 import { objectAssignNoNulls } from "../../utils/objects"
 
 import { ContractKind } from "../contracts/contract.model"
-import { Person, TrialBasket } from "../members/member.model"
+import { Member, Person, TrialBasket } from "../members/member.model"
 import { MemberService } from "../members/member.service"
 import { Season, SeasonWeek } from "../seasons/season.model"
 import { SeasonService } from "../seasons/season.service"
@@ -43,7 +43,7 @@ export class TrialBasketEditPage {
 
   title: string
   edit: boolean
-  person: Person
+  member: Member
   trialBasket: TrialBasket
 
   season$: Observable<Season>
@@ -56,13 +56,6 @@ export class TrialBasketEditPage {
               private seasons: SeasonService) {
 
     this.form = this.formBuilder.group({
-      person: this.formBuilder.group({
-        firstname: ['', Validators.required],
-        lastname: ['', Validators.required],
-        address: null,
-        phoneNumber: null,
-        emailAddress: null,
-      }, { asyncValidator: this.personDoesNotAlreadyExist }),
       trialBasket: this.formBuilder.group({
         week: [1, Validators.required],
         sections: this.formBuilder.array(
@@ -83,38 +76,16 @@ export class TrialBasketEditPage {
   ionViewDidLoad() {
     if (this.navParams.data) {
       this.title = this.navParams.data.title
-      this.edit = this.navParams.data.edit
-      this.person = this.navParams.data.person
+      this.member = this.navParams.data.member
       this.trialBasket = this.navParams.data.trialBasket
 
       this.form.patchValue({
-        person: this.person,
         trialBasket: this.trialBasket
       })
-
-      if (this.edit) {
-        this.form.get('person').disable()
-      }
     }
 
     this.season$ = this.seasons.seasonById$(this.trialBasket.season)
     this.weeks$ = this.season$.pipe(map(s => s.seasonWeeks()))
-  }
-
-  personDoesNotAlreadyExist: AsyncValidatorFn = c => {
-    let lastname = c.get("lastname")
-    let firstname = c.get("firstname")
-
-    if (!lastname.value || !firstname.value) return of(null)
-
-    return this.members.getMember$(lastname.value, firstname.value).pipe(
-      map(m => !m ? null : { "memberAlreadyExists": true }),
-      take(1),
-    )
-  }
-
-  get personControl() {
-    return this.form.get('person')
   }
 
   dismiss() {
@@ -123,7 +94,6 @@ export class TrialBasketEditPage {
 
   save() {
     this.viewCtrl.dismiss({
-      person: objectAssignNoNulls({}, this.person, this.form.get('person').value),
       trialBasket: objectAssignNoNulls({}, this.trialBasket, this.form.get('trialBasket').value)
     })
   }

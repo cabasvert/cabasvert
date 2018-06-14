@@ -22,7 +22,8 @@
     "EGGS": "Eggs",
     "BASKETTREATED": "Treated baskets",
     "BASKETPREPARED": "Prepared baskets",
-    "COUNT": "Count"
+    "COUNT": "Count",
+    "MEMBER": "Member"
   },
   "WELCOME": {
     "TITLE": "Welcome",

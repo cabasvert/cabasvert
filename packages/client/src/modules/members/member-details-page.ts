@@ -248,8 +248,7 @@ export class MemberDetailsPage {
         (w, m) => {
           return {
             title: 'TRIAL_BASKET.CREATION_TITLE',
-            edit: true,
-            person: m.persons[0],
+            member: m,
             trialBasket: {
               season: w.season.id,
               week: w.seasonWeek,
