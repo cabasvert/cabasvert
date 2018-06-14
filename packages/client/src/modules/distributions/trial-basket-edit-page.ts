@@ -58,6 +58,7 @@ export class TrialBasketEditPage {
     this.form = this.formBuilder.group({
       trialBasket: this.formBuilder.group({
         week: [1, Validators.required],
+        paid: false,
         sections: this.formBuilder.array(
           [ContractKind.VEGETABLES, ContractKind.EGGS].map(kind => {
             let section = this.formBuilder.group({

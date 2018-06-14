@@ -42,6 +42,11 @@
           </ion-select>
         </ion-item>
 
+        <ion-item>
+          <ion-label color="primary" stacked>Paid</ion-label>
+          <ion-checkbox formControlName="paid"></ion-checkbox>
+        </ion-item>
+
         <ng-container formArrayName="sections">
           <ion-item *ngFor="let section of trialBasket.sections; let i=index" [formGroupName]="i">
             <input type="text" style="display: none;" formControlName="kind"/>
