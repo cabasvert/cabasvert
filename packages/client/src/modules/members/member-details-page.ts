@@ -20,6 +20,7 @@
 import { Component } from "@angular/core"
 import { NavParams, ViewController } from "ionic-angular"
 import { Observable } from "rxjs/Observable"
+import { of } from "rxjs/observable/of"
 import {
   map,
   publishReplay,
@@ -44,7 +45,7 @@ import { TrialBasketEditPage } from "../distributions/trial-basket-edit-page"
 import { Season } from "../seasons/season.model"
 import { SeasonService } from "../seasons/season.service"
 
-import { Member, Person } from "./member.model"
+import { Member, Person, TrialBasket } from "./member.model"
 import { MemberService } from "./member.service"
 import { PersonEditPage } from "./person-edit-page"
 
@@ -273,5 +274,40 @@ export class MemberDetailsPage {
       ),
       switchMap(m => this.members.putMember$(m)),
     ).subscribe()
+  }
+
+  editTrialBasket(trialBasket: TrialBasket, index: number) {
+    of(trialBasket).pipe(
+      withLatestFrom(this.member$,
+        (trialBasket, m) => ({
+        title: 'TRIAL_BASKET.TITLE',
+        member: m,
+        trialBasket: trialBasket,
+      })),
+      switchMap(data => this.nav.push(TrialBasketEditPage, data)),
+      filterNotNull(),
+      withLatestFrom(this.member$,
+        (d, m) => Object.assign({}, m, { trialBaskets: copyWith(m.trialBaskets, index, d.trialBasket) })
+      ),
+      switchMap(m => this.members.putMember$(m)),
+    ).subscribe()
+  }
+
+  deleteTrialBasket(trialBasket: TrialBasket, index: number) {
+    this.nav.alert({
+        title: "Confirm Deletion",
+        message: `Are you sure you want to delete this trial basket ?`,
+        buttons: [
+          { text: "Cancel", role: 'cancel' },
+          { text: "Delete" },
+        ],
+      })
+      .pipe(
+        withLatestFrom(this.member$,
+          (d, m) => Object.assign({}, m, { trialBaskets: copyRemove(m.trialBaskets, index) })
+        ),
+        switchMap(m => this.members.putMember$(m)),
+      )
+      .subscribe()
   }
 }

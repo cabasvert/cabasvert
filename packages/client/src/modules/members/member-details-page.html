@@ -118,8 +118,20 @@
           </button>
         </ion-buttons>
       </ion-list-header>
-      <ion-item *ngFor="let trialBasket of member.trialBaskets">
+      <ion-item *ngFor="let trialBasket of member.trialBaskets; let index=index">
         <trial-basket [trialBasket]="trialBasket"></trial-basket>
+
+        <!-- TODO Enable buttons only in case the trial basket has not been distributed -->
+        <ion-buttons item-right *ngIf="(editMode$ | async)">
+          <button ion-button small outline
+                  (click)="editTrialBasket(trialBasket, index)">
+            <ion-icon name="create"></ion-icon>
+          </button>
+          <button ion-button small outline
+                  (click)="deleteTrialBasket(trialBasket, index)">
+            <ion-icon name="trash"></ion-icon>
+          </button>
+        </ion-buttons>
       </ion-item>
     </ion-list>
 
