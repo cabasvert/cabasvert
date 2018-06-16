@@ -57,6 +57,7 @@ export class SeasonService {
 
   private _seasons$: Observable<Season[]>
   private _seasonsIndexed$: Observable<{ [id: string]: Season }>
+  private _lastThreeSeasons$: Observable<Season[]>
 
   constructor(private mainDatabase: DatabaseService) {
 
@@ -92,9 +93,25 @@ export class SeasonService {
       publishReplay(1),
       refCount(),
     )
+
+    // Last three seasons
+    this._lastThreeSeasons$ = this._lastSeasons$(3).pipe(
+      publishReplay(1),
+      refCount(),
+    )
   }
 
   lastSeasons$(count: number = 1): Observable<Season[]> {
+    if (count <= 3) {
+      return this._lastThreeSeasons$.pipe(
+        map(ss => ss.slice(0, count))
+      )
+    } else {
+      return this._lastSeasons$(count)
+    }
+  }
+
+  private _lastSeasons$(count: number = 1): Observable<Season[]> {
     let query = {
       selector: {
         type: 'season',
