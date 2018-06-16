@@ -117,6 +117,7 @@ export class SeasonService {
         type: 'season',
       },
       sort: [{
+        type: 'desc',
         _id: 'desc',
       }],
       limit: count,
