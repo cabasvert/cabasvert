@@ -19,13 +19,22 @@
 
 import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core'
 
-import { Content, ModalController, NavController, NavParams, } from 'ionic-angular'
+import { Content, ModalController, NavController, NavParams } from 'ionic-angular'
 import { Observable } from "rxjs/Observable"
 import { combineLatest as combineAllLatest } from "rxjs/observable/combineLatest"
 import { of } from "rxjs/observable/of"
 import {
-  combineLatest, map, mapTo, merge, mergeScan, publishReplay, refCount, startWith, switchAll,
-  switchMap, withLatestFrom,
+  combineLatest,
+  map,
+  mapTo,
+  merge,
+  mergeScan,
+  publishReplay,
+  refCount,
+  startWith,
+  switchAll,
+  switchMap,
+  withLatestFrom,
 } from "rxjs/operators"
 import { Subject } from "rxjs/Subject"
 import { Subscription } from "rxjs/Subscription"
@@ -254,15 +263,7 @@ export class DistributionPage implements AfterViewInit, OnDestroy {
       this.week$.pipe(
         switchMap(w =>
           this.contracts.getSeasonContracts$(w.season).pipe(
-            map(cs =>
-              cs.reduce((acc, c) => {
-                let problems = ContractService.validateContract(c)
-                let severity = ContractService.contractValidationSeverity(problems)
-
-                if (severity) acc[c.member] = severity
-                return acc
-              }, {})
-            )
+            map(cs => ContractService.computePerMemberIdProblemSeverity(cs))
           )
         ),
         publishReplay(1),

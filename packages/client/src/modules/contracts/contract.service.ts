@@ -19,7 +19,7 @@
 
 import { Injectable } from '@angular/core'
 import { Observable } from "rxjs/Observable"
-import { switchMap } from "rxjs/operators"
+import { map, publishReplay, refCount, switchMap } from "rxjs/operators"
 
 import { DatabaseService } from "../../toolkit/providers/database-service"
 
@@ -30,7 +30,15 @@ import { Contract, ContractKind, ContractSection } from "./contract.model"
 @Injectable()
 export class ContractService {
 
+  private _perMemberIdProblemSeverity$: Observable<{[id: string]: string}>
+
   constructor(private mainDatabase: DatabaseService) {
+    // Per member problem severity on all contracts
+    this._perMemberIdProblemSeverity$ = this.getContracts$().pipe(
+      map(cs => ContractService.computePerMemberIdProblemSeverity(cs)),
+      publishReplay(1),
+      refCount(),
+    )
   }
 
   getSeasonContracts$(season: Season): Observable<Contract[]> {
@@ -74,6 +82,20 @@ export class ContractService {
 
   removeContracts$(contracts: Contract): Observable<string> {
     return this.mainDatabase.database$.pipe(switchMap(db => db.remove$(contracts)))
+  }
+
+  perMemberIdProblemSeverity$(): Observable<{[id: string]: string}> {
+    return this._perMemberIdProblemSeverity$
+  }
+
+  static computePerMemberIdProblemSeverity(cs: Contract[]): {[id: string]: string} {
+    return cs.reduce((acc, c) => {
+      let problems = ContractService.validateContract(c)
+      let severity = ContractService.contractValidationSeverity(problems)
+
+      if (severity) acc[c.member] = severity
+      return acc
+    }, {})
   }
 
   static contractValidationMessages(problems: { [key: string]: boolean }): string[] {

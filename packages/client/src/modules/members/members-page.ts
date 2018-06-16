@@ -41,7 +41,7 @@ import { Subscription } from "rxjs/Subscription"
 import { IndexedScroller } from "../../toolkit/components/indexed-scroller"
 import { Navigation } from "../../toolkit/providers/navigation"
 import { contains, Group, groupBy } from "../../utils/arrays"
-import { debug, errors, filterNotNull, ignoreErrors } from "../../utils/observables"
+import { errors, filterNotNull, ignoreErrors } from "../../utils/observables"
 
 import { ContractService } from "../contracts/contract.service"
 import { Season } from "../seasons/season.model"
@@ -165,19 +165,7 @@ export class MembersPage {
     )
 
     this.subscription.add(
-      this.contracts.getContracts$().pipe(
-        map(cs =>
-          cs.reduce((acc, c) => {
-            let problems = ContractService.validateContract(c)
-            let severity = ContractService.contractValidationSeverity(problems, acc[c.member])
-
-            if (severity) acc[c.member] = severity
-            return acc
-          }, {})
-        ),
-        publishReplay(1),
-        refCount(),
-      ).subscribe(perIdSeverity => {
+      this.contracts.perMemberIdProblemSeverity$().subscribe(perIdSeverity => {
         this.perMemberIdProblemSeverity = perIdSeverity
       })
     )
