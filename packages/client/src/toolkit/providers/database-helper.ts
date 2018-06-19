@@ -136,50 +136,30 @@ export class Database {
 
   public login(username: string, password: string, options: {} = {}): Promise<boolean> {
     this.log.debug(`Attempting to log user '${username}' in...`)
-    return Promise.resolve().then(() => {
-      options = options || {}
-      this.addAjaxHeaders(options, username, password)
-      return this.db.logIn(username, password, options).then((r) => {
-        if (r.ok) {
-          this.log.info(`Successfully logged user '${username}' in.`)
-          this.setupAuthenticationCookieRenewer()
-        }
-        else this.log.error(`Failed to log user '${username}' in.`)
-        return r.ok
-      }).catch((e) => {
-        let error = new PouchError(e, "login")
-        this.log.error(`Failed to log user: ${error}`)
-        return Promise.reject(error)
-      })
+    return this.db.logIn(username, password, options || {}).then((r) => {
+      if (r.ok) {
+        this.log.info(`Successfully logged user '${username}' in.`)
+        this.setupAuthenticationCookieRenewer()
+      }
+      else this.log.error(`Failed to log user '${username}' in.`)
+      return r.ok
+    }).catch((e) => {
+      let error = new PouchError(e, "login")
+      this.log.error(`Failed to log user: ${error}`)
+      return Promise.reject(error)
     })
   }
 
   public changePassword(username: string, oldPassword: string, newPassword: string, options: {} = {}): Promise<boolean> {
-    return Promise.resolve().then(() => {
-      options = options || {}
-      this.addAjaxHeaders(options, username, oldPassword)
-      return this.db.changePassword(username, newPassword, options).then(r => {
-        if (r.ok) this.log.info(`Successfully changed password.`)
-        else this.log.error("Failed to change password.")
-        return r.ok
-      }).catch((e) => {
-        let error = new PouchError(e, "changePassword")
-        this.log.error(`Failed to change password: ${error}`)
-        return Promise.reject(error)
-      })
+    return this.db.changePassword(username, newPassword, options || {}).then(r => {
+      if (r.ok) this.log.info(`Successfully changed password.`)
+      else this.log.error("Failed to change password.")
+      return r.ok
+    }).catch((e) => {
+      let error = new PouchError(e, "changePassword")
+      this.log.error(`Failed to change password: ${error}`)
+      return Promise.reject(error)
     })
-  }
-
-  private addAjaxHeaders(options: {}, username: string, password: string) {
-    options['ajax'] = {
-      headers: {
-        Authorization: 'Basic ' + window.btoa(username + ':' + password),
-      },
-      body: {
-        name: username,
-        password: password,
-      },
-    }
   }
 
   public getUser(username: string): Promise<any> {
