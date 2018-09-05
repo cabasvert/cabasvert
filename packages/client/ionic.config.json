@@ -1,9 +1,8 @@
 {
   "name": "Cabas Vert",
-  "v3": true,
-  "type": "ionic-angular",
   "integrations": {
     "cordova": {}
   },
-  "app_id": ""
+  "v3": true,
+  "type": "ionic-angular"
 }
