@@ -15,7 +15,10 @@
     "build": "ionic-app-scripts build && npm run license-check",
     "ionic:build": "ionic-app-scripts build",
     "ionic:serve": "ionic-app-scripts serve --sourceMap source-map --iscordovaserve --wwwDir platforms/browser/www/ --buildDir platforms/browser/www/build --nobrowser",
-    "license-check": "license-check"
+    "license-check": "license-check",
+    "build-browser-release": "NODE_ENV=prod ionic cordova build browser --prod",
+    "pack-browser-release": "tar cvzf cabasvert-client-browser.tar.gz --directory=platforms/browser --exclude=config.dev.json --exclude=config.prod.json www",
+    "browser-release": "npm run build-browser-release && npm run pack-browser-release"
   },
   "dependencies": {
     "@angular/common": "^5.1.2",
