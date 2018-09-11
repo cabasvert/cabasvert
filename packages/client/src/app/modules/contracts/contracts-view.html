@@ -18,22 +18,26 @@
       <ng-container *ngIf="section.firstWeek && section.firstWeek !== 1 && !section.lastWeek">
         {{ 'CONTRACT.SINCE' | translate }}
         <app-week-view [seasonId]="contract.season"
-                       [weekNumber]="section.firstWeek"></app-week-view>
+                       [weekNumber]="section.firstWeek">
+        </app-week-view>
       </ng-container>
 
       <ng-container *ngIf="(!section.firstWeek || section.firstWeek === 1) && section.lastWeek">
         {{ 'CONTRACT.UP_TO' | translate }}
         <app-week-view [seasonId]="contract.season"
-                       [weekNumber]="section.lastWeek"></app-week-view>
+                       [weekNumber]="section.lastWeek">
+        </app-week-view>
       </ng-container>
 
       <ng-container *ngIf="section.firstWeek && section.firstWeek !== 1 && section.lastWeek">
         {{ 'CONTRACT.FROM' | translate }}
         <app-week-view [seasonId]="contract.season"
-                       [weekNumber]="section.firstWeek"></app-week-view>
+                       [weekNumber]="section.firstWeek">
+        </app-week-view>
         {{ 'CONTRACT.TO' | translate }}
         <app-week-view [seasonId]="contract.season"
-                       [weekNumber]="section.lastWeek"></app-week-view>
+                       [weekNumber]="section.lastWeek">
+        </app-week-view>
       </ng-container>
     </ng-container>
   </li>
@@ -46,7 +50,8 @@
 
       {{ 'CONTRACT.ON' | translate }}
       <app-week-view [seasonId]="contract.season"
-                     [weekNumber]="amendment.week"></app-week-view>
+                     [weekNumber]="amendment.week">
+      </app-week-view>
 
       <ng-container *ngFor="let kind of Kinds.ALL">
         <ng-container *ngIf="amendment.deltas[kind] as delta">
@@ -65,11 +70,13 @@
 
       {{ 'CONTRACT.FROM' | translate }}
       <app-week-view [seasonId]="contract.season"
-                     [weekNumber]="postponement.week"></app-week-view>
+                     [weekNumber]="postponement.week">
+      </app-week-view>
 
       {{ 'CONTRACT.TO' | translate }}
       <app-week-view [seasonId]="contract.season"
-                     [weekNumber]="postponement.rescheduledWeek"></app-week-view>
+                     [weekNumber]="postponement.rescheduledWeek">
+      </app-week-view>
 
       <ng-container *ngFor="let kind of Kinds.ALL">
         <ng-container *ngIf="postponement.deltas[kind] as delta">
