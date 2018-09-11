@@ -53,6 +53,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
 
   member$: Observable<Member>;
   contracts$: Observable<Contract[]>;
+  trialBaskets$: Observable<TrialBasket[]>;
 
   user: User;
   private subscription: Subscription;
@@ -77,6 +78,13 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
     this.contracts$ = this.member$.pipe(
       switchMap(m => this.contractService.getContracts$(m)),
       map(cs => cs.sort((c1, c2) => -c1.season.localeCompare(c2.season))),
+    );
+
+    this.trialBaskets$ = this.member$.pipe(
+      map(m => m.trialBaskets || []),
+      map(tbs => tbs.sort((tb1, tb2) =>
+        -(tb1.season + '-' + tb1.week).localeCompare(tb2.season + '-' + tb2.week)),
+      ),
     );
 
     this.subscription = this.authService.loggedInUser$.subscribe(user => this.user = user);
@@ -160,7 +168,10 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
           contract: this.inferNewContract(currentSeason, lastSeason, member, lastContract),
         }),
       ),
-      switchMap(data => this.nav.showModal$({ component: ContractsEditPage, componentProps: data })),
+      switchMap(data => this.nav.showModal$({
+        component: ContractsEditPage,
+        componentProps: data,
+      })),
       filter(r => r.role === 'save'),
       map(r => r.data),
       map(c => {
@@ -257,7 +268,10 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
           trialBasket: this.inferNewTrialBasket(currentWeek, member),
         }),
       ),
-      switchMap(data => this.nav.showModal$({ component: TrialBasketEditPage, componentProps: data })),
+      switchMap(data => this.nav.showModal$({
+        component: TrialBasketEditPage,
+        componentProps: data,
+      })),
       filter(r => r.role === 'save'),
       map(r => r.data),
       withLatestFrom(this.member$,
@@ -299,7 +313,10 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         title: 'TRIAL_BASKET.TITLE',
         trialBasket: basket,
       })),
-      switchMap(data => this.nav.showModal$({ component: TrialBasketEditPage, componentProps: data })),
+      switchMap(data => this.nav.showModal$({
+        component: TrialBasketEditPage,
+        componentProps: data,
+      })),
       filter(r => r.role === 'save'),
       map(r => r.data),
       withLatestFrom(this.member$,

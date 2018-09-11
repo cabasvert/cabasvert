@@ -152,7 +152,7 @@
         </ng-container>
       </ion-list-header>
 
-      <ion-item *ngFor="let trialBasket of member.trialBaskets; let index=index" text-wrap>
+      <ion-item *ngFor="let trialBasket of trialBaskets$ | async; let index=index" text-wrap>
         <ion-label>
           <trial-basket [trialBasket]="trialBasket"></trial-basket>
         </ion-label>
