@@ -1,6 +1,6 @@
 <h3>
-  {{ 'REF.SEASON' | translate }} {{ seasonName | async }};
-  {{ 'REF.WEEK' | translate }} {{ trialBasket.week }}
+  {{ seasonName | async }} -
+  <app-week-view [seasonId]="trialBasket.season" [weekNumber]="trialBasket.week"></app-week-view>
 </h3>
 <ul>
   <li>
