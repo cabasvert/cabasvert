@@ -71,11 +71,11 @@ export class EditDialogComponent implements OnInit {
     return this.editFormInstance.isValid;
   }
 
-  async dismiss() {
-    await this.modalController.dismiss();
+  async cancel() {
+    await this.modalController.dismiss(null, 'cancel');
   }
 
   async save() {
-    await this.modalController.dismiss(this.editFormInstance.editedData);
+    await this.modalController.dismiss(this.editFormInstance.editedData, 'save');
   }
 }

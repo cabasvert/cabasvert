@@ -21,6 +21,7 @@ import { Injectable } from '@angular/core';
 import { AlertController, ModalController, NavController } from '@ionic/angular';
 import { AlertOptions, ModalOptions, NavOptions } from '@ionic/core';
 import { Observable } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { EditDialogComponent, EditFormOptions } from '../dialogs/edit-dialog.component';
 
 @Injectable()
@@ -67,7 +68,7 @@ export class Navigation {
       this.modalCtrl.create(opts)
         .then(modal => {
           modal.onDidDismiss().then(r => {
-            observer.next(r.data);
+            observer.next(r);
             observer.complete();
           });
           return modal.present();
@@ -80,6 +81,9 @@ export class Navigation {
     return this.showModal$({
       component: EditDialogComponent,
       componentProps: opts,
-    });
+    }).pipe(
+      filter(r => r.role === 'save'),
+      map(r => r.data),
+    );
   }
 }

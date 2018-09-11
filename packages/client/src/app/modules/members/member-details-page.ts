@@ -22,7 +22,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Plugins } from '@capacitor/core';
 import { NavController, Platform } from '@ionic/angular';
 import { Observable, of, Subscription } from 'rxjs';
-import { map, switchMap, take, withLatestFrom } from 'rxjs/operators';
+import { filter, map, switchMap, take, withLatestFrom } from 'rxjs/operators';
 
 import { AuthService, Roles, User } from '../../toolkit/providers/auth-service';
 import { Navigation } from '../../toolkit/providers/navigation';
@@ -110,7 +110,6 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         person: {},
       },
     }).pipe(
-      filterNotNull(),
       withLatestFrom(this.member$,
         (p, m) => Object.assign({}, m, { persons: copyAdd(m.persons, p) }),
       ),
@@ -126,7 +125,6 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         person: person,
       },
     }).pipe(
-      filterNotNull(),
       withLatestFrom(this.member$,
         (p, m) => Object.assign({}, m, { persons: copyWith(m.persons, index, p) }),
       ),
@@ -163,7 +161,8 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         }),
       ),
       switchMap(data => this.nav.showModal$({ component: ContractsEditPage, componentProps: data })),
-      filterNotNull(),
+      filter(r => r.role === 'save'),
+      map(r => r.data),
       map(c => {
         const seasonId = c.season.substring('season:'.length);
         const memberId = c.member.substring('member:'.length);
@@ -226,7 +225,8 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         contract: contract,
       },
     }).pipe(
-      filterNotNull(),
+      filter(r => r.role === 'save'),
+      map(r => r.data),
       map(c => Object.assign({}, contract, c)),
       switchMap(c => this.contractService.putContracts$(c)),
     ).subscribe();
@@ -258,9 +258,10 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         }),
       ),
       switchMap(data => this.nav.showModal$({ component: TrialBasketEditPage, componentProps: data })),
-      filterNotNull(),
+      filter(r => r.role === 'save'),
+      map(r => r.data),
       withLatestFrom(this.member$,
-        (d, m) => Object.assign({}, m, { trialBaskets: copyAdd(m.trialBaskets || [], d.trialBasket) }),
+        (tb, m) => Object.assign({}, m, { trialBaskets: copyAdd(m.trialBaskets || [], tb) }),
       ),
       switchMap(m => this.memberService.putMember$(m)),
     ).subscribe();
@@ -299,9 +300,10 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         trialBasket: basket,
       })),
       switchMap(data => this.nav.showModal$({ component: TrialBasketEditPage, componentProps: data })),
-      filterNotNull(),
+      filter(r => r.role === 'save'),
+      map(r => r.data),
       withLatestFrom(this.member$,
-        (d, m) => Object.assign({}, m, { trialBaskets: copyWith(m.trialBaskets, index, d.trialBasket) }),
+        (tb, m) => Object.assign({}, m, { trialBaskets: copyWith(m.trialBaskets, index, tb) }),
       ),
       switchMap(m => this.memberService.putMember$(m)),
     ).subscribe();

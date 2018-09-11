@@ -98,13 +98,12 @@ export class TrialBasketEditPage implements OnInit {
     }
   }
 
-  async dismiss() {
-    await this.modalController.dismiss();
+  async cancel() {
+    await this.modalController.dismiss(null, 'cancel');
   }
 
   async save() {
-    await this.modalController.dismiss({
-      trialBasket: objectAssignNoNulls({}, this.trialBasket, this.form.value),
-    });
+    let data = objectAssignNoNulls({}, this.trialBasket, this.form.value);
+    await this.modalController.dismiss(data, 'save');
   }
 }

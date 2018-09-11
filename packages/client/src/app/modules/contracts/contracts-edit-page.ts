@@ -145,15 +145,16 @@ export class ContractsEditPage implements OnInit {
     }
   }
 
-  async dismiss() {
-    await this.modalController.dismiss();
+  async cancel() {
+    await this.modalController.dismiss(null, 'cancel');
   }
 
   async save() {
     // Recompute formula
     this.formulasFromForm(this.form.value);
 
-    await this.modalController.dismiss(objectAssignNoNulls({}, this.contract, this.form.value));
+    let data = objectAssignNoNulls({}, this.contract, this.form.value);
+    await this.modalController.dismiss(data, 'save');
   }
 
   hasNoneFormula(kind: string) {
