@@ -32,8 +32,7 @@ import { DynamicChildControlComponent } from './dynamic-child-control.component'
         </ion-item-divider>
 
         <dynamic-controls [config]="config"
-                          [form]="form" [group]="group.get(config.name)"
-                          [parentDisabled$]="disabled$">
+                          [form]="form" [group]="group.get(config.name)">
         </dynamic-controls>
       </ion-item-group>
     </ng-container>

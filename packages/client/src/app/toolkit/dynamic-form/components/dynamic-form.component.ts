@@ -30,8 +30,7 @@ import { DynamicControlComponent } from './dynamic-control.component';
     <form [formGroup]="form.control" (submit)="handleSubmit($event)">
       <ion-list inset>
         <dynamic-controls [config]="config"
-                          [form]="form" [group]="form"
-                          [parentDisabled$]="disabled$">
+                          [form]="form" [group]="form">
         </dynamic-controls>
       </ion-list>
     </form>

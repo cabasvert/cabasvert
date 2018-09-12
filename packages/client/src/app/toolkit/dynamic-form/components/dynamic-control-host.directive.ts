@@ -59,7 +59,6 @@ export class DynamicControlHostDirective implements OnChanges {
   @Input() config: ControlConfig;
   @Input() form: DynamicGroup;
   @Input() group: DynamicGroup;
-  @Input() parentDisabled$?: Observable<boolean>;
 
   component: ComponentRef<DynamicControlComponent<any>>;
 
@@ -79,6 +78,6 @@ export class DynamicControlHostDirective implements OnChanges {
     }
     const factory = this.resolver.resolveComponentFactory<DynamicControlComponent<any>>(components[control]);
     this.component = this.container.createComponent(factory);
-    this.component.instance.initialize(this.config, this.group, this.form, this.parentDisabled$);
+    this.component.instance.initialize(this.config, this.group, this.form);
   }
 }

@@ -22,19 +22,16 @@ import { DynamicGroup } from '../dynamic-form.service';
 import { ControlConfigBase } from '../models/form-config.interface';
 
 export abstract class DynamicControlComponent<C extends ControlConfigBase> {
-  protected config: C;
-  protected group: DynamicGroup;
-  protected form: DynamicGroup;
-  protected parentDisabled$?: Observable<boolean>;
+  config: C;
+  group: DynamicGroup;
+  form: DynamicGroup;
 
   initialize(config: C,
              group: DynamicGroup,
-             form: DynamicGroup,
-             parentDisabled$: Observable<boolean> = null) {
+             form: DynamicGroup) {
     this.config = config;
     this.group = group;
     this.form = form;
-    this.parentDisabled$ = parentDisabled$;
   }
 
   abstract get dynamicControl()

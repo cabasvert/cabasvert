@@ -33,8 +33,7 @@ import { GroupConfigBase } from '../models/form-config.interface';
     </ion-item>
     <ng-container *ngFor="let childConfig of config.controls;"
                   dynamicControlHost [config]="childConfig"
-                  [form]="form" [group]="group"
-                  [parentDisabled$]="parentDisabled$">
+                  [form]="form" [group]="group">
     </ng-container>
   `,
 })
@@ -43,7 +42,6 @@ export class DynamicControlsComponent {
   @Input() config: GroupConfigBase;
   @Input() form: DynamicGroup;
   @Input() group: DynamicGroup;
-  @Input() parentDisabled$?: Observable<boolean>;
 
   get errors() {
     let control = this.group.control;
