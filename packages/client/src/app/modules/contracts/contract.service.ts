@@ -22,6 +22,7 @@ import { Observable } from 'rxjs';
 import { map, publishReplay, refCount, switchMap } from 'rxjs/operators';
 
 import { DatabaseService } from '../../toolkit/providers/database-service';
+import { debug } from '../../utils/observables';
 
 import { Member } from '../members/member.model';
 import { Season } from '../seasons/season.model';
@@ -56,7 +57,7 @@ export class ContractService {
     });
     return db$.pipe(
       switchMap(db => db.findAll$(query)),
-      map((cs: any[]) => cs.map(c => this.fixContract(c))),
+      map((cs: any[]) => cs.map(c => this.documentToObject(c))),
     );
   }
 
@@ -78,11 +79,11 @@ export class ContractService {
     });
     return db$.pipe(
       switchMap(db => db.findAll$(query)),
-      map((cs: any[]) => cs.map(c => this.fixContract(c))),
+      map((cs: any[]) => cs.map(c => this.documentToObject(c))),
     );
   }
 
-  private fixContract(contract: any): any {
+  private documentToObject(contract: any): any {
     if (contract.wish !== undefined) {
       if (!contract.validation) contract.validation = {};
       contract.validation.wish = contract.wish;
@@ -92,11 +93,19 @@ export class ContractService {
   }
 
   putContracts$(contracts: Contract): Observable<Contract> {
-    return this.mainDatabase.database$.pipe(switchMap(db => db.put$(contracts)));
+    return this.mainDatabase.database$.pipe(switchMap(db => db.put$(this.objectToDocument(contracts))));
   }
 
   removeContracts$(contracts: Contract): Observable<void> {
-    return this.mainDatabase.database$.pipe(switchMap(db => db.remove$(contracts)));
+    return this.mainDatabase.database$.pipe(switchMap(db => db.remove$(this.objectToDocument(contracts))));
+  }
+
+  private objectToDocument(contract: any): any {
+    if (contract.validation.wish !== undefined) {
+      contract.wish = contract.validation.wish;
+      delete contract.validation.wish;
+    }
+    return contract;
   }
 
   perMemberIdProblemSeverity$(): Observable<{ [id: string]: string }> {
