@@ -17,8 +17,12 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export interface EditFormComponent {
-  title: string;
-  data: any;
-  valid: boolean;
+import { ChildConfigBase } from '../models/form-config.interface';
+import { DynamicControlComponent } from './dynamic-control.component';
+
+export abstract class DynamicChildControlComponent<C extends ChildConfigBase> extends DynamicControlComponent<C> {
+
+  get control() {
+    return this.group.get(this.config.name).control;
+  }
 }

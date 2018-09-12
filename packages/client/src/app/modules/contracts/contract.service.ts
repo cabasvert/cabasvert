@@ -54,7 +54,10 @@ export class ContractService {
         fields: ['type', 'season'],
       },
     });
-    return db$.pipe(switchMap(db => db.findAll$(query)));
+    return db$.pipe(
+      switchMap(db => db.findAll$(query)),
+      map((cs: any[]) => cs.map(c => this.fixContract(c))),
+    );
   }
 
   getContracts$(member: Member = null): Observable<Contract[]> {
@@ -73,7 +76,19 @@ export class ContractService {
         fields: member ? ['type', 'member'] : ['type'],
       },
     });
-    return db$.pipe(switchMap(db => db.findAll$(query)));
+    return db$.pipe(
+      switchMap(db => db.findAll$(query)),
+      map((cs: any[]) => cs.map(c => this.fixContract(c))),
+    );
+  }
+
+  private fixContract(contract: any): any {
+    if (contract.wish !== undefined) {
+      if (!contract.validation) contract.validation = {};
+      contract.validation.wish = contract.wish;
+      delete contract.wish;
+    }
+    return contract;
   }
 
   putContracts$(contracts: Contract): Observable<string> {
@@ -118,11 +133,11 @@ export class ContractService {
   static validateContract(contract: Contract): { [key: string]: boolean } {
     let problems = {};
 
-    if (contract.wish) {
+    if (contract.validation && contract.validation.wish) {
       problems['wish'] = true;
     }
 
-    if (!contract.validation) {
+    if (!contract.validation || contract.validation.wish) {
       return problems;
     }
 
@@ -140,9 +155,6 @@ export class ContractService {
     if (!contract.validation.cheques ||
       (!contract.validation.cheques.eggs && !ContractService.hasNoneFormula(eggSection)))
       problems['missingChequesForEggs'] = true;
-
-    if (!contract.validation.validatedBy)
-      problems['wish'] = true;
 
     return problems;
   }

@@ -17,8 +17,20 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export interface EditFormComponent {
-  title: string;
-  data: any;
-  valid: boolean;
+import { Component } from '@angular/core';
+import { InputConfig } from '../models/form-config.interface';
+import { DynamicChildControlComponent } from './dynamic-child-control.component';
+
+@Component({
+  selector: 'dynamic-hidden-input',
+  template: `
+    <ng-container [formGroup]="group.control">
+      <input
+          [type]="config.type"
+          [style.display]="'none'"
+          [formControlName]="config.name" />
+    </ng-container>
+  `,
+})
+export class DynamicHiddenInputComponent extends DynamicChildControlComponent<InputConfig> {
 }

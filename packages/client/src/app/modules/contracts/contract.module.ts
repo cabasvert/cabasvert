@@ -22,6 +22,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { DynamicFormModule } from '../../toolkit/dynamic-form/dynamic-form.module';
 import { SeasonModule } from '../seasons/season.module';
 import { ContractService } from './contract.service';
 
@@ -36,6 +37,7 @@ import { TrialBasketView } from './trial-basket-view';
     IonicModule,
     TranslateModule,
     ReactiveFormsModule,
+    DynamicFormModule,
     SeasonModule,
   ],
   declarations: [

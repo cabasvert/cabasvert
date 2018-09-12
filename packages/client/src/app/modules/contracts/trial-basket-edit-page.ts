@@ -17,78 +17,97 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { formatDate } from '@angular/common';
+import { Component, Inject, LOCALE_ID, OnDestroy } from '@angular/core';
+import { Validators } from '@angular/forms';
 
 import { ModalController, NavParams } from '@ionic/angular';
-import { combineLatest, Observable } from 'rxjs';
-import { map, publishReplay, refCount, startWith } from 'rxjs/operators';
-
-import { Forms } from '../../toolkit/utils/forms';
+import { map, switchMap } from 'rxjs/operators';
+import { DynamicFormService, DynamicGroup } from '../../toolkit/dynamic-form/dynamic-form.service';
+import { ControlConfig, FormConfig } from '../../toolkit/dynamic-form/models/form-config.interface';
 import { objectAssignNoNulls } from '../../utils/objects';
+import { filterNotNull } from '../../utils/observables';
+import { TrialBasket } from '../members/member.model';
+import { MemberService } from '../members/member.service';
+import { SeasonService } from '../seasons/season.service';
 
 import { ContractKind } from './contract.model';
-import { Member, TrialBasket } from '../members/member.model';
-import { MemberService } from '../members/member.service';
-import { Season, SeasonWeek } from '../seasons/season.model';
-import { SeasonService } from '../seasons/season.service';
 
 @Component({
   selector: 'page-edit-trial-basket',
   templateUrl: 'trial-basket-edit-page.html',
 })
-export class TrialBasketEditPage implements OnInit {
-  form: FormGroup;
+export class TrialBasketEditPage implements OnDestroy {
+
+  config: FormConfig = {
+    controls: [
+      {
+        name: 'season',
+        label: 'REF.SEASON',
+        kind: 'select',
+        options: () => this.seasonService.lastSeasons$(2),
+        optionLabel: season => season.name,
+        optionValue: season => season.id,
+        validator: Validators.required,
+      },
+      {
+        name: 'week',
+        label: 'REF.WEEK',
+        kind: 'select',
+        options:
+          form => form.get('season').value$.pipe(
+            filterNotNull(),
+            switchMap(sid => this.seasonService.seasonById$(sid)),
+            map(s => s.seasonWeeks()),
+          ),
+        optionLabel: week => this.formatWeek(week),
+        optionValue: week => week.seasonWeek,
+        validator: Validators.required,
+      },
+      {
+        name: 'paid',
+        label: 'TRIAL_BASKET.PAID',
+        kind: 'checkbox',
+      },
+      {
+        name: 'sections',
+        kind: 'array',
+        controls: [ContractKind.VEGETABLES, ContractKind.EGGS].map((kind, index) => ({
+          name: index.toString(),
+          label: kind === 'legumes' ? 'REF.VEGETABLES' : 'REF.EGGS',
+          icon: ContractKind.icon(kind),
+          kind: 'group',
+          controls: [
+            {
+              name: 'kind',
+              kind: 'hidden-input',
+              type: 'text',
+            },
+            {
+              name: 'count',
+              label: 'REF.COUNT',
+              kind: 'input',
+              type: 'number',
+            },
+          ],
+        } as ControlConfig)),
+      },
+    ],
+  };
+
+  form: DynamicGroup;
 
   title: string;
   trialBasket: TrialBasket;
 
-  seasons$: Observable<Season[]>;
-  weeks$: Observable<SeasonWeek[]>;
-
   constructor(private navParams: NavParams,
               private modalController: ModalController,
-              private formBuilder: FormBuilder,
+              private dynamicFormService: DynamicFormService,
               private memberService: MemberService,
-              private seasonService: SeasonService) {
+              private seasonService: SeasonService,
+              @Inject(LOCALE_ID) private locale: string) {
 
-    this.initializeForm();
-
-    this.seasons$ = this.seasonService.lastSeasons$(2);
-  }
-
-  private initializeForm() {
-    this.form = this.formBuilder.group({
-      season: [null, Validators.required],
-      week: [1, Validators.required],
-      paid: false,
-      sections: this.formBuilder.array(
-        [ContractKind.VEGETABLES, ContractKind.EGGS].map(kind => {
-          const section = this.formBuilder.group({
-            kind: [kind, Validators.required],
-            count: [1, Validators.required],
-          });
-          Forms.forceCastAsNumberOrNull(section.get('count'));
-          return section;
-        }),
-      ),
-    });
-    Forms.forceCastAsNumberOrNull(this.form.get('week'));
-  }
-
-  ngOnInit() {
-    const selectedSeasonId$ = this.form.get('season').valueChanges.pipe(
-      startWith(this.trialBasket.season),
-      publishReplay(1),
-      refCount(),
-    );
-
-    this.weeks$ =
-      combineLatest(this.seasons$, selectedSeasonId$).pipe(
-        map(([ss, seasonId]) => seasonId == null ? [] : ss.find(s => s.id === seasonId).seasonWeeks()),
-        publishReplay(1),
-        refCount(),
-      );
+    this.form = this.dynamicFormService.createForm(this.config);
 
     if (this.navParams.data) {
       this.title = this.navParams.data.title;
@@ -96,6 +115,15 @@ export class TrialBasketEditPage implements OnInit {
 
       this.form.patchValue(this.trialBasket);
     }
+  }
+
+  ngOnDestroy() {
+    this.form.destroy();
+  }
+
+  private formatWeek(week) {
+    return formatDate(week.distributionDate, 'shortDate', this.locale) +
+      ' (' + week.seasonWeek + ')';
   }
 
   async cancel() {

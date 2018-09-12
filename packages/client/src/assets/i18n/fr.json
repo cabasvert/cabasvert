@@ -116,7 +116,8 @@
     "LASTNAME_PLACEHOLDER": "Entrez le nom de la personne",
     "ADDRESS_PLACEHOLDER": "Entrez l'adresse de la personne",
     "PHONE_NUMBER_PLACEHOLDER": "Entrez le téléphone de la personne",
-    "EMAIL_ADDRESS_PLACEHOLDER": "Entrez le courriel de la personne"
+    "EMAIL_ADDRESS_PLACEHOLDER": "Entrez le courriel de la personne",
+    "PROBLEM_MEMBER_PERSON_ALREADY_EXISTS": "Un membre existe déjà avec cette personne."
   },
   "REPORTS": {
     "TITLE": "Rapports",

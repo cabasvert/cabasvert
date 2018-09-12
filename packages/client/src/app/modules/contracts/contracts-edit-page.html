@@ -12,7 +12,7 @@
     </ion-title>
 
     <ion-buttons slot="primary">
-      <ion-button icon-only (click)="submit.click()" [disabled]="!form.valid">
+      <ion-button icon-only (click)="save()" [disabled]="!form.valid">
         {{ 'DIALOGS.SAVE' | translate }}
       </ion-button>
     </ion-buttons>
@@ -20,117 +20,5 @@
 </ion-header>
 
 <ion-content>
-  <form [formGroup]="form" novalidate (ngSubmit)="save()">
-    <input #submit type="submit" value="Submit" style="display:none"/>
-
-    <ion-list *ngIf="contract" inset="true" lines="full">
-
-      <ion-item>
-        <ion-label color="primary">{{ 'REF.SEASON' | translate }}</ion-label>
-        <ion-select formControlName="season" interface="popover">
-          <ion-select-option *ngFor="let season of seasons$ | async" [value]="season.id">
-            {{ season.name }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
-
-      <ng-container formArrayName="sections">
-        <ion-item-group *ngFor="let section of contract.sections; let i=index" [formGroupName]="i">
-          <ion-item-divider>
-            <ion-icon [name]="Kinds.icon(section.kind)" slot="start"></ion-icon>
-            <ion-label>
-              {{ 'CONTRACT.SINGULAR_TITLE' | translate }} {{ section.kind }}
-            </ion-label>
-          </ion-item-divider>
-          <input type="text" style="display: none;" formControlName="kind"/>
-
-          <ion-item>
-            <ion-label color="primary">{{ 'CONTRACT.FORMULA' | translate }}</ion-label>
-            <ion-select formControlName="formulaIndex" interface="popover">
-              <ion-select-option *ngFor="let f of formulasFor(section.kind); let j=index"
-                                 [value]="j">
-                {{ f.label | translate }}
-              </ion-select-option>
-            </ion-select>
-          </ion-item>
-          <ion-item>
-            <ion-label color="primary">{{ 'CONTRACT.FIRST_WEEK' | translate }}</ion-label>
-            <ion-select formControlName="firstWeek" interface="popover"
-                        [disabled]="hasNoneFormula(section.kind)">
-              <ion-select-option *ngFor="let week of weeks$ | async" [value]="week.seasonWeek">
-                {{ week.distributionDate | date: 'shortDate' }} ({{ week.seasonWeek }})
-              </ion-select-option>
-            </ion-select>
-          </ion-item>
-          <ion-item>
-            <ion-label color="primary">{{ 'CONTRACT.LAST_WEEK' | translate }}</ion-label>
-            <ion-select formControlName="lastWeek" interface="popover"
-                        [disabled]="hasNoneFormula(section.kind)">
-              <ion-select-option [value]="">
-                -
-              </ion-select-option>
-              <ion-select-option *ngFor="let week of weeks$ | async" [value]="week.seasonWeek">
-                {{ week.distributionDate | date: 'shortDate' }} ({{ week.seasonWeek }})
-              </ion-select-option>
-            </ion-select>
-          </ion-item>
-        </ion-item-group>
-      </ng-container>
-
-      <ion-item-group>
-        <ion-item-divider>
-          <ion-icon name="checkmark" slot="start"></ion-icon>
-          <ion-label>{{ 'CONTRACT.VALIDATION' | translate }}</ion-label>
-        </ion-item-divider>
-
-        <ion-item>
-          <ion-label color="primary">{{ 'CONTRACT.WISH' | translate }}</ion-label>
-          <ion-checkbox formControlName="wish"></ion-checkbox>
-        </ion-item>
-
-        <ng-container formGroupName="validation">
-
-          <ion-item>
-            <ion-label color="primary">{{ 'CONTRACT.VALIDATED_BY' | translate }}</ion-label>
-            <ion-input type="text" formControlName="validatedBy" id="validatedBy"></ion-input>
-          </ion-item>
-
-          <ion-item-group formGroupName="paperCopies">
-            <ion-item-divider>
-              <ion-icon name="paper" slot="start"></ion-icon>
-              <ion-label>{{ 'CONTRACT.PAPER_COPIES' | translate }}</ion-label>
-            </ion-item-divider>
-            <ion-item>
-              <ion-label color="primary">{{ 'CONTRACT.FOR_ASSOCIATION' | translate }}</ion-label>
-              <ion-checkbox formControlName="forAssociation"></ion-checkbox>
-            </ion-item>
-            <ion-item>
-              <ion-label color="primary">{{ 'CONTRACT.FOR_PRODUCER' | translate }}</ion-label>
-              <ion-checkbox formControlName="forFarmer"></ion-checkbox>
-            </ion-item>
-          </ion-item-group>
-
-          <ion-item-group formGroupName="cheques">
-            <ion-item-divider>
-              <ion-icon name="cash" slot="start"></ion-icon>
-              <ion-label>{{ 'CONTRACT.CHEQUES' | translate }}</ion-label>
-            </ion-item-divider>
-            <ion-item>
-              <ion-label color="primary">{{ 'REF.VEGETABLES' | translate }}</ion-label>
-              <ion-checkbox formControlName="vegetables"
-                            [disabled]="hasNoneFormula('legumes')"></ion-checkbox>
-            </ion-item>
-            <ion-item>
-              <ion-label color="primary">{{ 'REF.EGGS' | translate }}</ion-label>
-              <ion-checkbox formControlName="eggs"
-                            [disabled]="hasNoneFormula('oeufs')"></ion-checkbox>
-            </ion-item>
-          </ion-item-group>
-
-        </ng-container>
-      </ion-item-group>
-
-    </ion-list>
-
-  </form>
+  <dynamic-form [config]="config" [form]="form"></dynamic-form>
 </ion-content>

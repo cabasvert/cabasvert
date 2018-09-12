@@ -23,6 +23,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { DynamicFormModule } from '../../toolkit/dynamic-form/dynamic-form.module';
 import { AuthGuard } from '../../toolkit/providers/auth-guard';
 import { Roles } from '../../toolkit/providers/auth-service';
 import { ToolkitModule } from '../../toolkit/toolkit.module';
@@ -60,6 +61,7 @@ let routes: Routes = [
     IonicModule,
     TranslateModule,
     ReactiveFormsModule,
+    DynamicFormModule,
     ToolkitModule,
     RouterModule.forChild(routes),
     ContractModule,

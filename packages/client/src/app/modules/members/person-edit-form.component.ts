@@ -18,12 +18,14 @@
  */
 
 import { Component } from '@angular/core';
-import { AsyncValidatorFn, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AsyncValidatorFn, Validators } from '@angular/forms';
 
 import { ModalController, NavParams } from '@ionic/angular';
 import { of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { EditFormComponent } from '../../toolkit/dialogs/edit-form.interface';
+import { DynamicFormService, DynamicGroup } from '../../toolkit/dynamic-form/dynamic-form.service';
+import { FormConfig } from '../../toolkit/dynamic-form/models/form-config.interface';
 import { objectAssignNoNulls } from '../../utils/objects';
 import { Person } from './member.model';
 import { MemberService } from './member.service';
@@ -33,24 +35,60 @@ import { MemberService } from './member.service';
   templateUrl: 'person-edit-form.component.html',
 })
 export class PersonEditFormComponent implements EditFormComponent {
-  form: FormGroup;
+
+  config: FormConfig = {
+    controls: [
+      {
+        name: 'firstname',
+        label: 'PERSON.FIRSTNAME',
+        kind: 'input',
+        type: 'text',
+        validator: Validators.required,
+      },
+      {
+        name: 'lastname',
+        label: 'PERSON.LASTNAME',
+        kind: 'input',
+        type: 'text',
+        validator: Validators.required,
+      },
+      {
+        name: 'address',
+        label: 'PERSON.ADDRESS',
+        kind: 'textarea',
+      },
+      {
+        name: 'phoneNumber',
+        label: 'PERSON.PHONE_NUMBER',
+        kind: 'input',
+        type: 'tel',
+      },
+      {
+        name: 'emailAddress',
+        label: 'PERSON.EMAIL_ADDRESS',
+        kind: 'input',
+        type: 'email',
+      },
+    ],
+    asyncValidator: this.personDoesNotAlreadyExist,
+    errorLabels: {
+      'memberAlreadyExists': 'PERSON.PROBLEM_MEMBER_PERSON_ALREADY_EXISTS',
+    },
+  };
+
+  form: DynamicGroup;
 
   title: string;
   person: Person;
+
   private isNewPerson: boolean;
 
-  constructor(public navParams: NavParams,
-              public modalController: ModalController,
-              public formBuilder: FormBuilder,
+  constructor(private navParams: NavParams,
+              private modalController: ModalController,
+              private dynamicFormService: DynamicFormService,
               private members: MemberService) {
 
-    this.form = this.formBuilder.group({
-      firstname: ['', Validators.required],
-      lastname: ['', Validators.required],
-      address: null,
-      phoneNumber: null,
-      emailAddress: null,
-    }, { asyncValidator: this.personDoesNotAlreadyExist });
+    this.form = this.dynamicFormService.createForm(this.config);
   }
 
   set data(data: any) {
@@ -61,41 +99,29 @@ export class PersonEditFormComponent implements EditFormComponent {
     this.form.patchValue(this.person);
   }
 
-  get isValid() {
-    return this.form.valid;
-  }
-
-  get editedData() {
+  get data() {
     return objectAssignNoNulls({}, this.person, this.form.value);
   }
 
-  get problems() {
-    return this.problemsForControl(this.form);
+  get valid() {
+    return this.form.valid;
   }
 
-  problemsFor(path: string) {
-    const control = this.form.get(path);
-    return this.problemsForControl(control);
+  get personDoesNotAlreadyExist(): AsyncValidatorFn {
+    return c => {
+      if (!this.isNewPerson) return of(null);
+
+      const lastname = c.get('lastname');
+      const firstname = c.get('firstname');
+
+      if (!lastname.value || !firstname.value) {
+        return of(null);
+      }
+
+      return this.members.getMember$(lastname.value, firstname.value).pipe(
+        map(m => !m ? null : { 'memberAlreadyExists': true }),
+        take(1),
+      );
+    };
   }
-
-  private problemsForControl(control) {
-    return (control.invalid && control.errors) ?
-      control.errors : null;
-  }
-
-  personDoesNotAlreadyExist: AsyncValidatorFn = c => {
-    if (!this.isNewPerson) return of(null);
-
-    const lastname = c.get('lastname');
-    const firstname = c.get('firstname');
-
-    if (!lastname.value || !firstname.value) {
-      return of(null);
-    }
-
-    return this.members.getMember$(lastname.value, firstname.value).pipe(
-      map(m => !m ? null : { 'memberAlreadyExists': true }),
-      take(1),
-    );
-  };
 }

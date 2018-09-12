@@ -69,46 +69,68 @@ export class ContractKind {
 }
 
 export type ContractValidation = {
-  paperCopies: {
+  wish?: boolean
+  paperCopies?: {
     forAssociation: boolean
     forFarmer: boolean
   }
-  cheques: {
-    vegetables: boolean
-    eggs: boolean
+  cheques?: {
+    vegetables?: boolean
+    eggs?: boolean
   }
-  validatedBy: string
+  validatedBy?: string
+}
+
+export class ContractFormula {
+  constructor(public readonly value: number | [number, number],
+              public readonly alternativeValue: number | null,
+              public readonly label: string) {
+  }
+
+  isNoneFormula() {
+    let value = this.value;
+    return (value instanceof Array && value[0] === 0 && value[1] === 0) || value === 0;
+  }
+
+  isRegularFormula() {
+    let value = this.value;
+    return (value instanceof Array && value[0] === value[1]) || value === parseInt('' + value, 10);
+  }
 }
 
 export class ContractFormulas {
 
   static readonly formulas: ContractFormula[] = [
-    {
-      value: 2,
-      label: 'CONTRACT.FORMULA_2_EVERY_WEEK',
-    },
-    {
-      value: [2, 1],
-      alternativeValue: 1.5,
-      label: 'CONTRACT.FORMULA_ALTERNATING_2_AND_1',
-    },
-    {
-      value: 1,
-      label: 'CONTRACT.FORMULA_1_EVERY_WEEK',
-    },
-    {
-      value: [2, 0],
-      label: 'CONTRACT.FORMULA_2_EVERY_OTHER_WEEK',
-    },
-    {
-      value: [1, 0],
-      alternativeValue: .5,
-      label: 'CONTRACT.FORMULA_1_EVERY_OTHER_WEEK',
-    },
-    {
-      value: 0,
-      label: 'CONTRACT.FORMULA_NONE',
-    },
+    new ContractFormula(
+      2,
+      null,
+      'CONTRACT.FORMULA_2_EVERY_WEEK',
+    ),
+    new ContractFormula(
+      [2, 1],
+      1.5,
+      'CONTRACT.FORMULA_ALTERNATING_2_AND_1',
+    ),
+    new ContractFormula(
+      1,
+      null,
+      'CONTRACT.FORMULA_1_EVERY_WEEK',
+    ),
+    new ContractFormula(
+      [2, 0],
+      null,
+      'CONTRACT.FORMULA_2_EVERY_OTHER_WEEK',
+    ),
+    new ContractFormula(
+      [1, 0],
+      .5,
+      'CONTRACT.FORMULA_1_EVERY_OTHER_WEEK',
+    ),
+    new ContractFormula(
+      0,
+      null,
+      'CONTRACT.FORMULA_NONE',
+    ),
   ];
 
   static formulaIndexFor(value: number | [number, number]): number {
@@ -117,23 +139,21 @@ export class ContractFormulas {
     );
   }
 
+  static formulaForIndex(index: number): ContractFormula {
+    return ContractFormulas.formulas[index];
+  }
+
   static formulaFor(value: number | [number, number]): ContractFormula {
     return ContractFormulas.formulas[ContractFormulas.formulaIndexFor(value)];
   }
 
   static hasNoneFormula(value: number | [number, number]) {
-    return (value instanceof Array && value[0] === 0 && value[1] === 0) || value === 0;
+    return this.formulaFor(value).isNoneFormula();
   }
 
   static hasRegularFormula(value: number | [number, number]) {
-    return (value instanceof Array && value[0] === value[1]) || value === parseInt('' + value, 10);
+    return this.formulaFor(value).isRegularFormula();
   }
-}
-
-export interface ContractFormula {
-  value: number | [number, number];
-  alternativeValue?: number;
-  label: string;
 }
 
 function deepEquals(a, b): boolean {

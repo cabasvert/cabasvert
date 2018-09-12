@@ -68,7 +68,7 @@ export class EditDialogComponent implements OnInit {
   }
 
   get isFormValid() {
-    return this.editFormInstance.isValid;
+    return this.editFormInstance.valid;
   }
 
   async cancel() {
@@ -76,6 +76,6 @@ export class EditDialogComponent implements OnInit {
   }
 
   async save() {
-    await this.modalController.dismiss(this.editFormInstance.editedData, 'save');
+    await this.modalController.dismiss(this.editFormInstance.data, 'save');
   }
 }
