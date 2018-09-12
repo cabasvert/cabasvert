@@ -82,12 +82,14 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
 
     this.trialBaskets$ = this.member$.pipe(
       map(m => m.trialBaskets || []),
-      map(tbs => tbs.sort((tb1, tb2) =>
-        -(tb1.season + '-' + tb1.week).localeCompare(tb2.season + '-' + tb2.week)),
-      ),
+      map(tbs => tbs.sort((tb1, tb2) => -this.trialBasketCompare(tb1, tb2))),
     );
 
     this.subscription = this.authService.loggedInUser$.subscribe(user => this.user = user);
+  }
+
+  private trialBasketCompare(tb1, tb2) {
+    return (tb1.season + '-' + tb1.week).localeCompare(tb2.season + '-' + tb2.week);
   }
 
   ngOnDestroy() {
@@ -285,8 +287,10 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   }
 
   private inferNewTrialBasket(currentWeek: SeasonWeek, member: Member) {
-    let count = member.trialBaskets ? member.trialBaskets.length : 0;
-    let last = count > 0 ? member.trialBaskets[count - 1] : null;
+    let trialBaskets = !member.trialBaskets ? [] : member.trialBaskets.slice();
+    trialBaskets.sort((tb1, tb2) => -this.trialBasketCompare(tb1, tb2));
+
+    let last = trialBaskets.length === 0 ? null : trialBaskets[0];
 
     const lastVegetableSection = !last ? null :
       last.sections.find(c => c.kind === ContractKind.VEGETABLES);
@@ -294,7 +298,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
       last.sections.find(c => c.kind === ContractKind.EGGS);
 
     return {
-      season: currentWeek.season.id,
+      season: last ? last.season : currentWeek.season.id,
       week: last && last.week >= currentWeek.seasonWeek ? last.week + 1 : currentWeek.seasonWeek,
       paid: false,
       sections: [
