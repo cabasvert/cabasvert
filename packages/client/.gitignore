@@ -39,3 +39,5 @@ src/config.prod.json
 src/credentials.dev.json
 
 android/keystore.properties
+android/app/src/main/assets/public
+android/app/build
