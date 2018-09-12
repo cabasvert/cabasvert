@@ -21,12 +21,14 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
+import { ServiceWorkerModule } from '@angular/service-worker';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SecureStorage } from '@ionic-native/secure-storage/ngx';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { environment } from '../environments/environment';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -50,8 +52,6 @@ import { DatabaseService } from './toolkit/providers/database-service';
 import { networkProvider } from './toolkit/providers/network';
 import { ToolkitModule } from './toolkit/toolkit.module';
 import { IonicGestureConfig } from './toolkit/utils/gestures';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
 
 registerLocales();
 
@@ -96,7 +96,6 @@ registerLocales();
     // Ionic Native
     SecureStorage,
     networkProvider,
-    AppVersion,
 
     { provide: HAMMER_GESTURE_CONFIG, useClass: IonicGestureConfig },
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

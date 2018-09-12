@@ -35,6 +35,7 @@ UserInterfaceState.xcuserstate
 
 .sourcemaps
 
+src/version.ts
 src/config.prod.json
 src/credentials.dev.json
 

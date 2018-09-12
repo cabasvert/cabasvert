@@ -20,7 +20,6 @@
 import { Component, Inject, LOCALE_ID, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router, Scroll } from '@angular/router';
 import { Plugins, StatusBarStyle } from '@capacitor/core';
-import { AppVersion } from '@ionic-native/app-version/ngx';
 import {
   ActionSheetController,
   IonRouterOutlet,
@@ -31,9 +30,10 @@ import {
   PopoverController,
 } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { fromEvent, Observable, Subscription } from 'rxjs';
+import { fromEvent, Observable } from 'rxjs';
 import { NodeCompatibleEventEmitter } from 'rxjs/internal/observable/fromEvent';
 import { filter, take } from 'rxjs/operators';
+import { APP_VERSION } from '../version';
 
 import { PageGroup, PAGES } from './menu-page.interface';
 import { AuthService, User } from './toolkit/providers/auth-service';
@@ -54,10 +54,7 @@ export class AppComponent implements OnInit {
 
   @ViewChildren(IonRouterOutlet) routerOutlets: QueryList<IonRouterOutlet>;
 
-  private subscription: Subscription;
-
   constructor(private platform: Platform,
-              private appVersion: AppVersion,
               private translate: TranslateService,
               private authService: AuthService,
               private navCtrl: NavController,
@@ -78,12 +75,12 @@ export class AppComponent implements OnInit {
     this.initTranslation();
 
     if (this.platform.is('android') || this.platform.is('ios')) {
-      await StatusBar.setStyle({ style: StatusBarStyle.Dark });
+      await StatusBar.setStyle({ style: StatusBarStyle.Light });
       await StatusBar.setBackgroundColor({ color: '#126019' });
     }
 
     try {
-      this.appVersionNumber = await this.appVersion.getVersionNumber();
+      this.appVersionNumber = APP_VERSION;
     } catch (error) {
     }
 
