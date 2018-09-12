@@ -19,9 +19,8 @@
 
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { Observable, Subscription } from 'rxjs';
-import { publishBehavior, publishReplay, refCount, startWith } from 'rxjs/operators';
-// import { ControlAccessor, GroupAccessor } from './models/form-accessor.interface';
+import { combineLatest, Observable, of, Subscription } from 'rxjs';
+import { map, publishBehavior, refCount } from 'rxjs/operators';
 import {
   BasicControlConfig,
   ControlConfig,
@@ -38,7 +37,7 @@ export class DynamicFormService {
 
   public createForm(config: FormConfig) {
     let dynamicGroup = this.createGroup(config);
-    dynamicGroup.scaffold(dynamicGroup, null);
+    dynamicGroup.initialize(dynamicGroup, dynamicGroup);
     return dynamicGroup;
   }
 
@@ -86,8 +85,9 @@ export class DynamicFormService {
 export class DynamicControl {
 
   readonly value$: Observable<any>;
+  private _disabled$: Observable<boolean>;
 
-  private _subscription: Subscription;
+  private _subscription = new Subscription();
 
   constructor(public control: AbstractControl, public _config: ControlConfigBase) {
 
@@ -96,14 +96,50 @@ export class DynamicControl {
       refCount(),
     );
 
-    this._subscription = this.value$.subscribe();
+    this._subscription.add(this.value$.subscribe());
+  }
+
+  initialize(form: DynamicControl, group: DynamicControl) {
+    this._disabled$ = this.setupDisabled$(form, group);
+
+    if (this._disabled$) {
+      let control = this.control;
+
+      this._subscription.add(this._disabled$.subscribe(disabled => {
+        const method = disabled ? 'disable' : 'enable';
+        control[method]();
+      }));
+    }
+  }
+
+  private setupDisabled$(form: DynamicControl, group: DynamicControl): Observable<boolean> {
+    let disabled$ = this.setupImmediateDisabled$(form, group);
+
+    if (group._disabled$) {
+      if (disabled$) {
+        disabled$ = combineLatest(disabled$, group._disabled$).pipe(
+          map(([b1, b2]) => b1 || b2),
+        );
+      } else {
+        disabled$ = group._disabled$;
+      }
+    }
+
+    return disabled$;
+  }
+
+  private setupImmediateDisabled$(form: DynamicControl, group: DynamicControl): Observable<boolean> {
+    let disabled = this._config.disabled;
+    if (!disabled) return null;
+
+    if (disabled instanceof Function) disabled = disabled(form, group);
+
+    if (disabled instanceof Observable) return disabled;
+    else return of(disabled);
   }
 
   destroy() {
     this._subscription.unsubscribe();
-  }
-
-  scaffold(form: DynamicControl, group: DynamicControl) {
   }
 
   get(path: string): DynamicControl {
@@ -116,7 +152,7 @@ export class DynamicControl {
       if (dynamicControl instanceof DynamicGroup) {
         dynamicControl = (dynamicControl as DynamicGroup).controls.get(element);
       } else if (dynamicControl instanceof DynamicArray) {
-        dynamicControl = (dynamicControl as DynamicArray).controls[parseInt(element)];
+        dynamicControl = (dynamicControl as DynamicArray).controls[parseInt(element, 10)];
       } else return null;
     }
 
@@ -127,8 +163,18 @@ export class DynamicControl {
     return this.control.value;
   }
 
+  get disabled$() {
+    return this._disabled$;
+  }
+
   get valid() {
     return this.control.valid;
+  }
+
+  get valid$() {
+    return this.control.valueChanges.pipe(
+      map(() => this.control.valid),
+    );
   }
 }
 
@@ -145,17 +191,17 @@ export class DynamicArray extends DynamicControl {
     this.control.push(dynamicControl.control);
   }
 
+  initialize(form: DynamicControl, group: DynamicControl) {
+    super.initialize(form, group);
+    this.controls.forEach(dynamicControl =>
+      dynamicControl.initialize(form, this),
+    );
+  }
+
   destroy() {
     super.destroy();
     this.controls.forEach(dynamicControl =>
       dynamicControl.destroy(),
-    );
-  }
-
-  scaffold(form: DynamicControl, group: DynamicControl) {
-    super.scaffold(form, group);
-    this.controls.forEach(dynamicControl =>
-      dynamicControl.scaffold(form, this),
     );
   }
 
@@ -184,10 +230,10 @@ export class DynamicGroup extends DynamicControl {
     );
   }
 
-  scaffold(form: DynamicControl, group: DynamicControl) {
-    super.scaffold(form, group);
+  initialize(form: DynamicControl, group: DynamicControl) {
+    super.initialize(form, group);
     this._config.controls.forEach(controlConfig =>
-      this.controls.get(controlConfig.name).scaffold(form, this),
+      this.controls.get(controlConfig.name).initialize(form, this),
     );
   }
 

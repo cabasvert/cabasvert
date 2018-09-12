@@ -226,6 +226,9 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
           firstWeek: inferFirstWeek(lastEggContract),
         },
       ],
+      validation: {
+        wish: true,
+      },
     };
   }
 

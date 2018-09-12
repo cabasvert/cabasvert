@@ -18,7 +18,6 @@
  */
 
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { DynamicFormService, DynamicGroup } from '../dynamic-form.service';
 
 import { FormConfig } from '../models/form-config.interface';
@@ -48,8 +47,8 @@ export class DynamicFormComponent extends DynamicControlComponent<FormConfig> im
 
   @Output() submit: EventEmitter<any> = new EventEmitter<any>();
 
-  get control() {
-    return this.form.control;
+  get dynamicControl() {
+    return this.form;
   }
 
   constructor(private dynamicFormService: DynamicFormService) {
@@ -58,7 +57,6 @@ export class DynamicFormComponent extends DynamicControlComponent<FormConfig> im
 
   ngOnInit() {
     if (!this.form) this.form = this.dynamicFormService.createForm(this.config);
-    super.ngOnInit();
   }
 
   handleSubmit(event: Event) {

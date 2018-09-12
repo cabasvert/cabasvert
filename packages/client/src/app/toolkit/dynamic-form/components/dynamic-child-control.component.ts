@@ -22,7 +22,7 @@ import { DynamicControlComponent } from './dynamic-control.component';
 
 export abstract class DynamicChildControlComponent<C extends ChildConfigBase> extends DynamicControlComponent<C> {
 
-  get control() {
-    return this.group.get(this.config.name).control;
+  get dynamicControl() {
+    return this.group.get(this.config.name);
   }
 }

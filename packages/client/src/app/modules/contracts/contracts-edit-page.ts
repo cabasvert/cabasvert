@@ -85,6 +85,7 @@ export class ContractsEditPage {
               optionValue: w => w.seasonWeek,
               validator: Validators.required,
               disabled: (f, g) => g.get('formulaIndex').value$.pipe(
+                filterNotNull(),
                 map(i => ContractFormulas.formulaForIndex(i).isNoneFormula()),
               ),
             },
@@ -102,6 +103,7 @@ export class ContractsEditPage {
               optionLabel: w => !w ? null : this.formatWeek(w),
               optionValue: w => !w ? null : w.seasonWeek,
               disabled: (f, g) => g.get('formulaIndex').value$.pipe(
+                filterNotNull(),
                 map(i => ContractFormulas.formulaForIndex(i).isNoneFormula()),
               ),
             },
@@ -161,6 +163,7 @@ export class ContractsEditPage {
                 kind: 'checkbox',
                 value: false,
                 disabled: f => f.get('sections.0.formulaIndex').value$.pipe(
+                  filterNotNull(),
                   map(i => ContractFormulas.formulaForIndex(i).isNoneFormula()),
                 ),
               },
@@ -170,6 +173,7 @@ export class ContractsEditPage {
                 kind: 'checkbox',
                 value: false,
                 disabled: f => f.get('sections.1.formulaIndex').value$.pipe(
+                  filterNotNull(),
                   map(i => ContractFormulas.formulaForIndex(i).isNoneFormula()),
                 ),
               },

@@ -49,8 +49,6 @@ export class DynamicSelectComponent extends DynamicChildControlComponent<SelectC
   options$: Observable<any[]>;
 
   ngOnInit() {
-    super.ngOnInit();
-
     let options = this.config.options;
 
     if (options instanceof Function) options = options(this.form, this.group);

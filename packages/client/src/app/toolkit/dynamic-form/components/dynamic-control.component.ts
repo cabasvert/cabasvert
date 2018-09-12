@@ -17,20 +17,15 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { OnDestroy, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { combineLatest, Observable, of, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { DynamicGroup } from '../dynamic-form.service';
 import { ControlConfigBase } from '../models/form-config.interface';
 
-export abstract class DynamicControlComponent<C extends ControlConfigBase> implements OnInit, OnDestroy {
+export abstract class DynamicControlComponent<C extends ControlConfigBase> {
   protected config: C;
   protected group: DynamicGroup;
   protected form: DynamicGroup;
   protected parentDisabled$?: Observable<boolean>;
-
-  private _subscription: Subscription;
 
   initialize(config: C,
              group: DynamicGroup,
@@ -42,7 +37,11 @@ export abstract class DynamicControlComponent<C extends ControlConfigBase> imple
     this.parentDisabled$ = parentDisabled$;
   }
 
-  abstract get control()
+  abstract get dynamicControl()
+
+  get control() {
+    return this.dynamicControl.control;
+  }
 
   get changes() {
     return this.control.valueChanges;
@@ -66,45 +65,6 @@ export abstract class DynamicControlComponent<C extends ControlConfigBase> imple
   }
 
   get disabled$(): Observable<boolean> {
-    let disabled$ = this.immediateDisabled$;
-
-    if (this.parentDisabled$) {
-      if (disabled$) {
-        disabled$ = combineLatest(disabled$, this.parentDisabled$).pipe(
-          map(([b1, b2]) => b1 || b2),
-        );
-      } else {
-        disabled$ = this.parentDisabled$;
-      }
-    }
-
-    return disabled$;
-  }
-
-  private get immediateDisabled$(): Observable<boolean> {
-    let disabled = this.config.disabled;
-    if (!disabled) return null;
-
-    if (disabled instanceof Function) disabled = disabled(this.form, this.group);
-
-    if (disabled instanceof Observable) return disabled;
-    else return of(disabled);
-  }
-
-  ngOnInit() {
-    let disabled$ = this.disabled$;
-
-    if (disabled$) {
-      let control = this.control;
-
-      this._subscription = disabled$.subscribe(disabled => {
-        const method = disabled ? 'disable' : 'enable';
-        control[method]();
-      });
-    }
-  }
-
-  ngOnDestroy() {
-    if (this._subscription) this._subscription.unsubscribe();
+    return this.dynamicControl.disabled$;
   }
 }
