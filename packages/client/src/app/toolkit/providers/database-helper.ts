@@ -27,7 +27,16 @@ import PouchFind from 'pouchdb-find';
 import PouchSync from 'pouchdb-replication';
 
 import { combineLatest, EMPTY, from, merge, Observable, of } from 'rxjs';
-import { catchError, map, mergeMap, publishReplay, refCount, startWith, switchMap } from 'rxjs/operators';
+import { fromPromise } from 'rxjs/internal-compatibility';
+import {
+  catchError,
+  map, mapTo,
+  mergeMap,
+  publishReplay,
+  refCount,
+  startWith,
+  switchMap,
+} from 'rxjs/operators';
 import { ConfigurationService } from '../../config/configuration.service';
 import { debug } from '../../utils/observables';
 import { SyncState, SyncStateListener } from '../components/sync-state-listener';
@@ -320,12 +329,7 @@ export class Database {
   }
 
   private _doPut(doc: any) {
-    return this.wrapErrors('put',
-      this.db.put(doc).then(response => {
-        doc._rev = response.rev;
-        return response;
-      }),
-    );
+    return this.wrapErrors('put', this.db.put(doc));
   }
 
   private wrapErrors(methodName: string, promise) {
@@ -407,16 +411,15 @@ export class Database {
     return from(this.find(query));
   }
 
-  public put$(doc: any): Observable<string> {
-    // TODO We mutate the original doc...
+  public put$<T>(doc: T & { _id: string }): Observable<T> {
     return from(this.put(doc)).pipe(
-      map(response => response.rev),
+      switchMap(() => this.get(doc._id)),
     );
   }
 
-  public remove$(doc: any): Observable<string> {
+  public remove$<T>(doc: T & { _id: string }): Observable<void> {
     return from(this.remove(doc)).pipe(
-      map(response => response.rev),
+      mapTo(null),
     );
   }
 
@@ -442,7 +445,7 @@ export class Database {
 
     return merge(doc$, changes$).pipe(
       publishReplay(1),
-      refCount()
+      refCount(),
     );
   }
 

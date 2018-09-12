@@ -19,7 +19,7 @@
 
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map, publishReplay, refCount, switchMap } from 'rxjs/operators';
+import { map, publishReplay, refCount, switchMap, take } from 'rxjs/operators';
 
 import { DatabaseService } from '../../toolkit/providers/database-service';
 import '../../utils/dates';
@@ -98,7 +98,7 @@ export class MemberService {
     return this.mainDatabase.database$.pipe(switchMap(db => db.withChanges$(member$)));
   }
 
-  putMember$(member: Member): Observable<string> {
+  putMember$(member: Member): Observable<Member> {
     return this.mainDatabase.database$.pipe(switchMap(db => db.put$(member)));
   }
 

@@ -77,6 +77,12 @@ export class Navigation {
     });
   }
 
+  async showModal(opts ?: ModalOptions): Promise<any> {
+    const modal = await this.modalCtrl.create(opts);
+    await modal.present();
+    return await modal.onDidDismiss();
+  }
+
   showEditDialog$(opts ?: EditFormOptions): Observable<any> {
     return this.showModal$({
       component: EditDialogComponent,
@@ -85,5 +91,13 @@ export class Navigation {
       filter(r => r.role === 'save'),
       map(r => r.data),
     );
+  }
+
+  async showEditDialog(opts ?: EditFormOptions): Promise<any> {
+    const result = await this.showModal({
+      component: EditDialogComponent,
+      componentProps: opts,
+    });
+    return result.role === 'save' ? result.data : null;
   }
 }

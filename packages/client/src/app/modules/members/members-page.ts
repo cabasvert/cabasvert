@@ -17,22 +17,31 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Content, NavController } from '@ionic/angular';
-import { BehaviorSubject, combineLatest, merge, Observable, Subject, Subscription } from 'rxjs';
-import { distinctUntilChanged, filter, map, mapTo, publishReplay, refCount, scan, startWith, switchMap } from 'rxjs/operators';
+import { combineLatest, Observable, Subject, Subscription, timer } from 'rxjs';
+import {
+  distinctUntilChanged,
+  filter,
+  map,
+  publishReplay,
+  refCount,
+  scan,
+  startWith,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs/operators';
 
 import { IndexedScroller } from '../../toolkit/components/indexed-scroller';
 import { Navigation } from '../../toolkit/providers/navigation';
 import { contains, Group, groupBy } from '../../utils/arrays';
-import { debug, errors, filterNotNull, ignoreErrors } from '../../utils/observables';
+import { debug, errors, ignoreErrors } from '../../utils/observables';
 
 import { ContractService } from '../contracts/contract.service';
 import { Season } from '../seasons/season.model';
 import { SeasonService } from '../seasons/season.service';
-
-import { MemberDetailsPage } from './member-details-page';
 import { Member } from './member.model';
 import { MemberService } from './member.service';
 import { PersonEditFormComponent } from './person-edit-form.component';
@@ -61,9 +70,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
 
   seasons$: Observable<Season[]>;
 
-  createdMember = new Subject<void>();
   searchQuery = new Subject<string>();
-  shownMember = new Subject<Member>();
 
   members$: Observable<Group<Member>[]>;
   memberDetails$: Observable<Member>;
@@ -178,32 +185,6 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
         this.perMemberIdProblemSeverity = perIdSeverity;
       }),
     );
-
-    this.subscription.add(
-      this.shownMember.pipe(
-        filterNotNull(),
-      ).subscribe(m => this.navCtrl.navigateForward(['/members', m._id])),
-    );
-
-    this.subscription.add(
-      this.createdMember.pipe(
-        switchMap(() => this.nav.showEditDialog$({
-          component: PersonEditFormComponent,
-          data: {
-            title: 'MEMBER.CREATION_TITLE',
-            person: {},
-          },
-        })),
-        filterNotNull(),
-        map(p => ({
-          _id: `member:${p.lastname}`, // FIXME This is very fragile
-          type: 'member',
-          srev: 'v1',
-          persons: [p],
-        })),
-        switchMap(m => this.members.putMember$(m).pipe(mapTo(m))),
-      ).subscribe(m => this.shownMember.next(m)),
-    );
   }
 
   ngAfterViewInit() {
@@ -220,9 +201,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
         }
 
         const element = document.getElementById('divider-' + label);
-        if (!element) {
-          return;
-        }
+        if (!element) return;
 
         this.content.scrollToPoint(0, element.offsetTop);
       }),
@@ -231,6 +210,45 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  async scrollToMember(member: Member) {
+    // FIXME Find a better way to wait for list to update
+
+    let element;
+    for (let i = 0; i < 10; i++) {
+      element = document.getElementById('member-' + member._id);
+      await timer(100).toPromise();
+      if (element) break;
+    }
+    if (!element) return;
+
+    await this.content.scrollToPoint(0, element.offsetTop);
+  }
+
+  async goToMember(member: Member) {
+    await this.navCtrl.navigateForward(['/members', member._id]);
+  }
+
+  async createAndGoToMember() {
+    this.nav.showEditDialog$({
+      component: PersonEditFormComponent,
+      data: {
+        title: 'MEMBER.CREATION_TITLE',
+        person: {},
+      },
+    }).pipe(
+      map(p => ({
+        _id: `member:${p.lastname}`, // FIXME This is very fragile
+        type: 'member',
+        srev: 'v1',
+        persons: [p],
+      })),
+      switchMap(m => this.members.putMember$(m)),
+      take(1),
+      tap(m => this.scrollToMember(m)),
+      tap(m => this.goToMember(m)),
+    ).subscribe();
   }
 
   groupKey(index: number, group: Group<Member>) {

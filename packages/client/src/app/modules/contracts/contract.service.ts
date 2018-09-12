@@ -91,11 +91,11 @@ export class ContractService {
     return contract;
   }
 
-  putContracts$(contracts: Contract): Observable<string> {
+  putContracts$(contracts: Contract): Observable<Contract> {
     return this.mainDatabase.database$.pipe(switchMap(db => db.put$(contracts)));
   }
 
-  removeContracts$(contracts: Contract): Observable<string> {
+  removeContracts$(contracts: Contract): Observable<void> {
     return this.mainDatabase.database$.pipe(switchMap(db => db.remove$(contracts)));
   }
 

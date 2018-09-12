@@ -59,8 +59,9 @@
       </ion-item-divider>
 
       <ion-item *ngFor="let member of group.values; trackBy: memberId"
+                id="member-{{ member._id }}"
                 [button]="true" style="min-height: 54px;"
-                (click)="shownMember.next(member)">
+                (click)="goToMember(member)">
         <ion-avatar slot="start">
           <div class="letter-avatar">
             <span>{{ group.key }}</span>
@@ -89,7 +90,7 @@
 
   <ion-fab class="add-member" slot="fixed" vertical="bottom" horizontal="end"
            [class.hidden]="scroller.scrolling$ | async">
-    <ion-fab-button color="primary" (click)="createdMember.next()">
+    <ion-fab-button color="primary" (click)="createAndGoToMember()">
       <ion-icon name="person-add"></ion-icon>
     </ion-fab-button>
   </ion-fab>

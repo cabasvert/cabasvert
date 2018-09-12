@@ -20,7 +20,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 import { Member } from './member.model';
 import { MemberService } from './member.service';
 
@@ -34,10 +34,16 @@ export class MemberResolver implements Resolve<Observable<Member>> {
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Observable<Member>> {
     let id = route.paramMap.get('id');
 
-    return of(
-      this.memberService.getMemberById$(id).pipe(
-        tap(m => !!m || this.router.navigate(['/members'])),
-      ),
+    return this.memberService.getMemberById$(id).pipe(
+      take(1),
+      map(m => {
+        if (!m) {
+          this.router.navigate(['/members']);
+          return null;
+        } else {
+          return this.memberService.getMemberById$(id);
+        }
+      }),
     );
   }
 }
