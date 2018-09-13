@@ -18,11 +18,14 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
+import { fromPromise } from 'rxjs/internal-compatibility';
 import { map, publishReplay, refCount, switchMap, take } from 'rxjs/operators';
 
 import { DatabaseService } from '../../toolkit/providers/database-service';
 import '../../utils/dates';
+import { UidService } from '../../toolkit/providers/uid-service';
+import { objectAssignNoNulls } from '../../utils/objects';
 import { SeasonWeek } from '../seasons/season.model';
 import { Member, TrialBasket } from './member.model';
 
@@ -32,7 +35,8 @@ export class MemberService {
   private members$: Observable<Member[]>;
   private membersIndexed$: Observable<{ [id: string]: Member }>;
 
-  constructor(private mainDatabase: DatabaseService) {
+  constructor(private mainDatabase: DatabaseService,
+              private uidService: UidService) {
   }
 
   getMembers$(): Observable<Member[]> {
@@ -99,6 +103,20 @@ export class MemberService {
   }
 
   putMember$(member: Member): Observable<Member> {
+    if (!member.persons || member.persons.length === 0)
+      throw new Error('Member must have at least one person');
+
+    if (member._id === undefined) {
+      let person = member.persons[0];
+      let uid = this.uidService.generate();
+
+      member = objectAssignNoNulls({}, member, {
+        _id: `member:${person.lastname}-${person.firstname}-${uid}`,
+        type: 'member',
+        srev: 'v1',
+      });
+    }
+
     return this.mainDatabase.database$.pipe(switchMap(db => db.put$(member)));
   }
 
@@ -106,13 +124,13 @@ export class MemberService {
 
   static memberHasTrialBasketForWeek(member: Member, week: SeasonWeek): boolean {
     return member.trialBaskets && member.trialBaskets.some(b =>
-      b.season === week.season.id && b.week == week.seasonWeek,
+      b.season === week.season.id && b.week === week.seasonWeek,
     );
   }
 
   static memberGetTrialBasketForWeek(member: Member, week: SeasonWeek): TrialBasket {
     return member.trialBaskets.find(b =>
-      b.season === week.season.id && b.week == week.seasonWeek,
+      b.season === week.season.id && b.week === week.seasonWeek,
     );
   }
 }

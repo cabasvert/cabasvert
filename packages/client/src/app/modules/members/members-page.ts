@@ -24,10 +24,10 @@ import { combineLatest, Observable, Subject, Subscription, timer } from 'rxjs';
 import {
   distinctUntilChanged,
   filter,
-  map,
+  map, mapTo,
   publishReplay,
   refCount,
-  scan,
+  scan, skipWhile,
   startWith,
   switchMap,
   take,
@@ -38,6 +38,7 @@ import { IndexedScroller } from '../../toolkit/components/indexed-scroller';
 import { Navigation } from '../../toolkit/providers/navigation';
 import { contains, Group, groupBy } from '../../utils/arrays';
 import { debug, errors, ignoreErrors } from '../../utils/observables';
+import { timeout } from '../../utils/promises';
 
 import { ContractService } from '../contracts/contract.service';
 import { Season } from '../seasons/season.model';
@@ -213,21 +214,37 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async scrollToMember(member: Member) {
-    // FIXME Find a better way to wait for list to update
+    // Asynchronously wait for the member item to be created.
+    await this.memberExists(member);
 
-    let element;
-    for (let i = 0; i < 10; i++) {
-      element = document.getElementById('member-' + member._id);
-      await timer(100).toPromise();
-      if (element) break;
-    }
+    // If the filters are not set adequately, we won't be able to scroll.
+    // Should we reset the member filters ? (Only for member creation)
+    let element = document.getElementById('member-' + member._id);
     if (!element) return;
+
+    // Await next round for the element to get a change to layout.
+    // Or else, the scroll point will be at the next item.
+    await timeout(0);
 
     await this.content.scrollToPoint(0, element.offsetTop);
   }
 
   async goToMember(member: Member) {
+    // Asynchronously wait for the member item to be created.
+    // This ensures that member creation has been propagated.
+    // Or else, the route's Resolve guard may fail.
+    await this.memberExists(member);
+
     await this.navCtrl.navigateForward(['/members', member._id]);
+  }
+
+  private memberExists(member: Member): Promise<void> {
+    return this.members.getMembersIndexed$().pipe(
+      map(msi => !!msi[member._id]),
+      skipWhile(exists => !exists),
+      take(1),
+      mapTo(null),
+    ).toPromise();
   }
 
   async createAndGoToMember() {
@@ -239,9 +256,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
       },
     }).pipe(
       map(p => ({
-        _id: `member:${p.lastname}`, // FIXME This is very fragile
-        type: 'member',
-        srev: 'v1',
+        _id: undefined,
         persons: [p],
       })),
       switchMap(m => this.members.putMember$(m)),

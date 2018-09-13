@@ -17,23 +17,18 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export interface Member {
-  _id: string | undefined;
-  persons: Person[];
-  trialBaskets?: TrialBasket[];
-}
+import { Injectable } from '@angular/core';
+import * as UIDGenerator from 'uid-generator';
 
-export interface Person {
-  firstname: string;
-  lastname: string;
-  address?: string;
-  phoneNumber?: string;
-  emailAddress?: string;
-}
+@Injectable()
+export class UidService {
 
-export interface TrialBasket {
-  season: string;
-  week: number;
-  paid: boolean;
-  sections: { kind: string, count: number }[];
+  private uidGenerator = new UIDGenerator(64, UIDGenerator.BASE62);
+
+  constructor() {
+  }
+
+  generate(): string {
+    return this.uidGenerator.generateSync();
+  }
 }

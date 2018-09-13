@@ -5,6 +5,7 @@
   "description": "Cabas Vert: A vegetable basket manager app",
   "homepage": "https://github.com/cabasvert",
   "scripts": {
+    "postinstall": "node patch.js",
     "start": "npm run prepare && ng serve",
     "build": "npm run prepare && ng build",
     "test": "npm run prepare && ng test",
@@ -56,6 +57,7 @@
     "pouchdb-find": "^6.4.1",
     "pouchdb-replication": "^6.4.1",
     "rxjs": "6.2.2",
+    "uid-generator": "^1.0.0",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {

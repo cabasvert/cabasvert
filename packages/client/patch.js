@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of CabasVert.
  *
  * Copyright 2017, 2018 Didier Villevalois
@@ -17,23 +17,26 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export interface Member {
-  _id: string | undefined;
-  persons: Person[];
-  trialBaskets?: TrialBasket[];
-}
+/**
+ * This file rewrites node_modules/@angular-devkit/build-angular to enable crypto-browserify.
+ * It must be called by npm after install. Make sure that your package.json includes:
+ * {
+ *   "scripts": {
+ *     "postinstall": "node patch.js"
+ *   }
+ * }
+ */
 
-export interface Person {
-  firstname: string;
-  lastname: string;
-  address?: string;
-  phoneNumber?: string;
-  emailAddress?: string;
-}
+const fs = require('fs');
+const f = 'node_modules/@angular-devkit/build-angular/src/angular-cli-files/models/webpack-configs/browser.js';
 
-export interface TrialBasket {
-  season: string;
-  week: number;
-  paid: boolean;
-  sections: { kind: string, count: number }[];
-}
+fs.readFile(f, 'utf8', function (err,data) {
+  if (err) {
+    return console.log(err);
+  }
+  var result = data.replace(/node: false/g, 'node: {crypto: true, stream: true}');
+
+  fs.writeFile(f, result, 'utf8', function (err) {
+    if (err) return console.log(err);
+  });
+});

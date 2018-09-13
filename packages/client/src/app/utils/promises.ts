@@ -17,23 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export interface Member {
-  _id: string | undefined;
-  persons: Person[];
-  trialBaskets?: TrialBasket[];
+export function timeout(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export interface Person {
-  firstname: string;
-  lastname: string;
-  address?: string;
-  phoneNumber?: string;
-  emailAddress?: string;
-}
-
-export interface TrialBasket {
-  season: string;
-  week: number;
-  paid: boolean;
-  sections: { kind: string, count: number }[];
-}
