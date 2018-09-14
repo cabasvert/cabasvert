@@ -55,7 +55,7 @@ export class SeasonService implements OnDestroy {
     );
 
   private readonly _seasons$: Observable<Season[]>;
-  private readonly _seasonsIndexed$: Observable<{ [id: string]: Season }>;
+  private readonly _seasonsIndexed$: Observable<Map<string, Season>>;
   private readonly _lastThreeSeasons$: Observable<Season[]>;
 
   private _subscription = new Subscription();
@@ -66,11 +66,15 @@ export class SeasonService implements OnDestroy {
     let { query, db$ } = this.seasonsQuery();
 
     this._seasons$ = db$.pipe(
-      switchMap(db => db.findAll$(query, s => new Season(this, s))),
+      switchMap(db => db.findAll$(query, doc => new Season(this, doc), season => season.id)),
+      publishReplay(1),
+      refCount(),
     );
 
     this._seasonsIndexed$ = db$.pipe(
-      switchMap(db => db.findAllIndexed$(query, s => new Season(this, s))),
+      switchMap(db => db.findAllIndexed$(query, doc => new Season(this, doc), season => season.id)),
+      publishReplay(1),
+      refCount(),
     );
 
     // Last three seasons
@@ -131,7 +135,9 @@ export class SeasonService implements OnDestroy {
     );
 
     return db$.pipe(
-      switchMap(db => db.findAll$(query, s => new Season(this, s))),
+      switchMap(db => db.findAll$(query, doc => new Season(this, doc), season => season.id)),
+      publishReplay(1),
+      refCount(),
     );
   }
 
@@ -152,6 +158,8 @@ export class SeasonService implements OnDestroy {
 
     return db$.pipe(
       switchMap(db => db.findOne$(query, s => new Season(this, s))),
+      publishReplay(1),
+      refCount(),
     );
   }
 
@@ -173,12 +181,12 @@ export class SeasonService implements OnDestroy {
     return this._seasons$;
   }
 
-  get seasonsIndexed$(): Observable<{ [id: string]: Season }> {
+  get seasonsIndexed$(): Observable<Map<string, Season>> {
     return this._seasonsIndexed$;
   }
 
   seasonById$(id: string): Observable<Season> {
-    return this.seasonsIndexed$.pipe(map(ss => ss[id]));
+    return this.seasonsIndexed$.pipe(map(ss => ss.get(id)));
   }
 
   seasonNameById$(id: string): Observable<string> {

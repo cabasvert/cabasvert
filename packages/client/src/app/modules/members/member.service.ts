@@ -18,13 +18,12 @@
  */
 
 import { Injectable, OnDestroy } from '@angular/core';
-import { combineLatest, Observable, of, Subscription } from 'rxjs';
-import { fromPromise } from 'rxjs/internal-compatibility';
-import { map, publishReplay, refCount, switchMap, take } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { map, publishReplay, refCount, switchMap } from 'rxjs/operators';
 
 import { DatabaseService } from '../../toolkit/providers/database-service';
-import '../../utils/dates';
 import { UidService } from '../../toolkit/providers/uid-service';
+import '../../utils/dates';
 import { objectAssignNoNulls } from '../../utils/objects';
 import { SeasonWeek } from '../seasons/season.model';
 import { Member, TrialBasket } from './member.model';
@@ -33,7 +32,7 @@ import { Member, TrialBasket } from './member.model';
 export class MemberService implements OnDestroy {
 
   private members$: Observable<Member[]>;
-  private membersIndexed$: Observable<{ [id: string]: Member }>;
+  private membersIndexed$: Observable<Map<string, Member>>;
 
   private _subscription = new Subscription();
 
@@ -54,18 +53,22 @@ export class MemberService implements OnDestroy {
 
     this.members$ = db$.pipe(
       switchMap(db => db.findAll$<Member>(query)),
+      publishReplay(1),
+      refCount(),
     );
 
     return this.members$;
   }
 
-  getMembersIndexed$(): Observable<{ [id: string]: Member }> {
+  getMembersIndexed$(): Observable<Map<string, Member>> {
     if (this.membersIndexed$ != null) return this.membersIndexed$;
 
     let { query, db$ } = this.membersQuery();
 
     this.membersIndexed$ = db$.pipe(
       switchMap(db => db.findAllIndexed$<Member>(query)),
+      publishReplay(1),
+      refCount(),
     );
 
     return this.membersIndexed$;
@@ -89,7 +92,7 @@ export class MemberService implements OnDestroy {
 
   getMemberById$(id: string): Observable<Member> {
     return this.getMembersIndexed$().pipe(
-      map(msi => msi[id]),
+      map(msi => msi.get(id)),
     );
   }
 

@@ -204,7 +204,7 @@ export class DistributionService implements OnDestroy {
     );
 
     return combineLatest(membersIndexed$, contracts$, trialBaskets$).pipe(
-      map(([ms, cs, tbs]) => {
+      map(([msi, cs, tbs]) => {
 
           const baskets = [];
 
@@ -216,7 +216,7 @@ export class DistributionService implements OnDestroy {
               return;
             }
 
-            const member = ms[c.member];
+            const member = msi.get(c.member);
 
             const sections: { [kind: string]: BasketSection } = {};
             c.sections.forEach(s => {
@@ -285,7 +285,11 @@ export class DistributionService implements OnDestroy {
 
     const defaultValue = () => Distribution.create(week, this.mainDatabase);
     const mapper = doc => new Distribution(doc, week, this.mainDatabase);
-    return db$.pipe(switchMap(db => db.findOne$(query, mapper, defaultValue)));
+    return db$.pipe(
+      switchMap(db => db.findOne$(query, mapper, defaultValue)),
+      publishReplay(1),
+      refCount(),
+    );
   }
 }
 

@@ -30,7 +30,7 @@ import { Contract, ContractFormulas, ContractKind, ContractSection } from './con
 @Injectable()
 export class ContractService implements OnDestroy {
 
-  private _perMemberIdProblemSeverity$: Observable<{ [id: string]: string }>;
+  private _perMemberIdProblemSeverity$: Observable<Map<string, string>>;
 
   private _subscription = new Subscription();
 
@@ -64,6 +64,8 @@ export class ContractService implements OnDestroy {
     });
     return db$.pipe(
       switchMap(db => db.findAll$(query, d => this.documentToObject(d))),
+      publishReplay(1),
+      refCount(),
     );
   }
 
@@ -85,6 +87,8 @@ export class ContractService implements OnDestroy {
     });
     return db$.pipe(
       switchMap(db => db.findAll$(query, d => this.documentToObject(d))),
+      publishReplay(1),
+      refCount(),
     );
   }
 
@@ -115,18 +119,18 @@ export class ContractService implements OnDestroy {
     return contract;
   }
 
-  perMemberIdProblemSeverity$(): Observable<{ [id: string]: string }> {
+  perMemberIdProblemSeverity$(): Observable<Map<string, string>> {
     return this._perMemberIdProblemSeverity$;
   }
 
-  static computePerMemberIdProblemSeverity(cs: Contract[]): { [id: string]: string } {
+  static computePerMemberIdProblemSeverity(cs: Contract[]): Map<string, string> {
     return cs.reduce((acc, c) => {
       let problems = ContractService.validateContract(c);
       let severity = ContractService.contractValidationSeverity(problems);
 
-      if (severity) acc[c.member] = severity;
+      if (severity) acc.set(c.member, severity);
       return acc;
-    }, {});
+    }, new Map());
   }
 
   static contractValidationMessages(problems: { [key: string]: boolean }): string[] {

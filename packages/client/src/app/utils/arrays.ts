@@ -23,6 +23,8 @@ declare global {
 
     indexed(f: (t: T) => string): { [key: string]: T };
 
+    indexedAsMap(f: (t: T) => string): Map<string, T>;
+
     groupBy(f: (x: T) => string): Group<T>[];
   }
 }
@@ -51,6 +53,20 @@ export function arrayIndexed<T>(array: T[], f: (t: T) => string): { [key: string
       return acc;
     },
     {},
+  );
+}
+
+Array.prototype.indexedAsMap = function <T>(f: (t: T) => string): Map<string, T> {
+  return arrayIndexedAsMap(this, f);
+};
+
+export function arrayIndexedAsMap<T>(array: T[], f: (t: T) => string): Map<string, T> {
+  return array.reduce(
+    (acc, elt) => {
+      acc.set(f(elt), elt);
+      return acc;
+    },
+    new Map(),
   );
 }
 

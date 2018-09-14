@@ -340,8 +340,8 @@ export class Database {
   /* Reactive methods */
 
   public findOne$<T>(query: any,
-                  mapper: (doc: any) => T = d => d,
-                  defaultValue: () => T = () => null): Observable<T> {
+                     mapper: (doc: any) => T = d => d,
+                     defaultValue: () => T = () => null): Observable<T> {
     // TODO Not sure it is the correct way to handle sort's presence...
     if (query.sort) {
       throw new Error('Sort not supported here !');
@@ -365,17 +365,20 @@ export class Database {
 
     return merge(found$, changes$).pipe(
       publishReplay(1),
-      refCount()
+      refCount(),
     );
   }
 
-  public findAll$<T>(query: any, mapper: (doc: any) => T = d => d): Observable<T[]> {
+  public findAll$<T>(query: any,
+                     mapper: (doc: any) => T = d => d,
+                     indexer: (t: T) => string = t => (t as any)._id
+  ): Observable<T[]> {
     return this._doFindAll$(
       query,
       mapper,
       docs => docs,
       (docs, id, doc, deleted) => {
-        const docIndex = docs.findIndex(d => d._id === id);
+        const docIndex = docs.findIndex(d => indexer(d) === id);
         if (deleted) {
           if (docIndex !== -1) {
             docs.splice(docIndex, 1);
@@ -392,14 +395,17 @@ export class Database {
     );
   }
 
-  public findAllIndexed$<T>(query: any, mapper: (doc: any) => T = d => d): Observable<{ [key: string]: T }> {
+  public findAllIndexed$<T>(query: any,
+                            mapper: (doc: any) => T = d => d,
+                            indexer: (t: T) => string = t => (t as any)._id
+  ): Observable<Map<string, T>> {
     return this._doFindAll$(
       query,
       mapper,
-      docs => docs.indexed(doc => doc._id),
+      docs => docs.indexedAsMap(indexer),
       (dsi, id, doc, deleted) => {
-        if (deleted) delete dsi[id];
-        else dsi[id] = doc;
+        if (deleted) dsi.delete(id);
+        else dsi.set(id, doc);
         return dsi;
       },
     );

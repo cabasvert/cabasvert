@@ -76,7 +76,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
   members$: Observable<Group<Member>[]>;
   memberDetails$: Observable<Member>;
 
-  perMemberIdProblemSeverity: { [memberId: string]: string };
+  perMemberIdProblemSeverity: Map<string, string>;
 
   error$: Observable<string>;
 
@@ -118,8 +118,8 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
     const seasonMemberFilters$ = this.seasons$.pipe(
       switchMap(ss => combineLatest(ss.map(s =>
         this.contracts.getSeasonContracts$(s).pipe(
-          map(cs => cs.indexed(c => c.member)),
-          map(csi => m => !!csi[m._id]),
+          map(cs => cs.indexedAsMap(c => c.member)),
+          map(csi => m => csi.has(m._id)),
           startWith(null),
         ),
       ))),
@@ -245,7 +245,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
 
   private memberExists(member: Member): Promise<void> {
     return this.members.getMembersIndexed$().pipe(
-      map(msi => !!msi[member._id]),
+      map(msi => msi.has(member._id)),
       skipWhile(exists => !exists),
       take(1),
       mapTo(null),

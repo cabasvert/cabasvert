@@ -98,7 +98,7 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
 
   private subscription = new Subscription();
   distribution: Distribution;
-  private perMemberIdProblemSeverity: { [memberId: string]: string };
+  private perMemberIdProblemSeverity: Map<string, string>;
 
   @ViewChild(SlidingPanes) private panes: SlidingPanes;
 
@@ -168,14 +168,14 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
     let distribution$ = basketsAndDistribution$.pipe(map(({ distribution, ..._ }) => distribution));
 
     let allBasketsIndexed$ = allBaskets$.pipe(
-      map(bs => bs.indexed(b => b.member._id)),
+      map(bs => bs.indexedAsMap(b => b.member._id)),
     );
     let distributedBaskets$ = combineLatest(allBasketsIndexed$, distribution$).pipe(
       map(([ibs, distribution]) =>
         distribution.baskets
           .filter(db => db.distributed)
           .sort((db1, db2) => new Date(db2.date).getTime() - new Date(db1.date).getTime())
-          .map(db => ibs[db.member])
+          .map(db => ibs.get(db.member))
           .filter(b => !!b),
       ),
       publishReplay(1),
@@ -316,7 +316,7 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   contractProblems(member: Member): string {
-    return this.perMemberIdProblemSeverity && this.perMemberIdProblemSeverity[member._id];
+    return this.perMemberIdProblemSeverity && this.perMemberIdProblemSeverity.get(member._id);
   }
 
   async goToMemberPage(member: Member, item: ItemExpanding) {

@@ -71,7 +71,7 @@
           <member-view [member]="member"></member-view>
         </ion-label>
         <ion-icon
-            *ngIf="perMemberIdProblemSeverity && perMemberIdProblemSeverity[member._id] as severity"
+            *ngIf="perMemberIdProblemSeverity && perMemberIdProblemSeverity.get(member._id) as severity"
             name="warning" slot="end" [color]="severity">
         </ion-icon>
       </ion-item>

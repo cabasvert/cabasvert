@@ -85,7 +85,7 @@ export class BasketPerMonthReport implements Report {
       zip(css$, seasons$, (css, seasons) => ReportService.zip(seasons, css));
 
     return combineLatest(basketType$, membersIndexed$, scss$,
-      (basketType, ms, scss: SeasonContractsPair[]) => {
+      (basketType, msi, scss: SeasonContractsPair[]) => {
 
         const sms: { season: Season, month: Date, member: Member, formula: number, }[] = [];
 
@@ -111,7 +111,7 @@ export class BasketPerMonthReport implements Report {
                 return;
               }
 
-              const member = ms[c.member];
+              const member = msi.get(c.member);
               const monthlyPresence = new Map<string, Date>();
               seasonWeeks.forEach(week => {
                 const month: Date = ReportService.monthFor(week);
@@ -219,7 +219,7 @@ export class DistributionChecklistReport implements Report {
     }));
 
     return combineLatest(basketType$, membersIndexed$, scs$,
-      (basketType, ms, scs: SeasonContractsPair) => {
+      (basketType, msi, scs: SeasonContractsPair) => {
 
         const presence = [];
 
@@ -244,7 +244,7 @@ export class DistributionChecklistReport implements Report {
               return;
             }
 
-            const member = ms[c.member];
+            const member = msi.get(c.member);
             const weeklyPresence = [];
             seasonWeeks.forEach(week => {
               const count = DistributionService.basketCount(c, s, week);
@@ -321,7 +321,7 @@ export class PerYearMemberListReport implements Report {
     const memberPresence = new Map<String, MemberPresence>();
 
     return combineLatest(membersIndexed$, seasons$, css$,
-      (ms, seasons, css: Contract[][]) => {
+      (msi, seasons, css: Contract[][]) => {
 
         type SeasonContractsPair = [Season, Array<Contract>];
         const scss: SeasonContractsPair[] = ReportService.zip(seasons, css);
@@ -342,7 +342,7 @@ export class PerYearMemberListReport implements Report {
             }
 
             const memberId = contract.member;
-            const member = ms[memberId];
+            const member = msi.get(memberId);
 
             if (memberPresence.has(memberId)) {
               memberPresence.get(memberId).seasons.push(season);
