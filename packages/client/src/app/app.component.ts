@@ -93,46 +93,6 @@ export class AppComponent implements OnInit {
         SplashScreen.hide();
       }
     });
-
-    // FIXME Hack because backButton is not supported correctly yet
-    if (this.platform.is('android')) {
-      fromEvent(App as NodeCompatibleEventEmitter, 'backButton').subscribe(async () => {
-        try {
-          let element = await this.actionSheetCtrl.getTop();
-          if (element) {
-            this.actionSheetCtrl.dismiss();
-            return;
-          }
-        } catch (error) {
-        }
-
-        try {
-          let element = await this.popoverCtrl.getTop();
-          if (element) {
-            this.popoverCtrl.dismiss();
-            return;
-          }
-        } catch (error) {
-        }
-
-        try {
-          let element = await this.modalCtrl.getTop();
-          if (element) {
-            this.modalCtrl.dismiss();
-            return;
-          }
-        } catch (error) {
-        }
-
-        let canGoBack = this.routerOutlets.find((outlet: IonRouterOutlet) => outlet && outlet.canGoBack());
-        if (canGoBack) {
-          this.navCtrl.goBack();
-          return;
-        }
-
-        this.navCtrl.navigateRoot('/dashboard');
-      });
-    }
   }
 
   initTranslation() {
