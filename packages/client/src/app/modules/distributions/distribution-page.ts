@@ -22,13 +22,22 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { Content, ModalController, NavController } from '@ionic/angular';
 import { combineLatest, merge, Observable, of, Subject, Subscription } from 'rxjs';
-import { map, mapTo, mergeScan, publishReplay, refCount, startWith, switchAll, switchMap, withLatestFrom } from 'rxjs/operators';
+import {
+  map,
+  mapTo,
+  mergeScan,
+  publishReplay,
+  refCount,
+  startWith,
+  switchAll,
+  switchMap,
+  withLatestFrom,
+} from 'rxjs/operators';
 import { IndexedScroller } from '../../toolkit/components/indexed-scroller';
 import { ItemExpanding } from '../../toolkit/components/item-expanding';
 import { SlidingPanes } from '../../toolkit/components/sliding-panes';
 import { Navigation } from '../../toolkit/providers/navigation';
 import { contains, Group, groupBy } from '../../utils/arrays';
-import { debug } from '../../utils/observables';
 
 import { ContractKind } from '../contracts/contract.model';
 import { ContractService } from '../contracts/contract.service';
@@ -159,12 +168,7 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
     let distribution$ = basketsAndDistribution$.pipe(map(({ distribution, ..._ }) => distribution));
 
     let allBasketsIndexed$ = allBaskets$.pipe(
-      map(bs =>
-        bs.reduce((acc, b) => {
-          acc[b.member._id] = b;
-          return acc;
-        }, {}),
-      ),
+      map(bs => bs.indexed(b => b.member._id)),
     );
     let distributedBaskets$ = combineLatest(allBasketsIndexed$, distribution$).pipe(
       map(([ibs, distribution]) =>

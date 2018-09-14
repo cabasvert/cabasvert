@@ -19,9 +19,11 @@
 
 declare global {
   interface Array<T> {
-    contains(x: T): boolean
+    contains(x: T): boolean;
 
-    groupBy(f: (x: T) => string): Group<T>[]
+    indexed(f: (t: T) => string): { [key: string]: T };
+
+    groupBy(f: (x: T) => string): Group<T>[];
   }
 }
 
@@ -36,6 +38,20 @@ Array.prototype.contains = function <T>(x: T): boolean {
 
 export function contains<T>(array: T[], elt: T) {
   return array.indexOf(elt) > -1;
+}
+
+Array.prototype.indexed = function <T>(f: (t: T) => string): { [key: string]: T } {
+  return arrayIndexed(this, f);
+};
+
+export function arrayIndexed<T>(array: T[], f: (t: T) => string): { [key: string]: T } {
+  return array.reduce(
+    (acc, elt) => {
+      acc[f(elt)] = elt;
+      return acc;
+    },
+    {},
+  );
 }
 
 // TODO Investigate why Ionic does not see this method but WebStorm does

@@ -27,10 +27,10 @@ import PouchFind from 'pouchdb-find';
 import PouchSync from 'pouchdb-replication';
 
 import { combineLatest, EMPTY, from, merge, Observable, of } from 'rxjs';
-import { fromPromise } from 'rxjs/internal-compatibility';
 import {
   catchError,
-  map, mapTo,
+  map,
+  mapTo,
   mergeMap,
   publishReplay,
   refCount,
@@ -38,7 +38,6 @@ import {
   switchMap,
 } from 'rxjs/operators';
 import { ConfigurationService } from '../../config/configuration.service';
-import { debug } from '../../utils/observables';
 import { SyncState, SyncStateListener } from '../components/sync-state-listener';
 import { Logger, LogService } from './log-service';
 

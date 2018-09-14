@@ -17,14 +17,14 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-import { Observable, timer } from 'rxjs';
-import { distinct, map, publishReplay, refCount, switchMap, take } from 'rxjs/operators';
+import { Injectable, OnDestroy } from '@angular/core';
+import { Observable, Subscription, timer } from 'rxjs';
+import { distinct, map, publishReplay, refCount, switchMap } from 'rxjs/operators';
 import { DatabaseService } from '../../toolkit/providers/database-service';
 import { Season, SeasonWeek } from './season.model';
 
 @Injectable()
-export class SeasonService {
+export class SeasonService implements OnDestroy {
 
   private static today() {
     let date = new Date();
@@ -34,7 +34,7 @@ export class SeasonService {
 
   private today$: Observable<Date> =
     timer(0, 60 * 1000).pipe(
-      map(_ => SeasonService.today()),
+      map(() => SeasonService.today()),
       distinct(d => d.getDate()),
       publishReplay(1),
       refCount(),
@@ -54,9 +54,11 @@ export class SeasonService {
       refCount(),
     );
 
-  private _seasons$: Observable<Season[]>;
-  private _seasonsIndexed$: Observable<{ [id: string]: Season }>;
-  private _lastThreeSeasons$: Observable<Season[]>;
+  private readonly _seasons$: Observable<Season[]>;
+  private readonly _seasonsIndexed$: Observable<{ [id: string]: Season }>;
+  private readonly _lastThreeSeasons$: Observable<Season[]>;
+
+  private _subscription = new Subscription();
 
   constructor(private mainDatabase: DatabaseService) {
 
@@ -80,24 +82,21 @@ export class SeasonService {
 
     // TODO Make more optimal by using changes directly and not mapping the result of findAll
     this._seasonsIndexed$ = this.seasons$.pipe(
-      map(
-        ss => ss.reduce(
-          (acc, s) => {
-            acc[s.id] = s;
-            return acc;
-          },
-          {},
-        ),
-      ),
+      map(ss => ss.indexed(s => s.id)),
       publishReplay(1),
       refCount(),
     );
 
     // Last three seasons
-    this._lastThreeSeasons$ = this._lastSeasons$(3).pipe(
-      publishReplay(1),
-      refCount(),
-    );
+    this._lastThreeSeasons$ = this._lastSeasons$(3);
+
+    this._subscription.add(this._seasons$.subscribe());
+    this._subscription.add(this._seasonsIndexed$.subscribe());
+    this._subscription.add(this._lastThreeSeasons$.subscribe());
+  }
+
+  ngOnDestroy() {
+    this._subscription.unsubscribe();
   }
 
   lastSeasons$(count: number = 1): Observable<Season[]> {
@@ -131,7 +130,6 @@ export class SeasonService {
     return db$.pipe(
       switchMap(db =>
         db.findAll$(query).pipe(
-          take(1),
           map((docs: any[]) => docs.map(d => d ? new Season(this, d) : null)),
         ),
       ),

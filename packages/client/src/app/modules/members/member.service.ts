@@ -17,8 +17,8 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-import { combineLatest, Observable, of } from 'rxjs';
+import { Injectable, OnDestroy } from '@angular/core';
+import { combineLatest, Observable, of, Subscription } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { map, publishReplay, refCount, switchMap, take } from 'rxjs/operators';
 
@@ -30,13 +30,21 @@ import { SeasonWeek } from '../seasons/season.model';
 import { Member, TrialBasket } from './member.model';
 
 @Injectable()
-export class MemberService {
+export class MemberService implements OnDestroy {
 
   private members$: Observable<Member[]>;
   private membersIndexed$: Observable<{ [id: string]: Member }>;
 
+  private _subscription = new Subscription();
+
   constructor(private mainDatabase: DatabaseService,
               private uidService: UidService) {
+
+    this._subscription.add(this.getMembersIndexed$().subscribe());
+  }
+
+  ngOnDestroy() {
+    this._subscription.unsubscribe();
   }
 
   getMembers$(): Observable<Member[]> {
@@ -68,15 +76,7 @@ export class MemberService {
 
     // TODO Make more optimal by using changes directly and not mapping the result of findAll
     this.membersIndexed$ = this.getMembers$().pipe(
-      map(
-        ms => ms.reduce(
-          (acc, m) => {
-            acc[m._id] = m;
-            return acc;
-          },
-          {},
-        ),
-      ),
+      map(ms => ms.indexed(m => m._id)),
       publishReplay(1),
       refCount(),
     );

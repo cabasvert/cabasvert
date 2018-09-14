@@ -17,8 +17,8 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-import { combineLatest, Observable } from 'rxjs';
+import { Injectable, OnDestroy } from '@angular/core';
+import { combineLatest, Observable, Subscription } from 'rxjs';
 import { map, publishReplay, refCount, switchMap } from 'rxjs/operators';
 
 import { DatabaseService } from '../../toolkit/providers/database-service';
@@ -34,13 +34,7 @@ import { SeasonService } from '../seasons/season.service';
 import { Basket, BasketSection, BasketSectionTotals, Distribution } from './distribution.model';
 
 @Injectable()
-export class DistributionService {
-
-  constructor(private mainDatabase: DatabaseService,
-              private seasons: SeasonService,
-              private members: MemberService,
-              private contracts: ContractService) {
-  }
+export class DistributionService implements OnDestroy {
 
   get todaysBaskets$(): Observable<Basket[]> {
     return this._todaysBaskets$;
@@ -64,6 +58,20 @@ export class DistributionService {
       refCount(),
     );
 
+  private _subscription = new Subscription();
+
+  constructor(private mainDatabase: DatabaseService,
+              private seasons: SeasonService,
+              private members: MemberService,
+              private contracts: ContractService) {
+
+    this._subscription.add(this._todaysTotals$.subscribe());
+  }
+
+  ngOnDestroy() {
+    this._subscription.unsubscribe();
+  }
+
   public static basketCount(contract: Contract, section: ContractSection, week: SeasonWeek) {
     let count = DistributionService.basketCountWithoutModifications(section, week);
     const seasonWeek = week.seasonWeek;
@@ -71,7 +79,7 @@ export class DistributionService {
     // Take contract amendments in account
     if (contract.amendments) {
       contract.amendments.forEach(a => {
-        if (a.week == seasonWeek) {
+        if (a.week === seasonWeek) {
           const delta = a.deltas[section.kind];
           if (delta) {
             count += delta.count;
@@ -83,12 +91,12 @@ export class DistributionService {
     // Take basket postponements in account
     if (contract.postponements) {
       contract.postponements.forEach(p => {
-        if (p.week == seasonWeek) {
+        if (p.week === seasonWeek) {
           const delta = p.deltas[section.kind];
           if (delta) {
             count += delta.count;
           }
-        } else if (p.rescheduledWeek == seasonWeek) {
+        } else if (p.rescheduledWeek === seasonWeek) {
           const delta = p.deltas[section.kind];
           if (delta) {
             count -= delta.count;
@@ -113,8 +121,7 @@ export class DistributionService {
     if (doubleDistribution) {
       if (formula instanceof Array) {
         return formula[0] + formula[1];
-      }
-      else {
+      } else {
         return formula * 2;
       }
     }
@@ -123,9 +130,8 @@ export class DistributionService {
     const isMainWeek = firstWeek.otherWeek === week.otherWeek;
     if (formula instanceof Array) {
       return formula[isMainWeek ? 0 : 1];
-    }
-    else {
-      if (formula != parseInt('' + formula)) {
+    } else {
+      if (formula !== parseInt('' + formula, 10)) {
         formula += (isMainWeek ? .5 : -.5);
       }
       return Math.round(formula);
@@ -197,66 +203,67 @@ export class DistributionService {
       refCount(),
     );
 
-    return combineLatest(membersIndexed$, contracts$, trialBaskets$,
-      (ms, cs, tbs) => {
+    return combineLatest(membersIndexed$, contracts$, trialBaskets$).pipe(
+      map(([ms, cs, tbs]) => {
 
-        const baskets = [];
+          const baskets = [];
 
-        cs.forEach(c => {
-          if (c.type !== 'contract' && c.srev !== 'v1') {
-            return;
-          }
-          if (!c.sections) {
-            return;
-          }
-
-          const member = ms[c.member];
-
-          const sections: { [kind: string]: BasketSection } = {};
-          c.sections.forEach(s => {
-            const { kind, formula, ..._ } = s;
-            if (!formula) {
+          cs.forEach(c => {
+            if (c.type !== 'contract' && c.srev !== 'v1') {
+              return;
+            }
+            if (!c.sections) {
               return;
             }
 
-            const count = DistributionService.basketCount(c, s, week);
+            const member = ms[c.member];
 
-            if (count == 0) {
+            const sections: { [kind: string]: BasketSection } = {};
+            c.sections.forEach(s => {
+              const { kind, formula } = s;
+              if (!formula) {
+                return;
+              }
+
+              const count = DistributionService.basketCount(c, s, week);
+
+              if (count === 0) {
+                return;
+              }
+              sections[kind] = { kind, count };
+            });
+
+            if (Object.keys(sections).length === 0) {
               return;
             }
-            sections[kind] = { kind, count };
+            baskets.push(new Basket(member, sections));
           });
 
-          if (Object.keys(sections).length == 0) {
-            return;
-          }
-          baskets.push(new Basket(member, sections));
-        });
-
-        tbs.forEach(tb => {
-          const trialBasket = MemberService.memberGetTrialBasketForWeek(tb, week);
-          if (!trialBasket) {
-            return;
-          }
-
-          const sections: { [kind: string]: BasketSection } = {};
-          trialBasket.sections.forEach(s => {
-            const { kind, count, ..._ } = s;
-
-            if (count == 0) {
+          tbs.forEach(tb => {
+            const trialBasket = MemberService.memberGetTrialBasketForWeek(tb, week);
+            if (!trialBasket) {
               return;
             }
-            sections[kind] = { kind, count };
+
+            const sections: { [kind: string]: BasketSection } = {};
+            trialBasket.sections.forEach(s => {
+              const { kind, count } = s;
+
+              if (count === 0) {
+                return;
+              }
+              sections[kind] = { kind, count };
+            });
+
+            if (Object.keys(sections).length === 0) {
+              return;
+            }
+            baskets.push(new Basket(tb, sections, true));
           });
 
-          if (Object.keys(sections).length == 0) {
-            return;
-          }
-          baskets.push(new Basket(tb, sections, true));
-        });
-
-        return baskets.sort((b1, b2) => DistributionService.memberCompare(b1.member, b2.member));
-      },
+          return baskets.sort((b1, b2) => DistributionService.memberCompare(b1.member, b2.member));
+        },
+      ),
     );
   }
 

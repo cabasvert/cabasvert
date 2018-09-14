@@ -17,21 +17,22 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable, OnDestroy } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
 import { map, publishReplay, refCount, switchMap } from 'rxjs/operators';
 
 import { DatabaseService } from '../../toolkit/providers/database-service';
-import { debug } from '../../utils/observables';
 
 import { Member } from '../members/member.model';
 import { Season } from '../seasons/season.model';
 import { Contract, ContractFormulas, ContractKind, ContractSection } from './contract.model';
 
 @Injectable()
-export class ContractService {
+export class ContractService implements OnDestroy {
 
   private _perMemberIdProblemSeverity$: Observable<{ [id: string]: string }>;
+
+  private _subscription = new Subscription();
 
   constructor(private mainDatabase: DatabaseService) {
     // Per member problem severity on all contracts
@@ -40,6 +41,12 @@ export class ContractService {
       publishReplay(1),
       refCount(),
     );
+
+    this._subscription.add(this._perMemberIdProblemSeverity$.subscribe());
+  }
+
+  ngOnDestroy() {
+    this._subscription.unsubscribe();
   }
 
   getSeasonContracts$(season: Season): Observable<Contract[]> {

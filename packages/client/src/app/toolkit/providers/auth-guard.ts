@@ -18,12 +18,19 @@
  */
 
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, CanLoad, Route, Router, RouterStateSnapshot } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  CanActivate,
+  CanActivateChild,
+  CanLoad,
+  Route,
+  Router,
+  RouterStateSnapshot,
+} from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { map, switchMap, take, tap } from 'rxjs/operators';
-import { debug } from '../../utils/observables';
-import { AuthService, User } from './auth-service';
+import { AuthService } from './auth-service';
 import { Logger, LogService } from './log-service';
 
 @Injectable()

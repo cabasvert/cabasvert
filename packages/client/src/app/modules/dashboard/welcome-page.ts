@@ -71,7 +71,7 @@ export class WelcomePage implements OnInit, OnDestroy {
     return this.user && this.user.hasRole(Roles.DISTRIBUTOR);
   }
 
-  openDistributionPage() {
-    this.navCtrl.navigateRoot(['./distribution']);
+  async openDistributionPage() {
+    await this.navCtrl.navigateRoot(['./distribution']);
   }
 }

@@ -21,7 +21,19 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Network } from '@ionic-native/network/ngx';
 import { Platform } from '@ionic/angular';
 
-import { BehaviorSubject, combineLatest, defer, EMPTY, from, merge, Observable, of, Subject, Subscription, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  defer,
+  EMPTY,
+  from,
+  merge,
+  Observable,
+  of,
+  Subject,
+  Subscription,
+  throwError,
+} from 'rxjs';
 import {
   catchError,
   delay,
@@ -42,7 +54,7 @@ import {
 import { environment } from '../../../environments/environment';
 import { ConfigurationService } from '../../config/configuration.service';
 
-import { filterNotNull, previous } from '../../utils/observables';
+import { debug, filterNotNull, previous } from '../../utils/observables';
 import { SyncState } from '../components/sync-state-listener';
 import { AuthService } from './auth-service';
 import { Database, DatabaseHelper } from './database-helper';
@@ -120,7 +132,7 @@ export class DatabaseService implements OnDestroy {
             startWith(this.network.type !== 'none' ? NetworkState.ONLINE : NetworkState.OFFLINE),
           ),
         ),
-        catchError(error => of(NetworkState.ONLINE)),
+        catchError(() => of(NetworkState.ONLINE)),
         publishReplay(1),
         refCount(),
       );
@@ -153,9 +165,8 @@ export class DatabaseService implements OnDestroy {
 
     const forceRecreateRemote$: Subject<void> = new BehaviorSubject(null);
 
-    const remoteDbNeeded$ = combineLatest(
-      loggedIn$, networkUp$, forceRecreateRemote$,
-      (loggedIn, networkUp, forceRecreate) => loggedIn && networkUp,
+    const remoteDbNeeded$ = combineLatest(loggedIn$, networkUp$, forceRecreateRemote$).pipe(
+      map(([loggedIn, networkUp, forceRecreate]) => loggedIn && networkUp || forceRecreate),
     );
     const remoteDb$: Observable<Database> = remoteDbNeeded$.pipe(
       withLatestFrom(network$, (needed, status) => {
@@ -198,7 +209,7 @@ export class DatabaseService implements OnDestroy {
           remoteDb$.pipe(filterNotNull()),
           (_, db) => from(db.getSession()).pipe(
             map(response => !response.ok || !response.userCtx.name),
-            catchError(error => of(true)),
+            catchError(() => of(true)),
           ),
         ),
         switchAll(),
@@ -207,14 +218,16 @@ export class DatabaseService implements OnDestroy {
       ).subscribe(forceRecreateRemote$),
     );
 
-    const maintainSync$ = combineLatest(localDb$, remoteDb$, (localDB, remoteDB) => {
-      if (localDB) {
-        DatabaseService.cancelSync(localDB);
-      }
-      if (localDB && remoteDB) {
-        DatabaseService.setupSync(localDB, remoteDB);
-      }
-    });
+    const maintainSync$ = combineLatest(localDb$, remoteDb$).pipe(
+      map(([localDB, remoteDB]) => {
+        if (localDB) {
+          DatabaseService.cancelSync(localDB);
+        }
+        if (localDB && remoteDB) {
+          DatabaseService.setupSync(localDB, remoteDB);
+        }
+      }),
+    );
     this._subscription.add(
       maintainSync$.subscribe(),
     );

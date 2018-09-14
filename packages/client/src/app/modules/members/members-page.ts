@@ -118,8 +118,8 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
     const seasonMemberFilters$ = this.seasons$.pipe(
       switchMap(ss => combineLatest(ss.map(s =>
         this.contracts.getSeasonContracts$(s).pipe(
-          map(cs => cs.map(c => c.member)),
-          map(mids => m => contains(mids, m._id)),
+          map(cs => cs.indexed(c => c.member)),
+          map(csi => m => !!csi[m._id]),
           startWith(null),
         ),
       ))),
@@ -143,13 +143,18 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
               const flag = f.get(s.id);
               return m => acc(m) && (flag === undefined || (scs[i] && scs[i](m) === flag));
             },
-            m => true,
+            () => true,
           )),
+        startWith(null),
+        distinctUntilChanged(),
         publishReplay(1),
         refCount(),
       );
 
-    const allMembers$ = this.members.getMembers$();
+    const allMembers$ = this.members.getMembers$().pipe(
+      publishReplay(1),
+      refCount(),
+    );
     const filteredMembers$ =
       combineLatest(allMembers$, seasonMemberFilter$).pipe(
         map(([ms, f]) => {
@@ -159,7 +164,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
             return ms;
           }
         }),
-        publishReplay<Member[]>(1),
+        publishReplay(1),
         refCount(),
       );
 
