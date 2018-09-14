@@ -13,6 +13,25 @@ ion-toolbar.unfolding {
   }
 }
 
+ion-toolbar.filter-toggles {
+
+  div {
+    display: flex;
+    width: auto;
+    justify-content: space-evenly;
+  }
+
+  ion-button {
+    --padding-start: .8em;
+    --padding-end: .8em;
+
+    &[fill='solid'] {
+      margin-left: 1px;
+      margin-right: 1px;
+    }
+  }
+}
+
 ion-content ion-list {
   // Make the list above bottom with margin 10px + 56px (fab-button) + 10px
   margin-bottom: 2 * 10px + 56px;

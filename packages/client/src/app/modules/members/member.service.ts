@@ -25,7 +25,7 @@ import { DatabaseService } from '../../toolkit/providers/database-service';
 import { UidService } from '../../toolkit/providers/uid-service';
 import '../../utils/dates';
 import { objectAssignNoNulls } from '../../utils/objects';
-import { SeasonWeek } from '../seasons/season.model';
+import { Season, SeasonWeek } from '../seasons/season.model';
 import { Member, TrialBasket } from './member.model';
 
 @Injectable()
@@ -127,6 +127,16 @@ export class MemberService implements OnDestroy {
   }
 
   // TODO Move these methods to Member class when it becomes one
+
+  static memberHasTrialBasket(member: Member): boolean {
+    return member.trialBaskets && member.trialBaskets.length > 0;
+  }
+
+  static memberHasTrialBasketForSeason(member: Member, seasonId: string): boolean {
+    return member.trialBaskets && member.trialBaskets.some(b =>
+      b.season === seasonId,
+    );
+  }
 
   static memberHasTrialBasketForWeek(member: Member, week: SeasonWeek): boolean {
     return member.trialBaskets && member.trialBaskets.some(b =>

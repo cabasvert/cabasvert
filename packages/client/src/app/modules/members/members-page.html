@@ -40,15 +40,33 @@
     </ion-searchbar>
   </ion-toolbar>
 
-  <ion-toolbar class="toolbar-thinner">
+  <ion-toolbar class="toolbar-thinner filter-toggles">
+    <div>
     <ng-container *ngIf="seasons$ | async as seasons">
       <ion-button *ngFor="let season of seasons"
-                  (click)="seasonFilterToggle$.next(season.id)"
-                  [color]="(seasonFilter$ | async).colorFor(season.id)"
-                  [fill]="(seasonFilter$ | async).get(season.id) === undefined ? 'outline' : 'solid'">
+                  (click)="filterToggle$.next(season.id)"
+                  [color]="(filter$ | async).colorFor(season.id)"
+                  [fill]="(filter$ | async).get(season.id) === undefined ? 'outline' : 'solid'">
         {{ season.name }}
       </ion-button>
     </ng-container>
+
+    <ion-button (click)="filterToggle$.next('contract')"
+                [color]="(filter$ | async).colorFor('contract')"
+                [fill]="(filter$ | async).get('contract') === undefined ? 'outline' : 'solid'">
+      <ion-icon name="paper"></ion-icon>
+    </ion-button>
+    <ion-button (click)="filterToggle$.next('trial')"
+                [color]="(filter$ | async).colorFor('trial')"
+                [fill]="(filter$ | async).get('trial') === undefined ? 'outline' : 'solid'">
+      <ion-icon name="basket"></ion-icon>
+    </ion-button>
+    <ion-button (click)="filterToggle$.next('problem')"
+                [color]="(filter$ | async).colorFor('problem')"
+                [fill]="(filter$ | async).get('problem') === undefined ? 'outline' : 'solid'">
+      <ion-icon name="warning"></ion-icon>
+    </ion-button>
+    </div>
   </ion-toolbar>
 </ion-header>
 
@@ -79,7 +97,7 @@
         </ion-label>
         <ion-icon
           *ngIf="perMemberIdProblemSeverity && perMemberIdProblemSeverity.get(member._id) as severity"
-          name="warning" slot="end" [color]="severity">
+          [name]="severity === 'danger' ? 'alert' : 'warning'" slot="end" [color]="severity">
         </ion-icon>
       </ion-item>
 

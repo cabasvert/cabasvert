@@ -20,7 +20,7 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Content, NavController } from '@ionic/angular';
-import { combineLatest, Observable, Subject, Subscription, timer } from 'rxjs';
+import { combineLatest, Observable, of, Subject, Subscription, timer } from 'rxjs';
 import {
   distinctUntilChanged,
   filter,
@@ -66,8 +66,8 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
               private contracts: ContractService) {
   }
 
-  seasonFilterToggle$ = new Subject<string>();
-  seasonFilter$: Observable<SeasonFilter>;
+  filterToggle$ = new Subject<string>();
+  filter$: Observable<Filter>;
 
   seasons$: Observable<Season[]>;
 
@@ -116,33 +116,55 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
       refCount(),
     );
 
-    const seasonMemberFilters$ = this.seasons$.pipe(
-      switchMap(ss => combineLatest(ss.map(s =>
-        this.contracts.getSeasonContracts$(s).pipe(
-          map(cs => cs.indexedAsMap(c => c.member)),
-          map(csi => m => csi.has(m._id)),
-          startWith(null),
+    const filters$ = this.seasons$.pipe(
+      switchMap(ss => combineLatest(
+        // Season filters
+        ss.map(s =>
+          this.contracts.getSeasonContracts$(s).pipe(
+            map(cs => cs.indexedAsMap(c => c.member)),
+            map(csi => m => MemberService.memberHasTrialBasketForSeason(m, s.id) || csi.has(m._id)),
+            startWith(null),
+            map(f => ({ id: s.id, filter: f })),
+          ),
+        ).concat(
+          // Contract filter
+          this.contracts.getContracts$().pipe(
+            map(cs => cs.indexedAsMap(c => c.member)),
+            map(csi => m => csi.has(m._id)),
+            startWith(null),
+            map(f => ({ id: 'contract', filter: f })),
+          ),
+
+          // Trial baskets filter
+          of({ id: 'trial', filter: m => MemberService.memberHasTrialBasket(m) }),
+
+          // Problem filter
+          this.contracts.perMemberIdProblemSeverity$().pipe(
+            map(m2ps => m => m2ps.has(m._id)),
+            startWith(null),
+            map(f => ({ id: 'problem', filter: f })),
+          ),
         ),
-      ))),
+      )),
       filter(fs => fs.every(f => !!f)),
       publishReplay(1),
       refCount(),
     );
 
-    this.seasonFilter$ = this.seasonFilterToggle$.pipe(
-      scan<string, SeasonFilter>((acc, id) => acc.toggle(id), new SeasonFilter()),
-      startWith(new SeasonFilter()),
+    this.filter$ = this.filterToggle$.pipe(
+      scan<string, Filter>((acc, id) => acc.toggle(id), new Filter()),
+      startWith(new Filter()),
       publishReplay(1),
       refCount(),
     );
 
     const seasonMemberFilter$ =
-      combineLatest(this.seasonFilter$, this.seasons$, seasonMemberFilters$).pipe(
-        map(([f, ss, scs]) =>
-          f.hasNone() ? null : ss.reduce<(m: Member) => boolean>(
-            (acc, s, i) => {
-              const flag = f.get(s.id);
-              return m => acc(m) && (flag === undefined || (scs[i] && scs[i](m) === flag));
+      combineLatest(this.filter$, filters$).pipe(
+        map(([ff, fs]) =>
+          ff.hasNone() ? null : fs.reduce<(m: Member) => boolean>(
+            (acc, f) => {
+              const flag = ff.get(f.id);
+              return m => acc(m) && (flag === undefined || (f.filter && f.filter(m) === flag));
             },
             () => true,
           )),
@@ -285,7 +307,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
   }
 }
 
-class SeasonFilter {
+class Filter {
 
   constructor(private flags: { [id: string]: boolean } = {}) {
   }
