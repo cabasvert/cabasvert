@@ -25,15 +25,22 @@
 
     <ion-title>{{ 'MEMBER.LIST_TITLE' | translate }}</ion-title>
 
-    <!--FIXME !!!-->
-    <!--<ion-buttons slot="primary">-->
-    <!--<searchbar-expanding #searchbar type="email"-->
-    <!--(ionInput)="searchQuery.next($event.target.value)"-->
-    <!--(ionClear)="searchQuery.next('')">-->
-    <!--</searchbar-expanding>-->
-    <!--</ion-buttons>-->
+    <ion-buttons slot="primary">
+      <ion-button (click)="toggleSearchBar() && searchBar.focus()">
+        <ion-icon name="search"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
-  <ion-toolbar>
+
+  <ion-toolbar class="unfolding" color="primary" [class.unfolded]="searchBarUnfolded">
+    <!-- Should we use type="email" to avoid having the keyboard automatically setting caps mode -->
+    <ion-searchbar #searchBar animated="true" showCancelButton="true"
+                   (ionChange)="searchQuery$.next($event.detail.value)"
+                   (ionCancel)="toggleSearchBar()">
+    </ion-searchbar>
+  </ion-toolbar>
+
+  <ion-toolbar class="toolbar-thinner">
     <ng-container *ngIf="seasons$ | async as seasons">
       <ion-button *ngFor="let season of seasons"
                   (click)="seasonFilterToggle$.next(season.id)"
@@ -71,8 +78,8 @@
           <member-view [member]="member"></member-view>
         </ion-label>
         <ion-icon
-            *ngIf="perMemberIdProblemSeverity && perMemberIdProblemSeverity.get(member._id) as severity"
-            name="warning" slot="end" [color]="severity">
+          *ngIf="perMemberIdProblemSeverity && perMemberIdProblemSeverity.get(member._id) as severity"
+          name="warning" slot="end" [color]="severity">
         </ion-icon>
       </ion-item>
 

@@ -71,7 +71,8 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
 
   seasons$: Observable<Season[]>;
 
-  searchQuery = new Subject<string>();
+  searchBarUnfolded = false;
+  searchQuery$ = new Subject<string>();
 
   members$: Observable<Group<Member>[]>;
   memberDetails$: Observable<Member>;
@@ -171,7 +172,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
     const members$ =
       combineLatest(
         filteredMembers$,
-        this.searchQuery.pipe(
+        this.searchQuery$.pipe(
           startWith(''),
           distinctUntilChanged(),
         ),
@@ -216,6 +217,10 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  async toggleSearchBar() {
+    this.searchBarUnfolded = !this.searchBarUnfolded;
   }
 
   async scrollToMember(member: Member) {

@@ -1,3 +1,17 @@
+$searchbar-unfolding-expand-time: 300ms;
+
+ion-toolbar.unfolding {
+  position: fixed;
+  top: 0;
+  z-index: 100;
+
+  transform: translateX(100%);
+  transition: transform $searchbar-unfolding-expand-time ease-out;
+
+  &.unfolded {
+    transform: translateX(0);
+  }
+}
 
 ion-content ion-list {
   // Make the list above bottom with margin 10px + 56px (fab-button) + 10px
