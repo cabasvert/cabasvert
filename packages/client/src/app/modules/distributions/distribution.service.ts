@@ -276,17 +276,16 @@ export class DistributionService implements OnDestroy {
       },
       limit: 1,
     };
-    const defaultValue = () => Distribution.createDoc(week);
 
     const db$ = this.mainDatabase.withIndex$({
       index: {
         fields: ['type', 'season', 'week'],
       },
     });
-    return db$.pipe(
-      switchMap(db => db.findOne$(query, defaultValue)),
-      map(doc => new Distribution(doc, week, this.mainDatabase)),
-    );
+
+    const defaultValue = () => Distribution.create(week, this.mainDatabase);
+    const mapper = doc => new Distribution(doc, week, this.mainDatabase);
+    return db$.pipe(switchMap(db => db.findOne$(query, mapper, defaultValue)));
   }
 }
 

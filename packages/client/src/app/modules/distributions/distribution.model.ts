@@ -40,7 +40,11 @@ export class Distribution {
     }
   }[];
 
-  static createDoc(week: SeasonWeek) {
+  static create(week: SeasonWeek, mainDatabase: DatabaseService) {
+    return new Distribution(Distribution.createDoc(week), week, mainDatabase);
+  }
+
+  private static createDoc(week: SeasonWeek) {
     let doc = {
       _id: this.createDocId(week),
       type: 'distribution',

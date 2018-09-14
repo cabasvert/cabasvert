@@ -50,6 +50,28 @@ export class MemberService implements OnDestroy {
   getMembers$(): Observable<Member[]> {
     if (this.members$ != null) return this.members$;
 
+    let { query, db$ } = this.membersQuery();
+
+    this.members$ = db$.pipe(
+      switchMap(db => db.findAll$<Member>(query)),
+    );
+
+    return this.members$;
+  }
+
+  getMembersIndexed$(): Observable<{ [id: string]: Member }> {
+    if (this.membersIndexed$ != null) return this.membersIndexed$;
+
+    let { query, db$ } = this.membersQuery();
+
+    this.membersIndexed$ = db$.pipe(
+      switchMap(db => db.findAllIndexed$<Member>(query)),
+    );
+
+    return this.membersIndexed$;
+  }
+
+  private membersQuery() {
     let query = {
       selector: {
         type: 'member',
@@ -61,27 +83,8 @@ export class MemberService implements OnDestroy {
         fields: ['type'],
       },
     });
-    this.members$ = db$.pipe(
-      switchMap(db => db.findAll$(query)),
-      map(ms => (ms as Member[])),
-      publishReplay(1),
-      refCount(),
-    );
 
-    return this.members$;
-  }
-
-  getMembersIndexed$(): Observable<{ [id: string]: Member }> {
-    if (this.membersIndexed$ != null) return this.membersIndexed$;
-
-    // TODO Make more optimal by using changes directly and not mapping the result of findAll
-    this.membersIndexed$ = this.getMembers$().pipe(
-      map(ms => ms.indexed(m => m._id)),
-      publishReplay(1),
-      refCount(),
-    );
-
-    return this.membersIndexed$;
+    return { query, db$ };
   }
 
   getMemberById$(id: string): Observable<Member> {

@@ -63,8 +63,7 @@ export class ContractService implements OnDestroy {
       },
     });
     return db$.pipe(
-      switchMap(db => db.findAll$(query)),
-      map((cs: any[]) => cs.map(c => this.documentToObject(c))),
+      switchMap(db => db.findAll$(query, d => this.documentToObject(d))),
     );
   }
 
@@ -85,8 +84,7 @@ export class ContractService implements OnDestroy {
       },
     });
     return db$.pipe(
-      switchMap(db => db.findAll$(query)),
-      map((cs: any[]) => cs.map(c => this.documentToObject(c))),
+      switchMap(db => db.findAll$(query, d => this.documentToObject(d))),
     );
   }
 
@@ -100,11 +98,13 @@ export class ContractService implements OnDestroy {
   }
 
   putContracts$(contracts: Contract): Observable<Contract> {
-    return this.mainDatabase.database$.pipe(switchMap(db => db.put$(this.objectToDocument(contracts))));
+    let doc = this.objectToDocument(contracts);
+    return this.mainDatabase.database$.pipe(switchMap(db => db.put$(doc)));
   }
 
   removeContracts$(contracts: Contract): Observable<void> {
-    return this.mainDatabase.database$.pipe(switchMap(db => db.remove$(this.objectToDocument(contracts))));
+    let doc = this.objectToDocument(contracts);
+    return this.mainDatabase.database$.pipe(switchMap(db => db.remove$(doc)));
   }
 
   private objectToDocument(contract: any): any {

@@ -76,7 +76,7 @@ export class DatabaseService implements OnDestroy {
               private network: Network) {
   }
 
-  get database$(): Observable<Database | any> {
+  get database$(): Observable<Database> {
     return this._database$.pipe(filterNotNull());
   }
 
@@ -242,7 +242,7 @@ export class DatabaseService implements OnDestroy {
     this._subscription.unsubscribe();
   }
 
-  public withIndex$(index: any): Observable<Database | any> {
+  public withIndex$(index: any): Observable<Database> {
     if (this.config.base.remoteDBOnly) {
       return this.database$;
     }

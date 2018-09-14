@@ -339,8 +339,9 @@ export class Database {
 
   /* Reactive methods */
 
-  public findOne$(query: any,
-                  defaultValue: () => any = () => null): Observable<any> {
+  public findOne$<T>(query: any,
+                  mapper: (doc: any) => T = d => d,
+                  defaultValue: () => T = () => null): Observable<T> {
     // TODO Not sure it is the correct way to handle sort's presence...
     if (query.sort) {
       throw new Error('Sort not supported here !');
@@ -350,7 +351,7 @@ export class Database {
     }
 
     const found$ = this.doFind$(query).pipe(
-      map(result => !result.docs || result.docs.length !== 1 ? defaultValue() : result.docs[0]),
+      map(result => !result.docs || result.docs.length !== 1 ? defaultValue() : mapper(result.docs[0])),
       catchError(_ => EMPTY),
     );
 
@@ -359,16 +360,60 @@ export class Database {
       filter: '_selector',
       selector: query.selector,
     }).pipe(
-      map(c => c.deleted ? null : c.doc),
+      map(change => change.deleted ? null : mapper(change.doc)),
     );
 
-    return merge(found$, changes$).pipe(publishReplay(1), refCount());
+    return merge(found$, changes$).pipe(
+      publishReplay(1),
+      refCount()
+    );
   }
 
-  public findAll$(query: any): Observable<any[]> {
+  public findAll$<T>(query: any, mapper: (doc: any) => T = d => d): Observable<T[]> {
+    return this._doFindAll$(
+      query,
+      mapper,
+      docs => docs,
+      (docs, id, doc, deleted) => {
+        const docIndex = docs.findIndex(d => d._id === id);
+        if (deleted) {
+          if (docIndex !== -1) {
+            docs.splice(docIndex, 1);
+          }
+        } else {
+          if (docIndex !== -1) {
+            docs[docIndex] = doc;
+          } else {
+            docs.push(doc);
+          }
+        }
+        return docs;
+      },
+    );
+  }
+
+  public findAllIndexed$<T>(query: any, mapper: (doc: any) => T = d => d): Observable<{ [key: string]: T }> {
+    return this._doFindAll$(
+      query,
+      mapper,
+      docs => docs.indexed(doc => doc._id),
+      (dsi, id, doc, deleted) => {
+        if (deleted) delete dsi[id];
+        else dsi[id] = doc;
+        return dsi;
+      },
+    );
+  }
+
+  private _doFindAll$<T>(query: any,
+                         mapper: (doc: any) => any,
+                         builder: (docs: any[]) => T,
+                         merger: (t: T, id: string, doc: any, deleted: boolean) => T,
+  ): Observable<T> {
     const found$ = this.doFind$(query).pipe(
       mergeMap(result => !result.docs ? EMPTY : of(result.docs)),
-      catchError(_ => EMPTY),
+      map(docs => builder(docs.map(mapper))),
+      catchError(() => EMPTY),
     );
 
     const changes$ = this.dbChanges$({
@@ -378,29 +423,12 @@ export class Database {
     });
 
     return combineLatest(
-      found$.pipe(catchError(_ => of([]))),
+      found$.pipe(catchError(() => of(builder([])))),
       changes$.pipe(startWith(null)),
     ).pipe(
-      map(([docs, change]) => {
-        if (change == null) {
-          return docs;
-        }
-
-        const docIndex = docs.findIndex(d => d._id === change.id);
-        if (change.deleted) {
-          if (docIndex !== -1) {
-            docs.splice(docIndex, 1);
-          }
-        } else {
-          if (docIndex !== -1) {
-            docs[docIndex] = change.doc;
-          } else {
-            docs.push(change.doc);
-          }
-        }
-
-        return docs;
-      }),
+      map(([docs, change]) =>
+        change == null ? docs : merger(docs, change.id, mapper(change.doc), change.deleted),
+      ),
       publishReplay(1),
       refCount(),
     );

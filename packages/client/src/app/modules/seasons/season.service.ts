@@ -63,28 +63,14 @@ export class SeasonService implements OnDestroy {
   constructor(private mainDatabase: DatabaseService) {
 
     // All seasons
-    this._seasons$ = this.mainDatabase
-      .withIndex$({
-        index: {
-          fields: ['type'],
-        },
-      })
-      .pipe(
-        switchMap(db => db.findAll$({
-          selector: {
-            type: 'season',
-          },
-        })),
-        map((ss: any[]) => ss.map(s => new Season(this, s))),
-        publishReplay(1),
-        refCount(),
-      );
+    let { query, db$ } = this.seasonsQuery();
 
-    // TODO Make more optimal by using changes directly and not mapping the result of findAll
-    this._seasonsIndexed$ = this.seasons$.pipe(
-      map(ss => ss.indexed(s => s.id)),
-      publishReplay(1),
-      refCount(),
+    this._seasons$ = db$.pipe(
+      switchMap(db => db.findAll$(query, s => new Season(this, s))),
+    );
+
+    this._seasonsIndexed$ = db$.pipe(
+      switchMap(db => db.findAllIndexed$(query, s => new Season(this, s))),
     );
 
     // Last three seasons
@@ -93,6 +79,22 @@ export class SeasonService implements OnDestroy {
     this._subscription.add(this._seasons$.subscribe());
     this._subscription.add(this._seasonsIndexed$.subscribe());
     this._subscription.add(this._lastThreeSeasons$.subscribe());
+  }
+
+  private seasonsQuery() {
+    let query = {
+      selector: {
+        type: 'season',
+      },
+    };
+
+    let db$ = this.mainDatabase.withIndex$({
+      index: {
+        fields: ['type'],
+      },
+    });
+
+    return { query, db$ };
   }
 
   ngOnDestroy() {
@@ -127,12 +129,9 @@ export class SeasonService implements OnDestroy {
         },
       },
     );
+
     return db$.pipe(
-      switchMap(db =>
-        db.findAll$(query).pipe(
-          map((docs: any[]) => docs.map(d => d ? new Season(this, d) : null)),
-        ),
-      ),
+      switchMap(db => db.findAll$(query, s => new Season(this, s))),
     );
   }
 
@@ -150,9 +149,9 @@ export class SeasonService implements OnDestroy {
         fields: ['type', 'startDate', 'endDate'],
       },
     });
+
     return db$.pipe(
-      switchMap(db => db.findOne$(query)),
-      map(doc => doc ? new Season(this, doc) : null),
+      switchMap(db => db.findOne$(query, s => new Season(this, s))),
     );
   }
 
