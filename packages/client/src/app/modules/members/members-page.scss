@@ -1,12 +1,16 @@
-$searchbar-unfolding-expand-time: 300ms;
+$searchbar-unfolding-time: 300ms;
 
 ion-toolbar.unfolding {
   position: fixed;
   top: 0;
   z-index: 100;
 
+  ion-searchbar {
+    padding: 0;
+  }
+
   transform: translateX(100%);
-  transition: transform $searchbar-unfolding-expand-time ease-out;
+  transition: transform $searchbar-unfolding-time ease-out;
 
   &.unfolded {
     transform: translateX(0);
@@ -22,8 +26,8 @@ ion-toolbar.filter-toggles {
   }
 
   ion-button {
-    --padding-start: .8em;
-    --padding-end: .8em;
+    --padding-start: .7em;
+    --padding-end: .7em;
 
     &[fill='solid'] {
       margin-left: 1px;

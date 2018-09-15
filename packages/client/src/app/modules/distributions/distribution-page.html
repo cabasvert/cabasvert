@@ -94,7 +94,7 @@
                         name="cash" item-right
                         color="{{ !isTrialBasketPaid(basket, item) ? 'danger' : 'primary' }}"></ion-icon>
               <ion-icon *ngIf="(!basket.isTrial && contractProblems(basket.member)) as severity"
-                        name="warning" item-right [color]="severity"></ion-icon>
+                        [name]="severity === 'danger' ? 'alert' : 'warning'" item-right [color]="severity"></ion-icon>
               <ion-icon *ngIf="distribution.isBasketDelayed(basket)"
                         name="clock" item-right color="warning"></ion-icon>
               <ion-icon *ngIf="distribution.isBasketHaveNote(basket)"
@@ -165,7 +165,7 @@
                           name="cash" item-right
                           color="{{ !isTrialBasketPaid(basket, item) ? 'danger' : 'primary' }}"></ion-icon>
                 <ion-icon *ngIf="(!basket.isTrial && contractProblems(basket.member)) as severity"
-                          name="warning" item-right [color]="severity"></ion-icon>
+                          [name]="severity === 'danger' ? 'alert' : 'warning'" item-right [color]="severity"></ion-icon>
                 <ion-icon *ngIf="distribution.isBasketDelayed(basket)"
                           name="clock" item-right color="warning"></ion-icon>
                 <ion-icon *ngIf="distribution.isBasketHaveNote(basket)"
@@ -230,8 +230,8 @@
               <ion-icon *ngIf="basket.isTrial"
                         name="cash" item-right
                         color="{{ !isTrialBasketPaid(basket, item) ? 'danger' : 'primary' }}"></ion-icon>
-              <ion-icon *ngIf="!basket.isTrial && contractProblems(basket.member) as severity"
-                        name="warning" item-right [color]="severity"></ion-icon>
+              <ion-icon *ngIf="(!basket.isTrial && contractProblems(basket.member)) as severity"
+                        [name]="severity === 'danger' ? 'alert' : 'warning'" item-right [color]="severity"></ion-icon>
               <ion-icon *ngIf="distribution.isBasketDelayed(basket)"
                         name="clock" item-right color="warning"></ion-icon>
               <ion-icon *ngIf="distribution.isBasketHaveNote(basket)"

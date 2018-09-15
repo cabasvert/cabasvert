@@ -94,10 +94,11 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private static memberMatches(query) {
+    let lowerCaseQuery = query.toLowerCase();
     return member => member.persons.some(
-      p => (p.lastname && p.lastname.toLowerCase().includes(query))
-        || (p.firstname && p.firstname.toLowerCase().includes(query))
-        || (p.emailAddress && p.emailAddress.toLowerCase().includes(query)));
+      p => (p.lastname && p.lastname.toLowerCase().includes(lowerCaseQuery))
+        || (p.firstname && p.firstname.toLowerCase().includes(lowerCaseQuery))
+        || (p.emailAddress && p.emailAddress.toLowerCase().includes(lowerCaseQuery)));
   }
 
   private static firstLastnameLetter(member: Member) {

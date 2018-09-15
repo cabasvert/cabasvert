@@ -35,6 +35,7 @@
   <ion-toolbar class="unfolding" color="primary" [class.unfolded]="searchBarUnfolded">
     <!-- Should we use type="email" to avoid having the keyboard automatically setting caps mode -->
     <ion-searchbar #searchBar animated="true" showCancelButton="true"
+                   [placeholder]="'MEMBER.SEARCH' | translate"
                    (ionChange)="searchQuery$.next($event.detail.value)"
                    (ionCancel)="toggleSearchBar()">
     </ion-searchbar>

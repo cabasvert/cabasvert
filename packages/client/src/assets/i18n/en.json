@@ -65,7 +65,8 @@
     "SINGULAR": "member",
     "LIST_TITLE": "Members",
     "DETAILS_TITLE": "Member Details",
-    "CREATION_TITLE": "New Member"
+    "CREATION_TITLE": "New Member",
+    "SEARCH": "Search"
   },
   "CONTRACT": {
     "SINGULAR_TITLE": "Contract",
