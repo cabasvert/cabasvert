@@ -30,18 +30,22 @@ import { Contract, ContractFormulas, ContractKind, ContractSection } from './con
 @Injectable()
 export class ContractService implements OnDestroy {
 
+  private _allContracts$: Observable<Contract[]>;
   private _perMemberIdProblemSeverity$: Observable<Map<string, string>>;
 
   private _subscription = new Subscription();
 
   constructor(private mainDatabase: DatabaseService) {
+    this._allContracts$ = this._doGetContracts();
+
     // Per member problem severity on all contracts
-    this._perMemberIdProblemSeverity$ = this.getContracts$().pipe(
+    this._perMemberIdProblemSeverity$ = this._allContracts$.pipe(
       map(cs => ContractService.computePerMemberIdProblemSeverity(cs)),
       publishReplay(1),
       refCount(),
     );
 
+    this._subscription.add(this._allContracts$.subscribe());
     this._subscription.add(this._perMemberIdProblemSeverity$.subscribe());
   }
 
@@ -69,7 +73,15 @@ export class ContractService implements OnDestroy {
     );
   }
 
-  getContracts$(member: Member = null): Observable<Contract[]> {
+  getContractsForMember$(member: Member): Observable<Contract[]> {
+    return this._doGetContracts(member);
+  }
+
+  getAllContracts$(): Observable<Contract[]> {
+    return this._allContracts$;
+  }
+
+  private _doGetContracts(member: Member = null) {
     let query = {
       selector: {
         type: 'contract',

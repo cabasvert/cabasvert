@@ -27,7 +27,6 @@ import { filter, map, switchMap, take, withLatestFrom } from 'rxjs/operators';
 import { AuthService, Roles, User } from '../../toolkit/providers/auth-service';
 import { Navigation } from '../../toolkit/providers/navigation';
 import { copyAdd, copyRemove, copyWith } from '../../utils/arrays';
-import { filterNotNull } from '../../utils/observables';
 import { Contract, ContractKind, ContractSection } from '../contracts/contract.model';
 import { ContractService } from '../contracts/contract.service';
 import { ContractsEditPage } from '../contracts/contracts-edit-page';
@@ -76,7 +75,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
     );
 
     this.contracts$ = this.member$.pipe(
-      switchMap(m => this.contractService.getContracts$(m)),
+      switchMap(m => this.contractService.getContractsForMember$(m)),
       map(cs => cs.sort((c1, c2) => -c1.season.localeCompare(c2.season))),
     );
 

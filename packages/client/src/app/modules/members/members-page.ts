@@ -20,14 +20,16 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Content, NavController } from '@ionic/angular';
-import { combineLatest, Observable, of, Subject, Subscription, timer } from 'rxjs';
+import { combineLatest, Observable, of, Subject, Subscription } from 'rxjs';
 import {
   distinctUntilChanged,
   filter,
-  map, mapTo,
+  map,
+  mapTo,
   publishReplay,
   refCount,
-  scan, skipWhile,
+  scan,
+  skipWhile,
   startWith,
   switchMap,
   take,
@@ -37,7 +39,7 @@ import {
 import { IndexedScroller } from '../../toolkit/components/indexed-scroller';
 import { Navigation } from '../../toolkit/providers/navigation';
 import { contains, Group, groupBy } from '../../utils/arrays';
-import { debug, errors, ignoreErrors } from '../../utils/observables';
+import { errors, ignoreErrors } from '../../utils/observables';
 import { timeout } from '../../utils/promises';
 
 import { ContractService } from '../contracts/contract.service';
@@ -129,7 +131,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
           ),
         ).concat(
           // Contract filter
-          this.contracts.getContracts$().pipe(
+          this.contracts.getAllContracts$().pipe(
             map(cs => cs.indexedAsMap(c => c.member)),
             map(csi => m => csi.has(m._id)),
             startWith(null),
