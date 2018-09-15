@@ -29,9 +29,9 @@ import {
   Platform,
   PopoverController,
 } from '@ionic/angular';
+import { BackButtonEvent } from '@ionic/core';
 import { TranslateService } from '@ngx-translate/core';
-import { fromEvent, Observable } from 'rxjs';
-import { NodeCompatibleEventEmitter } from 'rxjs/internal/observable/fromEvent';
+import { Observable } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { APP_VERSION } from '../version';
 
@@ -93,6 +93,13 @@ export class AppComponent implements OnInit {
         SplashScreen.hide();
       }
     });
+
+    if (this.platform.is('android') || this.platform.is('ios')) {
+      window.document.addEventListener('ionBackButton', (ev) => {
+        // Override Ionic's default behavior
+        (ev as BackButtonEvent).detail.register(50, async () => await this.goBack());
+      });
+    }
   }
 
   initTranslation() {
@@ -125,5 +132,14 @@ export class AppComponent implements OnInit {
     this.menuCtrl.close();
 
     await this.navCtrl.navigateRoot(['/login']);
+  }
+
+  async goBack() {
+    let canGoBack = this.routerOutlets.find(outlet => outlet && outlet.canGoBack());
+    if (canGoBack) {
+      this.navCtrl.goBack();
+    } else {
+      await this.navCtrl.navigateRoot('/dashboard');
+    }
   }
 }
