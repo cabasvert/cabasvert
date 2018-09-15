@@ -19,8 +19,9 @@
 
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, Subscription, timer } from 'rxjs';
-import { distinct, map, publishReplay, refCount, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, map, publishReplay, refCount, switchMap } from 'rxjs/operators';
 import { DatabaseService } from '../../toolkit/providers/database-service';
+import { filterNotNull } from '../../utils/observables';
 import { Season, SeasonWeek } from './season.model';
 
 @Injectable()
@@ -35,7 +36,7 @@ export class SeasonService implements OnDestroy {
   private today$: Observable<Date> =
     timer(0, 60 * 1000).pipe(
       map(() => SeasonService.today()),
-      distinct(d => d.getDate()),
+      distinctUntilChanged((d1, d2) => d1.getDate() === d2.getDate()),
       publishReplay(1),
       refCount(),
     );
@@ -50,6 +51,7 @@ export class SeasonService implements OnDestroy {
   private _todaysSeasonWeek$: Observable<SeasonWeek> =
     this.today$.pipe(
       switchMap(today => this.seasonWeekForDate$(today)),
+      filterNotNull(),
       publishReplay(1),
       refCount(),
     );

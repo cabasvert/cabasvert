@@ -195,7 +195,7 @@ export class DistributionService implements OnDestroy {
     const membersIndexed$ = this.members.getMembersIndexed$();
     const contracts$: Observable<Contract[]> = this.contracts.getSeasonContracts$(week.season);
 
-    const trialBaskets$: Observable<Member[]> = members$.pipe(
+    const membersWithTrialBasket$: Observable<Member[]> = members$.pipe(
       map(ms =>
         ms.filter(m => MemberService.memberHasTrialBasketForWeek(m, week)),
       ),
@@ -203,62 +203,47 @@ export class DistributionService implements OnDestroy {
       refCount(),
     );
 
-    return combineLatest(membersIndexed$, contracts$, trialBaskets$).pipe(
-      map(([msi, cs, tbs]) => {
+    return combineLatest(membersIndexed$, contracts$, membersWithTrialBasket$).pipe(
+      map(([msi, cs, ms]) => {
 
           const baskets = [];
 
           cs.forEach(c => {
-            if (c.type !== 'contract' && c.srev !== 'v1') {
-              return;
-            }
-            if (!c.sections) {
-              return;
-            }
+            if (c.type !== 'contract' && c.srev !== 'v1') return;
+            if (!c.sections) return;
 
             const member = msi.get(c.member);
+            if (!member) return;
 
             const sections: { [kind: string]: BasketSection } = {};
             c.sections.forEach(s => {
               const { kind, formula } = s;
-              if (!formula) {
-                return;
-              }
+              if (!formula) return;
 
               const count = DistributionService.basketCount(c, s, week);
 
-              if (count === 0) {
-                return;
-              }
+              if (count === 0) return;
               sections[kind] = { kind, count };
             });
 
-            if (Object.keys(sections).length === 0) {
-              return;
-            }
+            if (Object.keys(sections).length === 0) return;
             baskets.push(new Basket(member, sections));
           });
 
-          tbs.forEach(tb => {
-            const trialBasket = MemberService.memberGetTrialBasketForWeek(tb, week);
-            if (!trialBasket) {
-              return;
-            }
+          ms.forEach(m => {
+            const trialBasket = MemberService.memberGetTrialBasketForWeek(m, week);
+            if (!trialBasket) return;
 
             const sections: { [kind: string]: BasketSection } = {};
             trialBasket.sections.forEach(s => {
               const { kind, count } = s;
 
-              if (count === 0) {
-                return;
-              }
+              if (count === 0) return;
               sections[kind] = { kind, count };
             });
 
-            if (Object.keys(sections).length === 0) {
-              return;
-            }
-            baskets.push(new Basket(tb, sections, true));
+            if (Object.keys(sections).length === 0) return;
+            baskets.push(new Basket(m, sections, true));
           });
 
           return baskets.sort((b1, b2) => DistributionService.memberCompare(b1.member, b2.member));
