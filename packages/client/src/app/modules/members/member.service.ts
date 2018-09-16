@@ -129,23 +129,23 @@ export class MemberService implements OnDestroy {
   // TODO Move these methods to Member class when it becomes one
 
   static memberHasTrialBasket(member: Member): boolean {
-    return member.trialBaskets && member.trialBaskets.length > 0;
+    return !!member.trialBaskets && member.trialBaskets.length > 0;
   }
 
   static memberHasTrialBasketForSeason(member: Member, seasonId: string): boolean {
-    return member.trialBaskets && member.trialBaskets.some(b =>
+    return !!member.trialBaskets && member.trialBaskets.some(b =>
       b.season === seasonId,
     );
   }
 
   static memberHasTrialBasketForWeek(member: Member, week: SeasonWeek): boolean {
-    return member.trialBaskets && member.trialBaskets.some(b =>
+    return !!member.trialBaskets && member.trialBaskets.some(b =>
       b.season === week.season.id && b.week === week.seasonWeek,
     );
   }
 
   static memberGetTrialBasketForWeek(member: Member, week: SeasonWeek): TrialBasket {
-    return member.trialBaskets.find(b =>
+    return member.trialBaskets && member.trialBaskets.find(b =>
       b.season === week.season.id && b.week === week.seasonWeek,
     );
   }
