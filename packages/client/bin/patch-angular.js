@@ -22,7 +22,7 @@
  * It must be called by npm after install. Make sure that your package.json includes:
  * {
  *   "scripts": {
- *     "postinstall": "node patch.js"
+ *     "postinstall": "node bin/patch-angular.js"
  *   }
  * }
  */
