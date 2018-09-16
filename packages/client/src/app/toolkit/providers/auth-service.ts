@@ -27,7 +27,8 @@ import { environment } from '../../../environments/environment';
 import { ConfigurationService } from '../../config/configuration.service';
 
 import { Database, DatabaseHelper } from './database-helper';
-import { Logger, LogService } from './log-service';
+import { LogService } from './log-service';
+import { Logger } from './logger';
 
 export class User {
   constructor(public username: string,
@@ -162,7 +163,7 @@ export class AuthService {
       const session = await this.userDatabase.getSession();
       if (session && session.ok && session.userCtx && session.userCtx.name) {
         let username = session.userCtx.name;
-        this.log.debug(`Restored session for user '${username}'`);
+        this.log.info(`Restored session for user '${username}'`);
 
         let user = await this.retrieveUser(username);
         this.notifyLoggedUser(null, user);

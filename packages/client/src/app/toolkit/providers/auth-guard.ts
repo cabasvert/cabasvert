@@ -31,7 +31,8 @@ import { Observable, of } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { AuthService } from './auth-service';
-import { Logger, LogService } from './log-service';
+import { LogService } from './log-service';
+import { Logger } from './logger';
 
 @Injectable()
 export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
@@ -64,8 +65,8 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
         const authenticated = !!user;
         const granted = authenticated && (!roles || user.hasAnyRoleIn(roles));
 
-        this.log.debug('Checking authorization ' +
-          `(user: ${user && user.username || '<none>'}, needed roles: ${JSON.stringify(roles || [])}, granted: ${granted})`);
+        this.log.info('Checking authorization ' +
+          `(user: ${user && user.username || '<none>'}, accepted roles: ${JSON.stringify(roles || [])}, granted: ${granted})`);
 
         return [authenticated, granted];
       }),

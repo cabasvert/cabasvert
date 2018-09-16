@@ -39,7 +39,8 @@ import {
 } from 'rxjs/operators';
 import { ConfigurationService } from '../../config/configuration.service';
 import { SyncState, SyncStateListener } from '../components/sync-state-listener';
-import { Logger, LogService } from './log-service';
+import { LogService } from './log-service';
+import { Logger } from './logger';
 
 PouchDB
   .plugin(PouchHttp)
@@ -248,7 +249,7 @@ export class Database {
   }
 
   public doSync(other: Database, options?: {}): void {
-    this.log.info(`Setup sync with database (${other._id}): ${JSON.stringify(options)}`);
+    this.log.debug(`Setup sync with database (${other._id}): ${JSON.stringify(options)}`);
     this.sync = this.db.sync(other.db, options);
 
     this.addCancelable(this.sync);

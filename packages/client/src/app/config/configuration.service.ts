@@ -23,10 +23,16 @@ import { of } from 'rxjs';
 import { catchError, take, tap } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
+import { Logger } from '../toolkit/providers/logger';
+import { LogLevel } from '../toolkit/providers/log.model';
 import { Configuration, defaultConfiguration } from './configuration';
 
 @Injectable()
 export class ConfigurationService {
+
+  // LoggerService can't be injected as it depends on this service
+  // Manually construct a logger instance
+  private _logger = new Logger('Configuration', { 'Configuration': LogLevel.DEBUG });
 
   private configData: Configuration;
 
@@ -34,7 +40,7 @@ export class ConfigurationService {
   }
 
   async loadConfiguration() {
-    console.log('Loading configuration...');
+    this._logger.groupCollapsed('Loading configuration...');
 
     let fromFile = await this.http.get<Configuration>(environment.configFileName)
       .pipe(
@@ -52,13 +58,14 @@ export class ConfigurationService {
 
     this.configData = this.merge(this.merge({}, defaults), fromFile);
 
-    console.log(`Loaded configuration: ${JSON.stringify(this.configData)}`);
+    this._logger.info('Loaded configuration:', this.configData);
+    this._logger.groupEnd();
   }
 
   async tryLoadDevCredentials() {
     if (environment.production) return null;
 
-    console.log('Loading dev credentials...');
+    this._logger.info('Loading development credentials...');
 
     return await this.http.get<Configuration>(`credentials.dev.json`)
       .pipe(

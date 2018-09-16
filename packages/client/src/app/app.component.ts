@@ -30,7 +30,8 @@ import { APP_VERSION } from '../version';
 
 import { PageGroup, PAGES } from './menu-page.interface';
 import { AuthService, User } from './toolkit/providers/auth-service';
-import { Logger, LogService } from './toolkit/providers/log-service';
+import { LogService } from './toolkit/providers/log-service';
+import { Logger } from './toolkit/providers/logger';
 
 const { SplashScreen, StatusBar } = Plugins;
 
@@ -97,7 +98,7 @@ export class AppComponent implements OnInit {
 
     // For testing purposes
     if (this.platform.is('desktop') && environment.testHardwareBackButton) {
-      this.log.info('Manually starting hardware back button');
+      this.log.warn('Manually starting hardware back button for debugging');
       startHardwareBackButton(window);
     }
 
