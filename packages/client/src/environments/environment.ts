@@ -27,6 +27,7 @@ export const environment = {
   production: false,
   loadDevCredentials: true,
   enableRouteTracing: false,
+  testHardwareBackButton: true,
   localeOverride: 'fr-FR',
   configFileName: 'config.dev.json',
   defaultLogLevel: LogLevel.DEBUG,

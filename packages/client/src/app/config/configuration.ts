@@ -49,6 +49,7 @@ export function defaultConfiguration() {
       debugPouch: false,
     },
     log: {
+      'App': defaultLogLevel,
       'Database': defaultLogLevel,
       'Database|Remote': defaultLogLevel,
       'Database|Local': defaultLogLevel,

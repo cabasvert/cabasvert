@@ -20,31 +20,34 @@
 import { Component, Inject, LOCALE_ID, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router, Scroll } from '@angular/router';
 import { Plugins, StatusBarStyle } from '@capacitor/core';
-import {
-  ActionSheetController,
-  IonRouterOutlet,
-  MenuController,
-  ModalController,
-  NavController,
-  Platform,
-  PopoverController,
-} from '@ionic/angular';
-import { BackButtonEvent } from '@ionic/core';
+import { IonRouterOutlet, MenuController, NavController, Platform } from '@ionic/angular';
+import { BackButtonEvent, startHardwareBackButton } from '@ionic/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
+import { environment } from '../environments/environment';
 import { APP_VERSION } from '../version';
 
 import { PageGroup, PAGES } from './menu-page.interface';
 import { AuthService, User } from './toolkit/providers/auth-service';
+import { Logger, LogService } from './toolkit/providers/log-service';
 
-const { SplashScreen, StatusBar, App } = Plugins;
+const { SplashScreen, StatusBar } = Plugins;
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
 })
 export class AppComponent implements OnInit {
+
+  private _logger: Logger;
+
+  private get log() {
+    if (this._logger == null) {
+      this._logger = this.logService.logger('App');
+    }
+    return this._logger;
+  }
 
   pageGroups: PageGroup[] = PAGES;
 
@@ -56,11 +59,9 @@ export class AppComponent implements OnInit {
 
   constructor(private platform: Platform,
               private translate: TranslateService,
+              private logService: LogService,
               private authService: AuthService,
               private navCtrl: NavController,
-              private popoverCtrl: PopoverController,
-              private actionSheetCtrl: ActionSheetController,
-              private modalCtrl: ModalController,
               private menuCtrl: MenuController,
               private router: Router,
               private route: ActivatedRoute,
@@ -94,10 +95,17 @@ export class AppComponent implements OnInit {
       }
     });
 
-    if (this.platform.is('android') || this.platform.is('ios')) {
+    // For testing purposes
+    if (this.platform.is('desktop') && environment.testHardwareBackButton) {
+      this.log.info('Manually starting hardware back button');
+      startHardwareBackButton(window);
+    }
+
+    // Override Ionic's default behavior
+    if (this.platform.is('hybrid') ||
+      (this.platform.is('desktop') && environment.testHardwareBackButton)) {
       window.document.addEventListener('ionBackButton', (ev) => {
-        // Override Ionic's default behavior
-        (ev as BackButtonEvent).detail.register(50, async () => await this.goBack());
+        (ev as BackButtonEvent).detail.register(50, () => this.goBack());
       });
     }
   }
@@ -109,7 +117,7 @@ export class AppComponent implements OnInit {
     this.translate.use(userLang);
 
     this.translate.get('language', null).subscribe(localizedValue =>
-      console.log(`Selected language: ${localizedValue}`),
+      this.log.info(`Selected language: ${localizedValue}`),
     );
   }
 
@@ -134,7 +142,7 @@ export class AppComponent implements OnInit {
     await this.navCtrl.navigateRoot(['/login']);
   }
 
-  async goBack() {
+  private async goBack() {
     let canGoBack = this.routerOutlets.find(outlet => outlet && outlet.canGoBack());
     if (canGoBack) {
       this.navCtrl.goBack();

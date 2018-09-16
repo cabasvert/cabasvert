@@ -33,7 +33,7 @@ import { SeasonService } from '../seasons/season.service';
 @Component({
   selector: 'page-welcome',
   templateUrl: 'welcome-page.html',
-  styleUrls: ['welcome-page.scss']
+  styleUrls: ['welcome-page.scss'],
 })
 export class WelcomePage implements OnInit, OnDestroy {
 
