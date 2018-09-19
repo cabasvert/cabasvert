@@ -1,5 +1,9 @@
 {
   "language": "Français (fr)",
+  "PWA": {
+    "UPDATE_AVAILABLE": "Une mise à jour est disponible.",
+    "RELOAD": "Recharger"
+  },
   "SIDEMENU": {
     "DASHBOARD": "Accueil",
     "PROFILE": "Profil",

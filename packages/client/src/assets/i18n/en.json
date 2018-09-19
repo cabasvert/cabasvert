@@ -1,5 +1,9 @@
 {
   "language": "English (en)",
+  "PWA": {
+    "UPDATE_AVAILABLE": "An update is available.",
+    "RELOAD": "Reload"
+  },
   "SIDEMENU": {
     "DASHBOARD": "Dashboard",
     "PROFILE": "Profile",

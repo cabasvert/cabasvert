@@ -19,11 +19,18 @@
 
 import { Component, Inject, LOCALE_ID, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router, Scroll } from '@angular/router';
+import { SwUpdate } from '@angular/service-worker';
 import { Plugins, StatusBarStyle } from '@capacitor/core';
-import { IonRouterOutlet, MenuController, NavController, Platform } from '@ionic/angular';
+import {
+  IonRouterOutlet,
+  MenuController,
+  NavController,
+  Platform,
+  ToastController,
+} from '@ionic/angular';
 import { BackButtonEvent, startHardwareBackButton } from '@ionic/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { interval, Observable } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { APP_VERSION } from '../version';
@@ -60,6 +67,8 @@ export class AppComponent implements OnInit {
 
   constructor(private platform: Platform,
               private translate: TranslateService,
+              private swUpdate: SwUpdate,
+              private toastCtrl: ToastController,
               private logService: LogService,
               private authService: AuthService,
               private navCtrl: NavController,
@@ -75,6 +84,16 @@ export class AppComponent implements OnInit {
     await this.platform.ready();
 
     this.initTranslation();
+
+    if (this.swUpdate.isEnabled) {
+      // Show the update toast if an update is available
+      this.swUpdate.available.subscribe(async () => {
+        await this.showUpdateToast();
+      });
+
+      // Check every 6 hours whether there is an update
+      interval(6 * 60 * 60 * 1000).subscribe(() => this.swUpdate.checkForUpdate());
+    }
 
     if (this.platform.is('android') || this.platform.is('ios')) {
       await StatusBar.setStyle({ style: StatusBarStyle.Light });
@@ -124,6 +143,23 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.user$ = this.authService.loggedInUser$;
+  }
+
+  private async showUpdateToast() {
+    let toast = await this.toastCtrl.create({
+      position: 'top',
+      message: this.translate.instant('PWA.UPDATE_AVAILABLE'),
+      closeButtonText: this.translate.instant('PWA.RELOAD'),
+      showCloseButton: true,
+      duration: 5000,
+    });
+    await toast.present();
+
+    let detail = await toast.onDidDismiss();
+    if (detail.role === 'cancel') {
+      await this.swUpdate.activateUpdate();
+      document.location.reload();
+    }
   }
 
   async navigateToPage(page) {
