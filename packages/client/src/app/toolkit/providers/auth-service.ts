@@ -103,30 +103,25 @@ export class AuthService {
   }
 
   initialize() {
-    const devEnv = !environment.production;
-
     this._passwordStorage = this.setupPasswordStorage();
 
     this.userDatabase = this.dbHelper.newRemoteDatabase('_users');
   }
 
   private async setupPasswordStorage() {
-    // FIXME ionic-team/capacitor#787
-    return null;
+    const safeSecureStorage =
+      (this.platform.is('capacitor') && (this.platform.is('android') || this.platform.is('ios')));
 
-    // const safeSecureStorage =
-    //   (this.platform.is('capacitor') && (this.platform.is('android') || this.platform.is('ios')));
-    //
-    // if (!safeSecureStorage) return null;
-    //
-    // await this.platform.ready();
-    //
-    // try {
-    //   return await this.secureStorage.create(SECURE_STORAGE_NAME);
-    // } catch (error) {
-    //   this.log.error(`Error from secure storage: ${error}`);
-    //   return null;
-    // }
+    if (!safeSecureStorage) return null;
+
+    await this.platform.ready();
+
+    try {
+      return await this.secureStorage.create(SECURE_STORAGE_NAME);
+    } catch (error) {
+      this.log.error(`Error from secure storage: ${error}`);
+      return null;
+    }
   }
 
   public async tryLoadCredentials(): Promise<Credentials> {
