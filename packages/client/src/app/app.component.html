@@ -18,57 +18,60 @@
 -->
 
 <ion-app>
-  <ion-split-pane>
-    <ion-menu [swipeGesture]="true" *ngIf="user$ | async as user">
+  <ion-split-pane [disabled]="!(user$ | async)">
+    <ion-menu class="split-pane-side" side="start" [swipeGesture]="true">
+      <div class="ion-page" *ngIf="user$ | async as user">
 
-      <ion-header>
-        <ion-toolbar color="primary">
-          <ion-item no-lines color="primary" slot="start">
-            <ion-avatar slot="start">
-              <ion-icon size="large" name="person"></ion-icon>
-            </ion-avatar>
+        <ion-header>
+          <ion-toolbar color="primary">
+            <ion-item no-lines color="primary" slot="start">
+              <ion-avatar slot="start">
+                <ion-icon size="large" name="person"></ion-icon>
+              </ion-avatar>
 
-            <ion-label>
-              <p>{{ user.name }}</p>
-              <p style="font-size: xx-small;">{{ user.email }}</p>
-            </ion-label>
-          </ion-item>
+              <ion-label>
+                <p>{{ user.name }}</p>
+                <p style="font-size: xx-small;">{{ user.email }}</p>
+              </ion-label>
+            </ion-item>
 
-          <ion-buttons slot="end">
-            <ion-button icon-only (click)="logout()" style="--width: 34;">
-              <ion-icon name="log-out"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
+            <ion-buttons slot="end">
+              <ion-button icon-only (click)="logout()" style="--width: 34;">
+                <ion-icon name="log-out"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
 
-      <ion-content>
-        <ion-list>
-          <div *ngFor="let g of pageGroups">
-            <ion-item-group
+        <ion-content>
+          <ion-list>
+            <div *ngFor="let g of pageGroups">
+              <ion-item-group
                 *ngIf="!g.acceptedRoles || user.hasAnyRoleIn(g.acceptedRoles)">
 
-              <ion-item-divider *ngIf="g.title">
-                <ion-label>{{ g.title | translate }}</ion-label>
-              </ion-item-divider>
+                <ion-item-divider *ngIf="g.title">
+                  <ion-label>{{ g.title | translate }}</ion-label>
+                </ion-item-divider>
 
-              <div *ngFor="let p of g.pages">
-                <ion-item *ngIf="!p.acceptedRoles || user.hasAnyRoleIn(p.acceptedRoles)"
-                          [button]="true" (click)="navigateToPage(p)">
-                  <ion-icon slot="start" [name]="p.icon"></ion-icon>
-                  <ion-label>{{ p.title | translate }}</ion-label>
-                </ion-item>
-              </div>
-            </ion-item-group>
-          </div>
-        </ion-list>
-      </ion-content>
+                <div *ngFor="let p of g.pages">
+                  <ion-item *ngIf="!p.acceptedRoles || user.hasAnyRoleIn(p.acceptedRoles)"
+                            [button]="true" (click)="navigateToPage(p)">
+                    <ion-icon slot="start" [name]="p.icon"></ion-icon>
+                    <ion-label>{{ p.title | translate }}</ion-label>
+                  </ion-item>
+                </div>
+              </ion-item-group>
+            </div>
+          </ion-list>
+        </ion-content>
 
-      <ion-footer *ngIf="appVersionNumber">
-        <p style="margin: 5px; font-size: xx-small;"> Version {{ appVersionNumber }}</p>
-      </ion-footer>
+        <ion-footer *ngIf="appVersionNumber">
+          <p style="margin: 5px; font-size: xx-small;"> Version {{ appVersionNumber }}</p>
+        </ion-footer>
+
+      </div>
     </ion-menu>
 
-    <ion-router-outlet main #content></ion-router-outlet>
+    <ion-router-outlet main></ion-router-outlet>
   </ion-split-pane>
 </ion-app>
