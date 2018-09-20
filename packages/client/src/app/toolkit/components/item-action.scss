@@ -10,9 +10,15 @@
 }
 
 button {
-  height: 56px;
+  padding: 0;
+  height: 54px;
   background-color: var(--ion-color-light);
   outline: none;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 button:hover {
@@ -34,4 +40,5 @@ ion-label {
   line-height: 8px;
   text-transform: none;
   font-weight: normal;
+  max-height: 10px;
 }
