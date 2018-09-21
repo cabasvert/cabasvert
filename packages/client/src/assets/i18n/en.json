@@ -18,7 +18,9 @@
   "DIALOGS": {
     "CANCEL": "Cancel",
     "SAVE": "Save",
-    "REQUIRED": "Required"
+    "DELETE": "Delete",
+    "REQUIRED": "Required",
+    "CONFIRM_DELETION": "Confirm Deletion"
   },
   "REF": {
     "SEASON": "Season",
@@ -105,7 +107,8 @@
     "PROBLEM_paperCopyForAssociation": "Missing paper copy for association",
     "PROBLEM_paperCopyForFarmer": "Missing paper copy for farmer",
     "PROBLEM_missingChequesForVegetables": "Cheques for vegetables are missing",
-    "PROBLEM_missingChequesForEggs": "Cheque for eggs is missing"
+    "PROBLEM_missingChequesForEggs": "Cheque for eggs is missing",
+    "CONFIRM_DELETE_TEXT": "Are you sure you want to delete this contract ?"
   },
   "PERSON": {
     "TITLE": "Person",
@@ -122,7 +125,8 @@
     "ADDRESS_PLACEHOLDER": "Enter person's address",
     "PHONE_NUMBER_PLACEHOLDER": "Enter person's phone number",
     "EMAIL_ADDRESS_PLACEHOLDER": "Enter person's email address",
-    "PROBLEM_MEMBER_PERSON_ALREADY_EXISTS": "A member already exist with this person"
+    "PROBLEM_MEMBER_PERSON_ALREADY_EXISTS": "A member already exist with this person",
+    "CONFIRM_DELETE_TEXT": "Are you sure you want to delete this person ?"
   },
   "REPORTS": {
     "TITLE": "Reports",
@@ -141,7 +145,8 @@
     "WEEK_PLACEHOLDER": "Enter trial basket's week",
     "COUNT_PLACEHOLDER": "Enter trial basket's count",
     "PAID": "Paid",
-    "NOT_YET_PAID": "Not yet paid"
+    "NOT_YET_PAID": "Not yet paid",
+    "CONFIRM_DELETE_TEXT": "Are you sure you want to delete this trial basket ?"
   },
   "DISTRIBUTION": {
     "DISTRIBUTED_PLURAL": "Distributed",

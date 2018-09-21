@@ -21,6 +21,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Plugins } from '@capacitor/core';
 import { NavController, Platform } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable, of, Subscription } from 'rxjs';
 import { filter, map, switchMap, take, withLatestFrom } from 'rxjs/operators';
 
@@ -62,6 +63,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   constructor(private platform: Platform,
               private navCtrl: NavController,
               private route: ActivatedRoute,
+              private translateService: TranslateService,
               private nav: Navigation,
               private authService: AuthService,
               private seasonService: SeasonService,
@@ -144,11 +146,11 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
 
   deletePerson(person: Person, index: number) {
     this.nav.showAlert$({
-      header: 'Confirm Deletion',
-      message: `Are you sure you want to delete '${person.firstname} ${person.lastname}' ?`,
+      header: this.translateService.instant('DIALOGS.CONFIRM_DELETION'),
+      message: this.translateService.instant('PERSON.CONFIRM_DELETE_TEXT'),
       buttons: [
-        { text: 'Cancel', role: 'cancel' },
-        { text: 'Delete' },
+        { text: this.translateService.instant('DIALOGS.CANCEL'), role: 'cancel' },
+        { text: this.translateService.instant('DIALOGS.DELETE') },
       ],
     }).pipe(
       withLatestFrom(this.member$,
@@ -250,11 +252,11 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
 
   deleteContract(contract: Contract, index: number) {
     this.nav.showAlert$({
-        header: 'Confirm Deletion',
-        message: `Are you sure you want to delete these contracts ?`,
+        header: this.translateService.instant('DIALOGS.CONFIRM_DELETION'),
+        message: this.translateService.instant('CONTRACT.CONFIRM_DELETE_TEXT'),
         buttons: [
-          { text: 'Cancel', role: 'cancel' },
-          { text: 'Delete' },
+          { text: this.translateService.instant('DIALOGS.CANCEL'), role: 'cancel' },
+          { text: this.translateService.instant('DIALOGS.DELETE') },
         ],
       })
       .pipe(
@@ -335,11 +337,11 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
 
   deleteTrialBasket(trialBasket: TrialBasket, index: number) {
     this.nav.showAlert$({
-        header: 'Confirm Deletion',
-        message: `Are you sure you want to delete this trial basket ?`,
+        header: this.translateService.instant('DIALOGS.CONFIRM_DELETION'),
+        message: this.translateService.instant('TRIAL_BASKET.CONFIRM_DELETE_TEXT'),
         buttons: [
-          { text: 'Cancel', role: 'cancel' },
-          { text: 'Delete' },
+          { text: this.translateService.instant('DIALOGS.CANCEL'), role: 'cancel' },
+          { text: this.translateService.instant('DIALOGS.DELETE') },
         ],
       })
       .pipe(

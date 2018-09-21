@@ -18,7 +18,9 @@
   "DIALOGS": {
     "CANCEL": "Annuler",
     "SAVE": "Enregistrer",
-    "REQUIRED": "Requis"
+    "DELETE": "Supprimer",
+    "REQUIRED": "Requis",
+    "CONFIRM_DELETION": "Confirmer la suppression"
   },
   "REF": {
     "SEASON": "Saison",
@@ -105,7 +107,8 @@
     "PROBLEM_paperCopyForAssociation": "Contrat manquant pour l'association",
     "PROBLEM_paperCopyForFarmer": "Contrat manquant pour le producteur",
     "PROBLEM_missingChequesForVegetables": "Chèques manquants pour les légumes",
-    "PROBLEM_missingChequesForEggs": "Chèques manquants pour les œufs"
+    "PROBLEM_missingChequesForEggs": "Chèques manquants pour les œufs",
+    "CONFIRM_DELETE_TEXT": "Êtes-vous sûr de vouloir supprimer ce contrat ?"
   },
   "PERSON": {
     "TITLE": "Personne",
@@ -122,7 +125,8 @@
     "ADDRESS_PLACEHOLDER": "Entrez l'adresse de la personne",
     "PHONE_NUMBER_PLACEHOLDER": "Entrez le téléphone de la personne",
     "EMAIL_ADDRESS_PLACEHOLDER": "Entrez le courriel de la personne",
-    "PROBLEM_MEMBER_PERSON_ALREADY_EXISTS": "Un membre existe déjà avec cette personne."
+    "PROBLEM_MEMBER_PERSON_ALREADY_EXISTS": "Un membre existe déjà avec cette personne.",
+    "CONFIRM_DELETE_TEXT": "Êtes-vous sûr de vouloir supprimer cette personne ?"
   },
   "REPORTS": {
     "TITLE": "Rapports",
@@ -141,7 +145,8 @@
     "WEEK_PLACEHOLDER": "Entrez la semaine du panier",
     "COUNT_PLACEHOLDER": "Entrez le nombre de paniers",
     "PAID": "Payé",
-    "NOT_YET_PAID": "Non encore payé"
+    "NOT_YET_PAID": "Non encore payé",
+    "CONFIRM_DELETE_TEXT": "Êtes-vous sûr de vouloir supprimer ce panier d'essai ?"
   },
   "DISTRIBUTION": {
     "DISTRIBUTED_PLURAL": "Distribués",
