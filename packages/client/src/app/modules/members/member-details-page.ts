@@ -88,7 +88,8 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   }
 
   private trialBasketCompare(tb1, tb2) {
-    return (tb1.season + '-' + tb1.week).localeCompare(tb2.season + '-' + tb2.week);
+    return (tb1.season + '-' + tb1.week.toString().padStart(2, '0'))
+      .localeCompare(tb2.season + '-' + tb2.week.toString().padStart(2, '0'));
   }
 
   ngOnDestroy() {
