@@ -56,6 +56,9 @@ export class SeasonService implements OnDestroy {
       refCount(),
     );
 
+  private _seasonMapper = doc => new Season(this, doc);
+  private _seasonIndexer = season => season.id;
+
   private readonly _seasons$: Observable<Season[]>;
   private readonly _seasonsIndexed$: Observable<Map<string, Season>>;
   private readonly _lastThreeSeasons$: Observable<Season[]>;
@@ -65,19 +68,13 @@ export class SeasonService implements OnDestroy {
   constructor(private mainDatabase: DatabaseService) {
 
     // All seasons
-    let { query, db$ } = this.seasonsQuery();
+    let { query, index } = this.seasonsQuery();
 
-    this._seasons$ = db$.pipe(
-      switchMap(db => db.findAll$(query, doc => new Season(this, doc), season => season.id)),
-      publishReplay(1),
-      refCount(),
-    );
+    this._seasons$ =
+      this.mainDatabase.findAll$(index, query, this._seasonMapper, this._seasonIndexer);
 
-    this._seasonsIndexed$ = db$.pipe(
-      switchMap(db => db.findAllIndexed$(query, doc => new Season(this, doc), season => season.id)),
-      publishReplay(1),
-      refCount(),
-    );
+    this._seasonsIndexed$ =
+      this.mainDatabase.findAllIndexed$(index, query, this._seasonMapper, this._seasonIndexer);
 
     // Last three seasons
     this._lastThreeSeasons$ = this._lastSeasons$(3);
@@ -94,13 +91,13 @@ export class SeasonService implements OnDestroy {
       },
     };
 
-    let db$ = this.mainDatabase.withIndex$({
+    let index = {
       index: {
         fields: ['type'],
       },
-    });
+    };
 
-    return { query, db$ };
+    return { query, index };
   }
 
   ngOnDestroy() {
@@ -123,24 +120,19 @@ export class SeasonService implements OnDestroy {
         type: 'season',
       },
       sort: [{
-        type: 'desc',
-        _id: 'desc',
+        type: ('desc' as 'asc' | 'desc'),
+        _id: ('desc' as 'asc' | 'desc'),
       }],
       limit: count,
     };
 
-    let db$ = this.mainDatabase.withIndex$({
-        index: {
-          fields: ['type', '_id'],
-        },
+    let index = {
+      index: {
+        fields: ['type', '_id'],
       },
-    );
+    };
 
-    return db$.pipe(
-      switchMap(db => db.findAll$(query, doc => new Season(this, doc), season => season.id)),
-      publishReplay(1),
-      refCount(),
-    );
+    return this.mainDatabase.findAll$(index, query, this._seasonMapper, this._seasonIndexer);
   }
 
   seasonForDate$(date: Date = new Date()): Observable<Season> {
@@ -152,17 +144,13 @@ export class SeasonService implements OnDestroy {
       },
     };
 
-    let db$ = this.mainDatabase.withIndex$({
+    let index = {
       index: {
         fields: ['type', 'startDate', 'endDate'],
       },
-    });
+    };
 
-    return db$.pipe(
-      switchMap(db => db.findOne$(query, s => new Season(this, s))),
-      publishReplay(1),
-      refCount(),
-    );
+    return this.mainDatabase.findOne$(index, query, this._seasonMapper);
   }
 
   seasonWeekForDate$(date: Date = new Date()): Observable<SeasonWeek> {

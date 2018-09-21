@@ -17,9 +17,10 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { Network } from '@ionic-native/network/ngx';
 import { Platform } from '@ionic/angular';
+import PouchDB from "pouchdb-core";
 
 import {
   BehaviorSubject,
@@ -54,7 +55,7 @@ import {
 import { environment } from '../../../environments/environment';
 import { ConfigurationService } from '../../config/configuration.service';
 
-import { debug, filterNotNull, previous } from '../../utils/observables';
+import { filterNotNull, observeOutsideAngular, previous } from '../../utils/observables';
 import { SyncState } from '../components/sync-state-listener';
 import { AuthService } from './auth-service';
 import { Database, DatabaseHelper } from './database-helper';
@@ -73,11 +74,15 @@ export class DatabaseService implements OnDestroy {
               private dbHelper: DatabaseHelper,
               private authService: AuthService,
               private platform: Platform,
-              private network: Network) {
+              private network: Network,
+              private ngZone: NgZone) {
   }
 
-  get database$(): Observable<Database> {
-    return this._database$.pipe(filterNotNull());
+  private get database$(): Observable<Database> {
+    return this._database$.pipe(
+      filterNotNull(),
+      observeOutsideAngular(this.ngZone),
+    );
   }
 
   get syncState$(): Observable<SyncState | null> {
@@ -243,7 +248,7 @@ export class DatabaseService implements OnDestroy {
     this._subscription.unsubscribe();
   }
 
-  public withIndex$(index: any): Observable<Database> {
+  private withIndex$(index: PouchDB.Find.CreateIndexOptions): Observable<Database> {
     if (this.config.base.remoteDBOnly) {
       return this.database$;
     }
@@ -287,6 +292,64 @@ export class DatabaseService implements OnDestroy {
   private logoutDatabase$(db: Database): Observable<never> {
     return from(this.authService.logoutDatabase(db)).pipe(
       switchMapTo(EMPTY),
+    );
+  }
+
+  findOne$<T>(
+    index: PouchDB.Find.CreateIndexOptions,
+    query: PouchDB.Find.FindRequest<T>,
+    mapper: (doc: any) => T = d => d,
+    defaultValue: () => T = () => null,
+  ): Observable<T> {
+
+    return this.withIndex$(index).pipe(
+      switchMap(db => db.findOne$(query, mapper, defaultValue)),
+      publishReplay(1),
+      refCount(),
+    );
+  }
+
+  findAll$<T>(
+    index: PouchDB.Find.CreateIndexOptions,
+    query: PouchDB.Find.FindRequest<T>,
+    mapper: (doc: any) => T = d => d,
+    indexer: (t: T) => string = t => (t as any)._id,
+  ): Observable<T[]> {
+
+    return this.withIndex$(index).pipe(
+      switchMap(db => db.findAll$(query, mapper, indexer)),
+      publishReplay(1),
+      refCount(),
+    );
+  }
+
+  findAllIndexed$<T>(
+    index: PouchDB.Find.CreateIndexOptions,
+    query: PouchDB.Find.FindRequest<T>,
+    mapper: (doc: any) => T = d => d,
+    indexer: (t: T) => string = t => (t as any)._id,
+  ): Observable<Map<string, T>> {
+
+    return this.withIndex$(index).pipe(
+      switchMap(db => db.findAllIndexed$(query, mapper, indexer)),
+      publishReplay(1),
+      refCount(),
+    );
+  }
+
+  public put$<T>(doc: T & { _id: string }): Observable<T> {
+    return this.database$.pipe(switchMap(db => db.put$(doc)));
+  }
+
+  public remove$<T>(doc: T & { _id: string }): Observable<void> {
+    return this.database$.pipe(switchMap(db => db.remove$(doc)));
+  }
+
+  public get$<T>(id: string): Observable<T> {
+    return this.database$.pipe(
+      switchMap(db => db.get$(id)),
+      publishReplay(1),
+      refCount(),
     );
   }
 }

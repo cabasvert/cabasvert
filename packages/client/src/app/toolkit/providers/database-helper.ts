@@ -296,11 +296,11 @@ export class Database {
     return changes;
   }
 
-  public withIndex(index: any): Promise<Database> {
+  public withIndex(index: PouchDB.Find.CreateIndexOptions): Promise<Database> {
     return this.wrapErrors('createIndex', this.db.createIndex(index).then(() => this));
   }
 
-  public find(query: any): Promise<PouchDB.Find.FindResponse<any>> {
+  public find(query: PouchDB.Find.FindRequest<any>): Promise<PouchDB.Find.FindResponse<any>> {
     if (this.maxLimit && !query.limit) {
       query.limit = this.maxLimit;
     }
@@ -340,7 +340,7 @@ export class Database {
 
   /* Reactive methods */
 
-  public findOne$<T>(query: any,
+  public findOne$<T>(query: PouchDB.Find.FindRequest<T>,
                      mapper: (doc: any) => T = d => d,
                      defaultValue: () => T = () => null): Observable<T> {
     // TODO Not sure it is the correct way to handle sort's presence...
@@ -370,7 +370,7 @@ export class Database {
     );
   }
 
-  public findAll$<T>(query: any,
+  public findAll$<T>(query: PouchDB.Find.FindRequest<T>,
                      mapper: (doc: any) => T = d => d,
                      indexer: (t: T) => string = t => (t as any)._id
   ): Observable<T[]> {
@@ -396,7 +396,7 @@ export class Database {
     );
   }
 
-  public findAllIndexed$<T>(query: any,
+  public findAllIndexed$<T>(query: PouchDB.Find.FindRequest<T>,
                             mapper: (doc: any) => T = d => d,
                             indexer: (t: T) => string = t => (t as any)._id
   ): Observable<Map<string, T>> {
@@ -412,7 +412,7 @@ export class Database {
     );
   }
 
-  private _doFindAll$<T>(query: any,
+  private _doFindAll$<T>(query: PouchDB.Find.FindRequest<any>,
                          mapper: (doc: any) => any,
                          builder: (docs: any[]) => T,
                          merger: (t: T, id: string, doc: any, deleted: boolean) => T,
@@ -441,7 +441,7 @@ export class Database {
     );
   }
 
-  private doFind$(query: any) {
+  private doFind$(query: PouchDB.Find.FindRequest<any>) {
     return from(this.find(query));
   }
 
@@ -457,17 +457,12 @@ export class Database {
     );
   }
 
-  public get$(id$: Observable<string>) {
-    const doc$ = id$.pipe(
-      switchMap(id => from(this.get(id))),
-      publishReplay(1),
-      refCount(),
-    );
-
+  public get$<T>(id: string): Observable<T> {
+    const doc$ = from(this.get(id));
     return this.withChanges$(doc$);
   }
 
-  public withChanges$(doc$: Observable<any>) {
+  private withChanges$(doc$: Observable<any>) {
     const changes$ = doc$.pipe(
       map(d => ({
         since: 'now', live: true, include_docs: true,

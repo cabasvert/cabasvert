@@ -49,13 +49,9 @@ export class MemberService implements OnDestroy {
   getMembers$(): Observable<Member[]> {
     if (this.members$ != null) return this.members$;
 
-    let { query, db$ } = this.membersQuery();
+    let { query, index } = this.membersQuery();
 
-    this.members$ = db$.pipe(
-      switchMap(db => db.findAll$<Member>(query)),
-      publishReplay(1),
-      refCount(),
-    );
+    this.members$ = this.mainDatabase.findAll$<Member>(index, query);
 
     return this.members$;
   }
@@ -63,13 +59,9 @@ export class MemberService implements OnDestroy {
   getMembersIndexed$(): Observable<Map<string, Member>> {
     if (this.membersIndexed$ != null) return this.membersIndexed$;
 
-    let { query, db$ } = this.membersQuery();
+    let { query, index } = this.membersQuery();
 
-    this.membersIndexed$ = db$.pipe(
-      switchMap(db => db.findAllIndexed$<Member>(query)),
-      publishReplay(1),
-      refCount(),
-    );
+    this.membersIndexed$ = this.mainDatabase.findAllIndexed$<Member>(index, query);
 
     return this.membersIndexed$;
   }
@@ -81,13 +73,13 @@ export class MemberService implements OnDestroy {
       },
     };
 
-    let db$ = this.mainDatabase.withIndex$({
+    let index = {
       index: {
         fields: ['type'],
       },
-    });
+    };
 
-    return { query, db$ };
+    return { query, index };
   }
 
   getMemberById$(id: string): Observable<Member> {
@@ -102,10 +94,6 @@ export class MemberService implements OnDestroy {
         m.persons.some(p => p.firstname === firstname && p.lastname === lastname),
       ),
     ));
-  }
-
-  withChanges$(member$: Observable<Member>): Observable<Member> {
-    return this.mainDatabase.database$.pipe(switchMap(db => db.withChanges$(member$)));
   }
 
   putMember$(member: Member): Observable<Member> {
@@ -123,7 +111,7 @@ export class MemberService implements OnDestroy {
       });
     }
 
-    return this.mainDatabase.database$.pipe(switchMap(db => db.put$(member)));
+    return this.mainDatabase.put$(member);
   }
 
   // TODO Move these methods to Member class when it becomes one

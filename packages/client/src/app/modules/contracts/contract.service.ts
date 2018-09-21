@@ -61,16 +61,13 @@ export class ContractService implements OnDestroy {
       },
     };
 
-    let db$ = this.mainDatabase.withIndex$({
+    let index = {
       index: {
         fields: ['type', 'season'],
       },
-    });
-    return db$.pipe(
-      switchMap(db => db.findAll$(query, d => this.documentToObject(d))),
-      publishReplay(1),
-      refCount(),
-    );
+    };
+
+    return this.mainDatabase.findAll$(index, query, d => this.documentToObject(d));
   }
 
   getContractsForMember$(member: Member): Observable<Contract[]> {
@@ -92,16 +89,13 @@ export class ContractService implements OnDestroy {
       query.selector['member'] = member._id;
     }
 
-    let db$ = this.mainDatabase.withIndex$({
+    let index = {
       index: {
         fields: member ? ['type', 'member'] : ['type'],
       },
-    });
-    return db$.pipe(
-      switchMap(db => db.findAll$(query, d => this.documentToObject(d))),
-      publishReplay(1),
-      refCount(),
-    );
+    };
+
+    return this.mainDatabase.findAll$(index, query, d => this.documentToObject(d));
   }
 
   private documentToObject(contract: any): any {
@@ -115,12 +109,12 @@ export class ContractService implements OnDestroy {
 
   putContracts$(contracts: Contract): Observable<Contract> {
     let doc = this.objectToDocument(contracts);
-    return this.mainDatabase.database$.pipe(switchMap(db => db.put$(doc)));
+    return this.mainDatabase.put$(doc);
   }
 
   removeContracts$(contracts: Contract): Observable<void> {
     let doc = this.objectToDocument(contracts);
-    return this.mainDatabase.database$.pipe(switchMap(db => db.remove$(doc)));
+    return this.mainDatabase.remove$(doc);
   }
 
   private objectToDocument(contract: any): any {

@@ -71,7 +71,7 @@ export class Distribution {
     if (!this._doc.srev) {
       this._doc.srev = 'v1';
     }
-    this.mainDatabase.database$.pipe(switchMap(db => db.put$(this._doc))).subscribe();
+    this.mainDatabase.put$(this._doc).subscribe();
   }
 
   isBasketDistributed(basket: Basket) {
