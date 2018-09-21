@@ -53,11 +53,15 @@ Date.prototype.getWeek = function () {
 };
 
 Date.prototype.setWeek = function (week) {
-  // Copy date so don't modify original
-  var d = new Date(+this);
-  // Get first day of year
-  var yearStart = new Date(week[0], 0, 1);
-  d.setTime(yearStart.getTime() + (week[1] * 7 - 1) * 86400000);
-  d.setDate(d.getDate() + this.getDay() - d.getDay());
-  return d;
+  let year = week[0];
+  let weekNumber = week[1];
+
+  let simple = new Date(Date.UTC(year, 0, 1 + (weekNumber - 1) * 7));
+  let dow = simple.getDay();
+  let isoWeekStart = simple;
+  if (dow <= 4)
+    isoWeekStart.setDate(simple.getDate() - simple.getDay() + 1);
+  else
+    isoWeekStart.setDate(simple.getDate() + 8 - simple.getDay());
+  return isoWeekStart;
 };

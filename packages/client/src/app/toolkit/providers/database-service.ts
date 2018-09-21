@@ -147,7 +147,8 @@ export class DatabaseService implements OnDestroy {
         }
 
         // Add a suffix for development local database to avoid conflicts with production
-        const dbName = `cabasvert-${user.username}` + (environment.production ? '' : '-dev');
+        let dbName = user.database || 'cabasvert';
+        dbName = `${dbName}-${user.username}` + (environment.production ? '' : '-dev');
         return this.createLocalDatabase$(dbName);
       }),
       switchAll(),
@@ -169,12 +170,12 @@ export class DatabaseService implements OnDestroy {
       map(([loggedIn, networkUp, forceRecreate]) => loggedIn && networkUp || forceRecreate),
     );
     const remoteDb$: Observable<Database> = remoteDbNeeded$.pipe(
-      withLatestFrom(network$, (needed, status) => {
+      withLatestFrom(network$, loggedInUser$, (needed, status, user) => {
         if (!needed) {
           return of(null);
         }
 
-        const dbName = 'cabasvert';
+        const dbName = user.database || 'cabasvert';
         const creation = this.createRemoteDatabase$(dbName);
 
         // Delay and make multiple attempts to login to remote database

@@ -34,7 +34,8 @@ export class User {
   constructor(public username: string,
               public roles: string[],
               public name: string,
-              public email: string) {
+              public email: string,
+              public database?: string) {
   }
 
   private immediateHasRole(role: string) {
@@ -63,6 +64,7 @@ export interface Credentials {
   roles?: string[];
   name?: string;
   email?: string;
+  database?: string;
 }
 
 export interface PasswordSet {
@@ -210,7 +212,8 @@ export class AuthService {
     // And if they match, grant access to the user
     if (granted) {
       this.log.info(`Successfully logged in user '${credentials.username}' offline`);
-      return new User(credentials.username, credentials.roles, credentials.name, credentials.email);
+      return new User(credentials.username, credentials.roles,
+        credentials.name, credentials.email, credentials.database);
     } else {
       this.log.warn(`Failed to log in user '${credentials.username}' offline`);
       return null;
@@ -250,7 +253,8 @@ export class AuthService {
 
   private async retrieveUser(username: any) {
     const userData = await this.userDatabase.getUser(username);
-    return new User(username, userData.roles, userData.metadata.name, userData.metadata.email);
+    return new User(username, userData.roles,
+      userData.metadata.name, userData.metadata.email, userData.metadata.database);
   }
 
   public async tryRestoreSessionOrLoadCredentialsAndLogin(): Promise<boolean> {
