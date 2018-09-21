@@ -1,10 +1,10 @@
 {
   "language": "Français (fr)",
   "SIDEMENU": {
-    "WELCOME": "Accueil",
+    "DASHBOARD": "Accueil",
     "PROFILE": "Profil",
-    "DISTRIBUTION": "Suivi distribution",
-    "CHECK_DISTRIBUTION": "Suivre la distribution",
+    "DISTRIBUTION": "Distribution",
+    "CHECK_DISTRIBUTION": "Émargement",
     "VEGETABLES": "Légumes",
     "EGGS": "Œufs",
     "ADMINISTRATION": "Administration",
@@ -13,7 +13,8 @@
   },
   "DIALOGS": {
     "CANCEL": "Annuler",
-    "SAVE": "Enregistrer"
+    "SAVE": "Enregistrer",
+    "REQUIRED": "Requis"
   },
   "REF": {
     "SEASON": "Saison",
@@ -25,7 +26,7 @@
     "COUNT": "Nombre",
     "MEMBER": "Adhérent"
   },
-  "WELCOME": {
+  "DASHBOARD": {
     "TITLE": "Accueil",
     "DISTRIBUTION_DATE": "Distribution du",
     "DISTRIBUTORS": "Assurée par",
@@ -35,7 +36,7 @@
     "VEGETABLE_TRIAL_COUNTS": "(dont {{trialBasketCount}} en essai)",
     "EGG_COUNTS": "{{allBasketCount}} boîtes d'œufs",
     "EGG_TRIAL_COUNTS": "(dont {{trialBasketCount}} en essai)",
-    "CHECK_DISTRIBUTION": "Suivre la distribution"
+    "CHECK_DISTRIBUTION": "Émargement"
   },
   "LOGIN": {
     "TITLE": "Connexion",
@@ -68,10 +69,42 @@
   },
   "CONTRACT": {
     "SINGULAR_TITLE": "Contrat",
-    "PLURAL_TITLE": "Contrats"
+    "PLURAL_TITLE": "Contrats",
+    "EDITION_TITLE": "Édition Contrat",
+    "CREATION_TITLE": "Nouveau Contrat",
+    "FORMULA": "Formule",
+    "FIRST_WEEK": "Première semaine",
+    "LAST_WEEK": "Dernière semaine",
+    "VALIDATION": "Validation",
+    "WISH": "Contrat souhaité",
+    "VALIDATED_BY": "Validé par",
+    "PAPER_COPIES": "Contrats papier",
+    "FOR_ASSOCIATION": "Pour l'association",
+    "FOR_PRODUCER": "Pour le producteur",
+    "CHEQUES": "Chèques",
+    "FORMULA_2_EVERY_WEEK": "2 chaque semaine",
+    "FORMULA_ALTERNATING_2_AND_1": "2/1 en alternance",
+    "FORMULA_1_EVERY_WEEK": "1 chaque semaine",
+    "FORMULA_2_EVERY_OTHER_WEEK": "2 chaque quinzaine",
+    "FORMULA_1_EVERY_OTHER_WEEK": "1 chaque quinzaine",
+    "FORMULA_NONE": "aucun",
+    "CONTRACT_SECTIONS": "Sections",
+    "CONTRACT_AMENDMENTS": "Amendements",
+    "CONTRACT_POSTPONEMENTS": "Reports de paniers",
+    "SINCE": "depuis le",
+    "UP_TO": "jusqu'au",
+    "FROM": "du",
+    "TO": "au",
+    "ON": "le",
+    "PROBLEM_wish": "Le contrat n'est encore qu'un souhait",
+    "PROBLEM_paperCopyForAssociation": "Contrat manquant pour l'association",
+    "PROBLEM_paperCopyForFarmer": "Contrat manquant pour le producteur",
+    "PROBLEM_missingChequesForVegetables": "Chèques manquants pour les légumes",
+    "PROBLEM_missingChequesForEggs": "Chèques manquants pour les œufs"
   },
   "PERSON": {
     "TITLE": "Personne",
+    "PLURAL_TITLE": "Personnes",
     "EDITION_TITLE": "Édition Personne",
     "CREATION_TITLE": "Nouvelle Personne",
     "FIRSTNAME": "Prénom",
@@ -90,14 +123,19 @@
     "GENERATE": "Générer",
     "BASKETS_PER_MONTH_TITLE": "Paniers par mois",
     "BASKETS_PER_MONTH_DESCRIPTION": "Les statistiques de paniers par mois pour l'assemblée générale ordinaire.",
-    "DISTRIBUTION_CHECKLIST_TITLE": "Cochage distribution",
-    "DISTRIBUTION_CHECKLIST_DESCRIPTION": "La liste de cochage peut être utilisée pour faire une liste imprimée."
+    "DISTRIBUTION_CHECKLIST_TITLE": "Émargement distribution",
+    "DISTRIBUTION_CHECKLIST_DESCRIPTION": "La liste d'émargement peut être utilisée pour faire une liste imprimée.",
+    "MEMBER_LIST_TITLE": "Liste des adhérents",
+    "MEMBER_LIST_DESCRIPTION": "La liste des adhérents sur les deux dernières saisons."
   },
   "TRIAL_BASKET": {
     "TITLE": "Panier d'essai",
+    "PLURAL_TITLE": "Paniers d'essai",
     "CREATION_TITLE": "Panier d'essai",
     "WEEK_PLACEHOLDER": "Entrez la semaine du panier",
-    "COUNT_PLACEHOLDER": "Entrez le nombre de paniers"
+    "COUNT_PLACEHOLDER": "Entrez le nombre de paniers",
+    "PAID": "Payé",
+    "NOT_YET_PAID": "Non encore payé"
   },
   "DISTRIBUTION": {
     "DISTRIBUTED_PLURAL": "Distribués",

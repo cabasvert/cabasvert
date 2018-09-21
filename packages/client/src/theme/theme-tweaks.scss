@@ -1,68 +1,57 @@
 
-.header-md::after,
-.footer-md::before,
-.tabs-md[tabsPlacement="top"] > .tabbar::after,
-.tabs-md[tabsPlacement="bottom"] > .tabbar::before {
-  background-image: none !important;
+// FIXME Remove after ionic 4.0.0-beta3
+ion-button[disabled] {
+  pointer-events: none !important;
 }
+
+// Fixes for lists with inset margin
+
+.list-md.list-inset ion-item:first-child {
+  --border-width: 0 0 1px 0 !important;
+}
+
+.list-md.list-inset ion-item {
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.list-md.list-inset ion-item-divider {
+  --padding-start: 0;
+  --padding-end: 0;
+
+  color: var(--ion-color-light-contrast);
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.list-md.list-inset ion-list-header {
+  padding: 0;
+}
+
+ion-item-divider ion-icon[slot=start],
+ion-item-divider ion-icon[slot=end] {
+  margin: 2px 8px 2px 0;
+}
+
+// Fixes for ion-select not occupying full space
+
+ion-item.item-interactive {
+  ion-label {
+    flex: initial;
+  }
+  ion-select {
+    flex: 1;
+    max-width: unset;
+    text-align: right;
+  }
+}
+
+// Thinner toolbar styles
 
 ion-toolbar.toolbar-thinner {
-  padding-left: 8px;
-  padding-right: 8px;
-  padding-bottom: 0;
-  min-height: 46px;
-
-  .toolbar-content-md {
-    .segment-button {
-      border-bottom-width: 1px;
-
-      &.segment-activated {
-        border-bottom-width: 2px;
-      }
-      &:not(.segment-activated) {
-        color: map-get($colors, "inactive");
-      }
-    }
-  }
-}
-
-@media screen and (min-width: 767px) {
-  .segment-md .segment-button {
-    font-size: 1.4rem !important;
-  }
-}
-
-@media screen and (max-width: 767px) {
-  .segment-md .segment-button {
-    font-size: 1.1rem !important;
-  }
-  .segment-md .segment-button ion-badge {
-    font-size: 1.2rem;
-  }
-}
-
-.item-divider {
-  background-color: $list-background-color !important;
-}
-
-.card-md h2,
-.card-md h3,
-.card-md h4,
-.card-md h5,
-.card-md h6 {
-  color: $text-color !important;
-}
-
-.list-header-md {
-  margin-bottom: 0;
-}
-
-/* The following is to fix the so-called 'gray square' (c.f. ionic-team/ionic#6416) */
-
-.content .scroll-content {
-  overflow-y: auto;
-}
-
-.content-ios .scroll-content {
-  overflow-y: scroll;
+  --padding-left: 0;
+  --padding-right: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --min-height: 42px;
 }

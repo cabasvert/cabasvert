@@ -17,17 +17,22 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { registerLocaleData } from '@angular/common'
+import { registerLocaleData } from '@angular/common';
 
-import localeEnGb from '@angular/common/locales/en-GB'
-import localeEs from '@angular/common/locales/es'
-import localeEnGb_Extra from '@angular/common/locales/extra/en-GB'
-import localeEs_Extra from '@angular/common/locales/extra/es'
-import localeFr_Extra from '@angular/common/locales/extra/fr'
-import localeFr from '@angular/common/locales/fr'
+import localeEnGb from '@angular/common/locales/en-GB';
+import localeEs from '@angular/common/locales/es';
+import localeEnGb_Extra from '@angular/common/locales/extra/en-GB';
+import localeEs_Extra from '@angular/common/locales/extra/es';
+import localeFr_Extra from '@angular/common/locales/extra/fr';
+import localeFr from '@angular/common/locales/fr';
+import { environment } from '../environments/environment';
 
 export function registerLocales() {
-  registerLocaleData(localeEs, localeEs_Extra)
-  registerLocaleData(localeFr, localeFr_Extra)
-  registerLocaleData(localeEnGb, localeEnGb_Extra)
+  registerLocaleData(localeEs, localeEs_Extra);
+  registerLocaleData(localeFr, localeFr_Extra);
+  registerLocaleData(localeEnGb, localeEnGb_Extra);
+}
+
+export function inferLocale() {
+  return environment.localeOverride ? environment.localeOverride : navigator.language;
 }

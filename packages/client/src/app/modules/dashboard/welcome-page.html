@@ -1,0 +1,90 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
+    <ion-title>{{ 'DASHBOARD.TITLE' | translate }}</ion-title>
+
+    <ion-buttons slot="primary">
+      <sync-state></sync-state>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="cards-bg">
+  <pre *ngIf="error$ | async as error" style="font-size: xx-small;">{{ error }}</pre>
+
+  <ion-card *ngIf="week$ | async as week; else noDistributionWeek">
+
+    <ion-item>
+      <ion-avatar slot="start">
+        <img width="40" height="40" src="assets/img/icon.svg">
+      </ion-avatar>
+      <ion-label>
+        <h2>
+          <span showOnMedia="sm">{{ 'REF.SEASON' | translate }}</span> {{ week.season.name }}
+          –
+          {{ 'REF.WEEK' | translate }} {{ week.seasonWeek }}/{{ week.season.weekCount }}
+        </h2>
+        <p>
+          <span showOnMedia="sm">{{ 'DASHBOARD.DISTRIBUTION_DATE' | translate }}</span>
+          {{ week.distributionDate | date: 'fullDate' }}
+        </p>
+      </ion-label>
+    </ion-item>
+
+    <ng-container *ngIf="totals$ | async as allTotals; else noTotals">
+      <ion-item *ngIf="allTotals['cumulative'] as totals" icon-left small>
+        <ion-icon slot="start" name='person'></ion-icon>
+        <ion-label>
+          <h3>{{ 'DASHBOARD.CUMULATIVE_COUNTS' | translate : totals }}</h3>
+          <p style="font-size: x-small;">{{ 'DASHBOARD.CUMULATIVE_TRIAL_COUNTS' | translate : totals
+            }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="allTotals[Kinds.VEGETABLES] as totals" icon-left small>
+        <ion-icon slot="start" name='basket'></ion-icon>
+        <ion-label>
+          <h3>{{ 'DASHBOARD.VEGETABLE_COUNTS' | translate : totals }}</h3>
+          <p style="font-size: x-small;">{{ 'DASHBOARD.VEGETABLE_TRIAL_COUNTS' | translate : totals
+            }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="allTotals[Kinds.EGGS] as totals" icon-left small>
+        <ion-icon slot="start" name='egg'></ion-icon>
+        <ion-label>
+          <h3>{{ 'DASHBOARD.EGG_COUNTS' | translate : totals }}</h3>
+          <p style="font-size: x-small;">{{ 'DASHBOARD.EGG_TRIAL_COUNTS' | translate : totals }}</p>
+        </ion-label>
+      </ion-item>
+    </ng-container>
+    <ng-template #noTotals>
+      <ion-item text-center>
+        <ion-label>
+          <ion-spinner icon="dots"></ion-spinner>
+        </ion-label>
+      </ion-item>
+    </ng-template>
+
+    <ion-row no-padding *ngIf="isDistributor()">
+      <ion-col text-center>
+        <ion-button fill="clear" size="small" (click)="openDistributionPage()">
+          <ion-icon name="checkmark" slot="start"></ion-icon>
+          {{ 'DASHBOARD.CHECK_DISTRIBUTION' | translate }}
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+  </ion-card>
+  <ng-template #noDistributionWeek>
+    <ion-card text-center>
+      <ion-row no-padding>
+        <ion-col>
+          <ion-spinner icon="dots"></ion-spinner>
+        </ion-col>
+      </ion-row>
+    </ion-card>
+  </ng-template>
+
+</ion-content>

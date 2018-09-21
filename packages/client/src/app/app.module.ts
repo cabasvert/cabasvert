@@ -17,74 +17,63 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { HttpClient, HttpClientModule } from "@angular/common/http"
-import { APP_INITIALIZER, ErrorHandler, NgModule } from "@angular/core"
-import { BrowserModule } from "@angular/platform-browser"
-import { AppVersion } from "@ionic-native/app-version"
-import { Deeplinks } from "@ionic-native/deeplinks"
-import { File } from '@ionic-native/file'
-import { FileOpener } from "@ionic-native/file-opener"
-import { SecureStorage } from "@ionic-native/secure-storage"
-import { SplashScreen } from "@ionic-native/splash-screen"
-import { StatusBar } from "@ionic-native/status-bar"
-import { TranslateLoader, TranslateModule } from "@ngx-translate/core"
-import { TranslateHttpLoader } from "@ngx-translate/http-loader"
-import { IonicApp, IonicErrorHandler, IonicModule } from "ionic-angular"
-import { ConfigurationService } from "../config/configuration.service"
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
+import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
+import { RouteReuseStrategy } from '@angular/router';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { SecureStorage } from '@ionic-native/secure-storage/ngx';
 
-import { ConfigurationModule } from "../config/configuration.module"
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
-import { ContractModule } from "../modules/contracts/contract.module"
-import { DistributionModule } from "../modules/distributions/distribution.module"
-import { LoginPage } from "../modules/main/login/login-page"
-import { MainPage } from "../modules/main/main-page"
-import { MainModule } from "../modules/main/main.module"
-import { ResetPasswordPage } from "../modules/main/reset-password/reset-password-page"
-import { MemberModule } from "../modules/members/member.module"
-import { ProfileModule } from "../modules/profiles/profile.module"
-import { ReportModule } from "../modules/reports/report.module"
-import { SeasonModule } from "../modules/seasons/season.module"
-import { AuthService } from "../toolkit/providers/auth-service"
-import { DatabaseHelper } from "../toolkit/providers/database-helper"
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
 
-import { DatabaseService } from "../toolkit/providers/database-service"
-import { networkProvider } from "../toolkit/providers/network"
-import { ToolkitModule } from "../toolkit/toolkit.module"
+import { ConfigurationModule } from './config/configuration.module';
+import { ConfigurationService } from './config/configuration.service';
+import { inferLocale, registerLocales } from './locales';
+import { AuthenticationModule } from './modules/authentication/authentication.module';
 
-import { MyApp } from "./app.component"
-import { registerLocales } from "./locales"
+import { ContractModule } from './modules/contracts/contract.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { DistributionModule } from './modules/distributions/distribution.module';
+import { MemberModule } from './modules/members/member.module';
+import { ProfileModule } from './modules/profiles/profile.module';
+import { ReportModule } from './modules/reports/report.module';
+import { SeasonModule } from './modules/seasons/season.module';
+import { AuthService } from './toolkit/providers/auth-service';
+import { DatabaseHelper } from './toolkit/providers/database-helper';
 
-registerLocales()
+import { DatabaseService } from './toolkit/providers/database-service';
+import { networkProvider } from './toolkit/providers/network';
+import { ToolkitModule } from './toolkit/toolkit.module';
+import { IonicGestureConfig } from './toolkit/utils/gestures';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
+
+registerLocales();
 
 @NgModule({
-  declarations: [
-    MyApp,
-  ],
+  declarations: [AppComponent],
+  entryComponents: [],
   imports: [
-    IonicModule.forRoot(MyApp, {}, {
-      links: [
-        { component: LoginPage, name: 'login', segment: 'login' },
-        {
-          component: ResetPasswordPage,
-          name: 'reset-password',
-          segment: 'reset-password/:username/:token',
-        },
-        { component: MainPage, name: 'main', segment: 'main' },
-      ],
-    }),
     BrowserModule,
+    IonicModule.forRoot(),
+
     HttpClientModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory: http => new TranslateHttpLoader(http, "./assets/i18n/", ".json"),
+        useFactory: http => new TranslateHttpLoader(http, '../assets/i18n/', '.json'),
         deps: [HttpClient],
       },
     }),
 
     // Technical Modules
     ConfigurationModule,
-    ToolkitModule,
+    ToolkitModule.forRoot(),
 
     // Business Modules
     SeasonModule,
@@ -93,25 +82,24 @@ registerLocales()
     DistributionModule,
     ProfileModule,
     ReportModule,
-    MainModule,
-  ],
-  exports: [BrowserModule, HttpClientModule, TranslateModule],
-  bootstrap: [IonicApp],
-  entryComponents: [
-    MyApp,
+    AuthenticationModule,
+    DashboardModule,
+
+    // Rooting
+    AppRoutingModule,
+
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
   ],
   providers: [
+    { provide: LOCALE_ID, useValue: inferLocale() },
 
-    // Ionic/Cordova
-    { provide: ErrorHandler, useClass: IonicErrorHandler },
-    StatusBar,
-    Deeplinks,
-    SplashScreen,
+    // Ionic Native
     SecureStorage,
-    File,
-    FileOpener,
     networkProvider,
     AppVersion,
+
+    { provide: HAMMER_GESTURE_CONFIG, useClass: IonicGestureConfig },
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
 
     // App Initializer
     {
@@ -121,18 +109,19 @@ registerLocales()
       multi: true,
     },
   ],
+  bootstrap: [AppComponent],
 })
 export class AppModule {
 }
 
 export function initializeApplication(configuration: ConfigurationService,
-                               databaseHelper: DatabaseHelper,
-                               authService: AuthService,
-                               databaseService: DatabaseService) {
+                                      databaseHelper: DatabaseHelper,
+                                      authService: AuthService,
+                                      databaseService: DatabaseService) {
   return async () => {
-    await configuration.loadConfiguration()
-    await databaseHelper.initialize()
-    await authService.initialize()
-    await databaseService.initialize()
-  }
+    await configuration.loadConfiguration();
+    await databaseHelper.initialize();
+    await authService.initialize();
+    await databaseService.initialize();
+  };
 }

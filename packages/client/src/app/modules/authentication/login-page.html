@@ -1,0 +1,73 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>{{ 'LOGIN.TITLE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="login-content" padding>
+  <ion-grid fixed>
+    <ion-row class="logo-row" justify-content-center>
+      <ion-col size="12" text-center>
+        <img width="128" height="128" src="assets/img/icon.svg"/>
+      </ion-col>
+    </ion-row>
+    <ion-row class="login-box" justify-content-center>
+      <ion-col size-lg="6" size-md="8" size-sm="12">
+      <form [formGroup]="form" (ngSubmit)="login()">
+
+        <ion-row>
+            <ion-col>
+              <ion-list>
+
+                <ion-item>
+                  <ion-label color="primary" position="stacked">
+                    {{ 'LOGIN.USERNAME' | translate }}
+                  </ion-label>
+                  <ion-input type="email" formControlName="username" autocomplete="on">
+                  </ion-input>
+                </ion-item>
+
+                <ion-item>
+                  <ion-label color="primary" position="stacked">
+                    {{ 'LOGIN.PASSWORD' | translate }}
+                  </ion-label>
+                  <ion-input type="password" formControlName="password" autocomplete="on">
+                  </ion-input>
+                </ion-item>
+
+                <ion-item *ngIf="hasPasswordStorage">
+                  <ion-label>{{ 'LOGIN.STORE_PASSWORD' | translate }}</ion-label>
+                  <ion-checkbox formControlName="storePassword"></ion-checkbox>
+                </ion-item>
+
+              </ion-list>
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col>
+              <div style="height: 1.2em;">
+                <ion-text *ngIf="feedback | async as f"
+                          color="{{ f.isError ? 'danger' : 'primary' }}"
+                          text-center style="min-height: 2em; font-size: small;">{{ f.message }}
+                </ion-text>
+              </div>
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col class="signup-col">
+              <ion-button class="submit-btn" expand="full" type="submit" [disabled]="!form.valid">
+                {{ 'LOGIN.LOGIN' | translate }}
+              </ion-button>
+              <ion-button expand="block" fill="clear" type="reset" (click)="forgotPassword()">
+                {{ 'LOGIN.FORGOT_PASSWORD' | translate }}
+              </ion-button>
+            </ion-col>
+          </ion-row>
+
+        </form>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

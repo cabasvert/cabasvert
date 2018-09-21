@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:ordering="together">
+    <objectAnimator
+        android:duration="1000"
+        android:propertyName="scaleX"
+        android:repeatCount="infinite"
+        android:repeatMode="reverse"
+        android:valueFrom=".8"
+        android:valueTo="1"
+        android:valueType="floatType" />
+    <objectAnimator
+        android:duration="1000"
+        android:propertyName="scaleY"
+        android:repeatCount="infinite"
+        android:repeatMode="reverse"
+        android:valueFrom=".8"
+        android:valueTo="1"
+        android:valueType="floatType" />
+    <objectAnimator
+        android:duration="1000"
+        android:propertyName="translateX"
+        android:repeatCount="infinite"
+        android:repeatMode="reverse"
+        android:valueFrom="10"
+        android:valueTo="0"
+        android:valueType="floatType" />
+    <objectAnimator
+        android:duration="1000"
+        android:propertyName="translateY"
+        android:repeatCount="infinite"
+        android:repeatMode="reverse"
+        android:valueFrom="10"
+        android:valueTo="0"
+        android:valueType="floatType" />
+</set>

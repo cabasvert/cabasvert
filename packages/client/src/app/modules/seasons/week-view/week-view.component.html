@@ -1,0 +1,4 @@
+<ng-container *ngIf="(seasonWeek$ | async) as week">
+  {{ week.distributionDate | date: 'shortDate' }}
+  ({{ week.seasonWeek }})
+</ng-container>

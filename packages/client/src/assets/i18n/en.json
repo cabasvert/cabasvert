@@ -1,7 +1,7 @@
 {
   "language": "English (en)",
   "SIDEMENU": {
-    "WELCOME": "Welcome",
+    "DASHBOARD": "Dashboard",
     "PROFILE": "Profile",
     "DISTRIBUTION": "Distribution",
     "CHECK_DISTRIBUTION": "Track distribution",
@@ -13,7 +13,8 @@
   },
   "DIALOGS": {
     "CANCEL": "Cancel",
-    "SAVE": "Save"
+    "SAVE": "Save",
+    "REQUIRED": "Required"
   },
   "REF": {
     "SEASON": "Season",
@@ -25,8 +26,8 @@
     "COUNT": "Count",
     "MEMBER": "Member"
   },
-  "WELCOME": {
-    "TITLE": "Welcome",
+  "DASHBOARD": {
+    "TITLE": "Dashboard",
     "DISTRIBUTION_DATE": "Distribution of",
     "DISTRIBUTORS": "Distributed by",
     "CUMULATIVE_COUNTS": "{{allBasketCount}} persons",
@@ -67,11 +68,43 @@
     "CREATION_TITLE": "New Member"
   },
   "CONTRACT": {
-  "SINGULAR_TITLE": "Contract",
-  "PLURAL_TITLE": "Contracts"
+    "SINGULAR_TITLE": "Contract",
+    "PLURAL_TITLE": "Contracts",
+    "EDITION_TITLE": "Edit Contract",
+    "CREATION_TITLE": "New Contract",
+    "FORMULA": "Formula",
+    "FIRST_WEEK": "First week",
+    "LAST_WEEK": "Last week",
+    "VALIDATION": "Validation",
+    "WISH": "Wish",
+    "VALIDATED_BY": "Validated by",
+    "PAPER_COPIES": "Paper copies",
+    "FOR_ASSOCIATION": "For association",
+    "FOR_PRODUCER": "For producer",
+    "CHEQUES": "Cheques",
+    "FORMULA_2_EVERY_WEEK": "2 every week",
+    "FORMULA_ALTERNATING_2_AND_1": "alternating 2 and 1",
+    "FORMULA_1_EVERY_WEEK": "1 every week",
+    "FORMULA_2_EVERY_OTHER_WEEK": "2 every other week",
+    "FORMULA_1_EVERY_OTHER_WEEK": "1 every other week",
+    "FORMULA_NONE": "none",
+    "CONTRACT_SECTIONS": "Contract sections",
+    "CONTRACT_AMENDMENTS": "Contract amendments",
+    "CONTRACT_POSTPONEMENTS": "Contract postponements",
+    "SINCE": "since",
+    "UP_TO": "up to",
+    "FROM": "from",
+    "TO": "to",
+    "ON": "on week",
+    "PROBLEM_wish": "Contract is just a wish yet",
+    "PROBLEM_paperCopyForAssociation": "Missing paper copy for association",
+    "PROBLEM_paperCopyForFarmer": "Missing paper copy for farmer",
+    "PROBLEM_missingChequesForVegetables": "Cheques for vegetables are missing",
+    "PROBLEM_missingChequesForEggs": "Cheque for eggs is missing"
   },
   "PERSON": {
     "TITLE": "Person",
+    "PLURAL_TITLE": "Persons",
     "EDITION_TITLE": "Edit Person",
     "CREATION_TITLE": "New Person",
     "FIRSTNAME": "Firstname",
@@ -88,16 +121,21 @@
   "REPORTS": {
     "TITLE": "Reports",
     "GENERATE": "Generate",
-    "BASKETS_PER_MONTH_TITLE": "Baskets per month",
+    "BASKETS_PER_MONTH_TITLE": "Baskets Per Month",
     "BASKETS_PER_MONTH_DESCRIPTION": "The basket per month statistics for the end of year assembly.",
-    "DISTRIBUTION_CHECKLIST_TITLE": "Distribution checklist",
-    "DISTRIBUTION_CHECKLIST_DESCRIPTION": "The distribution checklist can be used to make a printed checklist."
+    "DISTRIBUTION_CHECKLIST_TITLE": "Distribution Checklist",
+    "DISTRIBUTION_CHECKLIST_DESCRIPTION": "The distribution checklist can be used to make a printed checklist.",
+    "MEMBER_LIST_TITLE": "Member List",
+    "MEMBER_LIST_DESCRIPTION": "The member list over the last two seasons."
   },
   "TRIAL_BASKET": {
     "TITLE": "Trial Basket",
+    "PLURAL_TITLE": "Trial Baskets",
     "CREATION_TITLE": "Trial Basket",
     "WEEK_PLACEHOLDER": "Enter trial basket's week",
-    "COUNT_PLACEHOLDER": "Enter trial basket's count"
+    "COUNT_PLACEHOLDER": "Enter trial basket's count",
+    "PAID": "Paid",
+    "NOT_YET_PAID": "Not yet paid"
   },
   "DISTRIBUTION": {
     "DISTRIBUTED_PLURAL": "Distributed",

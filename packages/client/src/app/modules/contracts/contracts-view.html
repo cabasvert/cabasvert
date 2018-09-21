@@ -1,0 +1,82 @@
+<h3>
+  {{ seasonName | async }}
+</h3>
+<p *ngIf="contract.validation && contract.validation.validatedBy" class="validation">
+  {{ 'CONTRACT.VALIDATED_BY' | translate }} {{ contract.validation.validatedBy }}
+</p>
+<p *ngFor="let problemMessage of messages" [class]="'problem ' + severity">
+  {{ problemMessage | translate }}
+</p>
+<h4>{{ 'CONTRACT.CONTRACT_SECTIONS' | translate }}</h4>
+<ul>
+  <li *ngFor="let section of contract.sections">
+    <ng-container *ngIf="!Formulas.hasNoneFormula(section.formula)">
+      <ion-icon small [name]="Kinds.icon(section.kind)"></ion-icon>
+
+      <strong>{{ Formulas.formulaFor(section.formula).label | translate }}</strong>
+
+      <ng-container *ngIf="section.firstWeek && section.firstWeek !== 1 && !section.lastWeek">
+        {{ 'CONTRACT.SINCE' | translate }}
+        <app-week-view [seasonId]="contract.season"
+                       [weekNumber]="section.firstWeek"></app-week-view>
+      </ng-container>
+
+      <ng-container *ngIf="(!section.firstWeek || section.firstWeek === 1) && section.lastWeek">
+        {{ 'CONTRACT.UP_TO' | translate }}
+        <app-week-view [seasonId]="contract.season"
+                       [weekNumber]="section.lastWeek"></app-week-view>
+      </ng-container>
+
+      <ng-container *ngIf="section.firstWeek && section.firstWeek !== 1 && section.lastWeek">
+        {{ 'CONTRACT.FROM' | translate }}
+        <app-week-view [seasonId]="contract.season"
+                       [weekNumber]="section.firstWeek"></app-week-view>
+        {{ 'CONTRACT.TO' | translate }}
+        <app-week-view [seasonId]="contract.season"
+                       [weekNumber]="section.lastWeek"></app-week-view>
+      </ng-container>
+    </ng-container>
+  </li>
+</ul>
+<ng-container *ngIf="contract.amendments">
+  <h4>{{ 'CONTRACT.CONTRACT_AMENDMENTS' | translate }}</h4>
+  <ul>
+    <li *ngFor="let amendment of contract.amendments">
+      <ion-icon small name="calendar"></ion-icon>
+
+      {{ 'CONTRACT.ON' | translate }}
+      <app-week-view [seasonId]="contract.season"
+                     [weekNumber]="amendment.week"></app-week-view>
+
+      <ng-container *ngFor="let kind of Kinds.ALL">
+        <ng-container *ngIf="amendment.deltas[kind] as delta">
+          <ion-icon small [name]="Kinds.icon(delta.kind)"></ion-icon>
+          {{ delta.count }}
+        </ng-container>
+      </ng-container>
+    </li>
+  </ul>
+</ng-container>
+<ng-container *ngIf="contract.postponements">
+  <h4>{{ 'CONTRACT.CONTRACT_POSTPONEMENTS' | translate }}</h4>
+  <ul>
+    <li *ngFor="let postponement of contract.postponements">
+      <ion-icon small name="calendar"></ion-icon>
+
+      {{ 'CONTRACT.FROM' | translate }}
+      <app-week-view [seasonId]="contract.season"
+                     [weekNumber]="postponement.week"></app-week-view>
+
+      {{ 'CONTRACT.TO' | translate }}
+      <app-week-view [seasonId]="contract.season"
+                     [weekNumber]="postponement.rescheduledWeek"></app-week-view>
+
+      <ng-container *ngFor="let kind of Kinds.ALL">
+        <ng-container *ngIf="postponement.deltas[kind] as delta">
+          <ion-icon small [name]="Kinds.icon(delta.kind)"></ion-icon>
+          {{ delta.count }}
+        </ng-container>
+      </ng-container>
+    </li>
+  </ul>
+</ng-container>

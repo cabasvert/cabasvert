@@ -17,74 +17,156 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, ViewChild } from "@angular/core"
-import { SplashScreen } from "@ionic-native/splash-screen"
-import { StatusBar } from "@ionic-native/status-bar"
+import { Component, Inject, LOCALE_ID, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { ActivatedRoute, Router, Scroll } from '@angular/router';
+import { Plugins, StatusBarStyle } from '@capacitor/core';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import {
+  ActionSheetController,
+  IonRouterOutlet,
+  MenuController,
+  ModalController,
+  NavController,
+  Platform,
+  PopoverController,
+} from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { fromEvent, Observable, Subscription } from 'rxjs';
+import { NodeCompatibleEventEmitter } from 'rxjs/internal/observable/fromEvent';
+import { filter, take } from 'rxjs/operators';
 
-import { TranslateService } from "@ngx-translate/core"
-import { Nav, Platform } from "ionic-angular"
-import { LoginPage } from "../modules/main/login/login-page"
-import { MainPage } from "../modules/main/main-page"
-import { AuthService } from "../toolkit/providers/auth-service"
+import { PageGroup, PAGES } from './menu-page.interface';
+import { AuthService, User } from './toolkit/providers/auth-service';
 
-const PUBLIC_PAGES = ['/login', '/reset-password']
+const { SplashScreen, StatusBar, App } = Plugins;
 
 @Component({
-  templateUrl: 'app.html',
+  selector: 'app-root',
+  templateUrl: 'app.component.html',
 })
-export class MyApp {
+export class AppComponent implements OnInit {
 
-  @ViewChild(Nav) nav: Nav
+  pageGroups: PageGroup[] = PAGES;
 
-  rootPage: any
+  appVersionNumber: string;
+
+  user$: Observable<User>;
+
+  @ViewChildren(IonRouterOutlet) routerOutlets: QueryList<IonRouterOutlet>;
+
+  private subscription: Subscription;
 
   constructor(private platform: Platform,
-              private statusBar: StatusBar,
-              private splashScreen: SplashScreen,
+              private appVersion: AppVersion,
               private translate: TranslateService,
-              private auth: AuthService) {
+              private authService: AuthService,
+              private navCtrl: NavController,
+              private popoverCtrl: PopoverController,
+              private actionSheetCtrl: ActionSheetController,
+              private modalCtrl: ModalController,
+              private menuCtrl: MenuController,
+              private router: Router,
+              private route: ActivatedRoute,
+              @Inject(LOCALE_ID) private locale: string) {
 
-    platform.ready()
-      .then(() => {
-        statusBar.styleBlackTranslucent()
-        statusBar.backgroundColorByHexString('#126019')
+    this.initializeApp();
+  }
 
-        this.initTranslation()
-      })
-      .then(() => {
-        let url = platform.url()
-        let [, fragment] = url.split('#')
+  private async initializeApp() {
+    await this.platform.ready();
 
-        let publicPage = fragment && PUBLIC_PAGES.some(pageName => fragment.startsWith(pageName))
-        console.info(`URL: ${url} - Page fragment: ${fragment} - Public page: ${publicPage}`)
+    this.initTranslation();
 
-        if (!publicPage) {
-          this.auth.tryLoadCredentialsAndLogin().then(granted => {
-            if (!granted) return this.nav.setRoot(LoginPage)
-            else if (!fragment || fragment === '/') return this.nav.setRoot(MainPage)
-          })
+    if (this.platform.is('android') || this.platform.is('ios')) {
+      await StatusBar.setStyle({ style: StatusBarStyle.Dark });
+      await StatusBar.setBackgroundColor({ color: '#126019' });
+    }
+
+    try {
+      this.appVersionNumber = await this.appVersion.getVersionNumber();
+    } catch (error) {
+    }
+
+    // Wait for the initial navigation to succeed before hiding the splash screen
+    this.router.events.pipe(
+      filter(e => e instanceof Scroll),
+      take(1),
+    ).subscribe(() => {
+      if (this.platform.is('android') || this.platform.is('ios')) {
+        SplashScreen.hide();
+      }
+    });
+
+    // FIXME Hack because backButton is not supported correctly yet
+    if (this.platform.is('android')) {
+      fromEvent(App as NodeCompatibleEventEmitter, 'backButton').subscribe(async () => {
+        try {
+          let element = await this.actionSheetCtrl.getTop();
+          if (element) {
+            this.actionSheetCtrl.dismiss();
+            return;
+          }
+        } catch (error) {
         }
-      })
-      .then(
-        () => {
-          splashScreen
-            .hide()
-        },
-      )
+
+        try {
+          let element = await this.popoverCtrl.getTop();
+          if (element) {
+            this.popoverCtrl.dismiss();
+            return;
+          }
+        } catch (error) {
+        }
+
+        try {
+          let element = await this.modalCtrl.getTop();
+          if (element) {
+            this.modalCtrl.dismiss();
+            return;
+          }
+        } catch (error) {
+        }
+
+        let canGoBack = this.routerOutlets.find((outlet: IonRouterOutlet) => outlet && outlet.canGoBack());
+        if (canGoBack) {
+          this.navCtrl.goBack();
+          return;
+        }
+
+        this.navCtrl.navigateRoot('/dashboard');
+      });
+    }
   }
 
   initTranslation() {
-    var userLang = navigator.language.split('-')[0]
-    userLang = /(fr|en)/gi.test(userLang) ? userLang : 'fr'
+    let userLang = this.locale.split('-')[0];
 
-    // Default language if file not found
-    this.translate.setDefaultLang('fr')
-
-    // Change userLang = 'fr' to check instantly
-    this.translate.use(userLang)
+    this.translate.setDefaultLang('fr');
+    this.translate.use(userLang);
 
     this.translate.get('language', null).subscribe(localizedValue =>
-      console.info(`Selected language: ${localizedValue}`),
-    )
+      console.log(`Selected language: ${localizedValue}`),
+    );
+  }
+
+  ngOnInit() {
+    this.user$ = this.authService.loggedInUser$;
+  }
+
+  async navigateToPage(page) {
+    let commands = ['/' + page.path];
+    if (page.params) commands.push(page.params);
+
+    this.menuCtrl.close();
+
+    await this.navCtrl.navigateRoot(commands);
+  }
+
+  async logout() {
+    await this.authService.logout();
+
+    this.menuCtrl.close();
+
+    await this.navCtrl.navigateRoot(['/login']);
   }
 }

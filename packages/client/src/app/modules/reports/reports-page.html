@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
+    <ion-title>{{ 'REPORTS.TITLE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="user" class="cards-bg">
+
+  <div *ngFor="let r of reports">
+    <ion-card *ngIf="!r.acceptedRoles || user.hasAnyRoleIn(r.acceptedRoles)">
+
+      <ion-card-content>
+        <ion-card-title>
+          {{ r.title | translate }}
+        </ion-card-title>
+
+        <p>
+          {{ r.description | translate }}
+        </p>
+      </ion-card-content>
+
+      <ion-row no-padding>
+        <ion-col text-center>
+          <ion-button fill="clear" size="small" (click)="writeReport(r.report)">
+            <ion-icon name="document" slot="start"></ion-icon>
+            {{ 'REPORTS.GENERATE' | translate }}
+          </ion-button>
+        </ion-col>
+      </ion-row>
+
+    </ion-card>
+  </div>
+
+</ion-content>

@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar hideBackButton>
+    <ion-buttons slot="start">
+      <ion-button icon-only (click)="dismiss()">
+        <ion-icon name="arrow-back"></ion-icon>
+        {{ 'DIALOGS.CANCEL' | translate }}
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>
+      {{ title | translate }}
+    </ion-title>
+
+    <ion-buttons slot="primary">
+      <ion-button icon-only (click)="submit.click()" [disabled]="!form.valid">
+        {{ 'DIALOGS.SAVE' | translate }}
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="form" novalidate (ngSubmit)="save()">
+    <input #submit type="submit" value="Submit" style="display:none"/>
+
+    <ion-list *ngIf="trialBasket" inset="true" lines="full">
+
+      <ion-item>
+        <ion-label color="primary">{{ 'REF.SEASON' | translate }}</ion-label>
+        <ion-select formControlName="season" interface="popover">
+          <ion-select-option *ngFor="let season of seasons$ | async" [value]="season.id">
+            {{ season.name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label color="primary">{{ 'REF.WEEK' | translate }}</ion-label>
+        <ion-select formControlName="week" interface="popover">
+          <ion-select-option *ngFor="let week of weeks$ | async" [value]="week.seasonWeek">
+            {{ week.distributionDate | date: 'shortDate' }} ({{ week.seasonWeek }})
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label color="primary">{{ 'TRIAL_BASKET.PAID' | translate }}</ion-label>
+        <ion-checkbox formControlName="paid"></ion-checkbox>
+      </ion-item>
+
+      <ng-container formArrayName="sections">
+        <ion-item *ngFor="let section of trialBasket.sections; let i=index" [formGroupName]="i">
+          <input type="text" style="display: none;" formControlName="kind"/>
+
+          <ion-label color="primary">
+            {{ (section.kind == 'legumes' ? 'REF.VEGETABLES' : 'REF.EGGS') | translate}} –
+            {{ 'REF.COUNT' | translate }}
+          </ion-label>
+          <ion-input type="number"
+                     placeholder="{{ 'TRIAL_BASKET.COUNT_PLACEHOLDER' | translate }}"
+                     formControlName="count"></ion-input>
+        </ion-item>
+      </ng-container>
+
+    </ion-list>
+  </form>
+</ion-content>

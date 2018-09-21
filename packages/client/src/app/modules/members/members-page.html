@@ -1,0 +1,77 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
+    <ion-title>{{ 'MEMBER.LIST_TITLE' | translate }}</ion-title>
+
+    <!--FIXME !!!-->
+    <!--<ion-buttons slot="primary">-->
+    <!--<searchbar-expanding #searchbar type="email"-->
+    <!--(ionInput)="searchQuery.next($event.target.value)"-->
+    <!--(ionClear)="searchQuery.next('')">-->
+    <!--</searchbar-expanding>-->
+    <!--</ion-buttons>-->
+  </ion-toolbar>
+  <ion-toolbar>
+    <ng-container *ngIf="seasons$ | async as seasons">
+      <ion-button *ngFor="let season of seasons"
+                  (click)="seasonFilterToggle$.next(season.id)"
+                  [color]="(seasonFilter$ | async).colorFor(season.id)"
+                  [fill]="(seasonFilter$ | async).get(season.id) === undefined ? 'outline' : 'solid'">
+        {{ season.name }}
+      </ion-button>
+    </ng-container>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <pre *ngIf="error$ | async as error" style="font-size: xx-small;">{{ error }}</pre>
+
+  <indexed-scroller [indexesLabels]="alphabeticLabels"></indexed-scroller>
+
+  <scroll-to-top></scroll-to-top>
+
+  <ion-list *ngIf="members$ | async as members; else noMembers">
+    <ng-container *ngFor="let group of members; trackBy: groupKey">
+      <ion-item-divider id="divider-{{ group.key }}">
+        <ion-label>{{ group.key }}</ion-label>
+      </ion-item-divider>
+
+      <ion-item *ngFor="let member of group.values; trackBy: memberId"
+                [button]="true" style="min-height: 54px;"
+                (click)="shownMember.next(member)">
+        <ion-avatar slot="start">
+          <div class="letter-avatar">
+            <span>{{ group.key }}</span>
+          </div>
+        </ion-avatar>
+        <ion-label detail-push>
+          <member-view [member]="member"></member-view>
+        </ion-label>
+        <ion-icon
+            *ngIf="perMemberIdProblemSeverity && perMemberIdProblemSeverity[member._id] as severity"
+            name="warning" slot="end" [color]="severity">
+        </ion-icon>
+      </ion-item>
+
+    </ng-container>
+  </ion-list>
+  <ng-template #noMembers>
+    <ion-list>
+      <ion-item text-center>
+        <ion-label>
+          <ion-spinner icon="dots"></ion-spinner>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ng-template>
+
+  <ion-fab class="add-member" slot="fixed" vertical="bottom" horizontal="end"
+           [class.hidden]="scroller.scrolling$ | async">
+    <ion-fab-button color="primary" (click)="createdMember.next()">
+      <ion-icon name="person-add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

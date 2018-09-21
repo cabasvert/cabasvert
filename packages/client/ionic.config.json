@@ -1,8 +1,7 @@
 {
   "name": "Cabas Vert",
   "integrations": {
-    "cordova": {}
+    "capacitor": {}
   },
-  "v3": true,
-  "type": "ionic-angular"
+  "type": "angular"
 }

@@ -1,0 +1,274 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
+    <ion-title>
+      <span *ngIf="week$ | async as week">
+        {{ week.distributionDate | date: 'shortDate' }} ({{ week.seasonWeek }})
+      </span>
+    </ion-title>
+
+    <ion-buttons slot="primary">
+      <ion-button icon-only
+                  (click)="previousWeekClicks$.next()"
+                  [disabled]="previousDisablement$ | async">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+      <ion-button icon-only
+                  (click)="nextWeekClicks$.next()"
+                  [disabled]="nextDisablement$ | async">
+        <ion-icon name="arrow-forward"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar class="toolbar-thinner">
+    <ion-segment [value]="filter" (ionChange)="filter = $event.target.value">
+      <ion-segment-button value="distributed">
+        {{ 'DISTRIBUTION.DISTRIBUTED_PLURAL' | translate }}
+        <ion-badge item-right color="primary">
+          {{ distributedBasketsCount$ | async }}
+        </ion-badge>
+      </ion-segment-button>
+      <ion-segment-button value="remaining">
+        {{ 'DISTRIBUTION.REMAINING_PLURAL' | translate }}
+        <ion-badge item-right color="danger">
+          {{ remainingBasketsCount$ | async }}
+        </ion-badge>
+      </ion-segment-button>
+      <ion-segment-button value="toPrepare">
+        {{ 'DISTRIBUTION.TO_PREPARE_PLURAL' | translate }}
+        <ion-badge item-right color="warning">
+          {{ delayedBasketsCount$ | async }}
+        </ion-badge>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <sliding-panes [selectedPane]="filter">
+
+    <sliding-pane name="distributed">
+      <ion-content style="width: 100%; height: 100%;">
+
+        <scroll-to-top></scroll-to-top>
+
+        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution">
+          <ion-item-expanding #item *ngFor="let basket of distributedBaskets$ | async; trackBy: basketDistributionDate">
+
+            <ion-item>
+              <ion-note *ngIf="distribution.getBasketDistributionDate(basket) as date"
+                        item-start class="distribution-date">
+                {{ date | date: 'shortTime' }}
+              </ion-note>
+              <ion-label>
+                <ng-template #noDate>
+                  <span item-start>–</span>
+                </ng-template>
+
+                <member-view [member]="basket.member"></member-view>
+              </ion-label>
+
+              <ion-icon *ngIf="basket.isTrial"
+                        name="cash" item-right
+                        color="{{ !isTrialBasketPaid(basket, item) ? 'danger' : 'primary' }}"></ion-icon>
+              <ion-icon *ngIf="(!basket.isTrial && contractProblems(basket.member)) as severity"
+                        name="warning" item-right [color]="severity"></ion-icon>
+              <ion-icon *ngIf="distribution.isBasketDelayed(basket)"
+                        name="clock" item-right color="warning"></ion-icon>
+              <ion-icon *ngIf="distribution.isBasketHaveNote(basket)"
+                        name="create" item-right></ion-icon>
+
+              <ng-container item-right *ngFor="let kind of Kinds.ALL">
+                <ng-container *ngIf="basket.sections[kind] as section">
+                  <ion-icon *ngFor="let i of range(section.count)"
+                            item-right [name]="Kinds.icon(kind)">
+                  </ion-icon>
+                </ng-container>
+              </ng-container>
+            </ion-item>
+
+            <ion-item-actions>
+              <ion-item-action [label]="'DISTRIBUTION.DETAILS' | translate"
+                               icon="information-circle"
+                               (click)="goToMemberPage(basket.member, item)">
+              </ion-item-action>
+              <ion-item-action [label]="'DISTRIBUTION.NOTES' | translate"
+                               icon="create"
+                               [color]="distribution.isBasketHaveNote(basket) ? 'danger' : 'dark'"
+                               (click)="setNote(basket, item)">
+              </ion-item-action>
+              <ion-item-action *ngIf="basket.isTrial"
+                               [label]="'DISTRIBUTION.PAID' | translate"
+                               icon="cash"
+                               [color]="isTrialBasketPaid(basket, item) ? 'danger' : 'paid'"
+                               (click)="toggleTrialBasketPaid(basket, item)">
+              </ion-item-action>
+              <ion-item-action [label]="'DISTRIBUTION.DISTRIBUTED' | translate"
+                               [icon]="distribution.isBasketDistributed(basket) ? 'close' : 'checkmark'"
+                               [color]="distribution.isBasketDistributed(basket) ? 'danger' : 'primary'"
+                               (click)="toggleBasketDistributed(basket, item)">
+              </ion-item-action>
+              <ion-item-action [label]="'DISTRIBUTION.TO_PREPARE' | translate"
+                               icon="clock"
+                               [color]="distribution.isBasketDelayed(basket) ? 'warning' : 'dark'"
+                               (click)="toggleBasketDelayed(basket, item)">
+              </ion-item-action>
+            </ion-item-actions>
+
+          </ion-item-expanding>
+        </ion-list>
+      </ion-content>
+    </sliding-pane>
+
+    <sliding-pane name="remaining">
+      <ion-content #secondPaneContent style="width: 100%; height: 100%;">
+        <indexed-scroller #secondPaneScroller [indexesLabels]="alphabeticLabels"></indexed-scroller>
+
+        <scroll-to-top></scroll-to-top>
+
+        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution">
+          <ng-container *ngFor="let group of remainingBaskets$ | async; trackBy: groupKey">
+            <ion-item-divider id="divider-{{ group.key }}">
+              <ion-label>{{ group.key }}</ion-label>
+            </ion-item-divider>
+
+            <ion-item-expanding #item *ngFor="let basket of group.values; trackBy: basketMemberId">
+
+              <ion-item>
+                <ion-label>
+                  <member-view [member]="basket.member"></member-view>
+                </ion-label>
+
+                <ion-icon *ngIf="basket.isTrial"
+                          name="cash" item-right
+                          color="{{ !isTrialBasketPaid(basket, item) ? 'danger' : 'primary' }}"></ion-icon>
+                <ion-icon *ngIf="(!basket.isTrial && contractProblems(basket.member)) as severity"
+                          name="warning" item-right [color]="severity"></ion-icon>
+                <ion-icon *ngIf="distribution.isBasketDelayed(basket)"
+                          name="clock" item-right color="warning"></ion-icon>
+                <ion-icon *ngIf="distribution.isBasketHaveNote(basket)"
+                          name="create" item-right></ion-icon>
+
+                <ng-container item-right *ngFor="let kind of Kinds.ALL">
+                  <ng-container *ngIf="basket.sections[kind] as section">
+                    <ion-icon *ngFor="let i of range(section.count)"
+                              item-right [name]="Kinds.icon(kind)">
+                    </ion-icon>
+                  </ng-container>
+                </ng-container>
+              </ion-item>
+
+              <ion-item-actions>
+                <ion-item-action [label]="'DISTRIBUTION.DETAILS' | translate"
+                                 icon="information-circle"
+                                 (click)="goToMemberPage(basket.member, item)">
+                </ion-item-action>
+                <ion-item-action [label]="'DISTRIBUTION.NOTES' | translate"
+                                 icon="create"
+                                 [color]="distribution.isBasketHaveNote(basket) ? 'danger' : 'dark'"
+                                 (click)="setNote(basket, item)">
+                </ion-item-action>
+                <ion-item-action *ngIf="basket.isTrial"
+                                 [label]="'DISTRIBUTION.PAID' | translate"
+                                 icon="cash"
+                                 [color]="isTrialBasketPaid(basket, item) ? 'danger' : 'paid'"
+                                 (click)="toggleTrialBasketPaid(basket, item)">
+                </ion-item-action>
+                <ion-item-action [label]="'DISTRIBUTION.DISTRIBUTED' | translate"
+                                 [icon]="distribution.isBasketDistributed(basket) ? 'close' : 'checkmark'"
+                                 [color]="distribution.isBasketDistributed(basket) ? 'danger' : 'primary'"
+                                 (click)="toggleBasketDistributed(basket, item)">
+                </ion-item-action>
+                <ion-item-action [label]="'DISTRIBUTION.TO_PREPARE' | translate"
+                                 icon="clock"
+                                 [color]="distribution.isBasketDelayed(basket) ? 'warning' : 'dark'"
+                                 (click)="toggleBasketDelayed(basket, item)">
+                </ion-item-action>
+              </ion-item-actions>
+
+            </ion-item-expanding>
+          </ng-container>
+        </ion-list>
+      </ion-content>
+    </sliding-pane>
+
+    <sliding-pane name="toPrepare">
+      <ion-content style="width: 100%; height: 100%;">
+
+        <scroll-to-top></scroll-to-top>
+
+        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution">
+          <ion-item-expanding #item *ngFor="let basket of delayedBaskets$ | async; trackBy: basketMemberId">
+
+            <ion-item>
+              <ion-label>
+                <member-view [member]="basket.member"></member-view>
+              </ion-label>
+
+              <ion-icon *ngIf="basket.isTrial"
+                        name="cash" item-right
+                        color="{{ !isTrialBasketPaid(basket, item) ? 'danger' : 'primary' }}"></ion-icon>
+              <ion-icon *ngIf="!basket.isTrial && contractProblems(basket.member) as severity"
+                        name="warning" item-right [color]="severity"></ion-icon>
+              <ion-icon *ngIf="distribution.isBasketDelayed(basket)"
+                        name="clock" item-right color="warning"></ion-icon>
+              <ion-icon *ngIf="distribution.isBasketHaveNote(basket)"
+                        name="create" item-right></ion-icon>
+
+              <ng-container item-right *ngFor="let kind of Kinds.ALL">
+                <ng-container *ngIf="basket.sections[kind] as section">
+                  <ion-icon *ngFor="let i of range(section.count)"
+                            item-right [name]="Kinds.icon(kind)">
+                  </ion-icon>
+                </ng-container>
+              </ng-container>
+            </ion-item>
+
+            <ion-item-actions>
+              <ion-item-action [label]="'DISTRIBUTION.DETAILS' | translate"
+                               icon="information-circle"
+                               (click)="goToMemberPage(basket.member, item)">
+              </ion-item-action>
+              <ion-item-action [label]="'DISTRIBUTION.NOTES' | translate"
+                               icon="create"
+                               [color]="distribution.isBasketHaveNote(basket) ? 'danger' : 'dark'"
+                               (click)="setNote(basket, item)">
+              </ion-item-action>
+              <ion-item-action *ngIf="basket.isTrial"
+                               [label]="'DISTRIBUTION.PAID' | translate"
+                               icon="cash"
+                               [color]="isTrialBasketPaid(basket, item) ? 'danger' : 'paid'"
+                               (click)="toggleTrialBasketPaid(basket, item)">
+              </ion-item-action>
+              <ion-item-action [label]="'DISTRIBUTION.DISTRIBUTED' | translate"
+                               [icon]="distribution.isBasketDistributed(basket) ? 'close' : 'checkmark'"
+                               [color]="distribution.isBasketDistributed(basket) ? 'danger' : 'primary'"
+                               (click)="toggleBasketDistributed(basket, item)">
+              </ion-item-action>
+              <ion-item-action [label]="'DISTRIBUTION.TO_PREPARE' | translate"
+                               icon="clock"
+                               [color]="distribution.isBasketDelayed(basket) ? 'warning' : 'dark'"
+                               (click)="toggleBasketDelayed(basket, item)">
+              </ion-item-action>
+            </ion-item-actions>
+
+          </ion-item-expanding>
+        </ion-list>
+      </ion-content>
+    </sliding-pane>
+
+  </sliding-panes>
+</ion-content>
+
+<ng-template #noDistribution>
+  <ion-list>
+    <ion-item text-center>
+      <ion-label>
+        <ion-spinner icon="dots"></ion-spinner>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ng-template>

@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Cabas Vert</string>
+    <string name="title_activity_main">Cabas Vert</string>
+    <string name="package_name">org.cabasvert.client</string>
+    <string name="fileprovider_authority">org.cabasvert.client.fileprovider</string>
+    <string name="custom_url_scheme">org.cabasvert.client</string>
+</resources>

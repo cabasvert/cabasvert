@@ -1,8 +1,11 @@
 {
   "name": "Cabas Vert",
   "short_name": "Cabas Vert",
-  "start_url": "index.html",
+  "scope": "/",
+  "start_url": "/",
   "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#11801a",
   "icons": [
     {
       "src": "assets/img/icon-1x.png",
@@ -24,7 +27,5 @@
       "sizes": "512x512",
       "type": "image/svg+xml"
     }
-  ],
-  "background_color": "#ffffff",
-  "theme_color": "#11801a"
+  ]
 }

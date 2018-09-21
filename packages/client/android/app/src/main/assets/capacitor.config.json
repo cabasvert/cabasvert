@@ -1,0 +1,12 @@
+{
+  "appId": "org.cabasvert.client",
+  "appName": "Cabas Vert",
+  "bundledWebRuntime": false,
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "androidSplashResourceName": "animated_splash",
+      "launchShowDuration": 10000
+    }
+  }
+}

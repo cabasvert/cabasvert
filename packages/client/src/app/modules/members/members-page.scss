@@ -1,0 +1,54 @@
+
+ion-content ion-list {
+  // Make the list above bottom with margin 10px + 56px (fab-button) + 10px
+  margin-bottom: 2 * 10px + 56px;
+}
+
+.item.item-divider {
+  height: 31px;
+}
+
+.item.item-block {
+  height: 56px;
+
+  .input-wrapper .label {
+    margin: 0;
+  }
+}
+
+ion-fab.add-member {
+  right: 40px;
+
+  perspective: 10px;
+
+  ion-fab-button {
+    opacity: 1;
+
+    transition: transform 300ms cubic-bezier(1, 0, 0, 1), opacity 300ms ease;
+  }
+
+  &.hidden ion-fab-button {
+    opacity: 0;
+    transform: translateZ(-1000px);
+
+    transition: transform 300ms cubic-bezier(1, 0, 0, 1), opacity 300ms ease;
+  }
+}
+
+.item {
+  padding-right: 30px !important;
+}
+
+.letter-avatar {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+
+  border: .5px solid var(--ion-color-medium);
+  border-radius: 20px;
+
+  font-size: x-large;
+  text-align: center;
+  line-height: 39px;
+  color: var(--ion-color-medium);
+}

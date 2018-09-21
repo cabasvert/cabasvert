@@ -1,0 +1,39 @@
+h3 {
+  font-weight: bold;
+}
+
+p.validation {
+  font-size: 0.8rem;
+  color: var(--ion-color-primary-tint);
+}
+
+ul {
+  margin: 0;
+  padding-left: 2px;
+  font-size: 0.8rem;
+  border-left: .5px solid var(--ion-color-medium);
+
+  li {
+    list-style-type: none;
+    padding-left: 21px;
+    text-indent: -21px;
+
+    ion-icon {
+      text-indent: 0;
+      min-width: 18px;
+      text-align: center;
+    }
+  }
+}
+
+.problem {
+  font-style: italic;
+
+  &.warning {
+    color: var(--ion-color-warning);
+  }
+
+  &.danger {
+    color: var(--ion-color-danger);
+  }
+}

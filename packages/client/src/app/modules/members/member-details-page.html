@@ -1,0 +1,183 @@
+<ion-header>
+  <ion-toolbar hideBackButton>
+    <ion-buttons slot="start">
+      <ion-button icon-only (click)="dismiss()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>
+      {{ 'MEMBER.DETAILS_TITLE' | translate }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <pre *ngIf="error$ | async as error" style="font-size: xx-small;">{{ error }}</pre>
+
+  <div *ngIf="member$ | async as member">
+
+    <ion-list>
+      <ion-list-header>
+        <ion-label>{{ 'PERSON.PLURAL_TITLE' | translate }}</ion-label>
+
+        <ion-buttons item-right *ngIf="canEdit()">
+          <ion-button size="small" fill="outline" color="primary" (click)="createPerson()">
+            <ion-icon name="add"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-list-header>
+
+      <ion-item *ngFor="let person of member.persons; let index=index; let isFirst=first" text-wrap>
+        <ion-label>
+          <h3>
+            {{ person.firstname }} {{ person.lastname }}
+          </h3>
+
+          <ul style="font-size: small;">
+            <li *ngIf="person.phoneNumber">
+              <ion-icon small name="call"></ion-icon>
+              {{ person.phoneNumber }}
+            </li>
+            <li *ngIf="person.emailAddress">
+              <ion-icon small name="mail"></ion-icon>
+              {{ person.emailAddress }}
+            </li>
+            <li *ngIf="person.address">
+              <ion-icon small name="home"></ion-icon>
+              <ng-container *ngFor="let line of person.address.split('\n')">
+                {{ line }}<br/>
+              </ng-container>
+            </li>
+          </ul>
+        </ion-label>
+
+        <ion-buttons item-right>
+          <ion-grid>
+            <ion-row *ngIf="canContactPerson() && person.phoneNumber as phoneNumber">
+              <ion-col>
+                <ion-button size="small" fill="outline" color="primary"
+                            (click)="conctactPerson(person, 'sms')">
+                  <ion-icon name="text"></ion-icon>
+                </ion-button>
+              </ion-col>
+              <ion-col>
+                <ion-button size="small" fill="outline" color="primary"
+                            (click)="conctactPerson(person, 'tel')">
+                  <ion-icon name="call"></ion-icon>
+                </ion-button>
+              </ion-col>
+            </ion-row>
+
+            <ion-row *ngIf="canEdit()">
+              <ion-col>
+                <ion-button size="small" fill="outline" color="primary"
+                            (click)="editPerson(person, index)">
+                  <ion-icon name="create"></ion-icon>
+                </ion-button>
+              </ion-col>
+              <ion-col>
+                <ion-button size="small" fill="outline" color="primary"
+                            (click)="deletePerson(person, index)"
+                            [disabled]="member.persons.length === 1">
+                  <ion-icon name="trash"></ion-icon>
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-buttons>
+
+      </ion-item>
+    </ion-list>
+
+    <ion-list>
+      <ion-list-header>
+        <ion-label>{{ 'CONTRACT.PLURAL_TITLE' | translate }}</ion-label>
+
+        <!-- TODO Enable button only in case a new season exists and no contracts exist for it yet -->
+        <ion-buttons item-right *ngIf="canEdit()">
+          <ion-button size="small" fill="outline" color="primary" (click)="createContract()">
+            <ion-icon name="add"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-list-header>
+
+      <ng-container *ngIf="(contracts$ | async) as contracts; else contractsLoading">
+        <ion-item *ngFor="let contract of contracts; let index=index; let isFirst=first" text-wrap>
+          <ion-label>
+            <contracts-view [contract]="contract"></contracts-view>
+          </ion-label>
+
+          <!-- TODO Enable buttons only in case the contract is not validated -->
+          <ion-buttons item-right *ngIf="isFirst && (canEdit())">
+            <ion-grid>
+              <ion-row *ngIf="canEdit()">
+                <ion-col>
+                  <ion-button size="small" fill="outline" color="primary"
+                              (click)="editContract(contract, index)">
+                    <ion-icon name="create"></ion-icon>
+                  </ion-button>
+                </ion-col>
+                <ion-col>
+                  <ion-button size="small" fill="outline" color="primary"
+                              (click)="deleteContract(contract, index)">
+                    <ion-icon name="trash"></ion-icon>
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-buttons>
+        </ion-item>
+      </ng-container>
+      <ng-template #contractsLoading>
+        <ion-item text-center>
+          <ion-label>
+            <ion-spinner icon="dots"></ion-spinner>
+          </ion-label>
+        </ion-item>
+      </ng-template>
+    </ion-list>
+
+    <ion-list>
+      <ion-list-header>
+        <ion-label>{{ 'TRIAL_BASKET.PLURAL_TITLE' | translate }}</ion-label>
+
+        <ng-container *ngIf="contracts$ | async as contracts">
+          <ion-buttons item-right *ngIf="canEdit()">
+            <ion-button size="small" fill="outline" color="primary" (click)="addTrialBasket()"
+                        [disabled]="contracts.length > 0">
+              <ion-icon name="add"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ng-container>
+      </ion-list-header>
+
+      <ion-item *ngFor="let trialBasket of member.trialBaskets; let index=index" text-wrap>
+        <ion-label>
+          <trial-basket [trialBasket]="trialBasket"></trial-basket>
+        </ion-label>
+
+        <!-- TODO Enable buttons only in case the trial basket has not been distributed -->
+        <ion-buttons item-right *ngIf="(canEdit())">
+          <ion-grid>
+            <ion-row *ngIf="canEdit()">
+              <ion-col>
+                <ion-button size="small" fill="outline" color="primary"
+                            (click)="editTrialBasket(trialBasket, index)">
+                  <ion-icon name="create"></ion-icon>
+                </ion-button>
+              </ion-col>
+              <ion-col>
+                <ion-button size="small" fill="outline" color="primary"
+                            (click)="deleteTrialBasket(trialBasket, index)">
+                  <ion-icon name="trash"></ion-icon>
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-buttons>
+      </ion-item>
+    </ion-list>
+
+  </div>
+</ion-content>

@@ -1,0 +1,43 @@
+<!--
+  This file is part of CabasVert.
+
+  Copyright 2017, 2018 Didier Villevalois
+
+  CabasVert is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  CabasVert is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<ion-header>
+  <ion-toolbar hideBackButton>
+    <ion-buttons slot="start">
+      <ion-button icon-only (click)="dismiss()">
+        <ion-icon name="arrow-back"></ion-icon>
+        {{ 'DIALOGS.CANCEL' | translate }}
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>
+      {{ title | translate }}
+    </ion-title>
+
+    <ion-buttons slot="primary">
+      <ion-button icon-only (click)="save()" [disabled]="!isFormValid">
+        {{ 'DIALOGS.SAVE' | translate }}
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ng-container edit-form-host></ng-container>
+</ion-content>

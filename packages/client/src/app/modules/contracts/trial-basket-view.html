@@ -1,0 +1,15 @@
+<h3>
+  {{ 'REF.SEASON' | translate }} {{ seasonName | async }};
+  {{ 'REF.WEEK' | translate }} {{ trialBasket.week }}
+</h3>
+<ul>
+  <li>
+    <ion-icon small name="cash"
+              color="{{ !trialBasket.paid ? 'danger' : 'primary' }}"></ion-icon>
+    {{ 'TRIAL_BASKET.' + (trialBasket.paid ? 'PAID' : 'NOT_YET_PAID') | translate }}
+  </li>
+  <li *ngFor="let section of trialBasket.sections">
+    <ion-icon small [name]="Kinds.icon(section.kind)"></ion-icon>
+    {{ section.count }}
+  </li>
+</ul>

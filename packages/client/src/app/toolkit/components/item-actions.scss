@@ -1,0 +1,25 @@
+:host {
+  position: relative;
+  z-index: 1; // $z-index-item-options;
+
+  width: 100%;
+  display: flex;
+  align-items: center;
+
+  padding-left: 16px;
+  padding-right: 16px;
+  background-color: var(--ion-color-light);
+  font-size: 14px;
+
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+
+  transition: all 150ms ease-in-out;
+}
+
+:host-context(.expanded) {
+  height: 54px;
+  opacity: 1;
+  pointer-events: all;
+}

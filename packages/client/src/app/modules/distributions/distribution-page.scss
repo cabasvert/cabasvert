@@ -1,0 +1,37 @@
+
+ion-list {
+  // Make the list above bottom with margin 10px + 56px (fab-button) + 10px + 54px (expanded item actions)
+  margin-bottom: 2 * 10px + 56px + 54px;
+}
+
+ion-item {
+  --min-height: 56px;
+  cursor: pointer;
+
+  ion-label {
+    margin: 0;
+  }
+
+  // Make icons a little bigger
+  ion-icon {
+    font-size: 1.8rem;
+  }
+}
+
+ion-note.distribution-date {
+  font-size: 0.7rem;
+  color: var(--ion-color-medium);
+  margin-right: 5px;
+}
+
+// Add some space on the right for the indexed scroller
+sliding-pane[name="remaining"] {
+  ion-item-expanding {
+    ion-item {
+      padding-right: 30px !important;
+    }
+    ion-item-actions {
+      padding-right: 40px;
+    }
+  }
+}
