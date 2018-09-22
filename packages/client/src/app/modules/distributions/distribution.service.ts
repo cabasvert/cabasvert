@@ -17,12 +17,13 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 import { map, publishReplay, refCount, switchMap } from 'rxjs/operators';
 
 import { DatabaseService } from '../../toolkit/providers/database-service';
 import '../../utils/dates';
+import { debugObservable, observeInsideAngular } from '../../utils/observables';
 
 import { Contract, ContractKind, ContractSection } from '../contracts/contract.model';
 import { ContractService } from '../contracts/contract.service';
@@ -36,38 +37,33 @@ import { Basket, BasketSection, BasketSectionTotals, Distribution } from './dist
 @Injectable()
 export class DistributionService implements OnDestroy {
 
-  get todaysBaskets$(): Observable<Basket[]> {
-    return this._todaysBaskets$;
-  }
-
-  get todaysTotals$(): Observable<{ [kind: string]: BasketSectionTotals }> {
-    return this._todaysTotals$;
-  }
-
-  private _todaysBaskets$: Observable<Basket[]> =
-    this.seasons.todaysSeasonWeek$.pipe(
-      switchMap(week => this.getBaskets$(week)),
-      publishReplay(1),
-      refCount(),
-    );
-
-  private _todaysTotals$: Observable<{ [kind: string]: BasketSectionTotals }> =
-    this._todaysBaskets$.pipe(
-      map(bs => DistributionService.totals(bs)),
-      publishReplay(1),
-      refCount(),
-    );
+  public readonly todaysBaskets$: Observable<Basket[]>;
+  public readonly todaysTotals$: Observable<{ [kind: string]: BasketSectionTotals }>;
 
   private _subscription = new Subscription();
 
   constructor(private mainDatabase: DatabaseService,
+              private ngZone: NgZone,
               private seasons: SeasonService,
               private members: MemberService,
               private contracts: ContractService) {
 
     this.createIndexes();
 
-    this._subscription.add(this._todaysTotals$.subscribe());
+    this.todaysBaskets$ = this.seasons.todaysSeasonWeek$.pipe(
+      switchMap(week => this.basketsForWeek$(week)),
+      publishReplay(1),
+      refCount(),
+    );
+
+    this.todaysTotals$ = this.todaysBaskets$.pipe(
+      map(bs => DistributionService.totals(bs)),
+      observeInsideAngular(this.ngZone),
+      publishReplay(1),
+      refCount(),
+    );
+
+    this._subscription.add(this.todaysTotals$.subscribe());
   }
 
   createIndexes() {
@@ -80,7 +76,7 @@ export class DistributionService implements OnDestroy {
     this._subscription.unsubscribe();
   }
 
-  getDistribution$(week: SeasonWeek): Observable<Distribution> {
+  distributionForWeek$(week: SeasonWeek): Observable<Distribution> {
     const query = {
       selector: {
         type: 'distribution',
@@ -95,66 +91,68 @@ export class DistributionService implements OnDestroy {
     return this.mainDatabase.findOne$(query, mapper, defaultValue);
   }
 
-  getBaskets$(week: SeasonWeek): Observable<Basket[]> {
-    const members$ = this.members.allMembers$;
-    const membersIndexed$ = this.members.allMembersIndexed$;
-    const contracts$: Observable<Contract[]> = this.contracts.contractsBySeason$(week.season);
+  basketsForWeek$(week: SeasonWeek): Observable<Basket[]> {
+    return this.ngZone.runOutsideAngular(() => {
+      const members$ = this.members.allMembers$;
+      const membersIndexed$ = this.members.allMembersIndexed$;
+      const contracts$: Observable<Contract[]> = this.contracts.contractsBySeason$(week.season);
 
-    const membersWithTrialBasket$: Observable<Member[]> = members$.pipe(
-      map(ms =>
-        ms.filter(m => MemberService.memberHasTrialBasketForWeek(m, week)),
-      ),
-      publishReplay(1),
-      refCount(),
-    );
+      const membersWithTrialBasket$: Observable<Member[]> = members$.pipe(
+        map(ms =>
+          ms.filter(m => MemberService.memberHasTrialBasketForWeek(m, week)),
+        ),
+        publishReplay(1),
+        refCount(),
+      );
 
-    return combineLatest(membersIndexed$, contracts$, membersWithTrialBasket$).pipe(
-      map(([msi, cs, ms]) => {
+      return combineLatest(membersIndexed$, contracts$, membersWithTrialBasket$).pipe(
+        map(([msi, cs, ms]) => {
 
-          const baskets = [];
+            const baskets = [];
 
-          cs.forEach(c => {
-            if (c.type !== 'contract' && c.srev !== 'v1') return;
-            if (!c.sections) return;
+            cs.forEach(c => {
+              if (c.type !== 'contract' && c.srev !== 'v1') return;
+              if (!c.sections) return;
 
-            const member = msi.get(c.member);
-            if (!member) return;
+              const member = msi.get(c.member);
+              if (!member) return;
 
-            const sections: { [kind: string]: BasketSection } = {};
-            c.sections.forEach(s => {
-              const { kind, formula } = s;
-              if (!formula) return;
+              const sections: { [kind: string]: BasketSection } = {};
+              c.sections.forEach(s => {
+                const { kind, formula } = s;
+                if (!formula) return;
 
-              const count = DistributionService.basketCount(c, s, week);
+                const count = DistributionService.basketCount(c, s, week);
 
-              if (count === 0) return;
-              sections[kind] = { kind, count };
+                if (count === 0) return;
+                sections[kind] = { kind, count };
+              });
+
+              if (Object.keys(sections).length === 0) return;
+              baskets.push(new Basket(member, sections));
             });
 
-            if (Object.keys(sections).length === 0) return;
-            baskets.push(new Basket(member, sections));
-          });
+            ms.forEach(m => {
+              const trialBasket = MemberService.memberGetTrialBasketForWeek(m, week);
+              if (!trialBasket) return;
 
-          ms.forEach(m => {
-            const trialBasket = MemberService.memberGetTrialBasketForWeek(m, week);
-            if (!trialBasket) return;
+              const sections: { [kind: string]: BasketSection } = {};
+              trialBasket.sections.forEach(s => {
+                const { kind, count } = s;
 
-            const sections: { [kind: string]: BasketSection } = {};
-            trialBasket.sections.forEach(s => {
-              const { kind, count } = s;
+                if (count === 0) return;
+                sections[kind] = { kind, count };
+              });
 
-              if (count === 0) return;
-              sections[kind] = { kind, count };
+              if (Object.keys(sections).length === 0) return;
+              baskets.push(new Basket(m, sections, true));
             });
 
-            if (Object.keys(sections).length === 0) return;
-            baskets.push(new Basket(m, sections, true));
-          });
-
-          return baskets.sort((b1, b2) => DistributionService.memberCompare(b1.member, b2.member));
-        },
-      ),
-    );
+            return baskets.sort((b1, b2) => DistributionService.memberCompare(b1.member, b2.member));
+          },
+        ),
+      );
+    });
   }
 
   private static memberCompare(member1, member2) {

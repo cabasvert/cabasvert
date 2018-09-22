@@ -148,14 +148,14 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
     );
 
     let baskets$ = this.week$.pipe(
-      switchMap(week => this.distributionService.getBaskets$(week)),
+      switchMap(week => this.distributionService.basketsForWeek$(week)),
       publishReplay(1),
       refCount(),
     );
 
     let basketsAndDistribution$ = baskets$.pipe(
       withLatestFrom(this.week$,
-        (baskets, week) => this.distributionService.getDistribution$(week).pipe(
+        (baskets, week) => this.distributionService.distributionForWeek$(week).pipe(
           map(distribution => ({ baskets, distribution })),
         ),
       ),
