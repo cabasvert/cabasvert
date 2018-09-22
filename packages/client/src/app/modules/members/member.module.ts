@@ -48,7 +48,7 @@ let routes: Routes = [
     path: 'members/:id',
     component: MemberDetailsPage,
     canActivate: [AuthGuard],
-    data: { roles: [Roles.ADMINISTRATOR] },
+    data: { roles: [Roles.DISTRIBUTOR] },
     resolve: {
       member$: MemberResolver,
     },
