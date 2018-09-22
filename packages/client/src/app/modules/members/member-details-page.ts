@@ -77,7 +77,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
     );
 
     this.contracts$ = this.member$.pipe(
-      switchMap(m => this.contractService.getContractsForMember$(m)),
+      switchMap(m => this.contractService.contractsByMember$(m)),
       map(cs => cs.sort((c1, c2) => -c1.season.localeCompare(c2.season))),
     );
 
@@ -164,7 +164,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
     this.seasonService.seasonForDate$().pipe(
       take(1),
       withLatestFrom(
-        this.seasonService.lastSeasons$(1).pipe(map(ss => ss[0])),
+        this.seasonService.latestSeason$,
         this.member$,
         this.contracts$.pipe(map(cs => cs.length === 0 ? null : cs[0])),
         (currentSeason, lastSeason, member, lastContract) => ({

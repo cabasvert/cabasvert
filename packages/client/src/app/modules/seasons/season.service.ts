@@ -33,7 +33,7 @@ export class SeasonService implements OnDestroy {
     return date;
   }
 
-  private today$: Observable<Date> =
+  private static readonly today$: Observable<Date> =
     timer(0, 60 * 1000).pipe(
       map(() => SeasonService.today()),
       distinctUntilChanged((d1, d2) => d1.getDate() === d2.getDate()),
@@ -41,116 +41,77 @@ export class SeasonService implements OnDestroy {
       refCount(),
     );
 
-  private _todaysSeason$: Observable<Season> =
-    this.today$.pipe(
+  private _seasonMapper = doc => new Season(this, doc);
+  private _seasonIndexer = season => season.id;
+
+  public readonly allSeasons$: Observable<Season[]>;
+  public readonly allSeasonsIndexed$: Observable<Map<string, Season>>;
+  public readonly latestSeason$: Observable<Season>;
+  public readonly todaysSeason$: Observable<Season>;
+  public readonly todaysSeasonWeek$: Observable<SeasonWeek>;
+
+  private _subscription = new Subscription();
+
+  constructor(private mainDatabase: DatabaseService) {
+
+    this.createIndexes();
+
+    // All seasons
+    let query = {
+      selector: {
+        type: 'season',
+      },
+    };
+
+    this.allSeasons$ =
+      this.mainDatabase.findAll$(query, this._seasonMapper, this._seasonIndexer);
+
+    this.allSeasonsIndexed$ =
+      this.mainDatabase.findAllIndexed$(query, this._seasonMapper, this._seasonIndexer);
+
+    this.latestSeason$ = this.latestSeasons$(1).pipe(map(ss => ss[0]));
+
+    this.todaysSeason$ = SeasonService.today$.pipe(
       switchMap(today => this.seasonForDate$(today)),
       publishReplay(1),
       refCount(),
     );
-
-  private _todaysSeasonWeek$: Observable<SeasonWeek> =
-    this.today$.pipe(
+    this.todaysSeasonWeek$ = SeasonService.today$.pipe(
       switchMap(today => this.seasonWeekForDate$(today)),
       filterNotNull(),
       publishReplay(1),
       refCount(),
     );
 
-  private _seasonMapper = doc => new Season(this, doc);
-  private _seasonIndexer = season => season.id;
-
-  private readonly _seasons$: Observable<Season[]>;
-  private readonly _seasonsIndexed$: Observable<Map<string, Season>>;
-  private readonly _lastThreeSeasons$: Observable<Season[]>;
-
-  private _subscription = new Subscription();
-
-  constructor(private mainDatabase: DatabaseService) {
-
-    // All seasons
-    let { query, index } = this.seasonsQuery();
-
-    this._seasons$ =
-      this.mainDatabase.findAll$(index, query, this._seasonMapper, this._seasonIndexer);
-
-    this._seasonsIndexed$ =
-      this.mainDatabase.findAllIndexed$(index, query, this._seasonMapper, this._seasonIndexer);
-
-    // Last three seasons
-    this._lastThreeSeasons$ = this._lastSeasons$(3);
-
-    this._subscription.add(this._seasons$.subscribe());
-    this._subscription.add(this._seasonsIndexed$.subscribe());
-    this._subscription.add(this._lastThreeSeasons$.subscribe());
+    this._subscription.add(this.todaysSeason$.subscribe());
+    this._subscription.add(this.allSeasons$.subscribe());
+    this._subscription.add(this.allSeasonsIndexed$.subscribe());
   }
 
-  private seasonsQuery() {
-    let query = {
-      selector: {
-        type: 'season',
-      },
-    };
-
-    let index = {
-      index: {
-        fields: ['type'],
-      },
-    };
-
-    return { query, index };
+  createIndexes() {
+    this._subscription.add(
+      this.mainDatabase.createIndex({ index: { fields: ['type'] } }),
+    );
   }
 
   ngOnDestroy() {
     this._subscription.unsubscribe();
   }
 
-  lastSeasons$(count: number = 1): Observable<Season[]> {
-    if (count <= 3) {
-      return this._lastThreeSeasons$.pipe(
-        map(ss => ss.slice(0, count)),
-      );
-    } else {
-      return this._lastSeasons$(count);
-    }
+  latestSeasons$(count: number = -1): Observable<Season[]> {
+    return this.allSeasons$.pipe(
+      map(ss => ss.sort(this._byDescendingSeasonId)),
+      map(ss => count === -1 ? ss : ss.slice(0, count)),
+    );
   }
 
-  private _lastSeasons$(count: number = 1): Observable<Season[]> {
-    let query = {
-      selector: {
-        type: 'season',
-      },
-      sort: [{
-        type: ('desc' as 'asc' | 'desc'),
-        _id: ('desc' as 'asc' | 'desc'),
-      }],
-      limit: count,
-    };
-
-    let index = {
-      index: {
-        fields: ['type', '_id'],
-      },
-    };
-
-    return this.mainDatabase.findAll$(index, query, this._seasonMapper, this._seasonIndexer);
-  }
+  private _bySeasonId = (s1, s2) => s1.id.localeCompare(s2.id);
+  private _byDescendingSeasonId = (s1, s2) => -this._bySeasonId(s1, s2);
 
   seasonForDate$(date: Date = new Date()): Observable<Season> {
-    let query = {
-      selector: {
-        type: 'season',
-        startDate: { $lte: SeasonService.deltaDate(date).toISOString() },
-        endDate: { $gt: SeasonService.deltaDate(date).toISOString() },
-      },
-    };
-
-    let index = {
-      index: {
-        fields: ['type', 'startDate', 'endDate'],
-      },
-    };
-
-    return this.mainDatabase.findOne$(index, query, this._seasonMapper);
+    return this.allSeasons$.pipe(
+      map(ss => ss.find(s => s.startDate <= date && date < s.endDate)),
+    );
   }
 
   seasonWeekForDate$(date: Date = new Date()): Observable<SeasonWeek> {
@@ -159,24 +120,8 @@ export class SeasonService implements OnDestroy {
     );
   }
 
-  get todaysSeason$(): Observable<Season> {
-    return this._todaysSeason$;
-  }
-
-  get todaysSeasonWeek$() {
-    return this._todaysSeasonWeek$;
-  }
-
-  get seasons$(): Observable<Season[]> {
-    return this._seasons$;
-  }
-
-  get seasonsIndexed$(): Observable<Map<string, Season>> {
-    return this._seasonsIndexed$;
-  }
-
   seasonById$(id: string): Observable<Season> {
-    return this.seasonsIndexed$.pipe(map(ss => ss.get(id)));
+    return this.allSeasonsIndexed$.pipe(map(ss => ss.get(id)));
   }
 
   seasonNameById$(id: string): Observable<string> {

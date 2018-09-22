@@ -118,7 +118,7 @@ export class PersonEditFormComponent implements EditFormComponent {
         return of(null);
       }
 
-      return this.members.getMember$(lastname.value, firstname.value).pipe(
+      return this.members.memberByNames$(lastname.value, firstname.value).pipe(
         map(m => !m ? null : { 'memberAlreadyExists': true }),
         take(1),
       );

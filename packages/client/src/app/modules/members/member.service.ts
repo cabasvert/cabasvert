@@ -19,77 +19,59 @@
 
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { map, publishReplay, refCount, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { DatabaseService } from '../../toolkit/providers/database-service';
 import { UidService } from '../../toolkit/providers/uid-service';
 import '../../utils/dates';
 import { objectAssignNoNulls } from '../../utils/objects';
-import { Season, SeasonWeek } from '../seasons/season.model';
+import { SeasonWeek } from '../seasons/season.model';
 import { Member, TrialBasket } from './member.model';
 
 @Injectable()
 export class MemberService implements OnDestroy {
 
-  private members$: Observable<Member[]>;
-  private membersIndexed$: Observable<Map<string, Member>>;
+  public readonly allMembers$: Observable<Member[]>;
+  public readonly allMembersIndexed$: Observable<Map<string, Member>>;
 
   private _subscription = new Subscription();
 
   constructor(private mainDatabase: DatabaseService,
               private uidService: UidService) {
 
-    this._subscription.add(this.getMembersIndexed$().subscribe());
-  }
+    this.createIndexes();
 
-  ngOnDestroy() {
-    this._subscription.unsubscribe();
-  }
-
-  getMembers$(): Observable<Member[]> {
-    if (this.members$ != null) return this.members$;
-
-    let { query, index } = this.membersQuery();
-
-    this.members$ = this.mainDatabase.findAll$<Member>(index, query);
-
-    return this.members$;
-  }
-
-  getMembersIndexed$(): Observable<Map<string, Member>> {
-    if (this.membersIndexed$ != null) return this.membersIndexed$;
-
-    let { query, index } = this.membersQuery();
-
-    this.membersIndexed$ = this.mainDatabase.findAllIndexed$<Member>(index, query);
-
-    return this.membersIndexed$;
-  }
-
-  private membersQuery() {
+    // All members
     let query = {
       selector: {
         type: 'member',
       },
     };
 
-    let index = {
-      index: {
-        fields: ['type'],
-      },
-    };
+    this.allMembers$ = this.mainDatabase.findAll$<Member>(query);
+    this.allMembersIndexed$ = this.mainDatabase.findAllIndexed$<Member>(query);
 
-    return { query, index };
+    this._subscription.add(this.allMembersIndexed$.subscribe());
   }
 
-  getMemberById$(id: string): Observable<Member> {
-    return this.getMembersIndexed$().pipe(
+  createIndexes() {
+    this._subscription.add(
+      this.mainDatabase.createIndex({ index: { fields: ['type'] } }),
+    );
+  }
+
+  ngOnDestroy() {
+    this._subscription.unsubscribe();
+  }
+
+  memberById$(id: string): Observable<Member> {
+    return this.allMembersIndexed$.pipe(
       map(msi => msi.get(id)),
     );
   }
 
-  getMember$(lastname: string, firstname: string): Observable<Member> {
-    return this.getMembers$().pipe(map(ms =>
+  memberByNames$(lastname: string, firstname: string): Observable<Member> {
+    return this.allMembers$.pipe(map(ms =>
       ms.find(m =>
         m.persons.some(p => p.firstname === firstname && p.lastname === lastname),
       ),

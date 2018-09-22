@@ -30,30 +30,51 @@ import { Contract, ContractFormulas, ContractKind, ContractSection } from './con
 @Injectable()
 export class ContractService implements OnDestroy {
 
-  private _allContracts$: Observable<Contract[]>;
-  private _perMemberIdProblemSeverity$: Observable<Map<string, string>>;
+  public readonly allContracts$: Observable<Contract[]>;
+  public readonly perMemberIdProblemSeverity$: Observable<Map<string, string>>;
 
   private _subscription = new Subscription();
 
   constructor(private mainDatabase: DatabaseService) {
-    this._allContracts$ = this._doGetContracts();
+    this.createIndexes();
+
+    // All contracts
+    let query = {
+      selector: {
+        type: 'contract',
+      },
+    };
+
+    this.allContracts$ = this.mainDatabase.findAll$(query, d => this.documentToObject(d));
 
     // Per member problem severity on all contracts
-    this._perMemberIdProblemSeverity$ = this._allContracts$.pipe(
+    this.perMemberIdProblemSeverity$ = this.allContracts$.pipe(
       map(cs => ContractService.computePerMemberIdProblemSeverity(cs)),
       publishReplay(1),
       refCount(),
     );
 
-    this._subscription.add(this._allContracts$.subscribe());
-    this._subscription.add(this._perMemberIdProblemSeverity$.subscribe());
+    this._subscription.add(this.allContracts$.subscribe());
+    this._subscription.add(this.perMemberIdProblemSeverity$.subscribe());
+  }
+
+  createIndexes() {
+    this._subscription.add(
+      this.mainDatabase.createIndex({ index: { fields: ['type'] } }),
+    );
+    this._subscription.add(
+      this.mainDatabase.createIndex({ index: { fields: ['type', 'season'] } }),
+    );
+    this._subscription.add(
+      this.mainDatabase.createIndex({ index: { fields: ['type', 'member'] } }),
+    );
   }
 
   ngOnDestroy() {
     this._subscription.unsubscribe();
   }
 
-  getSeasonContracts$(season: Season): Observable<Contract[]> {
+  contractsBySeason$(season: Season): Observable<Contract[]> {
     let query = {
       selector: {
         type: 'contract',
@@ -61,41 +82,18 @@ export class ContractService implements OnDestroy {
       },
     };
 
-    let index = {
-      index: {
-        fields: ['type', 'season'],
-      },
-    };
-
-    return this.mainDatabase.findAll$(index, query, d => this.documentToObject(d));
+    return this.mainDatabase.findAll$(query, d => this.documentToObject(d));
   }
 
-  getContractsForMember$(member: Member): Observable<Contract[]> {
-    return this._doGetContracts(member);
-  }
-
-  getAllContracts$(): Observable<Contract[]> {
-    return this._allContracts$;
-  }
-
-  private _doGetContracts(member: Member = null) {
+  contractsByMember$(member: Member): Observable<Contract[]> {
     let query = {
       selector: {
         type: 'contract',
+        member: member._id,
       },
     };
 
-    if (member) {
-      query.selector['member'] = member._id;
-    }
-
-    let index = {
-      index: {
-        fields: member ? ['type', 'member'] : ['type'],
-      },
-    };
-
-    return this.mainDatabase.findAll$(index, query, d => this.documentToObject(d));
+    return this.mainDatabase.findAll$(query, d => this.documentToObject(d));
   }
 
   private documentToObject(contract: any): any {
@@ -123,10 +121,6 @@ export class ContractService implements OnDestroy {
       delete contract.validation.wish;
     }
     return contract;
-  }
-
-  perMemberIdProblemSeverity$(): Observable<Map<string, string>> {
-    return this._perMemberIdProblemSeverity$;
   }
 
   static computePerMemberIdProblemSeverity(cs: Contract[]): Map<string, string> {

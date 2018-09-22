@@ -18,8 +18,27 @@
  */
 
 import { NgZone } from '@angular/core';
-import { asyncScheduler, EMPTY, MonoTypeOperatorFunction, Observer, of, OperatorFunction, pipe, SchedulerLike, Subscription } from 'rxjs';
-import { catchError, filter, ignoreElements, map, mapTo, observeOn, pairwise, tap } from 'rxjs/operators';
+import {
+  asyncScheduler,
+  EMPTY,
+  MonoTypeOperatorFunction,
+  Observer,
+  of,
+  OperatorFunction,
+  pipe,
+  SchedulerLike,
+  Subscription,
+} from 'rxjs';
+import {
+  catchError,
+  filter,
+  ignoreElements,
+  map,
+  mapTo,
+  observeOn,
+  pairwise, subscribeOn,
+  tap,
+} from 'rxjs/operators';
 
 export function previous<T>(): MonoTypeOperatorFunction<T> {
   return pipe(pairwise(), map(([p, _]) => p));
@@ -37,12 +56,8 @@ export function ignoreErrors<T>(): MonoTypeOperatorFunction<T> {
   return catchError(_ => EMPTY);
 }
 
-export function debug<T>(prefix: string, f: (T) => any = v => v): MonoTypeOperatorFunction<T> {
-  return tap(debugObservable<T>(prefix, f));
-}
-
-export function debugObservable<T>(prefix: string, f: (T) => any): Observer<T> {
-  return new DebugObserver(prefix, f);
+export function debugObservable<T>(prefix: string, f: (T) => any = v => v): MonoTypeOperatorFunction<T> {
+  return tap(new DebugObserver<T>(prefix, f));
 }
 
 class DebugObserver<T> implements Observer<T> {
@@ -51,9 +66,13 @@ class DebugObserver<T> implements Observer<T> {
               private f: (T) => any = v => v) {
   }
 
-  next: (value: T) => void = v => console.log(`${this.prefix} - Next value:`, this.f(v));
-  error: (err: any) => void = e => console.error(`${this.prefix} - Error:`, e);
-  complete: () => void = () => console.log(`${this.prefix} - Complete!`);
+  next: (value: T) => void = v => console.log(`${this.prefix} [${zoneName()}] Next value:`, this.f(v));
+  error: (err: any) => void = e => console.error(`${this.prefix} [${zoneName()}] Error:`, e);
+  complete: () => void = () => console.log(`${this.prefix} [${zoneName()}] Complete!`);
+}
+
+export function subscribeOutsideAngular<T>(zone: NgZone): MonoTypeOperatorFunction<T> {
+  return subscribeOn(leaveZone(zone));
 }
 
 export function observeInsideAngular<T>(zone: NgZone): MonoTypeOperatorFunction<T> {

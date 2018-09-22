@@ -276,7 +276,7 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
     this.subscription.add(
       this.week$.pipe(
         switchMap(w =>
-          this.contractService.getSeasonContracts$(w.season).pipe(
+          this.contractService.contractsBySeason$(w.season).pipe(
             map(cs => ContractService.computePerMemberIdProblemSeverity(cs)),
           ),
         ),

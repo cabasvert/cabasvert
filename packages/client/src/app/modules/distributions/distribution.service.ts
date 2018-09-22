@@ -65,11 +65,101 @@ export class DistributionService implements OnDestroy {
               private members: MemberService,
               private contracts: ContractService) {
 
+    this.createIndexes();
+
     this._subscription.add(this._todaysTotals$.subscribe());
+  }
+
+  createIndexes() {
+    this._subscription.add(
+      this.mainDatabase.createIndex({ index: { fields: ['type', 'season', 'week'] } }),
+    );
   }
 
   ngOnDestroy() {
     this._subscription.unsubscribe();
+  }
+
+  getDistribution$(week: SeasonWeek): Observable<Distribution> {
+    const query = {
+      selector: {
+        type: 'distribution',
+        season: week.season.id,
+        week: week.seasonWeek,
+      },
+      limit: 1,
+    };
+
+    const defaultValue = () => Distribution.create(week, this.mainDatabase);
+    const mapper = doc => new Distribution(doc, week, this.mainDatabase);
+    return this.mainDatabase.findOne$(query, mapper, defaultValue);
+  }
+
+  getBaskets$(week: SeasonWeek): Observable<Basket[]> {
+    const members$ = this.members.allMembers$;
+    const membersIndexed$ = this.members.allMembersIndexed$;
+    const contracts$: Observable<Contract[]> = this.contracts.contractsBySeason$(week.season);
+
+    const membersWithTrialBasket$: Observable<Member[]> = members$.pipe(
+      map(ms =>
+        ms.filter(m => MemberService.memberHasTrialBasketForWeek(m, week)),
+      ),
+      publishReplay(1),
+      refCount(),
+    );
+
+    return combineLatest(membersIndexed$, contracts$, membersWithTrialBasket$).pipe(
+      map(([msi, cs, ms]) => {
+
+          const baskets = [];
+
+          cs.forEach(c => {
+            if (c.type !== 'contract' && c.srev !== 'v1') return;
+            if (!c.sections) return;
+
+            const member = msi.get(c.member);
+            if (!member) return;
+
+            const sections: { [kind: string]: BasketSection } = {};
+            c.sections.forEach(s => {
+              const { kind, formula } = s;
+              if (!formula) return;
+
+              const count = DistributionService.basketCount(c, s, week);
+
+              if (count === 0) return;
+              sections[kind] = { kind, count };
+            });
+
+            if (Object.keys(sections).length === 0) return;
+            baskets.push(new Basket(member, sections));
+          });
+
+          ms.forEach(m => {
+            const trialBasket = MemberService.memberGetTrialBasketForWeek(m, week);
+            if (!trialBasket) return;
+
+            const sections: { [kind: string]: BasketSection } = {};
+            trialBasket.sections.forEach(s => {
+              const { kind, count } = s;
+
+              if (count === 0) return;
+              sections[kind] = { kind, count };
+            });
+
+            if (Object.keys(sections).length === 0) return;
+            baskets.push(new Basket(m, sections, true));
+          });
+
+          return baskets.sort((b1, b2) => DistributionService.memberCompare(b1.member, b2.member));
+        },
+      ),
+    );
+  }
+
+  private static memberCompare(member1, member2) {
+    return (member1.persons[0].lastname + ' ' + member1.persons[0].firstname)
+      .localeCompare(member2.persons[0].lastname + ' ' + member2.persons[0].firstname);
   }
 
   public static basketCount(contract: Contract, section: ContractSection, week: SeasonWeek) {
@@ -183,93 +273,5 @@ export class DistributionService implements OnDestroy {
     }
 
     return allCounts;
-  }
-
-  private static memberCompare(member1, member2) {
-    return (member1.persons[0].lastname + ' ' + member1.persons[0].firstname)
-      .localeCompare(member2.persons[0].lastname + ' ' + member2.persons[0].firstname);
-  }
-
-  getBaskets$(week: SeasonWeek): Observable<Basket[]> {
-    const members$ = this.members.getMembers$();
-    const membersIndexed$ = this.members.getMembersIndexed$();
-    const contracts$: Observable<Contract[]> = this.contracts.getSeasonContracts$(week.season);
-
-    const membersWithTrialBasket$: Observable<Member[]> = members$.pipe(
-      map(ms =>
-        ms.filter(m => MemberService.memberHasTrialBasketForWeek(m, week)),
-      ),
-      publishReplay(1),
-      refCount(),
-    );
-
-    return combineLatest(membersIndexed$, contracts$, membersWithTrialBasket$).pipe(
-      map(([msi, cs, ms]) => {
-
-          const baskets = [];
-
-          cs.forEach(c => {
-            if (c.type !== 'contract' && c.srev !== 'v1') return;
-            if (!c.sections) return;
-
-            const member = msi.get(c.member);
-            if (!member) return;
-
-            const sections: { [kind: string]: BasketSection } = {};
-            c.sections.forEach(s => {
-              const { kind, formula } = s;
-              if (!formula) return;
-
-              const count = DistributionService.basketCount(c, s, week);
-
-              if (count === 0) return;
-              sections[kind] = { kind, count };
-            });
-
-            if (Object.keys(sections).length === 0) return;
-            baskets.push(new Basket(member, sections));
-          });
-
-          ms.forEach(m => {
-            const trialBasket = MemberService.memberGetTrialBasketForWeek(m, week);
-            if (!trialBasket) return;
-
-            const sections: { [kind: string]: BasketSection } = {};
-            trialBasket.sections.forEach(s => {
-              const { kind, count } = s;
-
-              if (count === 0) return;
-              sections[kind] = { kind, count };
-            });
-
-            if (Object.keys(sections).length === 0) return;
-            baskets.push(new Basket(m, sections, true));
-          });
-
-          return baskets.sort((b1, b2) => DistributionService.memberCompare(b1.member, b2.member));
-        },
-      ),
-    );
-  }
-
-  getDistribution$(week: SeasonWeek): Observable<Distribution> {
-    const query = {
-      selector: {
-        type: 'distribution',
-        season: week.season.id,
-        week: week.seasonWeek,
-      },
-      limit: 1,
-    };
-
-    let index = {
-      index: {
-        fields: ['type', 'season', 'week'],
-      },
-    };
-
-    const defaultValue = () => Distribution.create(week, this.mainDatabase);
-    const mapper = doc => new Distribution(doc, week, this.mainDatabase);
-    return this.mainDatabase.findOne$(index, query, mapper, defaultValue);
   }
 }

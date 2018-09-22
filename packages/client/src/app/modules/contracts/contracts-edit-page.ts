@@ -43,7 +43,7 @@ export class ContractsEditPage {
         name: 'season',
         label: 'REF.SEASON',
         kind: 'select',
-        options: () => this.seasonService.lastSeasons$(2),
+        options: () => this.seasonService.latestSeasons$(),
         optionLabel: season => season.name,
         optionValue: season => season.id,
         validator: Validators.required,

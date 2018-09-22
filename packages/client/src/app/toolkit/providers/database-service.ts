@@ -18,9 +18,10 @@
  */
 
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
+import { T } from '@angular/core/src/render3';
 import { Network } from '@ionic-native/network/ngx';
 import { Platform } from '@ionic/angular';
-import PouchDB from "pouchdb-core";
+import PouchDB from 'pouchdb-core';
 
 import {
   BehaviorSubject,
@@ -248,15 +249,6 @@ export class DatabaseService implements OnDestroy {
     this._subscription.unsubscribe();
   }
 
-  private withIndex$(index: PouchDB.Find.CreateIndexOptions): Observable<Database> {
-    if (this.config.base.remoteDBOnly) {
-      return this.database$;
-    }
-    return this.database$.pipe(
-      switchMap(db => from(db.withIndex(index))),
-    );
-  }
-
   private createLocalDatabase$(dbName: string): Observable<Database> {
     return defer(() =>
       from(
@@ -295,45 +287,55 @@ export class DatabaseService implements OnDestroy {
     );
   }
 
+  createIndex(index: PouchDB.Find.CreateIndexOptions): Subscription {
+    if (this.config.base.remoteDBOnly) {
+      return new Subscription();
+    }
+    return this.database$.pipe(switchMap(db => from(db.withIndex(index)))).subscribe();
+  }
+
   findOne$<T>(
-    index: PouchDB.Find.CreateIndexOptions,
     query: PouchDB.Find.FindRequest<T>,
     mapper: (doc: any) => T = d => d,
     defaultValue: () => T = () => null,
   ): Observable<T> {
 
-    return this.withIndex$(index).pipe(
-      switchMap(db => db.findOne$(query, mapper, defaultValue)),
-      publishReplay(1),
-      refCount(),
+    return this.ngZone.runOutsideAngular(
+      () => this.database$.pipe(
+        switchMap(db => db.findOne$(query, mapper, defaultValue)),
+        publishReplay(1),
+        refCount(),
+      ),
     );
   }
 
   findAll$<T>(
-    index: PouchDB.Find.CreateIndexOptions,
     query: PouchDB.Find.FindRequest<T>,
     mapper: (doc: any) => T = d => d,
     indexer: (t: T) => string = t => (t as any)._id,
   ): Observable<T[]> {
 
-    return this.withIndex$(index).pipe(
-      switchMap(db => db.findAll$(query, mapper, indexer)),
-      publishReplay(1),
-      refCount(),
+    return this.ngZone.runOutsideAngular(
+      () => this.database$.pipe(
+        switchMap(db => db.findAll$(query, mapper, indexer)),
+        publishReplay(1),
+        refCount(),
+      ),
     );
   }
 
   findAllIndexed$<T>(
-    index: PouchDB.Find.CreateIndexOptions,
     query: PouchDB.Find.FindRequest<T>,
     mapper: (doc: any) => T = d => d,
     indexer: (t: T) => string = t => (t as any)._id,
   ): Observable<Map<string, T>> {
 
-    return this.withIndex$(index).pipe(
-      switchMap(db => db.findAllIndexed$(query, mapper, indexer)),
-      publishReplay(1),
-      refCount(),
+    return this.ngZone.runOutsideAngular(
+      () => this.database$.pipe(
+        switchMap(db => db.findAllIndexed$(query, mapper, indexer)),
+        publishReplay(1),
+        refCount(),
+      ),
     );
   }
 

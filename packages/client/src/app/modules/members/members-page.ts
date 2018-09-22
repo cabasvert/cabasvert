@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Content, NavController } from '@ionic/angular';
 import { combineLatest, Observable, of, Subject, Subscription } from 'rxjs';
@@ -39,7 +39,7 @@ import {
 import { IndexedScroller } from '../../toolkit/components/indexed-scroller';
 import { Navigation } from '../../toolkit/providers/navigation';
 import { contains, Group, groupBy } from '../../utils/arrays';
-import { errors, ignoreErrors } from '../../utils/observables';
+import { observeInsideAngular, observeOutsideAngular } from '../../utils/observables';
 import { timeout } from '../../utils/promises';
 
 import { ContractService } from '../contracts/contract.service';
@@ -65,7 +65,8 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
               private nav: Navigation,
               private members: MemberService,
               private seasons: SeasonService,
-              private contracts: ContractService) {
+              private contracts: ContractService,
+              private ngZone: NgZone) {
   }
 
   filterToggle$ = new Subject<string>();
@@ -80,8 +81,6 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
   memberDetails$: Observable<Member>;
 
   perMemberIdProblemSeverity: Map<string, string>;
-
-  error$: Observable<string>;
 
   alphabeticLabels: string[] = (STAR_CHAR + ALPHA_LETTERS).split('');
 
@@ -113,17 +112,18 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.seasons$ = this.seasons.lastSeasons$(2).pipe(
+    this.seasons$ = this.seasons.latestSeasons$(2).pipe(
       map(ss => ss.reverse()),
       publishReplay(1),
       refCount(),
     );
 
     const filters$ = this.seasons$.pipe(
+      observeOutsideAngular(this.ngZone),
       switchMap(ss => combineLatest(
         // Season filters
         ss.map(s =>
-          this.contracts.getSeasonContracts$(s).pipe(
+          this.contracts.contractsBySeason$(s).pipe(
             map(cs => cs.indexedAsMap(c => c.member)),
             map(csi => m => MemberService.memberHasTrialBasketForSeason(m, s.id) || csi.has(m._id)),
             startWith(null),
@@ -131,7 +131,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
           ),
         ).concat(
           // Contract filter
-          this.contracts.getAllContracts$().pipe(
+          this.contracts.allContracts$.pipe(
             map(cs => cs.indexedAsMap(c => c.member)),
             map(csi => m => csi.has(m._id)),
             startWith(null),
@@ -142,7 +142,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
           of({ id: 'trial', filter: m => MemberService.memberHasTrialBasket(m) }),
 
           // Problem filter
-          this.contracts.perMemberIdProblemSeverity$().pipe(
+          this.contracts.perMemberIdProblemSeverity$.pipe(
             map(m2ps => m => m2ps.has(m._id)),
             startWith(null),
             map(f => ({ id: 'problem', filter: f })),
@@ -163,6 +163,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
 
     const seasonMemberFilter$ =
       combineLatest(this.filter$, filters$).pipe(
+        observeOutsideAngular(this.ngZone),
         map(([ff, fs]) =>
           ff.hasNone() ? null : fs.reduce<(m: Member) => boolean>(
             (acc, f) => {
@@ -177,7 +178,8 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
         refCount(),
       );
 
-    const allMembers$ = this.members.getMembers$().pipe(
+    const allMembers$ = this.members.allMembers$.pipe(
+      observeOutsideAngular(this.ngZone),
       publishReplay(1),
       refCount(),
     );
@@ -194,26 +196,26 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
         refCount(),
       );
 
-    const members$ =
+    this.members$ =
       combineLatest(
         filteredMembers$,
         this.searchQuery$.pipe(
           startWith(''),
           distinctUntilChanged(),
+          observeOutsideAngular(this.ngZone),
         ),
       ).pipe(
         map(([ms, q]) => !q || q === '' ? ms : ms.filter(MembersPage.memberMatches(q))),
         map(ms => ms.sort(MembersPage.memberCompare)),
         map(ms => groupBy(ms, m => MembersPage.firstLastnameLetter(m))),
+        observeInsideAngular(this.ngZone),
+        startWith(null),
         publishReplay(1),
         refCount(),
       );
 
-    this.members$ = members$.pipe(ignoreErrors());
-    this.error$ = members$.pipe(errors());
-
     this.subscription.add(
-      this.contracts.perMemberIdProblemSeverity$().subscribe(perIdSeverity => {
+      this.contracts.perMemberIdProblemSeverity$.subscribe(perIdSeverity => {
         this.perMemberIdProblemSeverity = perIdSeverity;
       }),
     );
@@ -274,7 +276,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private memberExists(member: Member): Promise<void> {
-    return this.members.getMembersIndexed$().pipe(
+    return this.members.allMembersIndexed$.pipe(
       map(msi => msi.has(member._id)),
       skipWhile(exists => !exists),
       take(1),

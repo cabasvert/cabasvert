@@ -67,13 +67,13 @@ export class BasketPerMonthReport implements Report {
   }
 
   private basketsPerMonth(basketType$: Observable<string>, generator: ReportService): Observable<string> {
-    const seasons$ = generator.seasons.lastSeasons$(3);
+    const seasons$ = generator.seasons.latestSeasons$(3);
 
-    const membersIndexed$ = generator.members.getMembersIndexed$();
+    const membersIndexed$ = generator.members.allMembersIndexed$;
     const css$: Observable<Contract[][]> = seasons$.pipe(
       switchMap(seasons =>
         forkJoin(seasons.map(season =>
-          generator.contracts.getSeasonContracts$(season).pipe(
+          generator.contracts.contractsBySeason$(season).pipe(
             take(1),
           ),
         )),
@@ -197,12 +197,12 @@ export class DistributionChecklistReport implements Report {
   }
 
   private baskets(basketType$: Observable<string>, generator: ReportService): Observable<string> {
-    const season$ = generator.seasons.lastSeasons$().pipe(map(ss => ss[0]));
+    const season$ = generator.seasons.latestSeason$;
 
-    const membersIndexed$ = generator.members.getMembersIndexed$();
+    const membersIndexed$ = generator.members.allMembersIndexed$;
     const cs$: Observable<Contract[]> = season$.pipe(
       switchMap(season =>
-        generator.contracts.getSeasonContracts$(season).pipe(
+        generator.contracts.contractsBySeason$(season).pipe(
           take(1),
         ),
       ),
@@ -297,18 +297,18 @@ export class PerYearMemberListReport implements Report {
   private memberList(generator: ReportService): Observable<string> {
     const year = new Date().getFullYear();
 
-    const seasons$ = generator.seasons.lastSeasons$(3).pipe(
+    const seasons$ = generator.seasons.latestSeasons$(3).pipe(
       map(ss => ss.filter(s =>
         s.contains(new Date('01/01/' + year)) || s.contains(new Date('07/01/' + year)),
       )),
     );
 
-    const membersIndexed$ = generator.members.getMembersIndexed$();
+    const membersIndexed$ = generator.members.allMembersIndexed$;
 
     const css$: Observable<Contract[][]> = seasons$.pipe(
       switchMap(seasons =>
         forkJoin(seasons.map(season =>
-          generator.contracts.getSeasonContracts$(season).pipe(take(1)),
+          generator.contracts.contractsBySeason$(season).pipe(take(1)),
         )),
       ),
     );

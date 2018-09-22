@@ -34,14 +34,14 @@ export class MemberResolver implements Resolve<Observable<Member>> {
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Observable<Member>> {
     let id = route.paramMap.get('id');
 
-    return this.memberService.getMemberById$(id).pipe(
+    return this.memberService.memberById$(id).pipe(
       take(1),
       map(m => {
         if (!m) {
           this.router.navigate(['/members']);
           return null;
         } else {
-          return this.memberService.getMemberById$(id);
+          return this.memberService.memberById$(id);
         }
       }),
     );
