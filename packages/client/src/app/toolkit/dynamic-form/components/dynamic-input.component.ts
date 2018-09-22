@@ -17,7 +17,8 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Forms } from '../../utils/forms';
 import { InputConfig } from '../models/form-config.interface';
 import { DynamicChildControlComponent } from './dynamic-child-control.component';
 
@@ -39,5 +40,11 @@ import { DynamicChildControlComponent } from './dynamic-child-control.component'
     </ion-item>
   `,
 })
-export class DynamicInputComponent extends DynamicChildControlComponent<InputConfig> {
+export class DynamicInputComponent extends DynamicChildControlComponent<InputConfig> implements OnInit {
+
+  ngOnInit() {
+    if (this.config.type === 'number') {
+      Forms.forceCastAsNumberOrNull(this.control);
+    }
+  }
 }

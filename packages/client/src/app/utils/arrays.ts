@@ -26,6 +26,8 @@ declare global {
     indexedAsMap(f: (t: T) => string): Map<string, T>;
 
     groupBy(f: (x: T) => string): Group<T>[];
+
+    first(): T | null;
   }
 }
 
@@ -87,6 +89,10 @@ export function groupBy<T>(as: T[], f: (x: T) => string): Group<T>[] {
     .map(key => new Group(key, groups[key]))
     .reduce((acc, g) => [...acc, g], []);
 }
+
+Array.prototype.first = function <T>(): T {
+  return this.length === 0 ? null : this[0];
+};
 
 export function copyWith<T>(source: T[], index: number, value: T): T[] {
   let copy = source.slice();

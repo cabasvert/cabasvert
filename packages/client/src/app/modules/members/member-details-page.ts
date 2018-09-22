@@ -17,17 +17,26 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Plugins } from '@capacitor/core';
 import { NavController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of, Subscription } from 'rxjs';
-import { filter, map, switchMap, take, withLatestFrom } from 'rxjs/operators';
+import {
+  filter,
+  map,
+  publishReplay,
+  refCount,
+  switchMap,
+  take,
+  withLatestFrom,
+} from 'rxjs/operators';
 
 import { AuthService, Roles, User } from '../../toolkit/providers/auth-service';
 import { Navigation } from '../../toolkit/providers/navigation';
 import { copyAdd, copyRemove, copyWith } from '../../utils/arrays';
+import { debugObservable, observeInsideAngular } from '../../utils/observables';
 import { Contract, ContractKind, ContractSection } from '../contracts/contract.model';
 import { ContractService } from '../contracts/contract.service';
 import { ContractsEditPage } from '../contracts/contracts-edit-page';
@@ -68,7 +77,8 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
               private authService: AuthService,
               private seasonService: SeasonService,
               private memberService: MemberService,
-              private contractService: ContractService) {
+              private contractService: ContractService,
+              private ngZone: NgZone) {
   }
 
   ngOnInit() {
@@ -79,11 +89,16 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
     this.contracts$ = this.member$.pipe(
       switchMap(m => this.contractService.contractsByMember$(m)),
       map(cs => cs.sort((c1, c2) => -c1.season.localeCompare(c2.season))),
+      observeInsideAngular(this.ngZone),
+      publishReplay(1),
+      refCount(),
     );
 
     this.trialBaskets$ = this.member$.pipe(
       map(m => m.trialBaskets || []),
       map(tbs => tbs.sort((tb1, tb2) => -this.trialBasketCompare(tb1, tb2))),
+      publishReplay(1),
+      refCount(),
     );
 
     this.subscription = this.authService.loggedInUser$.subscribe(user => this.user = user);
@@ -166,10 +181,14 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
       withLatestFrom(
         this.seasonService.latestSeason$,
         this.member$,
-        this.contracts$.pipe(map(cs => cs.length === 0 ? null : cs[0])),
-        (currentSeason, lastSeason, member, lastContract) => ({
+        this.contracts$.pipe(map(cs => cs.first())),
+        this.trialBaskets$.pipe(map(tbs => tbs.first())),
+
+        (currentSeason, latestSeason, member, latestContract, latestTrial) => ({
           title: 'CONTRACT.CREATION_TITLE',
-          contract: this.inferNewContract(currentSeason, lastSeason, member, lastContract),
+          contract: this.inferNewContract(
+            currentSeason, latestSeason, member, latestContract, latestTrial,
+          ),
         }),
       ),
       switchMap(data => this.nav.showModal$({
@@ -188,21 +207,26 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  private inferNewContract(currentSeason: Season, lastSeason: Season,
-                           member: Member, lastContract: Contract) {
+  private inferNewContract(currentSeason: Season, latestSeason: Season,
+                           member: Member, latestContract: Contract, latestTrial: TrialBasket) {
 
-    // If last contract is the for the current season,
-    // then prepare a contract for the last season
+    // If latest contract is the contract for the current season,
+    // then prepare a contract for the latest season
     const season =
-      lastContract && lastContract.season === currentSeason.id ? lastSeason : currentSeason;
+      latestContract && latestContract.season === currentSeason.id ? latestSeason : currentSeason;
 
     const seasonId = season.id.substring('season:'.length);
     const memberId = member._id.substring('member:'.length);
 
-    const lastVegetableContract = !lastContract ? null :
-      lastContract.sections.find(c => c.kind === ContractKind.VEGETABLES);
-    const lastEggContract = !lastContract ? null :
-      lastContract.sections.find(c => c.kind === ContractKind.EGGS);
+    const latestVegetableContract = !latestContract ? null :
+      latestContract.sections.find(c => c.kind === ContractKind.VEGETABLES);
+    const latestEggContract = !latestContract ? null :
+      latestContract.sections.find(c => c.kind === ContractKind.EGGS);
+
+    const latestVegetableTrial = !latestTrial ? null :
+      latestTrial.sections.find(c => c.kind === ContractKind.VEGETABLES);
+    const latestEggTrial = !latestTrial ? null :
+      latestTrial.sections.find(c => c.kind === ContractKind.EGGS);
 
     function inferFirstWeek(maybeContract: ContractSection) {
       if (!maybeContract || ContractService.hasRegularFormula(maybeContract)) {
@@ -221,13 +245,17 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
       sections: [
         {
           kind: ContractKind.VEGETABLES,
-          formula: lastVegetableContract ? lastVegetableContract.formula : 1,
-          firstWeek: inferFirstWeek(lastVegetableContract),
+          formula:
+            latestVegetableContract ? latestVegetableContract.formula :
+              latestVegetableTrial ? latestVegetableTrial.count : 1,
+          firstWeek: inferFirstWeek(latestVegetableContract),
         },
         {
           kind: ContractKind.EGGS,
-          formula: lastEggContract ? lastEggContract.formula : 1,
-          firstWeek: inferFirstWeek(lastEggContract),
+          formula:
+            latestEggContract ? latestEggContract.formula :
+              latestEggTrial ? latestEggTrial.count : 1,
+          firstWeek: inferFirstWeek(latestEggContract),
         },
       ],
       validation: {
@@ -269,10 +297,11 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
     this.seasonService.seasonWeekForDate$().pipe(
       take(1),
       withLatestFrom(
-        this.member$,
-        (currentWeek, member) => ({
+        this.trialBaskets$.pipe(map(tbs => tbs.first())),
+
+        (currentWeek, latestTrial) => ({
           title: 'TRIAL_BASKET.CREATION_TITLE',
-          trialBasket: this.inferNewTrialBasket(currentWeek, member),
+          trialBasket: this.inferNewTrialBasket(currentWeek, latestTrial),
         }),
       ),
       switchMap(data => this.nav.showModal$({
@@ -288,29 +317,28 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  private inferNewTrialBasket(currentWeek: SeasonWeek, member: Member) {
-    let trialBaskets = !member.trialBaskets ? [] : member.trialBaskets.slice();
-    trialBaskets.sort((tb1, tb2) => -this.trialBasketCompare(tb1, tb2));
+  private inferNewTrialBasket(currentWeek: SeasonWeek, latestTrial: TrialBasket | null) {
 
-    let last = trialBaskets.length === 0 ? null : trialBaskets[0];
+    // TODO Use nextWeek() to properly compute next week
 
-    const lastVegetableSection = !last ? null :
-      last.sections.find(c => c.kind === ContractKind.VEGETABLES);
-    const lastEggSection = !last ? null :
-      last.sections.find(c => c.kind === ContractKind.EGGS);
+    const latestVegetableSection = !latestTrial ? null :
+      latestTrial.sections.find(c => c.kind === ContractKind.VEGETABLES);
+    const latestEggSection = !latestTrial ? null :
+      latestTrial.sections.find(c => c.kind === ContractKind.EGGS);
 
     return {
-      season: last ? last.season : currentWeek.season.id,
-      week: last && last.week >= currentWeek.seasonWeek ? last.week + 1 : currentWeek.seasonWeek,
+      season: latestTrial ? latestTrial.season : currentWeek.season.id,
+      week: latestTrial && latestTrial.week >= currentWeek.seasonWeek ?
+        latestTrial.week + 1 : currentWeek.seasonWeek,
       paid: false,
       sections: [
         {
           kind: ContractKind.VEGETABLES,
-          count: lastVegetableSection ? lastVegetableSection.count : 1,
+          count: latestVegetableSection ? latestVegetableSection.count : 1,
         },
         {
           kind: ContractKind.EGGS,
-          count: lastEggSection ? lastEggSection.count : 0,
+          count: latestEggSection ? latestEggSection.count : 0,
         },
       ],
     };
