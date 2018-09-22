@@ -82,9 +82,13 @@ export type ContractValidation = {
 }
 
 export class ContractFormula {
+  public readonly id;
+
   constructor(public readonly value: number | [number, number],
               public readonly alternativeValue: number | null,
               public readonly label: string) {
+
+    this.id = this.value.toString();
   }
 
   isNoneFormula() {
@@ -95,6 +99,14 @@ export class ContractFormula {
   isRegularFormula() {
     let value = this.value;
     return (value instanceof Array && value[0] === value[1]) || value === parseInt('' + value, 10);
+  }
+
+  hasValue(value: number | [number, number]) {
+    if (this.value instanceof Array && value instanceof Array) {
+      return this.value[0] === value[0] && this.value[1] === value[1];
+    } else {
+      return this.value === value || (this.alternativeValue && this.alternativeValue === value);
+    }
   }
 }
 
@@ -133,18 +145,13 @@ export class ContractFormulas {
     ),
   ];
 
-  static formulaIndexFor(value: number | [number, number]): number {
-    return ContractFormulas.formulas.findIndex(f =>
-      deepEquals(f.value, value) || (f.alternativeValue && f.alternativeValue === value),
-    );
-  }
-
-  static formulaForIndex(index: number): ContractFormula {
-    return ContractFormulas.formulas[index];
+  static formulaForId(id: string): ContractFormula {
+    return ContractFormulas.formulas.find(f => f.id === id);
   }
 
   static formulaFor(value: number | [number, number]): ContractFormula {
-    return ContractFormulas.formulas[ContractFormulas.formulaIndexFor(value)];
+    return ContractFormulas.formulas.find(f => f.hasValue(value),
+    );
   }
 
   static hasNoneFormula(value: number | [number, number]) {
@@ -153,21 +160,5 @@ export class ContractFormulas {
 
   static hasRegularFormula(value: number | [number, number]) {
     return this.formulaFor(value).isRegularFormula();
-  }
-}
-
-function deepEquals(a, b): boolean {
-  if (a instanceof Array && b instanceof Array) {
-    if (a.length !== b.length) {
-      return false;
-    }
-    for (let i = 0; i < a.length; i++) {
-      if (!deepEquals(a[i], b[i])) {
-        return false;
-      }
-    }
-    return true;
-  } else {
-    return a === b;
   }
 }

@@ -63,12 +63,12 @@ export class ContractsEditPage {
               type: 'text',
             },
             {
-              name: 'formulaIndex',
+              name: 'formulaId',
               label: 'CONTRACT.FORMULA',
               kind: 'select',
               options: () => ContractFormulas.formulas,
               optionLabel: f => this.translateService.instant(f.label),
-              optionValue: (f, i) => i,
+              optionValue: f => f.id,
               validator: Validators.required,
             },
             {
@@ -84,9 +84,9 @@ export class ContractsEditPage {
               optionLabel: w => this.formatWeek(w),
               optionValue: w => w.seasonWeek,
               validator: Validators.required,
-              disabled: (f, g) => g.get('formulaIndex').value$.pipe(
+              disabled: (f, g) => g.get('formulaId').value$.pipe(
                 filterNotNull(),
-                map(i => ContractFormulas.formulaForIndex(i).isNoneFormula()),
+                map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
               ),
             },
             {
@@ -102,9 +102,9 @@ export class ContractsEditPage {
               nullOption: true,
               optionLabel: w => !w ? null : this.formatWeek(w),
               optionValue: w => !w ? null : w.seasonWeek,
-              disabled: (f, g) => g.get('formulaIndex').value$.pipe(
+              disabled: (f, g) => g.get('formulaId').value$.pipe(
                 filterNotNull(),
-                map(i => ContractFormulas.formulaForIndex(i).isNoneFormula()),
+                map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
               ),
             },
           ],
@@ -162,9 +162,9 @@ export class ContractsEditPage {
                 label: 'REF.VEGETABLES',
                 kind: 'checkbox',
                 value: false,
-                disabled: f => f.get('sections.0.formulaIndex').value$.pipe(
+                disabled: f => f.get('sections.0.formulaId').value$.pipe(
                   filterNotNull(),
-                  map(i => ContractFormulas.formulaForIndex(i).isNoneFormula()),
+                  map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
                 ),
               },
               {
@@ -172,9 +172,9 @@ export class ContractsEditPage {
                 label: 'REF.EGGS',
                 kind: 'checkbox',
                 value: false,
-                disabled: f => f.get('sections.1.formulaIndex').value$.pipe(
+                disabled: f => f.get('sections.1.formulaId').value$.pipe(
                   filterNotNull(),
-                  map(i => ContractFormulas.formulaForIndex(i).isNoneFormula()),
+                  map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
                 ),
               },
             ],
@@ -233,13 +233,13 @@ export class ContractsEditPage {
 
   formulasToForm(contracts) {
     contracts.sections.forEach(s => {
-      s.formulaIndex = ContractFormulas.formulaIndexFor(s.formula);
+      s.formulaId = ContractFormulas.formulaFor(s.formula).id;
     });
   }
 
   formulasFromForm(contracts) {
     contracts.sections.forEach(s => {
-      s.formula = ContractFormulas.formulaForIndex(s.formulaIndex).value;
+      s.formula = ContractFormulas.formulaForId(s.formulaId).value;
     });
   }
 }
