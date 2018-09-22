@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Content, ModalController, NavController } from '@ionic/angular';
@@ -38,6 +38,7 @@ import { ItemExpanding } from '../../toolkit/components/item-expanding';
 import { SlidingPanes } from '../../toolkit/components/sliding-panes';
 import { Navigation } from '../../toolkit/providers/navigation';
 import { contains, Group, groupBy } from '../../utils/arrays';
+import { observeInsideAngular } from '../../utils/observables';
 
 import { ContractKind } from '../contracts/contract.model';
 import { ContractService } from '../contracts/contract.service';
@@ -69,7 +70,8 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
               private memberService: MemberService,
               private seasonService: SeasonService,
               private distributionService: DistributionService,
-              private contractService: ContractService) {
+              private contractService: ContractService,
+              private ngZone: NgZone) {
   }
 
   Kinds = ContractKind;
@@ -178,6 +180,7 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
           .map(db => ibs.get(db.member))
           .filter(b => !!b),
       ),
+      observeInsideAngular(this.ngZone),
       publishReplay(1),
       refCount(),
     );
@@ -198,12 +201,14 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
 
     this._groupedRemainingBaskets$ = allRemainingBaskets$.pipe(
       map((bs: Basket[]) => groupBy(bs, b => DistributionPage.firstLastnameLetter(b.member))),
+      observeInsideAngular(this.ngZone),
       publishReplay(1),
       refCount(),
     );
 
     let remainingBasketsCount$ = allRemainingBaskets$.pipe(
       map(bs => bs.length),
+      observeInsideAngular(this.ngZone),
       publishReplay(1),
       refCount(),
     );
@@ -212,6 +217,7 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
       map(([bs, distribution]) =>
         bs.filter(b => !distribution.isBasketDistributed(b) && distribution.isBasketDelayed(b)),
       ),
+      observeInsideAngular(this.ngZone),
       publishReplay(1),
       refCount(),
     );
