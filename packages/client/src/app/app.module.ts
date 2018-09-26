@@ -49,7 +49,6 @@ import { AuthService } from './toolkit/providers/auth-service';
 import { DatabaseHelper } from './toolkit/providers/database-helper';
 
 import { DatabaseService } from './toolkit/providers/database-service';
-import { networkProvider } from './toolkit/providers/network';
 import { ToolkitModule } from './toolkit/toolkit.module';
 import { IonicGestureConfig } from './toolkit/utils/gestures';
 
@@ -95,7 +94,6 @@ registerLocales();
 
     // Ionic Native
     SecureStorage,
-    networkProvider,
 
     { provide: HAMMER_GESTURE_CONFIG, useClass: IonicGestureConfig },
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

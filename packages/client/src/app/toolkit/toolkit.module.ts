@@ -18,7 +18,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -28,7 +28,6 @@ import { ItemAction } from './components/item-action';
 import { ItemActions } from './components/item-actions';
 import { ItemExpanding } from './components/item-expanding';
 import { ScrollToTop } from './components/scroll-to-top.component';
-// import { SearchbarExpanding } from './components/searchbar-expanding';
 import { SlidingPane } from './components/sliding-pane';
 import { SlidingPanes } from './components/sliding-panes';
 import { SyncStateIndicator } from './components/sync-state-indicator';
@@ -38,6 +37,7 @@ import { ElasticDirective } from './directives/elastic';
 import { ScrollToTopDirective } from './directives/scroll-to-top';
 import { ShowOnMediaDirective } from './directives/show-on-media';
 import { SafeUrlPipe } from './pipes/safe-url.pipe';
+import { AppBridge } from './providers/app-bridge';
 import { AuthGuard } from './providers/auth-guard';
 
 import { AuthService } from './providers/auth-service';
@@ -61,7 +61,6 @@ import { UidService } from './providers/uid-service';
     ItemAction,
     ItemExpanding,
     ScrollToTop,
-    // SearchbarExpanding,
     SlidingPane,
     SlidingPanes,
     SyncStateIndicator,
@@ -87,7 +86,6 @@ import { UidService } from './providers/uid-service';
     ItemAction,
     ItemExpanding,
     ScrollToTop,
-    // SearchbarExpanding,
     SlidingPane,
     SlidingPanes,
     SyncStateIndicator,
@@ -107,6 +105,7 @@ export class ToolkitModule {
       ngModule: ToolkitModule,
       providers: [
         LogService,
+        AppBridge,
         Navigation,
         DatabaseHelper,
         AuthService,

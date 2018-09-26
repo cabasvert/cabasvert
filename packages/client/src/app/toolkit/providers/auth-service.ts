@@ -18,24 +18,44 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Network } from '@ionic-native/network/ngx';
 import { SecureStorage, SecureStorageObject } from '@ionic-native/secure-storage/ngx';
 import { Platform } from '@ionic/angular';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { ConfigurationService } from '../../config/configuration.service';
+import { AppBridge } from './app-bridge';
 
 import { Database, DatabaseHelper } from './database-helper';
 import { LogService } from './log-service';
 import { Logger } from './logger';
 
+interface UserData {
+  roles: string[];
+  name: string;
+  email: string;
+  database?: string;
+}
+
 export class User {
   constructor(public username: string,
-              public roles: string[],
-              public name: string,
-              public email: string,
-              public database?: string) {
+              public data: UserData) {
+  }
+
+  public get roles(): string[] {
+    return this.data.roles;
+  }
+
+  public get name(): string {
+    return this.data.name;
+  }
+
+  public get email(): string {
+    return this.data.email;
+  }
+
+  public get database(): string | null {
+    return this.data.database;
   }
 
   private immediateHasRole(role: string) {
@@ -61,10 +81,7 @@ export class Roles {
 export interface Credentials {
   username: string;
   password: string;
-  roles?: string[];
-  name?: string;
-  email?: string;
-  database?: string;
+  data?: UserData;
 }
 
 export interface PasswordSet {
@@ -97,8 +114,8 @@ export class AuthService {
   private _passwordStorage: Promise<SecureStorageObject>;
 
   constructor(private platform: Platform,
+              private appBridge: AppBridge,
               private secureStorage: SecureStorage,
-              private network: Network,
               private logService: LogService,
               private config: ConfigurationService,
               private dbHelper: DatabaseHelper) {
@@ -212,8 +229,7 @@ export class AuthService {
     // And if they match, grant access to the user
     if (granted) {
       this.log.info(`Successfully logged in user '${credentials.username}' offline`);
-      return new User(credentials.username, credentials.roles,
-        credentials.name, credentials.email, credentials.database);
+      return new User(credentials.username, credentials.data);
     } else {
       this.log.warn(`Failed to log in user '${credentials.username}' offline`);
       return null;
@@ -232,9 +248,7 @@ export class AuthService {
         let user = await this.retrieveUser(credentials.username);
 
         // Copy metadata for offline use
-        credentials.roles = user.roles;
-        credentials.name = user.name;
-        credentials.email = user.email;
+        credentials.data = user.data;
 
         return user;
       } else {
@@ -253,8 +267,12 @@ export class AuthService {
 
   private async retrieveUser(username: any) {
     const userData = await this.userDatabase.getUser(username);
-    return new User(username, userData.roles,
-      userData.metadata.name, userData.metadata.email, userData.metadata.database);
+    return new User(username, {
+      roles: userData.roles,
+      name: userData.metadata.name,
+      email: userData.metadata.email,
+      database: userData.metadata.database,
+    });
   }
 
   public async tryRestoreSessionOrLoadCredentialsAndLogin(): Promise<boolean> {
@@ -304,7 +322,8 @@ export class AuthService {
   }
 
   public async logout() {
-    if (this.network.type === 'none') {
+    let networkStatus = await this.appBridge.networkStatus;
+    if (networkStatus.connectionType === 'none') {
       return;
     }
 

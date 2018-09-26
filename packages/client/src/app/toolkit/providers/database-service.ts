@@ -18,9 +18,6 @@
  */
 
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
-import { T } from '@angular/core/src/render3';
-import { Network } from '@ionic-native/network/ngx';
-import { Platform } from '@ionic/angular';
 import PouchDB from 'pouchdb-core';
 
 import {
@@ -29,7 +26,6 @@ import {
   defer,
   EMPTY,
   from,
-  merge,
   Observable,
   of,
   Subject,
@@ -37,15 +33,12 @@ import {
   throwError,
 } from 'rxjs';
 import {
-  catchError,
   delay,
-  filter,
+  distinctUntilChanged,
   map,
-  mapTo,
   publishReplay,
   refCount,
   retryWhen,
-  startWith,
   switchAll,
   switchMap,
   switchMapTo,
@@ -56,26 +49,24 @@ import {
 import { environment } from '../../../environments/environment';
 import { ConfigurationService } from '../../config/configuration.service';
 
-import { filterNotNull, observeOutsideAngular, previous } from '../../utils/observables';
+import {
+  debugObservable,
+  filterNotNull,
+  observeOutsideAngular,
+  previous,
+} from '../../utils/observables';
 import { SyncState } from '../components/sync-state-listener';
+import { AppBridge } from './app-bridge';
 import { AuthService } from './auth-service';
 import { Database, DatabaseHelper } from './database-helper';
-
-enum NetworkState {
-  OFFLINE,
-  ONLINE,
-  DISCONNECTED,
-  RECONNECTED,
-}
 
 @Injectable()
 export class DatabaseService implements OnDestroy {
 
   constructor(private config: ConfigurationService,
+              private appBridge: AppBridge,
               private dbHelper: DatabaseHelper,
               private authService: AuthService,
-              private platform: Platform,
-              private network: Network,
               private ngZone: NgZone) {
   }
 
@@ -90,11 +81,7 @@ export class DatabaseService implements OnDestroy {
     return this._syncState$;
   }
 
-  get forceRecreateIfNecessary$(): Subject<void> {
-    return this._forceRecreateIfNecessary$;
-  }
-
-  private _forceRecreateIfNecessary$ = new Subject<void>();
+  forceReset$ = new BehaviorSubject<void>(null);
 
   private _database$: Observable<Database | null>;
   private _syncState$: Observable<SyncState | null>;
@@ -128,23 +115,8 @@ export class DatabaseService implements OnDestroy {
     const loggedInUser$ = this.authService.loggedInUser$;
     const loggedIn$ = loggedInUser$.pipe(map(user => !!user));
 
-    const network$: Observable<NetworkState> =
-      from(this.platform.ready()).pipe(
-        switchMap(() =>
-          merge(
-            this.network.onConnect().pipe(mapTo(NetworkState.RECONNECTED)),
-            this.network.onDisconnect().pipe(mapTo(NetworkState.DISCONNECTED)),
-          ).pipe(
-            startWith(this.network.type !== 'none' ? NetworkState.ONLINE : NetworkState.OFFLINE),
-          ),
-        ),
-        catchError(() => of(NetworkState.ONLINE)),
-        publishReplay(1),
-        refCount(),
-      );
-    const networkUp$ = network$.pipe(
-      map(status => status === NetworkState.ONLINE || status === NetworkState.RECONNECTED),
-    );
+    const active$ = this.appBridge.appIsActive$;
+    const connected$ = this.appBridge.networkIsConnected$;
 
     const localDb$: Observable<Database> = loggedIn$.pipe(
       withLatestFrom(loggedInUser$, (loggedIn, user) => {
@@ -170,13 +142,14 @@ export class DatabaseService implements OnDestroy {
       ).subscribe(),
     );
 
-    const forceRecreateRemote$: Subject<void> = new BehaviorSubject(null);
-
-    const remoteDbNeeded$ = combineLatest(loggedIn$, networkUp$, forceRecreateRemote$).pipe(
-      map(([loggedIn, networkUp, forceRecreate]) => loggedIn && networkUp || forceRecreate),
+    const remoteDbNeeded$ = combineLatest(active$, loggedIn$, connected$, this.forceReset$).pipe(
+      map(([active, loggedIn, connected]) =>
+        active && loggedIn && connected
+      ),
+      distinctUntilChanged(),
     );
     const remoteDb$: Observable<Database> = remoteDbNeeded$.pipe(
-      withLatestFrom(network$, loggedInUser$, (needed, status, user) => {
+      withLatestFrom(loggedInUser$, (needed, user) => {
         if (!needed) {
           return of(null);
         }
@@ -184,11 +157,9 @@ export class DatabaseService implements OnDestroy {
         const dbName = user.database || 'cabasvert';
         const creation = this.createRemoteDatabase$(dbName);
 
-        // Delay and make multiple attempts to login to remote database
-        // in case of reconnection as the network might not be fully operable
-        const initialDelay = status === NetworkState.RECONNECTED ? 500 : 0;
+        // Make multiple attempts to login to remote database
+        // in case the network is not yet fully operable
         return creation.pipe(
-          delay(initialDelay),
           switchMap(db =>
             defer(() => this.loginDatabase$(db)).pipe(
               retryWhen(errors => errors.pipe(delay(500), take(10))),
@@ -207,22 +178,7 @@ export class DatabaseService implements OnDestroy {
         filterNotNull(),
         // Do not try to logout database as cookie is shared
         switchMap(db => DatabaseService.closeDatabase$(db)),
-      ).subscribe,
-    );
-
-    this._subscription.add(
-      merge(this.platform.resume, this._forceRecreateIfNecessary$).pipe(
-        withLatestFrom(
-          remoteDb$.pipe(filterNotNull()),
-          (_, db) => from(db.getSession()).pipe(
-            map(response => !response.ok || !response.userCtx.name),
-            catchError(() => of(true)),
-          ),
-        ),
-        switchAll(),
-        filter(forceRecreate => forceRecreate),
-        mapTo(null),
-      ).subscribe(forceRecreateRemote$),
+      ).subscribe(),
     );
 
     const maintainSync$ = combineLatest(localDb$, remoteDb$).pipe(

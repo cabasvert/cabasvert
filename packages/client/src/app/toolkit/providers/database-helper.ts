@@ -119,20 +119,10 @@ export class Database {
   private _authenticationCookieTimeout = 600; // In seconds
   private _authenticationCookieRenewal;
 
-  private static stringifyFilterDocs(change: any) {
-    return JSON.stringify(change,
-      function replacer(key, value) {
-        // Filtering out properties
-        if (key === 'docs') {
-          return value.map(elt => {
-            return { _id: elt._id, _rev: elt._rev };
-          });
-        } else if (key === 'last_seq') {
-          return null;
-        } else {
-          return value;
-        }
-      }, 2);
+  private static filterDocs(changeData: any) {
+    // noinspection JSUnusedLocalSymbols
+    let { direction, change: { docs, ...rest } } = changeData;
+    return { direction, ...rest };
   }
 
   public close(): Promise<void> {
@@ -174,7 +164,6 @@ export class Database {
     return this.db.logIn(username, password, options || {}).then((r) => {
       if (r.ok) {
         this.log.info(`Successfully logged user '${username}' in.`);
-        this.setupAuthenticationCookieRenewer();
       } else {
         this.log.error(`Failed to log user '${username}' in.`);
       }
@@ -210,7 +199,6 @@ export class Database {
   }
 
   public logout(): Promise<boolean> {
-    this.cancelAuthenticationCookieRenewer();
     return this.wrapErrors('logout', this.db.logOut()).then((r) => {
       if (r.ok) {
         this.log.info(`Successfully logged user out.`);
@@ -228,7 +216,7 @@ export class Database {
     });
   }
 
-  setupAuthenticationCookieRenewer() {
+  public setupAuthenticationCookieRenewer() {
     this._authenticationCookieRenewal = setInterval(() => {
       this.getSession().then(res => {
         if (res.ok && res.userCtx.name) {
@@ -242,7 +230,7 @@ export class Database {
     }, this._authenticationCookieTimeout * 1000 / 2);
   }
 
-  cancelAuthenticationCookieRenewer() {
+  public cancelAuthenticationCookieRenewer() {
     if (this._authenticationCookieRenewal) {
       clearInterval(this._authenticationCookieRenewal);
     }
@@ -255,19 +243,19 @@ export class Database {
     this.addCancelable(this.sync);
 
     this.sync.on('change', change => {
-      this.log.debug(`Sync with remote [change] ${Database.stringifyFilterDocs(change)}`);
+      this.log.debug('Sync with remote [change]', Database.filterDocs(change));
     }).on('paused', error => {
-      this.log.debug(`Sync with remote [paused] ${error ? new PouchError(error) : ''}`);
+      this.log.debug('Sync with remote [paused]', error);
     }).on('denied', error => {
-      this.log.error(`Sync with remote [denied] ${error ? new PouchError(error) : ''}`);
+      this.log.error('Sync with remote [denied]', error);
     }).on('error', error => {
-      this.log.error(`Sync with remote [error] ${error ? new PouchError(error) : ''}`);
+      this.log.error('Sync with remote [error]', error);
       this.removeCancelable(this.sync);
       this.sync = null;
     }).on('active', () => {
-      this.log.debug(`Sync with remote [active]`);
+      this.log.debug('Sync with remote [active]');
     }).on('complete', info => {
-      this.log.debug(`Sync with remote [complete] ${JSON.stringify(info, null, 2)}`);
+      this.log.debug('Sync with remote [complete]', info);
       this.removeCancelable(this.sync);
       this.sync = null;
     });
@@ -372,7 +360,7 @@ export class Database {
 
   public findAll$<T>(query: PouchDB.Find.FindRequest<T>,
                      mapper: (doc: any) => T = d => d,
-                     indexer: (t: T) => string = t => (t as any)._id
+                     indexer: (t: T) => string = t => (t as any)._id,
   ): Observable<T[]> {
     return this._doFindAll$(
       query,
@@ -398,7 +386,7 @@ export class Database {
 
   public findAllIndexed$<T>(query: PouchDB.Find.FindRequest<T>,
                             mapper: (doc: any) => T = d => d,
-                            indexer: (t: T) => string = t => (t as any)._id
+                            indexer: (t: T) => string = t => (t as any)._id,
   ): Observable<Map<string, T>> {
     return this._doFindAll$(
       query,

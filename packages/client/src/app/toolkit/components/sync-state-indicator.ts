@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AfterViewInit, Component, NgZone, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { observeInsideAngular } from '../../utils/observables';
@@ -30,7 +30,7 @@ import { SyncState, SyncStatus } from './sync-state-listener';
   template: `
     <ion-button icon-only
                 [disabled]="isAlive$ | async"
-                (click)="forceRecreateIfNecessary$.next()">
+                (click)="forceReset$.next()">
       <ion-icon name="{{ icon$ | async }}"></ion-icon>
     </ion-button>
   `,
@@ -38,7 +38,7 @@ import { SyncState, SyncStatus } from './sync-state-listener';
 export class SyncStateIndicator implements OnInit {
 
   syncState$: Observable<SyncState>;
-  forceRecreateIfNecessary$: Subject<void>;
+  forceReset$: Subject<void>;
 
   icon$: Observable<string>;
   isAlive$: Observable<boolean>;
@@ -46,7 +46,7 @@ export class SyncStateIndicator implements OnInit {
   constructor(private databaseService: DatabaseService,
               private zone: NgZone) {
     this.syncState$ = this.databaseService.syncState$;
-    this.forceRecreateIfNecessary$ = this.databaseService.forceRecreateIfNecessary$;
+    this.forceReset$ = this.databaseService.forceReset$;
   }
 
   ngOnInit() {

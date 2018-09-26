@@ -28,7 +28,7 @@ import {
   Platform,
   ToastController,
 } from '@ionic/angular';
-import { BackButtonEvent, startHardwareBackButton } from '@ionic/core';
+import { BackButtonEvent, setupConfig } from '@ionic/core';
 import { TranslateService } from '@ngx-translate/core';
 import { interval, Observable } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
@@ -118,7 +118,8 @@ export class AppComponent implements OnInit {
     // For testing purposes
     if (this.platform.is('desktop') && environment.testHardwareBackButton) {
       this.log.warn('Manually starting hardware back button for debugging');
-      startHardwareBackButton(window);
+      // FIXME Use IonicConfig when @ionic/core@4.0.0-beta.12 is out
+      setupConfig({ hardwareBackButton: true });
     }
 
     // Override Ionic's default behavior
