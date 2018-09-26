@@ -28,12 +28,49 @@ const RED = `#c0392b`;
 
 export class Logger {
 
-  private level: LogLevel;
+  private readonly level: LogLevel;
+
+  public readonly debug: (...params) => void;
+  public readonly info: (...params) => void;
+  public readonly warn: (...params) => void;
+  public readonly error: (...params) => void;
+  public readonly group: (...params) => void;
+  public readonly groupCollapsed: (...params) => void;
 
   constructor(private name: string,
               private config: LogConfiguration,
               private prefix: string = null) {
     this.level = config[name];
+
+    this.debug = this.setupLogFunction(LogLevel.DEBUG, BLUE, 'debug');
+    this.info = this.setupLogFunction(LogLevel.INFO, GREEN, 'info');
+    this.warn = this.setupLogFunction(LogLevel.WARN, YELLOW, 'warn');
+    this.error = this.setupLogFunction(LogLevel.ERROR, RED, 'error');
+    this.group = this.setupLogFunction(LogLevel.ERROR, GREY, 'group');
+    this.groupCollapsed = this.setupLogFunction(LogLevel.ERROR, GREY, 'groupCollapsed');
+  }
+
+  private setupLogFunction(minLevel: LogLevel, color: string, key: string): (...params) => void {
+    if (this.level >= minLevel) {
+      const logPrefix = `${this.name}${this.prefix ? ' ' + this.prefix : ''}`;
+
+      if (environment.production) {
+        return console[key].bind(window.console, logPrefix);
+      }
+
+      const formattedLogPrefix = [
+        `%c${logPrefix}`,
+        `background: ${color}; color: white; padding: 2px 0.5em; border-radius: 0.5em;`,
+      ];
+
+      return console[key].bind(window.console, ...formattedLogPrefix);
+    } else {
+      return (...params) => null;
+    }
+  }
+
+  public groupEnd() {
+    console.groupEnd();
   }
 
   public subLogger(name: string) {
@@ -42,37 +79,5 @@ export class Logger {
 
   public withPrefix(prefix: string) {
     return new Logger(this.name, this.config, (this.prefix ? this.prefix + ' ' : '') + prefix);
-  }
-
-  private logMessage(minLevel: LogLevel, color: string, key: string): (...params) => void {
-    return (...params) => {
-      if (this.level >= minLevel) {
-        const logPrefix = `${this.name}${this.prefix ? ' ' + this.prefix : ''}`;
-
-        if (environment.production) {
-          console[key](`${logPrefix}: `, ...params);
-          return;
-        }
-
-        const formattedLogPrefix = [
-          `%c${logPrefix}`,
-          `background: ${color}; color: white; padding: 2px 0.5em; border-radius: 0.5em;`,
-        ];
-
-        console[key](...formattedLogPrefix, ...params);
-      }
-    };
-  }
-
-  // Use console.log for debug level as console.debug is not supported by ionic console
-  public debug = this.logMessage(LogLevel.DEBUG, BLUE, 'debug');
-  public info = this.logMessage(LogLevel.INFO, GREEN, 'info');
-  public warn = this.logMessage(LogLevel.WARN, YELLOW, 'warn');
-  public error = this.logMessage(LogLevel.ERROR, RED, 'error');
-  public group = this.logMessage(LogLevel.ERROR, GREY, 'group');
-  public groupCollapsed = this.logMessage(LogLevel.ERROR, GREY, 'groupCollapsed');
-
-  public groupEnd() {
-    console.groupEnd();
   }
 }
