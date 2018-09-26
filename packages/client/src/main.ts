@@ -19,6 +19,7 @@
 
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { setupConfig } from '@ionic/core';
 
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
@@ -27,6 +28,12 @@ require('events').EventEmitter.defaultMaxListeners = 100;
 
 if (environment.production) {
   enableProdMode();
+}
+
+// For testing purposes
+if (environment.testHardwareBackButton) {
+  // FIXME Use npm link until @ionic/core@4.0.0-beta.12 is out
+  setupConfig({ hardwareBackButton: true });
 }
 
 platformBrowserDynamic().bootstrapModule(AppModule)

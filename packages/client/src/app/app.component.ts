@@ -115,13 +115,6 @@ export class AppComponent implements OnInit {
       }
     });
 
-    // For testing purposes
-    if (this.platform.is('desktop') && environment.testHardwareBackButton) {
-      this.log.warn('Manually starting hardware back button for debugging');
-      // FIXME Use IonicConfig when @ionic/core@4.0.0-beta.12 is out
-      setupConfig({ hardwareBackButton: true });
-    }
-
     // Override Ionic's default behavior
     if (this.platform.is('hybrid') ||
       (this.platform.is('desktop') && environment.testHardwareBackButton)) {
