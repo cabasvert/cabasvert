@@ -46,6 +46,7 @@ export class MemberService implements OnDestroy {
       selector: {
         type: 'member',
       },
+      use_index: 'type',
     };
 
     this.allMembers$ = this.mainDatabase.findAll$<Member>(query);
@@ -56,7 +57,7 @@ export class MemberService implements OnDestroy {
 
   createIndexes() {
     this._subscription.add(
-      this.mainDatabase.createIndex({ index: { fields: ['type'] } }),
+      this.mainDatabase.createIndex({ index: { fields: ['type'], ddoc: 'type' } }),
     );
   }
 

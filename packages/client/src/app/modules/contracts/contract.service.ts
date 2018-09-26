@@ -43,6 +43,7 @@ export class ContractService implements OnDestroy {
       selector: {
         type: 'contract',
       },
+      use_index: 'type',
     };
 
     this.allContracts$ = this.mainDatabase.findAll$(query, d => this.documentToObject(d));
@@ -60,13 +61,23 @@ export class ContractService implements OnDestroy {
 
   createIndexes() {
     this._subscription.add(
-      this.mainDatabase.createIndex({ index: { fields: ['type'] } }),
+      this.mainDatabase.createIndex({ index: { fields: ['type'], ddoc: 'type' } }),
     );
     this._subscription.add(
-      this.mainDatabase.createIndex({ index: { fields: ['type', 'season'] } }),
+      this.mainDatabase.createIndex({
+        index: {
+          fields: ['type', 'season'],
+          ddoc: 'type-season',
+        },
+      }),
     );
     this._subscription.add(
-      this.mainDatabase.createIndex({ index: { fields: ['type', 'member'] } }),
+      this.mainDatabase.createIndex({
+        index: {
+          fields: ['type', 'member'],
+          ddoc: 'type-member',
+        },
+      }),
     );
   }
 
@@ -80,6 +91,7 @@ export class ContractService implements OnDestroy {
         type: 'contract',
         season: season.id,
       },
+      use_index: 'type-season',
     };
 
     return this.mainDatabase.findAll$(query, d => this.documentToObject(d));
@@ -91,6 +103,7 @@ export class ContractService implements OnDestroy {
         type: 'contract',
         member: member._id,
       },
+      use_index: 'type-member',
     };
 
     return this.mainDatabase.findAll$(query, d => this.documentToObject(d));

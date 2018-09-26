@@ -68,7 +68,12 @@ export class DistributionService implements OnDestroy {
 
   createIndexes() {
     this._subscription.add(
-      this.mainDatabase.createIndex({ index: { fields: ['type', 'season', 'week'] } }),
+      this.mainDatabase.createIndex({
+        index: {
+          fields: ['type', 'season', 'week'],
+          ddoc: 'type-season-week',
+        },
+      }),
     );
   }
 
@@ -84,6 +89,7 @@ export class DistributionService implements OnDestroy {
         week: week.seasonWeek,
       },
       limit: 1,
+      use_index: 'type-season-week',
     };
 
     const defaultValue = () => Distribution.create(week, this.mainDatabase);

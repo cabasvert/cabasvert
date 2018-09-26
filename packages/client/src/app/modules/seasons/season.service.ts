@@ -61,6 +61,7 @@ export class SeasonService implements OnDestroy {
       selector: {
         type: 'season',
       },
+      use_index: 'type',
     };
 
     this.allSeasons$ =
@@ -90,7 +91,7 @@ export class SeasonService implements OnDestroy {
 
   createIndexes() {
     this._subscription.add(
-      this.mainDatabase.createIndex({ index: { fields: ['type'] } }),
+      this.mainDatabase.createIndex({ index: { fields: ['type'], ddoc: 'type' } }),
     );
   }
 
