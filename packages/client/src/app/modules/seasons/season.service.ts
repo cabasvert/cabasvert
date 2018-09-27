@@ -27,15 +27,9 @@ import { Season, SeasonWeek } from './season.model';
 @Injectable()
 export class SeasonService implements OnDestroy {
 
-  private static today() {
-    let date = new Date();
-    date.setHours(0, 0, 0, 0);
-    return date;
-  }
-
   private static readonly today$: Observable<Date> =
     timer(0, 60 * 1000).pipe(
-      map(() => SeasonService.today()),
+      map(() => Date.today()),
       distinctUntilChanged((d1, d2) => d1.getDate() === d2.getDate()),
       publishReplay(1),
       refCount(),
@@ -47,7 +41,6 @@ export class SeasonService implements OnDestroy {
   public readonly allSeasons$: Observable<Season[]>;
   public readonly allSeasonsIndexed$: Observable<Map<string, Season>>;
   public readonly latestSeason$: Observable<Season>;
-  public readonly todaysSeason$: Observable<Season>;
   public readonly todaysSeasonWeek$: Observable<SeasonWeek>;
 
   private _subscription = new Subscription();
@@ -72,11 +65,6 @@ export class SeasonService implements OnDestroy {
 
     this.latestSeason$ = this.latestSeasons$(1).pipe(map(ss => ss[0]));
 
-    this.todaysSeason$ = SeasonService.today$.pipe(
-      switchMap(today => this.seasonForDate$(today)),
-      publishReplay(1),
-      refCount(),
-    );
     this.todaysSeasonWeek$ = SeasonService.today$.pipe(
       switchMap(today => this.seasonWeekForDate$(today)),
       filterNotNull(),
@@ -84,7 +72,7 @@ export class SeasonService implements OnDestroy {
       refCount(),
     );
 
-    this._subscription.add(this.todaysSeason$.subscribe());
+    this._subscription.add(this.todaysSeasonWeek$.subscribe());
     this._subscription.add(this.allSeasons$.subscribe());
     this._subscription.add(this.allSeasonsIndexed$.subscribe());
   }
@@ -110,15 +98,11 @@ export class SeasonService implements OnDestroy {
   private _byDescendingSeasonId = (s1, s2) => -this._bySeasonId(s1, s2);
 
   seasonForDate$(date: Date = new Date()): Observable<Season> {
-    return this.allSeasons$.pipe(
-      map(ss => ss.find(s => s.startDate <= date && date < s.endDate)),
-    );
+    return this.allSeasons$.pipe(map(ss => ss.find(s => s.contains(date))));
   }
 
   seasonWeekForDate$(date: Date = new Date()): Observable<SeasonWeek> {
-    return this.seasonForDate$(date).pipe(
-      map(s => s ? s.seasonWeek(SeasonService.deltaDate(date)) : null),
-    );
+    return this.seasonForDate$(date).pipe(filterNotNull(), map(s => s.seasonWeek(date)));
   }
 
   seasonById$(id: string): Observable<Season> {
@@ -127,10 +111,5 @@ export class SeasonService implements OnDestroy {
 
   seasonNameById$(id: string): Observable<string> {
     return this.seasonById$(id).pipe(map(s => s.name));
-  }
-
-  // FIXME This is a hack to have distribution weeks start 5 days before the distribution day
-  private static deltaDate(date: Date) {
-    return date.addDays(4);
   }
 }

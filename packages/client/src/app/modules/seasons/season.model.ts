@@ -22,30 +22,62 @@ import { map } from 'rxjs/operators';
 
 import { SeasonService } from './season.service';
 
-export class Season {
-
-  id: string;
+interface SeasonData {
+  _id: string;
   name: string;
-  startDate: Date;
-  endDate: Date;
+  startWeek: CalendarWeek;
+  endWeek: CalendarWeek;
+  distributionDay: DayString;
   weekCount: number;
+  ignoredWeeks: CalendarWeek[];
+  doubleWeeks: CalendarWeek[];
+}
+
+type CalendarWeek = [number, number];
+
+type DayString =
+  'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+
+const dayStringToISODay = {
+  'monday': 0,
+  'tuesday': 1,
+  'wednesday': 2,
+  'thursday': 3,
+  'friday': 4,
+  'saturday': 5,
+  'sunday': 6,
+};
+
+export class Season {
 
   private _calendarToSeasonWeeks: Map<string, SeasonWeek> = new Map();
   private _seasonWeeks: Map<number, SeasonWeek> = new Map();
 
-  constructor(private seasons: SeasonService, public seasonData: any) {
-    this.id = seasonData._id;
-    this.name = seasonData.name;
-    this.startDate = new Date(seasonData.startDate);
-    this.weekCount = seasonData.weekCount;
+  constructor(private seasons: SeasonService, public seasonData: SeasonData) {
+    try {
+      this.computeWeeks();
+    } catch (error) {
+      console.log(error);
+      console.log(this.seasonData);
+      this._seasonWeeks.forEach(
+        (w, i) => console.log(`${i} - ${w.calendarWeek}, ${w.distributionDate}`),
+      );
+    }
+  }
 
+  private computeWeeks() {
+    let distributionDay = dayStringToISODay[this.seasonData.distributionDay];
+    let date = Date.fromISOWeek(this.seasonData.startWeek).setISODay(distributionDay);
+
+    let weekCount = this.seasonData.weekCount;
     let ignoredWeeks = this.seasonData.ignoredWeeks || [];
     let doubleWeeks = this.seasonData.doubleWeeks || [];
 
-    var date = this.startDate;
-    var calendarWeek = date.getWeek();
-    var otherWeek = false;
-    for (var seasonWeek = 1; seasonWeek <= seasonData.weekCount;) {
+    let calendarWeek;
+    let otherWeek = false;
+    for (let seasonWeek = 1; seasonWeek <= weekCount;) {
+      calendarWeek = date.getISOWeek();
+
       let ignored = ignoredWeeks.some((w) => calendarWeek.toString() === w.toString());
       let double = doubleWeeks.some((w) => calendarWeek.toString() === w.toString());
 
@@ -58,9 +90,32 @@ export class Season {
       }
 
       date = date.addDays(7);
-      calendarWeek = date.getWeek();
     }
-    this.endDate = new Date(seasonData.endDate);
+
+    if (calendarWeek.toString() !== this.seasonData.endWeek.toString())
+      throw new Error('Error computing season weeks');
+  }
+
+  get id() {
+    return this.seasonData._id;
+  }
+
+  get name() {
+    return this.seasonData.name;
+  }
+
+  get weekCount() {
+    return this.seasonData.weekCount;
+  }
+
+  get startDate() {
+    let distributionDay = dayStringToISODay[this.seasonData.distributionDay];
+    return Date.fromISOWeek(this.seasonData.startWeek).setISODay(distributionDay).addDays(-6);
+  }
+
+  get endDate() {
+    let distributionDay = dayStringToISODay[this.seasonData.distributionDay];
+    return Date.fromISOWeek(this.seasonData.endWeek).setISODay(distributionDay).addDays(1);
   }
 
   calendarToSeasonWeek(calendarWeek: [number, number]): SeasonWeek {
@@ -76,7 +131,7 @@ export class Season {
   }
 
   seasonWeeks(): SeasonWeek[] {
-    var weeks = [];
+    let weeks = [];
     for (let weekNumber = 1; weekNumber <= this.weekCount; weekNumber++) {
       let seasonWeek = this.seasonWeekByNumber(weekNumber);
       weeks.push(seasonWeek);
@@ -85,8 +140,12 @@ export class Season {
   }
 
   seasonWeek(date: Date): SeasonWeek | null {
+    let distributionDay = dayStringToISODay[this.seasonData.distributionDay];
+    let thisDay = date.getISODay();
+    if (distributionDay < thisDay) date = date.addDays(7 - thisDay + distributionDay);
+
     while (this.contains(date)) {
-      let seasonWeek = this.calendarToSeasonWeek(date.getWeek());
+      let seasonWeek = this.calendarToSeasonWeek(date.getISOWeek());
       if (seasonWeek != null) return seasonWeek;
       date = date.addDays(7);
     }
@@ -94,11 +153,11 @@ export class Season {
   }
 
   previousSeason$(): Observable<Season | null> {
-    return this.seasons.seasonForDate$(this.startDate.addDays(-7));
+    return this.seasons.seasonForDate$(this.startDate.addDays(-1));
   }
 
   nextSeason$(): Observable<Season | null> {
-    return this.seasons.seasonForDate$(this.endDate);
+    return this.seasons.seasonForDate$(this.endDate.addDays(+1));
   }
 }
 

@@ -125,7 +125,7 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
     );
 
     let initialWeek$ = date$.pipe(
-      switchMap(date => this.seasonService.seasonWeekForDate$(date))
+      switchMap(date => this.seasonService.seasonWeekForDate$(date)),
     );
 
     let previousNextClicks$ =
