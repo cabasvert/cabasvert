@@ -77,7 +77,7 @@
 
   <scroll-to-top></scroll-to-top>
 
-  <ion-list *ngIf="members$ | async as members; else noMembers">
+  <ion-list *ngIf="members$ | async as members; else noMembers" style="visibility: visible;">
     <ng-container *ngFor="let group of members; trackBy: groupKey">
       <ion-item-divider id="divider-{{ group.key }}">
         <ion-label>{{ group.key }}</ion-label>
