@@ -18,7 +18,8 @@
     "build-android-debug": "npm run build-debug && cap sync && (cd android && ./gradlew assembleDebug)",
     "install-android-debug": "npm run build-android-debug && adb -d uninstall org.cabasvert.client && adb -d install android/app/build/outputs/apk/debug/app-debug.apk",
     "build-android-release": "npm run build-production && cap sync && (cd android && ./gradlew assembleRelease)",
-    "install-android-release": "npm run build-android-release && adb -d uninstall org.cabasvert.client && adb -d install android/app/build/outputs/apk/release/app-release.apk"
+    "install-android-release": "npm run build-android-release && adb -d uninstall org.cabasvert.client && adb -d install android/app/build/outputs/apk/release/app-release.apk",
+    "release": "standard-version"
   },
   "private": true,
   "dependencies": {
@@ -55,6 +56,7 @@
     "pouchdb-find": "^6.4.1",
     "pouchdb-replication": "^6.4.1",
     "rxjs": "^6.3.2",
+    "standard-version": "^4.4.0",
     "uid-generator": "^1.0.0",
     "zone.js": "^0.8.26"
   },
