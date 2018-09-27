@@ -408,7 +408,6 @@ export class Database {
     const found$ = this.doFind$(query).pipe(
       mergeMap(result => !result.docs ? EMPTY : of(result.docs)),
       map(docs => builder(docs.map(mapper))),
-      catchError(() => EMPTY),
     );
 
     const changes$ = this.dbChanges$({
@@ -508,7 +507,7 @@ export class PouchError extends Error {
   public constructor(opts: any, methodName: string = null) {
     super(
       (methodName ? `While calling ${methodName}(): ` : '')
-      + `[${opts.status}] ${opts.reason}`,
+      + `[${opts.status || opts.error}] ${opts.reason || opts.message}`,
     );
     this.status = opts.status;
     this.name = opts.error;

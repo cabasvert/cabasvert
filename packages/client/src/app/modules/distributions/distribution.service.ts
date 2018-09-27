@@ -18,12 +18,12 @@
  */
 
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
-import { combineLatest, Observable, Subscription } from 'rxjs';
+import { combineLatest, Observable, of, Subscription } from 'rxjs';
 import { map, publishReplay, refCount, switchMap } from 'rxjs/operators';
 
 import { DatabaseService } from '../../toolkit/providers/database-service';
 import '../../utils/dates';
-import { debugObservable, observeInsideAngular } from '../../utils/observables';
+import { observeInsideAngular } from '../../utils/observables';
 
 import { Contract, ContractKind, ContractSection } from '../contracts/contract.model';
 import { ContractService } from '../contracts/contract.service';
@@ -51,13 +51,13 @@ export class DistributionService implements OnDestroy {
     this.createIndexes();
 
     this.todaysBaskets$ = this.seasons.todaysSeasonWeek$.pipe(
-      switchMap(week => this.basketsForWeek$(week)),
+      switchMap(week => !!week ? this.basketsForWeek$(week) : of(null)),
       publishReplay(1),
       refCount(),
     );
 
     this.todaysTotals$ = this.todaysBaskets$.pipe(
-      map(bs => DistributionService.totals(bs)),
+      map(bs => !!bs ? DistributionService.totals(bs) : null),
       observeInsideAngular(this.ngZone),
       publishReplay(1),
       refCount(),
@@ -232,7 +232,7 @@ export class DistributionService implements OnDestroy {
     }
   }
 
-  public static totals(baskets: Basket[] | null): { [kind: string]: BasketSectionTotals } {
+  public static totals(baskets: Basket[]): { [kind: string]: BasketSectionTotals } {
     const allCounts: { [kind: string]: BasketSectionTotals } = {};
 
     function sectionCounts(kind: string): BasketSectionTotals {
@@ -244,37 +244,35 @@ export class DistributionService implements OnDestroy {
       return counts;
     }
 
-    if (baskets) {
-      baskets.forEach(b => {
-        let contractCounted = false;
+    baskets.forEach(b => {
+      let contractCounted = false;
 
-        ContractKind.ALL.forEach(kind => {
-          const section = b.sections[kind];
-          if (!section) {
-            return;
-          }
+      ContractKind.ALL.forEach(kind => {
+        const section = b.sections[kind];
+        if (!section) {
+          return;
+        }
 
-          const count = section.count;
+        const count = section.count;
 
-          if (count > 0) {
-            contractCounted = true;
-            const counts = sectionCounts(kind);
-            counts.allBasketCount += count;
-            if (b.isTrial) {
-              counts.trialBasketCount += count;
-            }
-          }
-        });
-
-        if (contractCounted) {
-          const counts = sectionCounts('cumulative');
-          counts.allBasketCount++;
+        if (count > 0) {
+          contractCounted = true;
+          const counts = sectionCounts(kind);
+          counts.allBasketCount += count;
           if (b.isTrial) {
-            counts.trialBasketCount++;
+            counts.trialBasketCount += count;
           }
         }
       });
-    }
+
+      if (contractCounted) {
+        const counts = sectionCounts('cumulative');
+        counts.allBasketCount++;
+        if (b.isTrial) {
+          counts.trialBasketCount++;
+        }
+      }
+    });
 
     return allCounts;
   }

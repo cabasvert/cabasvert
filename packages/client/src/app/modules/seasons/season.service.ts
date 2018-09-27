@@ -17,11 +17,11 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { Observable, Subscription, timer } from 'rxjs';
 import { distinctUntilChanged, map, publishReplay, refCount, switchMap } from 'rxjs/operators';
 import { DatabaseService } from '../../toolkit/providers/database-service';
-import { filterNotNull } from '../../utils/observables';
+import { observeInsideAngular } from '../../utils/observables';
 import { Season, SeasonWeek } from './season.model';
 
 @Injectable()
@@ -45,7 +45,8 @@ export class SeasonService implements OnDestroy {
 
   private _subscription = new Subscription();
 
-  constructor(private mainDatabase: DatabaseService) {
+  constructor(private mainDatabase: DatabaseService,
+              private ngZone: NgZone) {
 
     this.createIndexes();
 
@@ -67,7 +68,7 @@ export class SeasonService implements OnDestroy {
 
     this.todaysSeasonWeek$ = SeasonService.today$.pipe(
       switchMap(today => this.seasonWeekForDate$(today)),
-      filterNotNull(),
+      observeInsideAngular(this.ngZone),
       publishReplay(1),
       refCount(),
     );
@@ -102,7 +103,7 @@ export class SeasonService implements OnDestroy {
   }
 
   seasonWeekForDate$(date: Date = new Date()): Observable<SeasonWeek> {
-    return this.seasonForDate$(date).pipe(filterNotNull(), map(s => s.seasonWeek(date)));
+    return this.seasonForDate$(date).pipe(map(s => !!s ? s.seasonWeek(date) : null));
   }
 
   seasonById$(id: string): Observable<Season> {
