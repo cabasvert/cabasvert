@@ -19,7 +19,8 @@
     "install-android-debug": "npm run build-android-debug && adb -d uninstall org.cabasvert.client && adb -d install android/app/build/outputs/apk/debug/app-debug.apk",
     "build-android-release": "npm run build-production && cap sync && (cd android && ./gradlew assembleRelease)",
     "install-android-release": "npm run build-android-release && adb -d uninstall org.cabasvert.client && adb -d install android/app/build/outputs/apk/release/app-release.apk",
-    "release": "standard-version"
+    "release": "standard-version",
+    "publish-release": "npm run build-production && node bin/publish-release.js"
   },
   "private": true,
   "dependencies": {
@@ -70,10 +71,13 @@
     "@angular/compiler-cli": "~6.1.9",
     "@angular/language-service": "~6.1.9",
     "@ionic/lab": "~1.0.9",
+    "@octokit/rest": "^15.12.1",
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^10.9.4",
     "codelyzer": "~4.4.4",
+    "execa": "^1.0.0",
+    "fs-extra": "^7.0.0",
     "jasmine-core": "~3.2.1",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~3.0.0",
