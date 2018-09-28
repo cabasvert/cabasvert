@@ -8,7 +8,9 @@
         "files": [
           "/index.html",
           "/*.css",
-          "/*.js",
+          "/*.js"
+        ],
+        "urls": [
           "/config.prod.json"
         ]
       }
