@@ -133,8 +133,12 @@
     "TITLE": "Reports",
     "GENERATE": "Generate",
     "BASKETS_PER_MONTH_TITLE": "Baskets Per Month",
+    "BASKETS_PER_MONTH_VEGETABLES": "Vegetable Baskets Per Month",
+    "BASKETS_PER_MONTH_EGGS": "Egg Boxes Per Month",
     "BASKETS_PER_MONTH_DESCRIPTION": "The basket per month statistics for the end of year assembly.",
     "DISTRIBUTION_CHECKLIST_TITLE": "Distribution Checklist",
+    "DISTRIBUTION_CHECKLIST_VEGETABLES": "Distribution Checklist For Vegetables",
+    "DISTRIBUTION_CHECKLIST_EGGS": "Distribution Checklist For Eggs",
     "DISTRIBUTION_CHECKLIST_DESCRIPTION": "The distribution checklist can be used to make a printed checklist.",
     "MEMBER_LIST_TITLE": "Member List",
     "MEMBER_LIST_DESCRIPTION": "The member list over the last two seasons."

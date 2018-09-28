@@ -17,63 +17,53 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { formatDate } from '@angular/common';
 import { combineLatest, forkJoin, Observable, of, zip } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 
 import { groupBy } from '../../utils/arrays';
 
-import { Contract, ContractKind } from '../contracts/contract.model';
+import { Contract, ContractFormulas, ContractKind } from '../contracts/contract.model';
 import { ContractService } from '../contracts/contract.service';
 import { DistributionService } from '../distributions/distribution.service';
 import { Member } from '../members/member.model';
 import { Season } from '../seasons/season.model';
 
-import { Report, ReportService } from './report.service';
+import { Report, ReportHelper, ReportTable } from './report.model';
 
 export class BasketPerMonthReport implements Report {
 
-  formulas: Formulas = [
-    {
-      value: 2,
-      label: '2 every week',
-    },
-    {
-      value: [2, 1],
-      alternativeValue: 1.5,
-      label: 'alternating 2 and 1',
-    },
-    {
-      value: 1,
-      label: '1 every week',
-    },
-    {
-      value: [2, 0],
-      label: '2 every other week',
-    },
-    {
-      value: [1, 0],
-      alternativeValue: .5,
-      label: '1 every other week',
-    },
-  ];
-
-  write(fileName: string, generator: ReportService) {
-    generator.writeFile('./basketsPerMonth-vegetables.csv',
-      this.basketsPerMonth(of('legumes'), generator).pipe(take(1)),
-    );
-    generator.writeFile('./basketsPerMonth-eggs.csv',
-      this.basketsPerMonth(of('oeufs'), generator).pipe(take(1)),
+  generate$(helper: ReportHelper): Observable<ReportTable[]> {
+    return zip(
+      this.basketsPerMonth(of('legumes'), helper).pipe(
+        map(content => ({
+          name: 'basketsPerMonth-vegetables',
+          title: 'REPORTS.BASKETS_PER_MONTH_VEGETABLES',
+          content: content,
+          headerRowCount: 1,
+          style: this.style,
+        })),
+      ),
+      this.basketsPerMonth(of('oeufs'), helper).pipe(
+        map(content => ({
+          name: 'basketsPerMonth-eggs',
+          title: 'REPORTS.BASKETS_PER_MONTH_EGGS',
+          content: content,
+          headerRowCount: 1,
+          style: this.style,
+        })),
+      ),
     );
   }
 
-  private basketsPerMonth(basketType$: Observable<string>, generator: ReportService): Observable<string> {
-    const seasons$ = generator.seasons.latestSeasons$(3);
+  private basketsPerMonth(basketType$: Observable<string>, helper: ReportHelper): Observable<any[][]> {
+    const seasons$ = helper.seasons.latestSeasons$(3);
 
-    const membersIndexed$ = generator.members.allMembersIndexed$;
+    const membersIndexed$ = helper.members.allMembersIndexed$;
     const css$: Observable<Contract[][]> = seasons$.pipe(
       switchMap(seasons =>
         forkJoin(seasons.map(season =>
-          generator.contracts.contractsBySeason$(season).pipe(
+          helper.contracts.contractsBySeason$(season).pipe(
             take(1),
           ),
         )),
@@ -82,12 +72,12 @@ export class BasketPerMonthReport implements Report {
 
     type SeasonContractsPair = [Season, Array<Contract>];
     const scss$: Observable<SeasonContractsPair[]> =
-      zip(css$, seasons$, (css, seasons) => ReportService.zip(seasons, css));
+      zip(css$, seasons$).pipe(map(([css, seasons]) => this.zip(seasons, css)));
 
-    return combineLatest(basketType$, membersIndexed$, scss$,
-      (basketType, msi, scss: SeasonContractsPair[]) => {
+    return combineLatest(basketType$, membersIndexed$, scss$).pipe(
+      map(([basketType, msi, scss]) => {
 
-        const sms: { season: Season, month: Date, member: Member, formula: number, }[] = [];
+        const sms: { season: Season, month: Date, member: Member, formulaId: string, }[] = [];
 
         scss.forEach(scs => {
           const season = scs[0];
@@ -114,7 +104,7 @@ export class BasketPerMonthReport implements Report {
               const member = msi.get(c.member);
               const monthlyPresence = new Map<string, Date>();
               seasonWeeks.forEach(week => {
-                const month: Date = ReportService.monthFor(week);
+                const month: Date = this.monthFor(week);
 
                 const count = DistributionService.basketCount(c, s, week);
                 if (count > 0) {
@@ -124,7 +114,7 @@ export class BasketPerMonthReport implements Report {
               monthlyPresence.forEach(month => {
                 sms.push({
                   season: season, month: month, member: member,
-                  formula: this.findFormula(s.formula),
+                  formulaId: ContractFormulas.formulaFor(s.formula).id,
                 });
               });
             });
@@ -135,74 +125,82 @@ export class BasketPerMonthReport implements Report {
           .map(group => ({
             month: group.values[0].month,
             total: group.values.length,
-            counts: this.formulas.map((f, i) =>
-              group.values.reduce((acc, v) => v.formula === i ? acc + 1 : acc, 0),
+            counts: ContractFormulas.formulas.map(({ id }) =>
+              group.values.reduce((acc, v) => v.formulaId === id ? acc + 1 : acc, 0),
             ),
           }))
           .sort((sm1, sm2) => sm1.month.toISOString().localeCompare(sm2.month.toISOString()));
 
         // TODO Update to take trial baskets in account
 
-        const csv =
-          'Mois,Total,' + this.formulas.map(f => f.label).join(',') + '\n' +
-          bsByMonth.map(mc => `${this.formatDate(mc.month)},${mc.total},${mc.counts.map(c => '' + c).join(',')}`).join('\n');
-        return csv;
-      },
+        return [
+          ['Mois', 'Total',
+            ...ContractFormulas.formulas.map(f => helper.translateService.instant(f.label)),
+          ],
+          ...bsByMonth.map(mc =>
+            [this.formatMonth(mc.month), mc.total, ... mc.counts.map(c => '' + c)],
+          ),
+        ];
+      }),
     );
   }
 
-  findFormula(value): number {
-    return this.formulas.findIndex(f =>
-      deepEquals(f.value, value) || (f.alternativeValue && f.alternativeValue === value),
+  private style = (row, col) => col === 0 ? 'left' : row === 0 && col >= 2 ? 'rotate' : 'center';
+
+  private formatMonth(date: Date) {
+    return formatDate(date, 'MMMM y', 'fr');
+  }
+
+  // FIXME Move to Array
+  private zip(...arrays) {
+    return arrays[0].map(function (_, i) {
+      return arrays.map(function (array) {
+        return array[i];
+      });
+    });
+  }
+
+  private monthFor(week): Date {
+    return new Date(
+      week.distributionDate.getFullYear(),
+      week.distributionDate.getMonth(),
+      1,
     );
-  }
-
-  formatDate(date: Date) {
-    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
-  }
-}
-
-type Formulas = {
-  value: number | [number, number]
-  alternativeValue?: number
-  label: string
-}[];
-
-
-function deepEquals(a, b): boolean {
-  if (a instanceof Array && b instanceof Array) {
-    if (a.length !== b.length) {
-      return false;
-    }
-    for (let i = 0; i < a.length; i++) {
-      if (!deepEquals(a[i], b[i])) {
-        return false;
-      }
-    }
-    return true;
-  } else {
-    return a === b;
   }
 }
 
 export class DistributionChecklistReport implements Report {
 
-  write(fileName: string, generator: ReportService) {
-    generator.writeFile('./distribution-checklist-vegetables.csv',
-      this.baskets(of('legumes'), generator).pipe(take(1)),
-    );
-    generator.writeFile('./distribution-checklist-eggs.csv',
-      this.baskets(of('oeufs'), generator).pipe(take(1)),
+  generate$(helper: ReportHelper): Observable<ReportTable[]> {
+    return zip(
+      this.baskets(of('legumes'), helper).pipe(
+        map(content => ({
+          name: 'distribution-checklist-vegetables',
+          title: 'REPORTS.DISTRIBUTION_CHECKLIST_VEGETABLES',
+          content: content,
+          headerRowCount: 4,
+          style: this.style,
+        })),
+      ),
+      this.baskets(of('oeufs'), helper).pipe(
+        map(content => ({
+          name: 'distribution-checklist-eggs',
+          title: 'REPORTS.DISTRIBUTION_CHECKLIST_EGGS',
+          content: content,
+          headerRowCount: 4,
+          style: this.style,
+        })),
+      ),
     );
   }
 
-  private baskets(basketType$: Observable<string>, generator: ReportService): Observable<string> {
-    const season$ = generator.seasons.latestSeason$;
+  private baskets(basketType$: Observable<string>, helper: ReportHelper): Observable<any[][]> {
+    const season$ = helper.seasons.latestSeason$;
 
-    const membersIndexed$ = generator.members.allMembersIndexed$;
+    const membersIndexed$ = helper.members.allMembersIndexed$;
     const cs$: Observable<Contract[]> = season$.pipe(
       switchMap(season =>
-        generator.contracts.contractsBySeason$(season).pipe(
+        helper.contracts.contractsBySeason$(season).pipe(
           take(1),
         ),
       ),
@@ -213,13 +211,12 @@ export class DistributionChecklistReport implements Report {
       contracts: Array<Contract>;
     }
 
-    const scs$: Observable<SeasonContractsPair> = combineLatest(cs$, season$, (css, season) => ({
-      season: season,
-      contracts: css,
-    }));
+    const scs$: Observable<SeasonContractsPair> = combineLatest(cs$, season$).pipe(
+      map(([css, season]) => ({ season: season, contracts: css })),
+    );
 
-    return combineLatest(basketType$, membersIndexed$, scs$,
-      (basketType, msi, scs: SeasonContractsPair) => {
+    return combineLatest(basketType$, membersIndexed$, scs$).pipe(
+      map(([basketType, msi, scs]) => {
 
         const presence = [];
 
@@ -257,24 +254,28 @@ export class DistributionChecklistReport implements Report {
 
         // TODO Update to take trial baskets in account
 
-        const formatDate: (d: Date) => string =
-          d => '' + d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear();
+        const totals = presence.reduce((acc, mp) =>
+          this.zip(acc, mp.presence, (a, b) => a + b), seasonWeeks.map(() => 0),
+        );
 
-        const totals = presence
-          .reduce((acc, mp) => this.zip(acc, mp.presence, (a, b) => a + b), seasonWeeks.map(_ => 0));
-
-        const csv =
-          ',,,' + seasonWeeks.map(w => w.seasonWeek).join(',') + '\n' +
-          ',,,' + seasonWeeks.map(w => formatDate(w.distributionDate)).join(',') + '\n' +
-          ',,Totals,' + totals.join(',') + '\n' +
-          'Nom,Prénom,Téléphone,' + seasonWeeks.map(w => '').join(',') + '\n' +
-          presence.map(mp =>
-            `${mp.member.persons[0].lastname},${mp.member.persons[0].firstname},${mp.member.persons[0].phoneNumber},` +
-            mp.presence.join(','),
-          ).join('\n');
-        return csv;
-      },
+        return [
+          ['', '', '', ...seasonWeeks.map(w => w.seasonWeek)],
+          ['', '', '', ...seasonWeeks.map(w => this.formatDate(w))],
+          ['', '', 'Totals', ...totals],
+          ['Nom', 'Prénom', 'Téléphone', ...seasonWeeks.map(() => '')],
+          ...presence.map(mp => {
+            let p = mp.member.persons[0];
+            return [p.lastname, p.firstname, p.phoneNumber, ...mp.presence];
+          }),
+        ];
+      }),
     );
+  }
+
+  private style = (row, col) => row === 1 ? 'rotate' : col < 2 ? 'left' : 'center';
+
+  private formatDate(w) {
+    return formatDate(w.distributionDate, 'shortDate', 'fr');
   }
 
   private zip<A, B, C>(a: A[], b: B[], f: (A, B) => C): C[] {
@@ -288,27 +289,38 @@ export class DistributionChecklistReport implements Report {
 
 export class PerYearMemberListReport implements Report {
 
-  write(fileName: string, generator: ReportService) {
-    generator.writeFile('./per-year-member-list.csv',
-      this.memberList(generator).pipe(take(1)),
+  generate$(helper: ReportHelper): Observable<ReportTable[]> {
+    return this.memberList(helper).pipe(
+      map(content => ([
+        {
+          name: 'per-year-member-list',
+          title: 'REPORTS.MEMBER_LIST_TITLE',
+          content: content,
+          headerRowCount: 1,
+          style: this.style,
+        },
+      ])),
     );
   }
 
-  private memberList(generator: ReportService): Observable<string> {
+  private memberList(helper: ReportHelper): Observable<any[][]> {
     const year = new Date().getFullYear();
+    let yearStart = new Date(year, 0, 1);
+    let yearEnd = new Date(year + 1, 0, 1);
 
-    const seasons$ = generator.seasons.latestSeasons$(3).pipe(
+    const seasons$ = helper.seasons.latestSeasons$().pipe(
       map(ss => ss.filter(s =>
-        s.contains(new Date('01/01/' + year)) || s.contains(new Date('07/01/' + year)),
+        (s.startDate >= yearStart && s.startDate < yearEnd)
+        || (s.endDate >= yearStart && s.endDate < yearEnd),
       )),
     );
 
-    const membersIndexed$ = generator.members.allMembersIndexed$;
+    const membersIndexed$ = helper.members.allMembersIndexed$;
 
     const css$: Observable<Contract[][]> = seasons$.pipe(
       switchMap(seasons =>
         forkJoin(seasons.map(season =>
-          generator.contracts.contractsBySeason$(season).pipe(take(1)),
+          helper.contracts.contractsBySeason$(season).pipe(take(1)),
         )),
       ),
     );
@@ -320,11 +332,11 @@ export class PerYearMemberListReport implements Report {
 
     const memberPresence = new Map<String, MemberPresence>();
 
-    return combineLatest(membersIndexed$, seasons$, css$,
-      (msi, seasons, css: Contract[][]) => {
+    return combineLatest(membersIndexed$, seasons$, css$).pipe(
+      map(([msi, seasons, css]) => {
 
         type SeasonContractsPair = [Season, Array<Contract>];
-        const scss: SeasonContractsPair[] = ReportService.zip(seasons, css);
+        const scss: SeasonContractsPair[] = this.zip(seasons, css);
 
         scss.reverse();
         scss.forEach(scs => {
@@ -355,15 +367,26 @@ export class PerYearMemberListReport implements Report {
           });
         });
 
-        let csv = 'Nom,Prénom,Téléphone,Courriel,Saisons\n';
-
-        memberPresence.forEach(mp => {
-          csv += `${mp.member.persons[0].lastname || ''},${mp.member.persons[0].firstname || ''},` +
-            `${mp.member.persons[0].phoneNumber || ''},${mp.member.persons[0].emailAddress || ''},` +
-            mp.seasons.map(s => s.name).join(' + ') + '\n';
-        });
-        return csv;
-      },
+        return [
+          ['Nom', 'Prénom', 'Téléphone', 'Courriel', 'Saisons'],
+          ...Array.from(memberPresence, ([id, mp]) => {
+            let p = mp.member.persons[0];
+            let seasonPresence = mp.seasons.map(s => s.name).join(', ');
+            return [p.lastname, p.firstname, p.phoneNumber, p.emailAddress, seasonPresence];
+          }).sort(([l1, f1], [l2, f2]) => (l1 + '#' + f1).localeCompare(l2 + '#' + f2)),
+        ];
+      }),
     );
+  }
+
+  private style = (row, col) => col < 2 ? 'left' : 'center';
+
+  // FIXME Move to Array
+  private zip(...arrays) {
+    return arrays[0].map(function (_, i) {
+      return arrays.map(function (array) {
+        return array[i];
+      });
+    });
   }
 }

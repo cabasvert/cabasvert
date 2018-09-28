@@ -133,8 +133,12 @@
     "TITLE": "Rapports",
     "GENERATE": "Générer",
     "BASKETS_PER_MONTH_TITLE": "Paniers par mois",
+    "BASKETS_PER_MONTH_VEGETABLES": "Paniers de légumes par mois",
+    "BASKETS_PER_MONTH_EGGS": "Boîtes d'œufs par mois",
     "BASKETS_PER_MONTH_DESCRIPTION": "Les statistiques de paniers par mois pour l'assemblée générale ordinaire.",
     "DISTRIBUTION_CHECKLIST_TITLE": "Émargement distribution",
+    "DISTRIBUTION_CHECKLIST_VEGETABLES": "Émargement des paniers de légumes",
+    "DISTRIBUTION_CHECKLIST_EGGS": "Émargement des boîtes d'œufs",
     "DISTRIBUTION_CHECKLIST_DESCRIPTION": "La liste d'émargement peut être utilisée pour faire une liste imprimée.",
     "MEMBER_LIST_TITLE": "Liste des adhérents",
     "MEMBER_LIST_DESCRIPTION": "La liste des adhérents sur les deux dernières saisons."

@@ -22,9 +22,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavController, Platform } from '@ionic/angular';
 
 import { Subscription } from 'rxjs';
-import { AuthService, Roles, User } from '../../toolkit/providers/auth-service';
-import { Report, ReportService } from './report.service';
-import { BasketPerMonthReport, DistributionChecklistReport, PerYearMemberListReport } from './reports';
+import { AuthService, User } from '../../toolkit/providers/auth-service';
+import { ReportDescription } from './report.model';
+import { ReportService } from './report.service';
 
 @Component({
   selector: 'page-reports',
@@ -35,26 +35,7 @@ export class ReportsPage implements OnInit, OnDestroy {
   user: User;
   private subscription: Subscription;
 
-  reports = [
-    {
-      title: 'REPORTS.BASKETS_PER_MONTH_TITLE', icon: 'home',
-      description: 'REPORTS.BASKETS_PER_MONTH_DESCRIPTION',
-      report: BasketPerMonthReport,
-      acceptedRoles: [Roles.ADMINISTRATOR],
-    },
-    {
-      title: 'REPORTS.DISTRIBUTION_CHECKLIST_TITLE', icon: 'home',
-      description: 'REPORTS.DISTRIBUTION_CHECKLIST_DESCRIPTION',
-      report: DistributionChecklistReport,
-      acceptedRoles: [Roles.ADMINISTRATOR],
-    },
-    {
-      title: 'REPORTS.MEMBER_LIST_TITLE', icon: 'home',
-      description: 'REPORTS.MEMBER_LIST_DESCRIPTION',
-      report: PerYearMemberListReport,
-      acceptedRoles: [Roles.ADMINISTRATOR],
-    },
-  ];
+  reports = this.reportsGenerator.reports;
 
   constructor(public navCtrl: NavController,
               public authService: AuthService,
@@ -70,9 +51,13 @@ export class ReportsPage implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  writeReport(report: Report) {
+  openReport(report: ReportDescription) {
+    this.navCtrl.navigateForward(`/reports/${report.name}`);
+  }
+
+  writeReport(report: ReportDescription) {
     this.platform.ready()
-      .then(_ => this.reportsGenerator.writeReport(report))
+      .then(_ => this.reportsGenerator.writeReport(report.name))
       .catch(error => console.log(error));
   }
 }

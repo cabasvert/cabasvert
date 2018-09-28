@@ -1,0 +1,73 @@
+<!--
+  This file is part of CabasVert.
+ 
+  Copyright 2017, 2018 Didier Villevalois
+ 
+  CabasVert is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+ 
+  CabasVert is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+ 
+  You should have received a copy of the GNU General Public License
+  along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button icon-only (click)="dismiss()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>{{ 'REPORTS.TITLE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="cards-bg">
+
+  <div *ngIf="tables$ | async as tables; else noTables">
+    <ion-card *ngFor="let table of tables">
+
+      <ion-card-header>
+        <ion-card-title>
+          {{ table.title | translate }}
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <table class="report-table">
+          <tr *ngFor="let row of table.content; let r=index">
+            <ng-container *ngIf="r < table.headerRowCount">
+              <th *ngFor="let cell of row; let c=index" [class]="table.style(r, c)">
+                <span>{{ cell }}</span>
+              </th>
+            </ng-container>
+            <ng-container *ngIf="r >= table.headerRowCount">
+              <td *ngFor="let cell of row; let c=index" [class]="table.style(r, c)">
+                {{ cell }}
+              </td>
+            </ng-container>
+          </tr>
+        </table>
+      </ion-card-content>
+
+    </ion-card>
+  </div>
+
+  <ng-template #noTables>
+    <ion-list>
+      <ion-item text-center>
+        <ion-label>
+          <ion-spinner icon="dots"></ion-spinner>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ng-template>
+
+</ion-content>

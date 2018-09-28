@@ -18,67 +18,78 @@
  */
 
 import { Injectable } from '@angular/core';
-// import { File } from '@ionic-native/file';
-// import { FileOpener } from '@ionic-native/file-opener';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
+import { Roles } from '../../toolkit/providers/auth-service';
+
 import { ContractService } from '../contracts/contract.service';
 import { MemberService } from '../members/member.service';
 import { SeasonService } from '../seasons/season.service';
 
-export interface Report {
-  write(fileName: string, generator: ReportService);
-}
+import { ReportDescription, ReportHelper, ReportTable } from './report.model';
+import {
+  BasketPerMonthReport,
+  DistributionChecklistReport,
+  PerYearMemberListReport,
+} from './reports';
+
+const REPORTS = [
+  {
+    name: 'baskets-per-month',
+    title: 'REPORTS.BASKETS_PER_MONTH_TITLE', icon: 'home',
+    description: 'REPORTS.BASKETS_PER_MONTH_DESCRIPTION',
+    report: BasketPerMonthReport,
+    acceptedRoles: [Roles.ADMINISTRATOR],
+  },
+  {
+    name: 'distribution-checklist',
+    title: 'REPORTS.DISTRIBUTION_CHECKLIST_TITLE', icon: 'home',
+    description: 'REPORTS.DISTRIBUTION_CHECKLIST_DESCRIPTION',
+    report: DistributionChecklistReport,
+    acceptedRoles: [Roles.ADMINISTRATOR],
+  },
+  {
+    name: 'member-list',
+    title: 'REPORTS.MEMBER_LIST_TITLE', icon: 'home',
+    description: 'REPORTS.MEMBER_LIST_DESCRIPTION',
+    report: PerYearMemberListReport,
+    acceptedRoles: [Roles.ADMINISTRATOR],
+  },
+];
 
 @Injectable()
-export class ReportService {
+export class ReportService implements ReportHelper {
 
-  constructor(// private file: File,
-              // private fileOpener: FileOpener,
-              public seasons: SeasonService,
+  constructor(public seasons: SeasonService,
               public members: MemberService,
-              public contracts: ContractService) {
+              public contracts: ContractService,
+              public translateService: TranslateService) {
   }
 
-  public static zip(...arrays) {
-    return arrays[0].map(function (_, i) {
-      return arrays.map(function (array) {
-        return array[i];
+  public readonly reports: ReportDescription[] = REPORTS;
+
+  public reportByName(name: string): ReportDescription {
+    return this.reports.find(r => r.name === name);
+  }
+
+  public generate$(name: string): Observable<ReportTable[]> {
+    let report = this.reportByName(name).report;
+    return new report().generate$(this);
+  }
+
+  public writeReport(name: string) {
+    this.generate$(name).subscribe(tables => {
+      tables.forEach(table => {
+        this.writeFile(`./${table.name}.csv`, ReportService.toCSV(table.content));
       });
     });
   }
 
-  public static monthFor(week): Date {
-    return new Date(
-      week.distributionDate.getFullYear(),
-      week.distributionDate.getMonth(),
-      1,
-    );
+  private writeFile(fileName: string, csv: string) {
+    // TODO Should we use Capacitor's Filesystem plugin ?
   }
 
-  public writeReport(report) {
-    new report().write(null, this);
+  private static toCSV(values: any[][]) {
+    return values.map(rows => rows.map(v => v ? v.toString() : '').join(',')).join('\n');
   }
-
-  public writeFile(fileName: string, csv$: Observable<string>) {
-    csv$.subscribe(csv => {
-      console.log(csv);
-      // return this.file.writeFile(this.file.dataDirectory, fileName, csv, { replace: true })
-      //   .catch(error =>
-      //     this.file.writeExistingFile(this.file.dataDirectory, fileName, csv),
-      //   )
-      //   .then(_ => this.openFile(fileName))
-      //   .catch(error => {
-      //     alert('Error: ' + JSON.stringify(error));
-      //   });
-    });
-  }
-
-  // public openFile(fileName: string) {
-  //   return this.file.resolveDirectoryUrl(this.file.dataDirectory)
-  //     .then(dir => this.file.getFile(dir, fileName, {}))
-  //     .then(file => file.toURL())
-  //     .then(url => this.fileOpener.open(url, 'text/plain'))
-  //     .then(() => console.log('File is opened'))
-  //     .catch(e => console.log('Error opening file', e));
-  // }
 }
