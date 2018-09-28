@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.3.0-beta.7"></a>
+# [0.3.0-beta.7](https://github.com/cabasvert/cabasvert-client/compare/v0.3.0-beta.6...v0.3.0-beta.7) (2018-09-28)
+
+
+### Features
+
+* **contracts:** add new formula '3 every other week' ([5b30df3](https://github.com/cabasvert/cabasvert-client/commit/5b30df3))
+* **reports:** make reports shiny ([cd64e55](https://github.com/cabasvert/cabasvert-client/commit/cd64e55))
+
+
+
 <a name="0.3.0-beta.6"></a>
 # [0.3.0-beta.6](https://github.com/cabasvert/cabasvert-client/compare/v0.3.0-beta.5...v0.3.0-beta.6) (2018-09-28)
 
