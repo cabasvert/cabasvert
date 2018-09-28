@@ -1,3 +1,19 @@
+# Change Log
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="0.3.0-beta.5"></a>
+# [0.3.0-beta.5](https://github.com/cabasvert/cabasvert-client/compare/v0.3.0-beta.4...v0.3.0-beta.5) (2018-09-28)
+
+
+### Bug Fixes
+
+* **lists:** force visible to have progressive loading ([b33117c](https://github.com/cabasvert/cabasvert-client/commit/b33117c))
+* **seasons:** load based on distribution day, start and end weeks ([c3d9450](https://github.com/cabasvert/cabasvert-client/commit/c3d9450))
+* **startup:** don't fail if no indexes during initial sync ([d2db5f2](https://github.com/cabasvert/cabasvert-client/commit/d2db5f2))
+
+
+
 <a name="0.3.0-beta.4"></a>
 # [0.3.0-beta.4](https://github.com/cabasvert/cabasvert-client/compare/v0.3.0-beta.3...v0.3.0-beta.4) (2018-09-26)
 
@@ -98,6 +114,3 @@
 
 <a name="0.3.0-beta.0"></a>
 # [0.3.0-beta.0](https://github.com/cabasvert/cabasvert-client/compare/v0.2.9...v0.3.0-beta.0) (2018-09-21)
-
-
-
