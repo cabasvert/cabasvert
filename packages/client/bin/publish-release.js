@@ -22,9 +22,11 @@ async function main() {
     const version = readVersion();
     const releaseArchiveFile = 'cabasvert-client-browser-' + version + '.tar.gz';
 
-    await packRelease(releaseArchiveFile);
+    await packBrowserRelease(releaseArchiveFile);
 
     await publishGithub(version, `v${version}`, releaseArchiveFile);
+
+    await rmBrowserRelease(releaseArchiveFile);
 
   } catch (err) {
     console.error('\n', err, '\n');
@@ -41,8 +43,12 @@ async function checkGit() {
   }
 }
 
-async function packRelease(releaseArchiveFile) {
+async function packBrowserRelease(releaseArchiveFile) {
   await execa.stdout('tar', ['cvzf', releaseArchiveFile, '--exclude=config.prod.json', 'www']);
+}
+
+async function rmBrowserRelease(releaseArchiveFile) {
+  await execa.stdout('rm', [releaseArchiveFile]);
 }
 
 async function publishGithub(version, tag, releaseArchiveFile) {
@@ -54,7 +60,7 @@ async function publishGithub(version, tag, releaseArchiveFile) {
   const result = await octokit.repos.createRelease({
     owner: 'cabasvert',
     repo: 'cabasvert-client',
-    target_commitish: tag,
+    target_commitish: 'v0.3',
     tag_name: tag,
     name: version,
     prerelease: isPreRelease(version),
@@ -67,9 +73,8 @@ async function publishGithub(version, tag, releaseArchiveFile) {
     url: result.data.upload_url,
     file: file,
     contentType: 'application/tar+gzip',
-    contentLength: file.byteLength(),
+    contentLength: file.byteLength,
     name: releaseArchiveFile,
-    // label: 'test'
   });
 }
 
