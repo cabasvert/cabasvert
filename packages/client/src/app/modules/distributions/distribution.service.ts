@@ -213,7 +213,7 @@ export class DistributionService implements OnDestroy {
     let formula = section.formula;
 
     if (doubleDistribution) {
-      if (formula instanceof Array) {
+      if (Array.isArray(formula)) {
         return formula[0] + formula[1];
       } else {
         return formula * 2;
@@ -222,7 +222,7 @@ export class DistributionService implements OnDestroy {
 
     const firstWeek = week.season.seasonWeekByNumber(section.firstWeek);
     const isMainWeek = firstWeek.otherWeek === week.otherWeek;
-    if (formula instanceof Array) {
+    if (Array.isArray(formula)) {
       return formula[isMainWeek ? 0 : 1];
     } else {
       if (formula !== parseInt('' + formula, 10)) {

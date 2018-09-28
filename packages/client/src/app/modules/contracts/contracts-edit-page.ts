@@ -240,6 +240,7 @@ export class ContractsEditPage {
   formulasFromForm(contracts) {
     contracts.sections.forEach(s => {
       s.formula = ContractFormulas.formulaForId(s.formulaId).value;
+      delete s.formulaId;
     });
   }
 }

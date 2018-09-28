@@ -17,6 +17,8 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { isArray } = Array;
+
 export type Contract = {
   _id: string
   type: string
@@ -82,27 +84,25 @@ export type ContractValidation = {
 }
 
 export class ContractFormula {
-  public readonly id;
 
-  constructor(public readonly value: number | [number, number],
+  constructor(public readonly id: string,
+              public readonly value: number | [number, number],
               public readonly alternativeValue: number | null,
               public readonly label: string) {
-
-    this.id = this.value.toString();
   }
 
   isNoneFormula() {
     let value = this.value;
-    return (value instanceof Array && value[0] === 0 && value[1] === 0) || value === 0;
+    return (isArray(value) && value[0] === 0 && value[1] === 0) || value === 0;
   }
 
   isRegularFormula() {
     let value = this.value;
-    return (value instanceof Array && value[0] === value[1]) || value === parseInt('' + value, 10);
+    return (isArray(value) && value[0] === value[1]) || value === parseInt('' + value, 10);
   }
 
   hasValue(value: number | [number, number]) {
-    if (this.value instanceof Array && value instanceof Array) {
+    if (isArray(this.value) && isArray(value)) {
       return this.value[0] === value[0] && this.value[1] === value[1];
     } else {
       return this.value === value || (this.alternativeValue && this.alternativeValue === value);
@@ -114,31 +114,43 @@ export class ContractFormulas {
 
   static readonly formulas: ContractFormula[] = [
     new ContractFormula(
+      '22',
       2,
       null,
       'CONTRACT.FORMULA_2_EVERY_WEEK',
     ),
     new ContractFormula(
+      '21',
       [2, 1],
       1.5,
       'CONTRACT.FORMULA_ALTERNATING_2_AND_1',
     ),
     new ContractFormula(
+      '11',
       1,
       null,
       'CONTRACT.FORMULA_1_EVERY_WEEK',
     ),
     new ContractFormula(
+      '30',
+      [3, 0],
+      null,
+      'CONTRACT.FORMULA_3_EVERY_OTHER_WEEK',
+    ),
+    new ContractFormula(
+      '20',
       [2, 0],
       null,
       'CONTRACT.FORMULA_2_EVERY_OTHER_WEEK',
     ),
     new ContractFormula(
+      '10',
       [1, 0],
       .5,
       'CONTRACT.FORMULA_1_EVERY_OTHER_WEEK',
     ),
     new ContractFormula(
+      '0',
       0,
       null,
       'CONTRACT.FORMULA_NONE',
