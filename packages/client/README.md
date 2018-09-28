@@ -22,27 +22,42 @@
 
 ### Serve
 
-Run `npm run start`.
+Run `npm start`.
 
 ### Browser Builds
 
-Run `npm run build`.
+#### Release build
 
-The result is in `www/`.
+1. Run `npm run build-production`. The result will be in `www/`.
+
+2. Run `(cd www && http-server)`.
+
+#### Make a release and publish to GitHub
+
+Add `-p beta` (or `alpha`, or `rc`) to the `npm release` below if necessary.
+
+1. First, do a release build and check that everything runs smoothly.
+
+2. Run `npm release -- --dry-run` to dry run the release.
+
+3. Run `npm release`
+
+4. Run `git push --follow-tags`.
+
+5. Run `npm run publish-release` to publish to GitHub.
 
 ### Android Builds
 
 #### Debug Builds
 
-1. Run `ionic build --prod && ionic cap sync && ionic cap open android`.
+Run `npm run build-android-debug`.
+The result will be in `android/app/build/outputs/apk/debug/`.
 
-2. Build in Android Studio
-
-The result is in `android/builds/output/apk/`.
+To build and deploy on your device connected via USB, run `npm run install-android-debug`.
 
 #### Release Builds
 
-1. Configure the `android/release-signing.properties` file to include the release signing information:
+First, configure the `android/keystore.properties` file to include the release signing information:
 ```
 storeFile=<path-to>/.keystores/android-cabasvert.jks
 storeType=jks
@@ -51,11 +66,7 @@ storePassword=<storePassword>
 keyPassword=<keyPassword>
 ```
 
-2. Check there is no `android:debuggable` attribute on the `application` tag in the `platforms/android/AndroidManifest.xml`
-file.
+Run `npm run build-android-release`.
+The result will be in `android/app/build/outputs/apk/release/`.
 
-3. Run `ionic build --prod --release && ionic cap sync && ionic cap open android`.
-
-4. Build and sign in Android Studio 
-
-The result is in `platform/android/builds/output/apk/`.
+To build and deploy on your device connected via USB, run `npm run install-android-release`.
