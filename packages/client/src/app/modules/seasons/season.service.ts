@@ -40,7 +40,11 @@ export class SeasonService implements OnDestroy {
 
   public readonly allSeasons$: Observable<Season[]>;
   public readonly allSeasonsIndexed$: Observable<Map<string, Season>>;
+
   public readonly latestSeason$: Observable<Season>;
+
+  // FIXME Rename to currentSeason$ and currentSeasonWeek$
+  public readonly todaysSeason$: Observable<Season>;
   public readonly todaysSeasonWeek$: Observable<SeasonWeek>;
 
   private _subscription = new Subscription();
@@ -65,6 +69,13 @@ export class SeasonService implements OnDestroy {
       this.mainDatabase.findAllIndexed$(query, this._seasonMapper, this._seasonIndexer);
 
     this.latestSeason$ = this.latestSeasons$(1).pipe(map(ss => ss[0]));
+
+    this.todaysSeason$ = SeasonService.today$.pipe(
+      switchMap(today => this.seasonForDate$(today)),
+      observeInsideAngular(this.ngZone),
+      publishReplay(1),
+      refCount(),
+    );
 
     this.todaysSeasonWeek$ = SeasonService.today$.pipe(
       switchMap(today => this.seasonWeekForDate$(today)),
@@ -104,6 +115,19 @@ export class SeasonService implements OnDestroy {
 
   seasonWeekForDate$(date: Date = new Date()): Observable<SeasonWeek> {
     return this.seasonForDate$(date).pipe(map(s => !!s ? s.seasonWeek(date) : null));
+  }
+
+  seasonsForPeriod$(from: Date, to: Date): Observable<Season[]> {
+    return this.allSeasons$.pipe(
+      map(ss => ss.filter(s =>
+        (s.startDate >= from && s.startDate < to)
+        || (s.endDate >= from && s.endDate < to),
+      )),
+    );
+  }
+
+  seasonsForYear$(year: number): Observable<Season[]> {
+    return this.seasonsForPeriod$(new Date(year, 0, 1), new Date(year + 1, 0, 1));
   }
 
   seasonById$(id: string): Observable<Season> {

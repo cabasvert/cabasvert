@@ -18,8 +18,8 @@
  */
 
 import { formatDate } from '@angular/common';
-import { combineLatest, forkJoin, Observable, of, zip } from 'rxjs';
-import { map, switchMap, take } from 'rxjs/operators';
+import { combineLatest, Observable, of, zip } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { groupBy } from '../../utils/arrays';
 
@@ -60,19 +60,10 @@ export class BasketPerMonthReport implements Report {
     const seasons$ = helper.seasons.latestSeasons$(3);
 
     const membersIndexed$ = helper.members.allMembersIndexed$;
-    const css$: Observable<Contract[][]> = seasons$.pipe(
-      switchMap(seasons =>
-        forkJoin(seasons.map(season =>
-          helper.contracts.contractsBySeason$(season).pipe(
-            take(1),
-          ),
-        )),
-      ),
-    );
 
-    type SeasonContractsPair = [Season, Array<Contract>];
-    const scss$: Observable<SeasonContractsPair[]> =
-      zip(css$, seasons$).pipe(map(([css, seasons]) => this.zip(seasons, css)));
+    const scss$ = seasons$.pipe(
+      switchMap(seasons => helper.contracts.contractsForSeasons$(seasons)),
+    );
 
     return combineLatest(basketType$, membersIndexed$, scss$).pipe(
       map(([basketType, msi, scss]) => {
@@ -80,26 +71,16 @@ export class BasketPerMonthReport implements Report {
         const sms: { season: Season, month: Date, member: Member, formulaId: string, }[] = [];
 
         scss.forEach(scs => {
-          const season = scs[0];
+          const { season, contracts } = scs;
           const seasonWeeks = season.seasonWeeks();
 
-          const cs = scs[1];
-
-          cs.forEach(c => {
-            if (c.type !== 'contract' && c.srev !== 'v1') {
-              return;
-            }
-            if (!c.sections) {
-              return;
-            }
+          contracts.forEach(c => {
+            if (c.type !== 'contract' && c.srev !== 'v1') return;
+            if (!c.sections) return;
 
             c.sections.forEach(s => {
-              if (s.kind !== basketType) {
-                return;
-              }
-              if (!s.formula) {
-                return;
-              }
+              if (s.kind !== basketType) return;
+              if (!s.formula) return;
 
               const member = msi.get(c.member);
               const monthlyPresence = new Map<string, Date>();
@@ -151,15 +132,6 @@ export class BasketPerMonthReport implements Report {
     return formatDate(date, 'MMMM y', 'fr');
   }
 
-  // FIXME Move to Array
-  private zip(...arrays) {
-    return arrays[0].map(function (_, i) {
-      return arrays.map(function (array) {
-        return array[i];
-      });
-    });
-  }
-
   private monthFor(week): Date {
     return new Date(
       week.distributionDate.getFullYear(),
@@ -195,51 +167,28 @@ export class DistributionChecklistReport implements Report {
   }
 
   private baskets(basketType$: Observable<string>, helper: ReportHelper): Observable<any[][]> {
-    const season$ = helper.seasons.latestSeason$;
+    const season$ = helper.seasons.todaysSeason$;
 
     const membersIndexed$ = helper.members.allMembersIndexed$;
+
     const cs$: Observable<Contract[]> = season$.pipe(
-      switchMap(season =>
-        helper.contracts.contractsBySeason$(season).pipe(
-          take(1),
-        ),
-      ),
+      switchMap(season => helper.contracts.contractsBySeason$(season)),
     );
 
-    interface SeasonContractsPair {
-      season: Season;
-      contracts: Array<Contract>;
-    }
-
-    const scs$: Observable<SeasonContractsPair> = combineLatest(cs$, season$).pipe(
-      map(([css, season]) => ({ season: season, contracts: css })),
-    );
-
-    return combineLatest(basketType$, membersIndexed$, scs$).pipe(
-      map(([basketType, msi, scs]) => {
+    return combineLatest(basketType$, membersIndexed$, season$, cs$).pipe(
+      map(([basketType, msi, season, cs]) => {
 
         const presence = [];
 
-        const season = scs.season;
         const seasonWeeks = season.seasonWeeks();
 
-        const cs = scs.contracts;
-
         cs.forEach(c => {
-          if (c.type !== 'contract' && c.srev !== 'v1') {
-            return;
-          }
-          if (!c.sections) {
-            return;
-          }
+          if (c.type !== 'contract' && c.srev !== 'v1') return;
+          if (!c.sections) return;
 
           c.sections.forEach(s => {
-            if (s.kind !== basketType) {
-              return;
-            }
-            if (!s.formula) {
-              return;
-            }
+            if (s.kind !== basketType) return;
+            if (!s.formula) return;
 
             const member = msi.get(c.member);
             const weeklyPresence = [];
@@ -255,7 +204,7 @@ export class DistributionChecklistReport implements Report {
         // TODO Update to take trial baskets in account
 
         const totals = presence.reduce((acc, mp) =>
-          this.zip(acc, mp.presence, (a, b) => a + b), seasonWeeks.map(() => 0),
+          Array.zip(acc, mp.presence, (a, b) => a + b), seasonWeeks.map(() => 0),
         );
 
         return [
@@ -277,14 +226,6 @@ export class DistributionChecklistReport implements Report {
   private formatDate(w) {
     return formatDate(w.distributionDate, 'shortDate', 'fr');
   }
-
-  private zip<A, B, C>(a: A[], b: B[], f: (A, B) => C): C[] {
-    const c = [];
-    for (let i = 0; i < Math.min(a.length, b.length); i++) {
-      c.push(f(a[i], b[i]));
-    }
-    return c;
-  }
 }
 
 export class PerYearMemberListReport implements Report {
@@ -305,24 +246,13 @@ export class PerYearMemberListReport implements Report {
 
   private memberList(helper: ReportHelper): Observable<any[][]> {
     const year = new Date().getFullYear();
-    let yearStart = new Date(year, 0, 1);
-    let yearEnd = new Date(year + 1, 0, 1);
 
-    const seasons$ = helper.seasons.latestSeasons$().pipe(
-      map(ss => ss.filter(s =>
-        (s.startDate >= yearStart && s.startDate < yearEnd)
-        || (s.endDate >= yearStart && s.endDate < yearEnd),
-      )),
-    );
+    const seasons$ = helper.seasons.seasonsForYear$(year);
 
     const membersIndexed$ = helper.members.allMembersIndexed$;
 
-    const css$: Observable<Contract[][]> = seasons$.pipe(
-      switchMap(seasons =>
-        forkJoin(seasons.map(season =>
-          helper.contracts.contractsBySeason$(season).pipe(take(1)),
-        )),
-      ),
+    const scss$ = seasons$.pipe(
+      switchMap(seasons => helper.contracts.contractsForSeasons$(seasons)),
     );
 
     interface MemberPresence {
@@ -330,20 +260,13 @@ export class PerYearMemberListReport implements Report {
       seasons: Season[];
     }
 
-    const memberPresence = new Map<String, MemberPresence>();
+    return combineLatest(membersIndexed$, seasons$, scss$).pipe(
+      map(([msi, seasons, scss]) => {
 
-    return combineLatest(membersIndexed$, seasons$, css$).pipe(
-      map(([msi, seasons, css]) => {
+        const memberPresence = new Map<String, MemberPresence>();
 
-        type SeasonContractsPair = [Season, Array<Contract>];
-        const scss: SeasonContractsPair[] = this.zip(seasons, css);
-
-        scss.reverse();
-        scss.forEach(scs => {
-          const season: Season = scs[0];
-          const cs: Contract[] = scs[1];
-
-          cs.forEach(contract => {
+        scss.forEach(({ season, contracts }) => {
+          contracts.forEach(contract => {
             const section = contract.sections.find(s => s.kind === ContractKind.VEGETABLES);
 
             if (!section.formula) {
@@ -380,13 +303,4 @@ export class PerYearMemberListReport implements Report {
   }
 
   private style = (row, col) => col < 2 ? 'left' : 'center';
-
-  // FIXME Move to Array
-  private zip(...arrays) {
-    return arrays[0].map(function (_, i) {
-      return arrays.map(function (array) {
-        return array[i];
-      });
-    });
-  }
 }

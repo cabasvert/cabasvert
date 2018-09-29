@@ -29,6 +29,11 @@ declare global {
 
     first(): T | null;
   }
+
+  interface ArrayConstructor {
+    zip<A, B>(as: A[], bs: B[]): [A, B][];
+    zip<A, B, C>(as: A[], bs: B[], f?: (A, B) => C): C[];
+  }
 }
 
 export class Group<T> {
@@ -109,3 +114,12 @@ export function copyAdd<T>(source: T[], value: T): T[] {
 export function copyRemove<T>(source: T[], index: number): T[] {
   return source.slice(0, index).concat(source.slice(index + 1, source.length));
 }
+
+Array.zip = function (as: any[], bs: any[], f?: (a: any, b: any) => any) {
+  f = f || ((a, b) => ([a, b]));
+  const cs = [];
+  for (let i = 0; i < Math.min(as.length, bs.length); i++) {
+    cs.push(f(as[i], bs[i]));
+  }
+  return cs;
+};

@@ -18,7 +18,7 @@
  */
 
 import { Injectable, OnDestroy } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { combineLatest, Observable, Subscription, zip } from 'rxjs';
 import { map, publishReplay, refCount, switchMap } from 'rxjs/operators';
 
 import { DatabaseService } from '../../toolkit/providers/database-service';
@@ -107,6 +107,15 @@ export class ContractService implements OnDestroy {
     };
 
     return this.mainDatabase.findAll$(query, d => this.documentToObject(d));
+  }
+
+  contractsForSeasons$(seasons: Season[]): Observable<SeasonContractsPair[]> {
+    const css$: Observable<Contract[][]> =
+      combineLatest(seasons.map(season => this.contractsBySeason$(season)));
+
+    return css$.pipe(
+      map(css => css.map((cs, index) => ({ season: seasons[index], contracts: cs }))),
+    );
   }
 
   private documentToObject(contract: any): any {
@@ -200,4 +209,9 @@ export class ContractService implements OnDestroy {
   public static hasRegularFormula(section: ContractSection) {
     return ContractFormulas.hasRegularFormula(section.formula);
   }
+}
+
+export interface SeasonContractsPair {
+  season: Season;
+  contracts: Array<Contract>;
 }
