@@ -41,20 +41,22 @@
       </ion-card-header>
 
       <ion-card-content>
-        <table class="report-table">
-          <tr *ngFor="let row of table.content; let r=index">
-            <ng-container *ngIf="r < table.headerRowCount">
-              <th *ngFor="let cell of row; let c=index" [class]="table.style(r, c)">
-                <span>{{ cell }}</span>
-              </th>
-            </ng-container>
-            <ng-container *ngIf="r >= table.headerRowCount">
-              <td *ngFor="let cell of row; let c=index" [class]="table.style(r, c)">
-                {{ cell }}
-              </td>
-            </ng-container>
-          </tr>
-        </table>
+        <div class="report-container">
+          <table class="report-table">
+            <tr *ngFor="let row of table.content; let r=index">
+              <ng-container *ngIf="r < table.headerRowCount">
+                <th *ngFor="let cell of row; let c=index" [class]="table.style(r, c)">
+                  <span>{{ cell }}</span>
+                </th>
+              </ng-container>
+              <ng-container *ngIf="r >= table.headerRowCount">
+                <td *ngFor="let cell of row; let c=index" [class]="table.style(r, c)">
+                  {{ cell }}
+                </td>
+              </ng-container>
+            </tr>
+          </table>
+        </div>
       </ion-card-content>
 
     </ion-card>

@@ -266,7 +266,7 @@ export class DistributionChecklistReport implements Report {
           ...presence.map(mp => {
             let p = mp.member.persons[0];
             return [p.lastname, p.firstname, p.phoneNumber, ...mp.presence];
-          }),
+          }).sort(([l1, f1], [l2, f2]) => (l1 + '#' + f1).localeCompare(l2 + '#' + f2)),
         ];
       }),
     );

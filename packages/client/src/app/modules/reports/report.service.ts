@@ -17,10 +17,11 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { Roles } from '../../toolkit/providers/auth-service';
+import { observeInsideAngular } from '../../utils/observables';
 
 import { ContractService } from '../contracts/contract.service';
 import { MemberService } from '../members/member.service';
@@ -63,7 +64,8 @@ export class ReportService implements ReportHelper {
   constructor(public seasons: SeasonService,
               public members: MemberService,
               public contracts: ContractService,
-              public translateService: TranslateService) {
+              public translateService: TranslateService,
+              private ngZone: NgZone) {
   }
 
   public readonly reports: ReportDescription[] = REPORTS;
@@ -74,7 +76,9 @@ export class ReportService implements ReportHelper {
 
   public generate$(name: string): Observable<ReportTable[]> {
     let report = this.reportByName(name).report;
-    return new report().generate$(this);
+    return new report().generate$(this).pipe(
+      observeInsideAngular(this.ngZone),
+    );
   }
 
   public writeReport(name: string) {
