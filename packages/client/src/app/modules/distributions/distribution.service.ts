@@ -232,6 +232,12 @@ export class DistributionService implements OnDestroy {
     }
   }
 
+  public static contractSpansOverWeek(section: ContractSection, week: SeasonWeek) {
+    const weekNumber = week.seasonWeek;
+    return section.firstWeek <= weekNumber
+      && (!section.lastWeek || section.lastWeek >= weekNumber);
+  }
+
   public static totals(baskets: Basket[]): { [kind: string]: BasketSectionTotals } {
     const allCounts: { [kind: string]: BasketSectionTotals } = {};
 

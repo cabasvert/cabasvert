@@ -87,8 +87,7 @@ export class BasketPerMonthReport implements Report {
               seasonWeeks.forEach(week => {
                 const month: Date = this.monthFor(week);
 
-                const count = DistributionService.basketCount(c, s, week);
-                if (count > 0) {
+                if (DistributionService.contractSpansOverWeek(s, week)) {
                   monthlyPresence.set(month.toISOString(), month);
                 }
               });
@@ -102,11 +101,13 @@ export class BasketPerMonthReport implements Report {
           });
         });
 
+        let formulas = ContractFormulas.formulas.slice(0, -1);
+
         const bsByMonth = groupBy(sms, sm => sm.month.toISOString())
           .map(group => ({
             month: group.values[0].month,
             total: group.values.length,
-            counts: ContractFormulas.formulas.map(({ id }) =>
+            counts: formulas.map(({ id }) =>
               group.values.reduce((acc, v) => v.formulaId === id ? acc + 1 : acc, 0),
             ),
           }))
@@ -116,7 +117,7 @@ export class BasketPerMonthReport implements Report {
 
         return [
           ['Mois', 'Total',
-            ...ContractFormulas.formulas.map(f => helper.translateService.instant(f.label)),
+            ...formulas.map(f => helper.translateService.instant(f.label)),
           ],
           ...bsByMonth.map(mc =>
             [this.formatMonth(mc.month), mc.total, ... mc.counts.map(c => '' + c)],
@@ -126,10 +127,12 @@ export class BasketPerMonthReport implements Report {
     );
   }
 
-  private style = (row, col) => col === 0 ? 'left' : row === 0 && col >= 2 ? 'rotate' : 'center';
+  private style = (row, col) =>
+    col === 0 ? (row === 0 ? 'left' : 'right') :
+      row === 0 && col >= 2 ? 'rotate' : 'center';
 
   private formatMonth(date: Date) {
-    return formatDate(date, 'MMMM y', 'fr');
+    return formatDate(date, 'MMM y', 'fr');
   }
 
   private monthFor(week): Date {
