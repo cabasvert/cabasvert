@@ -19,21 +19,44 @@
 
 interface Date {
 
+  /**
+   * Returns the ISO day. (0 = monday, 6 = sunday)
+   */
+  getISODay(): number
+
+  /**
+   * Sets the day to a day of the week.
+   * @param day the day of the week (0 = monday, 6 = sunday)
+   */
+  setISODay(day: number): Date
+
   addDays(days: number): Date
 
-  substract(other: Date): number
+  subtract(other: Date): number
 
-  getWeek(): [number, number]
+  getISOWeek(): [number, number]
 
   isBefore(other: Date): boolean
 }
 
+// noinspection JSUnusedGlobalSymbols
 interface DateConstructor {
 
-  fromWeek(week: [number, number]): Date
+  today(): Date
+
+  fromISOWeek(week: [number, number]): Date
 }
 
-const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24
+const MILLISECONDS_IN_A_MINUTE = 1000 * 60
+const MILLISECONDS_IN_A_DAY = MILLISECONDS_IN_A_MINUTE * 60 * 24
+
+Date.prototype.getISODay = function () {
+  return (this.getDay() || 7) - 1
+}
+
+Date.prototype.setISODay = function (day) {
+  return this.addDays(-this.getISODay() + day)
+}
 
 Date.prototype.addDays = function (days) {
   let date = new Date(this.valueOf())
@@ -41,11 +64,11 @@ Date.prototype.addDays = function (days) {
   return date
 }
 
-Date.prototype.substract = function (other) {
+Date.prototype.subtract = function (other) {
   return Math.round((this.getTime() - other.getTime()) / MILLISECONDS_IN_A_DAY)
 }
 
-Date.prototype.getWeek = function () {
+Date.prototype.getISOWeek = function () {
   // Copy date so don't modify original
   let d = new Date(+this)
   d.setHours(0, 0, 0, 0)
@@ -64,16 +87,19 @@ Date.prototype.isBefore = function (other) {
   return this.toISOString() < other.toISOString()
 }
 
-Date.fromWeek = function (week) {
+Date.today = function () {
+  let date = new Date()
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate())
+};
+
+Date.fromISOWeek = function (week) {
   let year = week[0]
   let weekNumber = week[1]
 
-  let simple = new Date(Date.UTC(year, 0, 1 + (weekNumber - 1) * 7))
-  let dow = simple.getDay()
-  let isoWeekStart = simple
-  if (dow <= 4)
-    isoWeekStart.setDate(simple.getDate() - simple.getDay() + 1)
+  let simple = new Date(year, 0, 1).addDays((weekNumber - 1) * 7)
+  let isoDay = simple.getISODay()
+  if (isoDay <= 3)
+    return simple.addDays(-isoDay)
   else
-    isoWeekStart.setDate(simple.getDate() + 8 - simple.getDay())
-  return isoWeekStart
+    return simple.addDays(-isoDay + 7)
 }

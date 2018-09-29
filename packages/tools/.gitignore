@@ -45,3 +45,6 @@ dist
 .idea
 
 *.js
+
+# Backup files
+backup-*.json

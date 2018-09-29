@@ -33,10 +33,15 @@ export class DatabaseGenerator {
 
     let memberCount = generateInt(140, 100)
 
-    let thisSeasonIndex = seasons.findIndex(s => s.startDate.isBefore(today) && today.isBefore(s.endDate))
+    let thisSeasonIndex = seasons.findIndex(
+      s => distributionDate(s.startWeek, s.distributionDay).addDays(-6) <= today
+        && today < distributionDate(s.endWeek, s.distributionDay).addDays(+1),
+    )
     let thisSeason = seasons[thisSeasonIndex]
     let thisWeeks = computeWeeks(thisSeason)
-    let thisSeasonWeek = thisWeeks.find(w => today.isBefore(w.date)).seasonWeek
+    let thisSeasonWeek = thisWeeks.find(
+      w => w.date.addDays(-6) <= today && today < w.date.addDays(+1),
+    ).seasonWeek
 
     let memberInfo = generateArray(() => {
       let maxSeasonIndex = seasons.length - 1
@@ -90,7 +95,6 @@ const CONTRACT_KINDS = ['legumes', 'oeufs']
 
 function generateSeasons(today: Date) {
   let seasons = []
-  const dayOfWeek = 1 // (0 = monday)
 
   let currentYear = today.getFullYear()
 
@@ -100,8 +104,9 @@ function generateSeasons(today: Date) {
       type: 'season',
       sver: 'v1',
       name: `Été ${year}`,
-      startDate: Date.fromWeek([year, 14]).addDays(dayOfWeek),
-      endDate: Date.fromWeek([year, 40]).addDays(dayOfWeek),
+      distributionDay: 'tuesday',
+      startWeek: [year, 14],
+      endWeek: [year, 39],
       weekCount: 24,
       ignoredWeeks: [[year, 31], [year, 32]],
     })
@@ -110,8 +115,9 @@ function generateSeasons(today: Date) {
       type: 'season',
       sver: 'v1',
       name: `Hiver ${year}`,
-      startDate: Date.fromWeek([year, 40]).addDays(dayOfWeek),
-      endDate: Date.fromWeek([year + 1, 14]).addDays(dayOfWeek),
+      distributionDay: 'tuesday',
+      startWeek: [year, 40],
+      endWeek: [year + 1, 13],
       weekCount: 24,
       ignoredWeeks: [[year, 52], [year + 1, 1]],
     })
@@ -120,17 +126,31 @@ function generateSeasons(today: Date) {
   return seasons
 }
 
+const dayStringToISODay = {
+  'monday': 0,
+  'tuesday': 1,
+  'wednesday': 2,
+  'thursday': 3,
+  'friday': 4,
+  'saturday': 5,
+  'sunday': 6,
+}
+
+function distributionDate(week: [number, number], distributionDay) {
+  return Date.fromISOWeek(week).setISODay(dayStringToISODay[distributionDay])
+}
+
 function computeWeeks(season) {
   let weeks = []
 
-  let startDate = season.startDate
+  let date = distributionDate(season.startWeek, season.distributionDay)
   let weekCount = season.weekCount
   let ignoredWeeks = season.ignoredWeeks || []
 
-  let date = startDate
-  let calendarWeek = date.getWeek()
   let otherWeek = false
   for (let seasonWeek = 1; seasonWeek <= weekCount;) {
+    let calendarWeek = date.getISOWeek()
+
     let ignored = ignoredWeeks.some((w) => calendarWeek.toString() === w.toString())
 
     if (!ignored) {
@@ -139,7 +159,6 @@ function computeWeeks(season) {
     }
 
     date = date.addDays(7)
-    calendarWeek = date.getWeek()
   }
   return weeks
 }
