@@ -90,7 +90,7 @@ Date.prototype.isBefore = function (other) {
 Date.today = function () {
   let date = new Date()
   return new Date(date.getFullYear(), date.getMonth(), date.getDate())
-};
+}
 
 Date.fromISOWeek = function (week) {
   let year = week[0]

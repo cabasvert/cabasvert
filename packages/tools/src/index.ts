@@ -85,6 +85,7 @@ export class CabasVertTools {
     try {
       await command.execute(args.slice(1), opts)
     } catch (error) {
+      if (error) this.logger.error(error)
       if (error.stack) console.log(error.stack)
     }
   }

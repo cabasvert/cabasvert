@@ -31,7 +31,7 @@ export class DatabaseGenerator {
 
     let seasons = generateSeasons(today)
 
-    let memberCount = generateInt(140, 100)
+    let memberCount = generateInt(120, 100)
 
     let thisSeasonIndex = seasons.findIndex(
       s => distributionDate(s.startWeek, s.distributionDay).addDays(-6) <= today
@@ -45,25 +45,28 @@ export class DatabaseGenerator {
 
     let memberInfo = generateArray(() => {
       let maxSeasonIndex = seasons.length - 1
-      let firstSeasonIndex = generateInt(thisSeasonIndex)
-      let lastSeasonIndex = firstSeasonIndex === maxSeasonIndex ?
-        firstSeasonIndex : generateInt(maxSeasonIndex, firstSeasonIndex + 1)
+      let firstSeasonIndex = generateInt(thisSeasonIndex, 0, x => x ** 3)
+      let lastSeasonIndex = generateInt(maxSeasonIndex, firstSeasonIndex, x => x ** (1 / 3))
 
       let firstSeason = seasons[firstSeasonIndex]
 
       let everyWeek = generateBoolean()
 
       let trialBasketCount =
-        firstSeasonIndex === thisSeasonIndex && thisSeasonWeek >= thisSeason.weekCount - 4 ?
-          generateInt((thisSeason.weekCount - thisSeasonWeek) / (everyWeek ? 1 : 2)) : generateInt(4)
+        firstSeasonIndex === thisSeasonIndex && thisSeasonWeek <= 4 * (everyWeek ? 1 : 2) ?
+          generateInt(thisSeasonWeek / (everyWeek ? 1 : 2)) : generateInt(4)
 
       let trialBasketSpan = trialBasketCount * (everyWeek ? 1 : 2)
 
       let firstTrialWeek = firstSeasonIndex === thisSeasonIndex ?
-        generateInt(thisSeasonWeek - trialBasketSpan, 1) :
-        generateInt(firstSeason.weekCount - trialBasketSpan, 1)
+        generateInt(thisSeasonWeek - trialBasketSpan + 1, 1) :
+        generateInt(firstSeason.weekCount - trialBasketSpan + 1, 1)
 
-      let firstContractWeek = firstTrialWeek + trialBasketSpan
+      let firstContractWeek =
+        firstSeasonIndex === thisSeasonIndex &&
+        firstTrialWeek + trialBasketSpan > thisSeasonWeek ?
+          -1 : firstTrialWeek + trialBasketSpan
+
       let sections = CONTRACT_KINDS
         .map(k => ({
           kind: k,
@@ -82,7 +85,7 @@ export class DatabaseGenerator {
       }
     }, memberCount)
 
-    let members = generateMembers(memberInfo, seasons, names)
+    let members = generateMembers(memberInfo, seasons, names, thisSeasonIndex, thisSeasonWeek)
     let validators = generateArray(() => generateOneOf(members).persons[0].firstname, 4)
     let contracts = generateContracts(memberInfo, seasons, thisSeasonIndex, validators)
     let distributions = []
@@ -163,13 +166,14 @@ function computeWeeks(season) {
   return weeks
 }
 
-function generateMembers(memberInfo, seasons, names) {
+function generateMembers(memberInfo, seasons, names, thisSeasonIndex, thisSeasonWeek) {
   return memberInfo
     .map(info => {
       let member = generateMember(names)
       info.memberId = member._id
 
-      let season = seasons[info.firstSeasonIndex]
+      let seasonIndex = info.firstSeasonIndex
+      let season = seasons[seasonIndex]
 
       let trialBaskets = info.trialBasketCount === 0 ? null :
         range(0, info.trialBasketCount - 1)
@@ -177,7 +181,7 @@ function generateMembers(memberInfo, seasons, names) {
           .map(w => ({
             season: season._id,
             week: w,
-            paid: true,
+            paid: !(seasonIndex === thisSeasonIndex && w >= thisSeasonWeek),
             sections: info.sections,
           }))
 
@@ -188,8 +192,10 @@ function generateMembers(memberInfo, seasons, names) {
 function generateContracts(memberInfo, seasons, thisSeasonIndex, validators) {
   return memberInfo
     .map(info => {
+      if (info.firstContractWeek === -1) return []
+
       let firstSeason = seasons[info.firstSeasonIndex]
-      let startsAtNextSeason = info.firstContractWeek === firstSeason.weekCount + 1
+      let startsAtNextSeason = info.firstContractWeek > firstSeason.weekCount
       let firstSeasonIndex = info.firstSeasonIndex + (startsAtNextSeason ? 1 : 0)
       return range(firstSeasonIndex, info.lastSeasonIndex)
         .map(seasonIndex => {
@@ -205,7 +211,10 @@ function generateContracts(memberInfo, seasons, thisSeasonIndex, validators) {
             sections: info.sections.map(s => ({
               kind: s.kind,
               formula: info.everyWeek || s.count === 0 ? s.count : [s.count, 0],
-              firstWeek: seasonIndex === firstSeasonIndex ? firstWeek : info.everyWeek ? 1 : firstWeek % 2 + 1,
+              firstWeek:
+                seasonIndex === firstSeasonIndex ? firstWeek :
+                  info.everyWeek ? 1 :
+                    firstWeek % 2 === 1 ? 1 : 2,
             })),
             wish: wish,
             validation: wish ? null : {
