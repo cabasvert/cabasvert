@@ -150,6 +150,8 @@ export class AuthService {
       else return null;
     }
 
+    await this.platform.ready();
+
     try {
       let data = await storage.get(SECURE_STORAGE_KEY);
       this.credentials = data ? JSON.parse(data) : null;
@@ -163,6 +165,8 @@ export class AuthService {
   public async tryStoreCredentials(): Promise<void> {
     let storage = await this._passwordStorage;
     if (!storage) return Promise.resolve();
+
+    await this.platform.ready();
 
     try {
       await storage.set(SECURE_STORAGE_KEY, JSON.stringify((this.credentials)));

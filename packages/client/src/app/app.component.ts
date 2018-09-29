@@ -81,7 +81,6 @@ export class AppComponent implements OnInit {
   }
 
   private async initializeApp() {
-    await this.platform.ready();
 
     this.initTranslation();
 
@@ -96,7 +95,7 @@ export class AppComponent implements OnInit {
     }
 
     if (this.platform.is('android') || this.platform.is('ios')) {
-      await StatusBar.setStyle({ style: StatusBarStyle.Light });
+      await StatusBar.setStyle({ style: StatusBarStyle.Dark });
       await StatusBar.setBackgroundColor({ color: '#126019' });
     }
 
@@ -111,6 +110,7 @@ export class AppComponent implements OnInit {
       take(1),
     ).subscribe(() => {
       if (this.platform.is('android') || this.platform.is('ios')) {
+        this.log.debug('Hiding splash screen');
         SplashScreen.hide();
       }
     });
