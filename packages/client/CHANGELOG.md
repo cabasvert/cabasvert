@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.3.0-beta.8"></a>
+# [0.3.0-beta.8](https://github.com/cabasvert/cabasvert-client/compare/v0.3.0-beta.7...v0.3.0-beta.8) (2018-09-29)
+
+
+### Bug Fixes
+
+* **reports:** make the reports scrollable ([d79d9f7](https://github.com/cabasvert/cabasvert-client/commit/d79d9f7))
+* **startup:** don't wait for platform ready for Capacitor plugins ([df493ba](https://github.com/cabasvert/cabasvert-client/commit/df493ba))
+
+
+
 <a name="0.3.0-beta.7"></a>
 # [0.3.0-beta.7](https://github.com/cabasvert/cabasvert-client/compare/v0.3.0-beta.6...v0.3.0-beta.7) (2018-09-28)
 
