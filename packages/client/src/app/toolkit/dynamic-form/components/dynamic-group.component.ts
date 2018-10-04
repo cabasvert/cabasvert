@@ -18,7 +18,7 @@
  */
 
 import { Component } from '@angular/core';
-import { GroupConfig } from '../models/form-config.interface';
+import { ComponentConfig, GroupConfig } from '../models/form-config.interface';
 import { DynamicChildControlComponent } from './dynamic-child-control.component';
 
 @Component({
@@ -41,5 +41,5 @@ import { DynamicChildControlComponent } from './dynamic-child-control.component'
     '.group-disabled ion-item-divider * { cursor: default; opacity: .3; }'
   ],
 })
-export class DynamicGroupComponent extends DynamicChildControlComponent<GroupConfig> {
+export class DynamicGroupComponent extends DynamicChildControlComponent<GroupConfig & ComponentConfig> {
 }

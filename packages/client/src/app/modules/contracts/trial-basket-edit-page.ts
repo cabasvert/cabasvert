@@ -24,11 +24,12 @@ import { Validators } from '@angular/forms';
 import { ModalController, NavParams } from '@ionic/angular';
 import { map, switchMap } from 'rxjs/operators';
 import { DynamicFormService, DynamicGroup } from '../../toolkit/dynamic-form/dynamic-form.service';
-import { ControlConfig, FormConfig } from '../../toolkit/dynamic-form/models/form-config.interface';
+import * as forms from '../../toolkit/dynamic-form/models/form-config.interface';
 import { objectAssignNoNulls } from '../../utils/objects';
 import { filterNotNull } from '../../utils/observables';
 import { TrialBasket } from '../members/member.model';
 import { MemberService } from '../members/member.service';
+import { Season, SeasonWeek } from '../seasons/season.model';
 import { SeasonService } from '../seasons/season.service';
 
 import { ContractKind } from './contract.model';
@@ -39,21 +40,19 @@ import { ContractKind } from './contract.model';
 })
 export class TrialBasketEditPage implements OnDestroy {
 
-  config: FormConfig = {
+  config = forms.form({
     controls: [
-      {
+      forms.select<Season>({
         name: 'season',
         label: 'REF.SEASON',
-        kind: 'select',
         options: () => this.seasonService.latestSeasons$(),
         optionLabel: season => season.name,
         optionValue: season => season.id,
         validator: Validators.required,
-      },
-      {
+      }),
+      forms.select<SeasonWeek>({
         name: 'week',
         label: 'REF.WEEK',
-        kind: 'select',
         options:
           form => form.get('season').value$.pipe(
             filterNotNull(),
@@ -63,37 +62,34 @@ export class TrialBasketEditPage implements OnDestroy {
         optionLabel: week => this.formatWeek(week),
         optionValue: week => week.seasonWeek,
         validator: Validators.required,
-      },
-      {
+      }),
+      forms.checkbox({
         name: 'paid',
         label: 'TRIAL_BASKET.PAID',
-        kind: 'checkbox',
-      },
-      {
+      }),
+      forms.array({
         name: 'sections',
-        kind: 'array',
-        controls: [ContractKind.VEGETABLES, ContractKind.EGGS].map((kind, index) => ({
-          name: index.toString(),
-          label: kind === 'legumes' ? 'REF.VEGETABLES' : 'REF.EGGS',
-          icon: ContractKind.icon(kind),
-          kind: 'group',
-          controls: [
-            {
-              name: 'kind',
-              kind: 'hidden-input',
-              type: 'text',
-            },
-            {
-              name: 'count',
-              label: 'REF.COUNT',
-              kind: 'input',
-              type: 'number',
-            },
-          ],
-        } as ControlConfig)),
-      },
+        controls: [ContractKind.VEGETABLES, ContractKind.EGGS].map((kind, index) =>
+          forms.group({
+            name: index.toString(),
+            label: kind === 'legumes' ? 'REF.VEGETABLES' : 'REF.EGGS',
+            icon: ContractKind.icon(kind),
+            controls: [
+              forms.hiddenInput({
+                name: 'kind',
+                type: 'text',
+              }),
+              forms.input({
+                name: 'count',
+                label: 'REF.COUNT',
+                type: 'number',
+              }),
+            ],
+          }),
+        ),
+      }),
     ],
-  };
+  });
 
   form: DynamicGroup;
 

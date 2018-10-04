@@ -17,10 +17,10 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ChildConfigBase } from '../models/form-config.interface';
+import { ChildControlConfig, ComponentConfig, FormConfig } from '../models/form-config.interface';
 import { DynamicControlComponent } from './dynamic-control.component';
 
-export abstract class DynamicChildControlComponent<C extends ChildConfigBase> extends DynamicControlComponent<C> {
+export abstract class DynamicChildControlComponent<C extends ChildControlConfig & ComponentConfig> extends DynamicControlComponent<C> {
 
   get dynamicControl() {
     return this.group.get(this.config.name);

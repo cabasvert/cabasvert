@@ -19,9 +19,9 @@
 
 import { Observable } from 'rxjs';
 import { DynamicGroup } from '../dynamic-form.service';
-import { ControlConfigBase } from '../models/form-config.interface';
+import { ComponentConfig, ConfigFn, ControlConfig } from '../models/form-config.interface';
 
-export abstract class DynamicControlComponent<C extends ControlConfigBase> {
+export abstract class DynamicControlComponent<C extends ControlConfig & ComponentConfig> {
   config: C;
   group: DynamicGroup;
   form: DynamicGroup;
@@ -63,5 +63,9 @@ export abstract class DynamicControlComponent<C extends ControlConfigBase> {
 
   get disabled$(): Observable<boolean> {
     return this.dynamicControl.disabled$;
+  }
+
+  protected applyConfigFn<T>(config: ConfigFn<T>): T {
+    return config instanceof Function ? config(this.form, this.group) : config;
   }
 }

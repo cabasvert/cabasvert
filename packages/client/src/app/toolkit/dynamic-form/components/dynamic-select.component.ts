@@ -20,14 +20,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map, publishReplay, refCount } from 'rxjs/operators';
-import { SelectConfig } from '../models/form-config.interface';
+import { ComponentConfig, SelectConfig } from '../models/form-config.interface';
 import { DynamicChildControlComponent } from './dynamic-child-control.component';
 
 @Component({
   selector: 'dynamic-select',
   template: `
-    <ion-item [formGroup]="group.control">
-      <ion-label color="primary">{{ config.label | translate }}</ion-label>
+    <dynamic-item [formGroup]="group.control" [label]="config.label" [problems]="problems">
       <ion-select [formControlName]="config.name"
                   [placeholder]="config.placeholder"
                   [interface]="config.interface || 'popover'">
@@ -36,22 +35,15 @@ import { DynamicChildControlComponent } from './dynamic-child-control.component'
           {{ optionLabel(option, index) }}
         </ion-select-option>
       </ion-select>
-
-      <ion-label color="danger" slot="end" style="font-size: xx-small;"
-                 *ngIf="problems">
-        <span *ngIf="problems['required']">{{ 'DIALOGS.REQUIRED' | translate }}</span>
-      </ion-label>
-    </ion-item>
+    </dynamic-item>
   `,
 })
-export class DynamicSelectComponent extends DynamicChildControlComponent<SelectConfig<any>> implements OnInit {
+export class DynamicSelectComponent extends DynamicChildControlComponent<SelectConfig<any> & ComponentConfig> implements OnInit {
 
   options$: Observable<any[]>;
 
   ngOnInit() {
-    let options = this.config.options;
-
-    if (options instanceof Function) options = options(this.form, this.group);
+    let options = this.applyConfigFn(this.config.options);
 
     this.options$ = (options instanceof Observable ? options : of(options)).pipe(
       map(os => {

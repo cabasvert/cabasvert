@@ -18,10 +18,8 @@
  */
 
 import { Component, Input } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
 import { DynamicGroup } from '../dynamic-form.service';
-import { GroupConfigBase } from '../models/form-config.interface';
+import { ContainerConfig } from '../models/form-config.interface';
 
 @Component({
   selector: 'dynamic-controls',
@@ -39,7 +37,7 @@ import { GroupConfigBase } from '../models/form-config.interface';
 })
 export class DynamicControlsComponent {
 
-  @Input() config: GroupConfigBase;
+  @Input() config: ContainerConfig;
   @Input() form: DynamicGroup;
   @Input() group: DynamicGroup;
 

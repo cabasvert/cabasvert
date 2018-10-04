@@ -31,6 +31,7 @@ import { DynamicFormComponent } from './components/dynamic-form.component';
 import { DynamicGroupComponent } from './components/dynamic-group.component';
 import { DynamicHiddenInputComponent } from './components/dynamic-hidden-input.component';
 import { DynamicInputComponent } from './components/dynamic-input.component';
+import { DynamicItemComponent } from './components/dynamic-item.component';
 import { DynamicSelectComponent } from './components/dynamic-select.component';
 import { DynamicTextareaComponent } from './components/dynamic-textarea.component';
 import { DynamicFormService } from './dynamic-form.service';
@@ -43,6 +44,8 @@ import { DynamicFormService } from './dynamic-form.service';
     ReactiveFormsModule,
   ],
   declarations: [
+    DynamicItemComponent,
+
     DynamicControlHostDirective,
     DynamicControlsComponent,
     DynamicFormComponent,
@@ -56,6 +59,7 @@ import { DynamicFormService } from './dynamic-form.service';
   ],
   exports: [
     DynamicFormComponent,
+    DynamicItemComponent,
   ],
   entryComponents: [
     DynamicArrayComponent,

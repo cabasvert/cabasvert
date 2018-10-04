@@ -21,12 +21,14 @@ import { Injectable } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { combineLatest, Observable, of, Subscription } from 'rxjs';
 import { map, publishBehavior, refCount } from 'rxjs/operators';
+import { DynamicArrayComponent } from './components/dynamic-array.component';
+import { DynamicGroupComponent } from './components/dynamic-group.component';
 import {
-  BasicControlConfig,
+  ChildControlConfig,
+  ComponentConfig,
   ControlConfig,
-  ControlConfigBase,
   FormConfig,
-  GroupConfigBase,
+  ContainerConfig,
 } from './models/form-config.interface';
 
 @Injectable()
@@ -35,13 +37,13 @@ export class DynamicFormService {
   constructor(private fb: FormBuilder) {
   }
 
-  public createForm(config: FormConfig) {
+  public createForm(config: FormConfig & ComponentConfig) {
     let dynamicGroup = this.createGroup(config);
     dynamicGroup.initialize(dynamicGroup, dynamicGroup);
     return dynamicGroup;
   }
 
-  private createGroup(config: GroupConfigBase) {
+  private createGroup(config: ContainerConfig & ComponentConfig) {
     const { validator, asyncValidator } = config;
     const group = this.fb.group({}, { validator, asyncValidator });
     const dynamicGroup = new DynamicGroup(group, config);
@@ -53,7 +55,7 @@ export class DynamicFormService {
     return dynamicGroup;
   }
 
-  private createArray(config: GroupConfigBase) {
+  private createArray(config: ContainerConfig & ComponentConfig) {
     const { validator, asyncValidator } = config;
     const array = this.fb.array([], validator, asyncValidator);
     const dynamicGroup = new DynamicArray(array, config);
@@ -65,17 +67,17 @@ export class DynamicFormService {
     return dynamicGroup;
   }
 
-  private create(config: ControlConfig) {
-    if (config.kind === 'array') {
-      return this.createArray(config);
-    } else if (config.kind === 'group') {
-      return this.createGroup(config);
+  private create(config: ChildControlConfig & ComponentConfig) {
+    if (config.component === DynamicArrayComponent) {
+      return this.createArray(config as any);
+    } else if (config.component === DynamicGroupComponent) {
+      return this.createGroup(config as any);
     } else {
       return this.createControl(config);
     }
   }
 
-  private createControl(config: BasicControlConfig) {
+  private createControl(config: ChildControlConfig & ComponentConfig) {
     const { value, validator, asyncValidator } = config;
     const control = this.fb.control(value, validator, asyncValidator);
     return new DynamicControl(control, config);
@@ -89,7 +91,7 @@ export class DynamicControl {
 
   private _subscription = new Subscription();
 
-  constructor(public control: AbstractControl, public _config: ControlConfigBase) {
+  constructor(public control: AbstractControl, public _config: ControlConfig & ComponentConfig) {
 
     this.value$ = this.control.valueChanges.pipe(
       publishBehavior(this.control.value),
@@ -163,6 +165,10 @@ export class DynamicControl {
     return this.control.value;
   }
 
+  patchValue(value: any) {
+    this.control.patchValue(value);
+  }
+
   get disabled$() {
     return this._disabled$;
   }
@@ -182,7 +188,7 @@ export class DynamicArray extends DynamicControl {
 
   controls: DynamicControl[] = [];
 
-  constructor(public control: FormArray, public _config: GroupConfigBase) {
+  constructor(public control: FormArray, public _config: ContainerConfig & ComponentConfig) {
     super(control, _config);
   }
 
@@ -214,7 +220,7 @@ export class DynamicGroup extends DynamicControl {
 
   controls = new Map<string, DynamicControl>();
 
-  constructor(public control: FormGroup, public _config: GroupConfigBase) {
+  constructor(public control: FormGroup, public _config: ContainerConfig & ComponentConfig) {
     super(control, _config);
   }
 

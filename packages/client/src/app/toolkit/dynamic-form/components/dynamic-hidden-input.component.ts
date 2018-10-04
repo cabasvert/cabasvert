@@ -18,7 +18,7 @@
  */
 
 import { Component } from '@angular/core';
-import { InputConfig } from '../models/form-config.interface';
+import { ComponentConfig, HiddenInputConfig } from '../models/form-config.interface';
 import { DynamicChildControlComponent } from './dynamic-child-control.component';
 
 @Component({
@@ -32,5 +32,5 @@ import { DynamicChildControlComponent } from './dynamic-child-control.component'
     </ng-container>
   `,
 })
-export class DynamicHiddenInputComponent extends DynamicChildControlComponent<InputConfig> {
+export class DynamicHiddenInputComponent extends DynamicChildControlComponent<HiddenInputConfig & ComponentConfig> {
 }

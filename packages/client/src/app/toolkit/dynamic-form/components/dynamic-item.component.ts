@@ -17,18 +17,29 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from '@angular/core';
-import { CheckboxConfig, ComponentConfig } from '../models/form-config.interface';
-import { DynamicChildControlComponent } from './dynamic-child-control.component';
+import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'dynamic-checkbox',
+  selector: 'dynamic-item',
   template: `
-    <dynamic-item [formGroup]="group.control" [label]="config.label" [problems]="problems">
-      <ion-checkbox [formControlName]="config.name">
-      </ion-checkbox>
-    </dynamic-item>
+    <ion-item [formGroup]="formGroup">
+      <ion-label color="primary">{{ label | translate }}</ion-label>
+
+      <ng-content></ng-content>
+
+      <ion-label *ngIf="problems && problems['required']"
+                 color="danger" slot="end" class="required">
+        <span *ngIf="problems['required']">{{ 'DIALOGS.REQUIRED' | translate }}</span>
+      </ion-label>
+    </ion-item>
   `,
+  styles: [
+    'ion-label.required { font-size: xx-small; margin-right: 0; flex: 0 0 auto; }',
+  ],
 })
-export class DynamicCheckboxComponent extends DynamicChildControlComponent<CheckboxConfig & ComponentConfig> {
+export class DynamicItemComponent {
+
+  @Input() formGroup;
+  @Input() label;
+  @Input() problems;
 }

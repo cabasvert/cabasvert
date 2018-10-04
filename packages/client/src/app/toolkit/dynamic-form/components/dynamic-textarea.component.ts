@@ -18,25 +18,19 @@
  */
 
 import { Component } from '@angular/core';
-import { InputConfig } from '../models/form-config.interface';
+import { ComponentConfig, TextAreaConfig } from '../models/form-config.interface';
 import { DynamicChildControlComponent } from './dynamic-child-control.component';
 
 @Component({
   selector: 'dynamic-input',
   template: `
-    <ion-item [formGroup]="group.control">
-      <ion-label color="primary">{{ config.label | translate }}</ion-label>
+    <dynamic-item [formGroup]="group.control" [label]="config.label" [problems]="problems">
       <ion-textarea
         [placeholder]="config.placeholder"
         [formControlName]="config.name">
       </ion-textarea>
-
-      <ion-label color="danger" slot="end" style="font-size: xx-small;"
-                 *ngIf="problems">
-        <span *ngIf="problems['required']">{{ 'DIALOGS.REQUIRED' | translate }}</span>
-      </ion-label>
-    </ion-item>
+    </dynamic-item>
   `,
 })
-export class DynamicTextareaComponent extends DynamicChildControlComponent<InputConfig> {
+export class DynamicTextareaComponent extends DynamicChildControlComponent<TextAreaConfig & ComponentConfig> {
 }

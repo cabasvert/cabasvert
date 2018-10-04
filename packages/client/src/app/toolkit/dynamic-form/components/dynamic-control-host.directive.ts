@@ -21,42 +21,22 @@ import {
   ComponentFactoryResolver,
   ComponentRef,
   Directive,
-  Input, OnChanges,
-  OnInit,
-  Type,
+  Input,
+  OnChanges,
   ViewContainerRef,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
 import { DynamicGroup } from '../dynamic-form.service';
-import { ControlConfig } from '../models/form-config.interface';
-import { DynamicArrayComponent } from './dynamic-array.component';
-import { DynamicCheckboxComponent } from './dynamic-checkbox.component';
+import { ChildControlConfig, ComponentConfig } from '../models/form-config.interface';
 
 import { DynamicControlComponent } from './dynamic-control.component';
-import { DynamicGroupComponent } from './dynamic-group.component';
-import { DynamicHiddenInputComponent } from './dynamic-hidden-input.component';
-import { DynamicInputComponent } from './dynamic-input.component';
-import { DynamicSelectComponent } from './dynamic-select.component';
-import { DynamicTextareaComponent } from './dynamic-textarea.component';
 
 import { FormButtonComponent } from './form-button.component';
-
-const components: { [control: string]: Type<DynamicControlComponent<any>> } = {
-  'array': DynamicArrayComponent,
-  'group': DynamicGroupComponent,
-  'checkbox': DynamicCheckboxComponent,
-  'hidden-input': DynamicHiddenInputComponent,
-  'input': DynamicInputComponent,
-  'select': DynamicSelectComponent,
-  'textarea': DynamicTextareaComponent,
-};
 
 @Directive({
   selector: '[dynamicControlHost]',
 })
 export class DynamicControlHostDirective implements OnChanges {
-  @Input() config: ControlConfig;
+  @Input() config: ChildControlConfig & ComponentConfig;
   @Input() form: DynamicGroup;
   @Input() group: DynamicGroup;
 
@@ -67,16 +47,8 @@ export class DynamicControlHostDirective implements OnChanges {
   }
 
   ngOnChanges() {
-    let control = this.config.kind;
-
-    if (!components[control]) {
-      const supportedTypes = Object.keys(components).join(', ');
-      throw new Error(
-        `Trying to use an unsupported type (${control}).
-        Supported types: ${supportedTypes}`,
-      );
-    }
-    const factory = this.resolver.resolveComponentFactory<DynamicControlComponent<any>>(components[control]);
+    let type = this.config.component;
+    const factory = this.resolver.resolveComponentFactory<DynamicControlComponent<any>>(type);
     this.component = this.container.createComponent(factory);
     this.component.instance.initialize(this.config, this.group, this.form);
   }

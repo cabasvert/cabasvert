@@ -20,7 +20,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DynamicFormService, DynamicGroup } from '../dynamic-form.service';
 
-import { FormConfig } from '../models/form-config.interface';
+import { ComponentConfig, FormConfig } from '../models/form-config.interface';
 import { DynamicControlComponent } from './dynamic-control.component';
 
 @Component({
@@ -36,14 +36,10 @@ import { DynamicControlComponent } from './dynamic-control.component';
     </form>
   `,
 })
-export class DynamicFormComponent extends DynamicControlComponent<FormConfig> implements OnInit {
+export class DynamicFormComponent extends DynamicControlComponent<FormConfig & ComponentConfig> implements OnInit {
 
-  @Input() config: FormConfig = {
-    controls: [],
-  };
-
+  @Input() config: FormConfig & ComponentConfig;
   @Input() form: DynamicGroup;
-
   @Output() submit: EventEmitter<any> = new EventEmitter<any>();
 
   get dynamicControl() {

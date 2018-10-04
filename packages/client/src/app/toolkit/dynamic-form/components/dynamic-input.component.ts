@@ -19,28 +19,22 @@
 
 import { Component, OnInit } from '@angular/core';
 import { Forms } from '../../utils/forms';
-import { InputConfig } from '../models/form-config.interface';
+import { ComponentConfig, InputConfig } from '../models/form-config.interface';
 import { DynamicChildControlComponent } from './dynamic-child-control.component';
 
 @Component({
   selector: 'dynamic-input',
   template: `
-    <ion-item [formGroup]="group.control">
-      <ion-label color="primary">{{ config.label | translate }}</ion-label>
+    <dynamic-item [formGroup]="group.control" [label]="config.label" [problems]="problems">
       <ion-input
         [type]="config.type"
         [placeholder]="config.placeholder"
         [formControlName]="config.name">
       </ion-input>
-
-      <ion-label color="danger" slot="end" style="font-size: xx-small;"
-                 *ngIf="problems">
-        <span *ngIf="problems['required']">{{ 'DIALOGS.REQUIRED' | translate }}</span>
-      </ion-label>
-    </ion-item>
+    </dynamic-item>
   `,
 })
-export class DynamicInputComponent extends DynamicChildControlComponent<InputConfig> implements OnInit {
+export class DynamicInputComponent extends DynamicChildControlComponent<InputConfig & ComponentConfig> implements OnInit {
 
   ngOnInit() {
     if (this.config.type === 'number') {

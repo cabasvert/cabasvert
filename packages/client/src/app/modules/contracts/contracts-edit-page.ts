@@ -19,15 +19,16 @@
 
 import { formatDate } from '@angular/common';
 import { Component, Inject, LOCALE_ID } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { ModalController, NavParams } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { map, switchMap } from 'rxjs/operators';
 import { DynamicFormService, DynamicGroup } from '../../toolkit/dynamic-form/dynamic-form.service';
-import { ControlConfig, FormConfig } from '../../toolkit/dynamic-form/models/form-config.interface';
+import * as forms from '../../toolkit/dynamic-form/models/form-config.interface';
 import { objectAssignNoNulls } from '../../utils/objects';
 import { filterNotNull } from '../../utils/observables';
+import { Season, SeasonWeek } from '../seasons/season.model';
 import { SeasonService } from '../seasons/season.service';
 import { Contract, ContractFormulas, ContractKind } from './contract.model';
 
@@ -37,153 +38,139 @@ import { Contract, ContractFormulas, ContractKind } from './contract.model';
 })
 export class ContractsEditPage {
 
-  config: FormConfig = {
+  config = forms.form({
     controls: [
-      {
+      forms.select<Season>({
         name: 'season',
         label: 'REF.SEASON',
-        kind: 'select',
         options: () => this.seasonService.latestSeasons$(),
         optionLabel: season => season.name,
         optionValue: season => season.id,
         validator: Validators.required,
-      },
-      {
+      }),
+      forms.array({
         name: 'sections',
-        kind: 'array',
-        controls: [ContractKind.VEGETABLES, ContractKind.EGGS].map((kind, index) => ({
-          name: index.toString(),
-          label: kind === 'legumes' ? 'REF.VEGETABLES' : 'REF.EGGS',
-          icon: ContractKind.icon(kind),
-          kind: 'group',
-          controls: [
-            {
-              name: 'kind',
-              kind: 'hidden-input',
-              type: 'text',
-            },
-            {
-              name: 'formulaId',
-              label: 'CONTRACT.FORMULA',
-              kind: 'select',
-              options: () => ContractFormulas.formulas,
-              optionLabel: f => this.translateService.instant(f.label),
-              optionValue: f => f.id,
-              validator: Validators.required,
-            },
-            {
-              name: 'firstWeek',
-              label: 'CONTRACT.FIRST_WEEK',
-              kind: 'select',
-              options:
-                f => f.get('season').value$.pipe(
+        controls: [ContractKind.VEGETABLES, ContractKind.EGGS].map((kind, index) =>
+          forms.group({
+            name: index.toString(),
+            label: kind === 'legumes' ? 'REF.VEGETABLES' : 'REF.EGGS',
+            icon: ContractKind.icon(kind),
+            controls: [
+              forms.hiddenInput({
+                name: 'kind',
+                type: 'text',
+              }),
+              forms.select({
+                name: 'formulaId',
+                label: 'CONTRACT.FORMULA',
+                options: () => ContractFormulas.formulas,
+                optionLabel: f => this.translateService.instant(f.label),
+                optionValue: f => f.id,
+                validator: Validators.required,
+              }),
+              forms.select<SeasonWeek>({
+                name: 'firstWeek',
+                label: 'CONTRACT.FIRST_WEEK',
+                options:
+                  f => f.get('season').value$.pipe(
+                    filterNotNull(),
+                    switchMap(sid => this.seasonService.seasonById$(sid)),
+                    map(s => s.seasonWeeks()),
+                  ),
+                optionLabel: w => this.formatWeek(w),
+                optionValue: w => w.seasonWeek,
+                validator: Validators.required,
+                disabled: (f, g) => g.get('formulaId').value$.pipe(
                   filterNotNull(),
-                  switchMap(sid => this.seasonService.seasonById$(sid)),
-                  map(s => s.seasonWeeks()),
+                  map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
                 ),
-              optionLabel: w => this.formatWeek(w),
-              optionValue: w => w.seasonWeek,
-              validator: Validators.required,
-              disabled: (f, g) => g.get('formulaId').value$.pipe(
-                filterNotNull(),
-                map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
-              ),
-            },
-            {
-              name: 'lastWeek',
-              label: 'CONTRACT.LAST_WEEK',
-              kind: 'select',
-              options:
-                f => f.get('season').value$.pipe(
+              }),
+              forms.select<SeasonWeek | null>({
+                name: 'lastWeek',
+                label: 'CONTRACT.LAST_WEEK',
+                options:
+                  f => f.get('season').value$.pipe(
+                    filterNotNull(),
+                    switchMap(sid => this.seasonService.seasonById$(sid)),
+                    map(s => s.seasonWeeks()),
+                  ),
+                nullOption: true,
+                optionLabel: w => !w ? null : this.formatWeek(w),
+                optionValue: w => !w ? null : w.seasonWeek,
+                disabled: (f, g) => g.get('formulaId').value$.pipe(
                   filterNotNull(),
-                  switchMap(sid => this.seasonService.seasonById$(sid)),
-                  map(s => s.seasonWeeks()),
+                  map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
                 ),
-              nullOption: true,
-              optionLabel: w => !w ? null : this.formatWeek(w),
-              optionValue: w => !w ? null : w.seasonWeek,
-              disabled: (f, g) => g.get('formulaId').value$.pipe(
-                filterNotNull(),
-                map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
-              ),
-            },
-          ],
-        } as ControlConfig)),
-      },
-      {
+              }),
+            ],
+          }),
+        ),
+      }),
+      forms.group({
         name: 'validation',
         label: 'CONTRACT.VALIDATION',
         icon: 'checkmark',
-        kind: 'group',
         controls: [
-          {
+          forms.checkbox({
             name: 'wish',
             label: 'CONTRACT.WISH',
-            kind: 'checkbox',
             value: true,
-          },
-          {
+          }),
+          forms.input({
             name: 'validatedBy',
             label: 'CONTRACT.VALIDATED_BY',
-            kind: 'input',
             type: 'text',
             validator: Validators.required,
             disabled: (f, g) => g.get('wish').value$,
-          },
-          {
+          }),
+          forms.group({
             name: 'paperCopies',
             label: 'CONTRACT.PAPER_COPIES',
             icon: 'paper',
-            kind: 'group',
             controls: [
-              {
+              forms.checkbox({
                 name: 'forAssociation',
                 label: 'CONTRACT.FOR_ASSOCIATION',
-                kind: 'checkbox',
                 value: false,
-              },
-              {
+              }),
+              forms.checkbox({
                 name: 'forFarmer',
                 label: 'CONTRACT.FOR_PRODUCER',
-                kind: 'checkbox',
                 value: false,
-              },
+              }),
             ],
             disabled: (f, g) => g.get('wish').value$,
-          },
-          {
+          }),
+          forms.group({
             name: 'cheques',
             label: 'CONTRACT.CHEQUES',
             icon: 'cash',
-            kind: 'group',
             controls: [
-              {
+              forms.checkbox({
                 name: 'vegetables',
                 label: 'REF.VEGETABLES',
-                kind: 'checkbox',
                 value: false,
                 disabled: f => f.get('sections.0.formulaId').value$.pipe(
                   filterNotNull(),
                   map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
                 ),
-              },
-              {
+              }),
+              forms.checkbox({
                 name: 'eggs',
                 label: 'REF.EGGS',
-                kind: 'checkbox',
                 value: false,
                 disabled: f => f.get('sections.1.formulaId').value$.pipe(
                   filterNotNull(),
                   map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
                 ),
-              },
+              }),
             ],
             disabled: (f, g) => g.get('wish').value$,
-          },
+          }),
         ],
-      },
+      }),
     ],
-  };
+  });
 
   form: DynamicGroup;
 

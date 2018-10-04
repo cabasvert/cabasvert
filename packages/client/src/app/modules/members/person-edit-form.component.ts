@@ -25,7 +25,7 @@ import { of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { EditFormComponent } from '../../toolkit/dialogs/edit-form.interface';
 import { DynamicFormService, DynamicGroup } from '../../toolkit/dynamic-form/dynamic-form.service';
-import { FormConfig } from '../../toolkit/dynamic-form/models/form-config.interface';
+import * as forms from '../../toolkit/dynamic-form/models/form-config.interface';
 import { objectAssignNoNulls } from '../../utils/objects';
 import { Person } from './member.model';
 import { MemberService } from './member.service';
@@ -36,45 +36,40 @@ import { MemberService } from './member.service';
 })
 export class PersonEditFormComponent implements EditFormComponent {
 
-  config: FormConfig = {
+  config = forms.form({
     controls: [
-      {
+      forms.input({
         name: 'firstname',
         label: 'PERSON.FIRSTNAME',
-        kind: 'input',
         type: 'text',
         validator: Validators.required,
-      },
-      {
+      }),
+      forms.input({
         name: 'lastname',
         label: 'PERSON.LASTNAME',
-        kind: 'input',
         type: 'text',
         validator: Validators.required,
-      },
-      {
+      }),
+      forms.textArea({
         name: 'address',
         label: 'PERSON.ADDRESS',
-        kind: 'textarea',
-      },
-      {
+      }),
+      forms.input({
         name: 'phoneNumber',
         label: 'PERSON.PHONE_NUMBER',
-        kind: 'input',
         type: 'tel',
-      },
-      {
+      }),
+      forms.input({
         name: 'emailAddress',
         label: 'PERSON.EMAIL_ADDRESS',
-        kind: 'input',
         type: 'email',
-      },
+      }),
     ],
     asyncValidator: this.personDoesNotAlreadyExist,
     errorLabels: {
       'memberAlreadyExists': 'PERSON.PROBLEM_MEMBER_PERSON_ALREADY_EXISTS',
     },
-  };
+  });
 
   form: DynamicGroup;
 
