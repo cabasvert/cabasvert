@@ -22,10 +22,12 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { DynamicFormModule } from '../../toolkit/dynamic-form/dynamic-form.module';
 
 import { SeasonService } from './season.service';
-import { WeekSelectorComponent } from './week-selector/week-selector.component';
+import { DynamicWeekSelectComponent } from './week-selector/dynamic-week-select.component';
 import { WeekSelectControl } from './week-selector/week-select-control.component';
+import { WeekSelectorComponent } from './week-selector/week-selector.component';
 import { WeekViewComponent } from './week-view/week-view.component';
 
 @NgModule({
@@ -34,18 +36,22 @@ import { WeekViewComponent } from './week-view/week-view.component';
     IonicModule,
     TranslateModule,
     ReactiveFormsModule,
+    DynamicFormModule,
   ],
   declarations: [
     WeekSelectorComponent,
     WeekSelectControl,
+    DynamicWeekSelectComponent,
     WeekViewComponent,
   ],
   entryComponents: [
     WeekSelectorComponent,
+    DynamicWeekSelectComponent,
   ],
   exports: [
     WeekSelectorComponent,
     WeekSelectControl,
+    DynamicWeekSelectComponent,
     WeekViewComponent,
   ],
   providers: [

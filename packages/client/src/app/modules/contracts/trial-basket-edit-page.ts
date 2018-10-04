@@ -22,15 +22,16 @@ import { Component, Inject, LOCALE_ID, OnDestroy } from '@angular/core';
 import { Validators } from '@angular/forms';
 
 import { ModalController, NavParams } from '@ionic/angular';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { DynamicFormService, DynamicGroup } from '../../toolkit/dynamic-form/dynamic-form.service';
 import * as forms from '../../toolkit/dynamic-form/models/form-config.interface';
 import { objectAssignNoNulls } from '../../utils/objects';
 import { filterNotNull } from '../../utils/observables';
 import { TrialBasket } from '../members/member.model';
 import { MemberService } from '../members/member.service';
-import { Season, SeasonWeek } from '../seasons/season.model';
+import { Season } from '../seasons/season.model';
 import { SeasonService } from '../seasons/season.service';
+import { weekSelect } from '../seasons/week-selector/dynamic-week-select';
 
 import { ContractKind } from './contract.model';
 
@@ -50,17 +51,14 @@ export class TrialBasketEditPage implements OnDestroy {
         optionValue: season => season.id,
         validator: Validators.required,
       }),
-      forms.select<SeasonWeek>({
+      weekSelect({
         name: 'week',
         label: 'REF.WEEK',
-        options:
-          form => form.get('season').value$.pipe(
+        season:
+          f => f.get('season').value$.pipe(
             filterNotNull(),
             switchMap(sid => this.seasonService.seasonById$(sid)),
-            map(s => s.seasonWeeks()),
           ),
-        optionLabel: week => this.formatWeek(week),
-        optionValue: week => week.seasonWeek,
         validator: Validators.required,
       }),
       forms.checkbox({

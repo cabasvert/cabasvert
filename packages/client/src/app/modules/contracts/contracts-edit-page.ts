@@ -19,7 +19,7 @@
 
 import { formatDate } from '@angular/common';
 import { Component, Inject, LOCALE_ID } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
 
 import { ModalController, NavParams } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -30,6 +30,7 @@ import { objectAssignNoNulls } from '../../utils/objects';
 import { filterNotNull } from '../../utils/observables';
 import { Season, SeasonWeek } from '../seasons/season.model';
 import { SeasonService } from '../seasons/season.service';
+import { weekSelect } from '../seasons/week-selector/dynamic-week-select';
 import { Contract, ContractFormulas, ContractKind } from './contract.model';
 
 @Component({
@@ -68,39 +69,35 @@ export class ContractsEditPage {
                 optionValue: f => f.id,
                 validator: Validators.required,
               }),
-              forms.select<SeasonWeek>({
+              weekSelect({
                 name: 'firstWeek',
                 label: 'CONTRACT.FIRST_WEEK',
-                options:
+                season:
                   f => f.get('season').value$.pipe(
                     filterNotNull(),
                     switchMap(sid => this.seasonService.seasonById$(sid)),
-                    map(s => s.seasonWeeks()),
                   ),
-                optionLabel: w => this.formatWeek(w),
-                optionValue: w => w.seasonWeek,
                 validator: Validators.required,
-                disabled: (f, g) => g.get('formulaId').value$.pipe(
-                  filterNotNull(),
-                  map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
-                ),
+                disabled:
+                  (f, g) => g.get('formulaId').value$.pipe(
+                    filterNotNull(),
+                    map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
+                  ),
               }),
-              forms.select<SeasonWeek | null>({
+              weekSelect({
                 name: 'lastWeek',
                 label: 'CONTRACT.LAST_WEEK',
-                options:
+                season:
                   f => f.get('season').value$.pipe(
                     filterNotNull(),
                     switchMap(sid => this.seasonService.seasonById$(sid)),
-                    map(s => s.seasonWeeks()),
                   ),
-                nullOption: true,
-                optionLabel: w => !w ? null : this.formatWeek(w),
-                optionValue: w => !w ? null : w.seasonWeek,
-                disabled: (f, g) => g.get('formulaId').value$.pipe(
-                  filterNotNull(),
-                  map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
-                ),
+                nullAllowed: true,
+                disabled:
+                  (f, g) => g.get('formulaId').value$.pipe(
+                    filterNotNull(),
+                    map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
+                  ),
               }),
             ],
           }),
@@ -150,19 +147,21 @@ export class ContractsEditPage {
                 name: 'vegetables',
                 label: 'REF.VEGETABLES',
                 value: false,
-                disabled: f => f.get('sections.0.formulaId').value$.pipe(
-                  filterNotNull(),
-                  map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
-                ),
+                disabled:
+                  f => f.get('sections.0.formulaId').value$.pipe(
+                    filterNotNull(),
+                    map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
+                  ),
               }),
               forms.checkbox({
                 name: 'eggs',
                 label: 'REF.EGGS',
                 value: false,
-                disabled: f => f.get('sections.1.formulaId').value$.pipe(
-                  filterNotNull(),
-                  map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
-                ),
+                disabled:
+                  f => f.get('sections.1.formulaId').value$.pipe(
+                    filterNotNull(),
+                    map(i => ContractFormulas.formulaForId(i).isNoneFormula()),
+                  ),
               }),
             ],
             disabled: (f, g) => g.get('wish').value$,
