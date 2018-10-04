@@ -1,0 +1,57 @@
+<!--
+  This file is part of CabasVert.
+
+  Copyright 2017, 2018 Didier Villevalois
+
+  CabasVert is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  CabasVert is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<ion-grid>
+  <ion-row *ngFor="let weekGroup of weekGroups$ | async">
+    <ng-container *ngFor="let weekInfo of weekGroup">
+      <ion-col [size]="weekInfo.week.doubleDistribution ? 6 : 3"
+               [class]="weekInfo.week.distributionDate.getMonth() % 2 === 0 ? 'even' : 'odd'">
+
+        <div>
+        <div class="month-name">
+          <ng-container *ngIf="weekInfo.isFirstOfMonth">
+            {{ weekInfo.week.distributionDate | date: 'MMM' }}
+          </ng-container>
+        </div>
+
+        <ion-button [fill]="isSameWeek(selectedWeek$ | async, weekInfo.week) ? 'solid' : 'outline'"
+                    (click)="weekChange$.next(weekInfo.week)">
+          <span>
+            {{ weekInfo.week.distributionDate.getDate() }}
+          </span>
+          <span *ngIf="isSameWeek(currentWeek$ | async, weekInfo.week)"
+                class="current-week"
+                [class.selected-week]="isSameWeek(selectedWeek$ | async, weekInfo.week)">
+            ●
+          </span>
+        </ion-button>
+        </div>
+      </ion-col>
+    </ng-container>
+  </ion-row>
+  <ion-row *ngIf="nullAllowed" class="unset-button">
+    <ion-col size="12">
+      <ion-button size="small" expand="full" fill="clear"
+                  (click)="weekChange$.next(null)" [disabled]="!(selectedWeek$ | async)">
+        <ion-label>{{ 'SEASONS.UNSET_WEEK' | translate }}</ion-label>
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-grid>

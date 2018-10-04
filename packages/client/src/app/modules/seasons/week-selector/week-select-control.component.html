@@ -1,0 +1,51 @@
+<!--
+  This file is part of CabasVert.
+
+  Copyright 2017, 2018 Didier Villevalois
+
+  CabasVert is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  CabasVert is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<div class="decrement"
+     [class.decrement-disabled]="decrementDisabled$ | async">
+  <div class="decrement-icon"></div>
+  <button (click)="decrement()"
+          class="decrement-button"
+          [disabled]="decrementDisabled$ | async">
+  </button>
+</div>
+
+<div role="textbox" aria-multiline="false" class="select-text">
+  <app-week-view [seasonId]="(season$ | async).id" [weekNumber]="weekNumber"></app-week-view>
+</div>
+<div class="select-icon" role="presentation">
+  <div class="select-icon-inner"></div>
+</div>
+
+<div class="increment"
+     [class.increment-disabled]="incrementDisabled$ | async">
+  <div class="increment-icon"></div>
+  <button (click)="increment()"
+          class="increment-button"
+          [disabled]="incrementDisabled$ | async">
+  </button>
+</div>
+
+<button (click)="showWeekSelector($event)"
+        class="select-cover"
+        type="button"
+        role="combobox"
+        aria-haspopup="dialog"
+        [attr.aria-disabled]="disabled ? 'true' : null">
+</button>

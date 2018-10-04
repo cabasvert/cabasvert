@@ -166,5 +166,8 @@
   },
   "NOTES": {
     "EDIT_NOTES": "Edit notes"
+  },
+  "SEASONS": {
+    "UNSET_WEEK": "Unset selected week"
   }
 }

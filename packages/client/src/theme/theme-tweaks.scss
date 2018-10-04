@@ -1,9 +1,4 @@
 
-// FIXME Remove after ionic 4.0.0-beta3
-ion-button[disabled] {
-  pointer-events: none !important;
-}
-
 // Fixes for lists with inset margin
 
 .list-md.list-inset ion-item:first-child {
@@ -36,13 +31,8 @@ ion-item-divider ion-icon[slot=end] {
 // Fixes for ion-select not occupying full space
 
 ion-item.item-interactive {
-  ion-label {
-    flex: initial;
-  }
   ion-select {
-    flex: 1;
-    max-width: unset;
-    text-align: right;
+    max-width: 60%;
   }
 }
 
@@ -54,4 +44,21 @@ ion-toolbar.toolbar-thinner {
   --padding-top: 0;
   --padding-bottom: 0;
   --min-height: 42px;
+}
+
+// Large popover
+
+.large-popover .popover-content {
+  min-width: 300px;
+  width: 300px;
+}
+
+// Right popover
+
+// FIXME Find a correct way to open the popover on the right
+// This is used in app-week-select
+.right-popover .popover-content {
+  transform-origin: right top 0px !important;
+  right: 16px !important;
+  left: unset !important;
 }

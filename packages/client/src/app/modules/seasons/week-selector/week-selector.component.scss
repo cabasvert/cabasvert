@@ -1,0 +1,63 @@
+:host {
+  --ion-grid-padding: 0;
+}
+
+ion-row:not(:first-of-type) {
+  ion-col {
+    border-top: 1px solid var(--ion-color-light-tint);
+  }
+}
+
+ion-row:not(:last-of-type) {
+  ion-col {
+    border-bottom: 1px solid var(--ion-color-light-tint);
+  }
+}
+
+ion-col {
+
+  &.even {
+    background-color: var(--ion-color-light-shade);
+  }
+  &.odd {
+    background-color: var(--ion-color-light-tint);
+  }
+
+  div {
+    display: flex;
+    justify-content: space-around;
+
+    .month-name {
+      min-width: 1.2em;
+
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+
+      font-size: .7em;
+      font-weight: bold;
+      color: var(--ion-color-primary);
+    }
+
+    ion-button {
+      --width: 3em;
+
+      .current-week {
+        position: fixed;
+        right: 3px;
+        top: 0;
+      }
+      .current-week.selected-week {
+        right: 4px;
+        top: 1px;
+      }
+    }
+  }
+}
+
+ion-row.unset-button {
+  padding: 0;
+
+  ion-button {
+    font-size: 10px;
+  }
+}

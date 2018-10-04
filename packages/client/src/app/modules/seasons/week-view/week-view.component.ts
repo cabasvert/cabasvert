@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SeasonWeek } from '../season.model';
@@ -28,17 +28,17 @@ import { SeasonService } from '../season.service';
   templateUrl: './week-view.component.html',
   styleUrls: ['./week-view.component.scss'],
 })
-export class WeekViewComponent implements OnInit {
+export class WeekViewComponent implements OnChanges {
 
-  @Input('seasonId') seasonId: string;
-  @Input('weekNumber') weekNumber: number;
+  @Input() seasonId: string;
+  @Input() weekNumber: number;
 
   seasonWeek$: Observable<SeasonWeek>;
 
   constructor(private seasonService: SeasonService) {
   }
 
-  ngOnInit() {
+  ngOnChanges() {
     this.seasonWeek$ = this.seasonService.seasonById$(this.seasonId).pipe(
       map(season => season.seasonWeekByNumber(this.weekNumber)),
     );

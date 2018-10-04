@@ -166,5 +166,8 @@
   },
   "NOTES": {
     "EDIT_NOTES": "Éditer les notes"
+  },
+  "SEASONS": {
+    "UNSET_WEEK": "Effacer la sélection"
   }
 }

@@ -1,0 +1,206 @@
+@import "~@ionic/core/dist/collection/themes/ionic.globals";
+
+:host {
+  /**
+   * @prop --color: Color of the select text
+   * @prop --icon-color: Color of the select icon
+   * @prop --padding-top: Top padding of the select
+   * @prop --padding-end: End padding of the select
+   * @prop --padding-bottom: Bottom padding of the select
+   * @prop --padding-start: Start padding of the select
+   * @prop --placeholder-color: Color of the select placeholder text
+   */
+
+  @include padding(var(--padding-top), var(--padding-end), var(--padding-bottom), var(--padding-start));
+
+  display: flex;
+  position: relative;
+  color: var(--color);
+  font-family: $font-family-base;
+  overflow: hidden;
+}
+
+:host-context(ion-item) {
+  position: static;
+
+  max-width: 60%;
+}
+
+:host(.select-disabled) {
+  opacity: .4;
+  pointer-events: none;
+}
+
+button {
+  font-size: inherit;
+  display: flex;
+
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+
+  appearance: none;
+  outline: none;
+}
+
+.select-text {
+  flex: 1;
+  min-width: 16px;
+  font-size: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.select-cover {
+  @include input-cover();
+}
+
+.select-icon {
+  position: relative;
+}
+
+.select-icon-inner {
+  @include position(50%, null, null, 5px);
+  @include margin(-3px, null, null, null);
+
+  position: absolute;
+
+  width: 0;
+  height: 0;
+
+  border-top: 5px solid;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+
+  color: var(--icon-color);
+  pointer-events: none;
+}
+
+.decrement-disabled, .increment-disabled {
+  opacity: .4;
+  pointer-events: none;
+}
+
+.decrement, .increment {
+  position: relative;
+
+  width: 22px;
+  height: 19px;
+}
+
+.decrement-button {
+  @include position(50%, null, null, 0);
+  @include margin(-22px);
+
+  position: absolute;
+
+  height: 44px;
+  width: 44px;
+
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+
+  appearance: none;
+  outline: none;
+
+  z-index: 10;
+}
+
+.increment-button {
+  @include position(50%, 0, null, null);
+  @include margin(-22px);
+
+  position: absolute;
+
+  height: 44px;
+  width: 44px;
+
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+
+  appearance: none;
+  outline: none;
+
+  z-index: 10;
+}
+
+.decrement-icon {
+  @include position(50%, null, null, 0);
+  @include margin(-6px, null, null, null);
+
+  position: absolute;
+
+  width: 0;
+  height: 0;
+
+  border-right: 5px solid;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+
+  color: var(--color);
+  pointer-events: none;
+}
+
+.increment-icon {
+  @include position(50%, 0, null, null);
+  @include margin(-6px, null, null, null);
+
+  position: absolute;
+
+  width: 0;
+  height: 0;
+
+  border-left: 5px solid;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+
+  color: var(--color);
+  pointer-events: none;
+}
+
+// MD
+
+@import "~@ionic/core/dist/collection/themes/ionic.globals.md";
+@import "~@ionic/core/dist/collection/components/item/item.md.vars";
+
+// Material Design Select
+// --------------------------------------------------
+
+/// @prop - Padding top of the select
+$select-md-padding-top: $item-md-padding-top !default;
+
+/// @prop - Padding end of the select
+$select-md-padding-end: ($item-md-padding-end / 2) !default;
+
+/// @prop - Padding bottom of the select
+$select-md-padding-bottom: $item-md-padding-bottom !default;
+
+/// @prop - Padding start of the select
+$select-md-padding-start: $item-md-padding-start !default;
+
+/// @prop - Color of the select icon
+$select-md-icon-color: $text-color-step-600 !default;
+
+/// @prop - Color of the select placeholder
+$select-md-placeholder-color: $select-md-icon-color !default;
+
+/// @prop - Text Color of the selected item
+$select-md-text-color: $text-color !default;
+
+:host {
+  --color: #{$select-md-text-color};
+  --icon-color: #{$select-md-icon-color};
+  --padding-top: #{$select-md-padding-top};
+  --padding-end: #{$select-md-padding-end};
+  --padding-bottom: #{$select-md-padding-bottom};
+  --padding-start: #{$select-md-padding-start};
+  --placeholder-color: #{$select-md-placeholder-color};
+}
+
+.select-icon {
+  width: 12px;
+  height: 19px;
+}

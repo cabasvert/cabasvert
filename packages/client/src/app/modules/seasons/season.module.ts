@@ -24,6 +24,8 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { SeasonService } from './season.service';
+import { WeekSelectorComponent } from './week-selector/week-selector.component';
+import { WeekSelectControl } from './week-selector/week-select-control.component';
 import { WeekViewComponent } from './week-view/week-view.component';
 
 @NgModule({
@@ -34,10 +36,16 @@ import { WeekViewComponent } from './week-view/week-view.component';
     ReactiveFormsModule,
   ],
   declarations: [
+    WeekSelectorComponent,
+    WeekSelectControl,
     WeekViewComponent,
   ],
-  entryComponents: [],
+  entryComponents: [
+    WeekSelectorComponent,
+  ],
   exports: [
+    WeekSelectorComponent,
+    WeekSelectControl,
     WeekViewComponent,
   ],
   providers: [
