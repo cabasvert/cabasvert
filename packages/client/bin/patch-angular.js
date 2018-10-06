@@ -22,21 +22,31 @@
  * It must be called by npm after install. Make sure that your package.json includes:
  * {
  *   "scripts": {
- *     "postinstall": "node bin/patch-angular.js"
+ *     "prepare": "node bin/patch-angular.js"
  *   }
  * }
  */
 
 const fs = require('fs');
-const f = 'node_modules/@angular-devkit/build-angular/src/angular-cli-files/models/webpack-configs/browser.js';
 
-fs.readFile(f, 'utf8', function (err,data) {
-  if (err) {
-    return console.log(err);
+let filename = '/src/angular-cli-files/models/webpack-configs/browser.js';
+let localModule = 'node_modules/@angular-devkit/build-angular';
+let rootModule = '../../' + localModule;
+
+try {
+  rewriteNodeSettings(localModule + filename);
+  console.log('Correctly rewrote angular node config in ' + localModule);
+} catch (error) {
+  try {
+    rewriteNodeSettings(rootModule + filename);
+    console.log('Correctly rewrote angular node config in ' + rootModule);
+  } catch (error) {
+    console.error('Failed to rewrite angular node config', error);
   }
-  var result = data.replace(/node: false/g, 'node: {crypto: true, stream: true}');
+}
 
-  fs.writeFile(f, result, 'utf8', function (err) {
-    if (err) return console.log(err);
-  });
-});
+function rewriteNodeSettings(file) {
+  let data = fs.readFileSync(file, 'utf8');
+  let result = data.replace(/node: false/g, 'node: {crypto: true, stream: true}');
+  fs.writeFileSync(file, result, 'utf8');
+}
