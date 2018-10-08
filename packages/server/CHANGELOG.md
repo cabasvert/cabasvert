@@ -1,0 +1,32 @@
+<a name="0.2.1"></a>
+## [0.2.1](/compare/@cabasvert/server@0.2.1...@cabasvert/server@0.2.1) (2018-10-06)
+
+
+### Bug Fixes
+
+* **api:** prefix server apis with /api 9271842
+* **confirm:** use full post and check request data 39558dc
+* **database:** correctly update user metadata 4239b38
+* **database:** logIn/logOut at each request 201f9bb
+* **email:** fix smtp credentials configuration and 'from' address cbee182
+* **errors:** enhance error management and reporting bb971dd
+* **mail:** better handle smtp transport configuration 6e02337
+* **mail:** fix url in sent mail 38b0b63
+* **mail:** make a complete mail text not viewable as spam fec6075
+* **package:** update inversify-express-utils to version 6.0.0 c4f57a1
+* **startup:** fix startup to not crash if db url is not responding 17d2c65
+
+
+### Features
+
+* **cli:** add a bin definition 4727ebc
+* **config:** add cli option to generate client application config 881dd32
+* **config:** read config from a config file db2dc89
+* **cors:** enable CORS headers 52965fc
+* **errors:** log internal errors 0dd1cb1
+* **logs:** add more debugging messages of actions or problems b9e19f3
+* **status:** add a status check controller at /status/check 7498ac4
+* **token:** clear token after request with expired/invalid token bb09994
+
+
+

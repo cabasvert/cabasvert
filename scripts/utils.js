@@ -16,3 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+const path = require('path');
+const fs = require('fs-extra');
+const execa = require('execa');
+
+function readPackageJson(dir) {
+  const packagePath = path.join(dir, 'package.json');
+  return JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
+}
+
+async function checkGit() {
+  if (await execa.stdout('git', ['status', '--porcelain']) !== '') {
+    throw new Error(`Unclean working tree. Commit or stash changes first.`);
+  }
+  if (await execa.stdout('git', ['rev-list', '--count', '--left-only', '@{u}...HEAD']) !== '0') {
+    throw new Error(`Remote history differs. Please pull changes.`);
+  }
+}
+
+module.exports = {
+  readPackageJson,
+  checkGit,
+};

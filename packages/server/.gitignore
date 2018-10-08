@@ -47,3 +47,5 @@ dist
 *.js
 
 public
+
+artifacts

@@ -1,0 +1,128 @@
+/*
+ * This file is part of CabasVert.
+ *
+ * Copyright 2017, 2018 Didier Villevalois
+ *
+ * CabasVert is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * CabasVert is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+const path = require('path');
+const fs = require('fs-extra');
+const octokit = require('@octokit/rest')();
+const utils = require('./utils');
+
+const owner = 'cabasvert';
+const repository = 'cabasvert';
+
+let packageDir = process.cwd();
+let rootDir = path.join(packageDir, '../../');
+
+async function main() {
+  try {
+    if (!process.env.GH_TOKEN) {
+      throw new Error('env.GH_TOKEN is undefined');
+    }
+
+    await utils.checkGit();
+
+    let { name, version } = utils.readPackageJson(packageDir);
+    let tag = `${name}@${version}`;
+    let artifactsDir = path.join(packageDir, 'artifacts');
+
+    await publishGithub(version, tag, artifactsDir);
+
+  } catch (err) {
+    console.error('\n', err, '\n');
+    process.exit(1);
+  }
+}
+
+async function publishGithub(version, tag, artifactsDir) {
+  octokit.authenticate({
+    type: 'oauth',
+    token: process.env.GH_TOKEN
+  });
+
+  // Create the GitHub release
+  const result = await octokit.repos.createRelease({
+    owner: owner,
+    repo: repository,
+    target_commitish: 'master',
+    tag_name: tag,
+    name: version,
+    prerelease: isPreRelease(version),
+    body: lastChangelog(),
+  });
+
+  let uploadUrl = result.data.upload_url;
+
+  // Check if there are any artifacts to publish
+  try {
+    let files = fs.readdirSync(artifactsDir);
+    for (let file of files) {
+
+      let contentType = null;
+      if (file.endsWith('.tar.gz') || file.endsWith('.tgz')) {
+        contentType = 'application/tar+gzip';
+      } else if (file.endsWith('.apk')) {
+        contentType = 'application/vnd.android.package-archive';
+      } else {
+        console.warn(`Unknown content type for '${file}' – Skipping`);
+        return;
+      }
+
+      const content = await fs.readFile(file);
+
+      await octokit.repos.uploadAsset({
+        url: uploadUrl,
+        file: content,
+        contentType: contentType,
+        contentLength: file.byteLength,
+        name: path.basename(file),
+      });
+    }
+  } catch (err) {
+  }
+}
+
+function isPreRelease(version) {
+  return version.indexOf('alpha') !== -1
+      || version.indexOf('beta') !== -1
+      || version.indexOf('rc') !== -1;
+}
+
+function lastChangelog() {
+  const lines = fs.readFileSync('CHANGELOG.md', 'utf-8').toString().split('\n');
+  let start = -1;
+  let end = -1;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.startsWith('# [')) {
+      if (start === -1) {
+        start = i + 1;
+      } else {
+        end = i - 1;
+        break;
+      }
+    }
+  }
+
+  if (start === -1 || end === -1) {
+    throw new Error('changelog diff was not found');
+  }
+  return lines.slice(start, end).join('\n').trim();
+}
+
+main();
