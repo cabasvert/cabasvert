@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of CabasVert.
  *
  * Copyright 2017, 2018 Didier Villevalois
