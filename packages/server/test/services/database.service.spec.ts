@@ -27,9 +27,8 @@ import * as PouchSecurity from 'pouchdb-security-helper'
 
 import * as winston from 'winston'
 
-import { defaultConfiguration } from '../../src/config'
-
 import { DatabaseService } from '../../src/services/database.service'
+import { testConfiguration } from '../config'
 
 PouchDB
   .plugin(PouchHttp)
@@ -39,12 +38,18 @@ PouchDB
 
 describe('DatabaseService', () => {
 
-  let configuration = defaultConfiguration()
+  let configuration = testConfiguration()
 
   let serverUser = configuration.database.auth
 
   let databaseService
   let database
+
+  beforeAll(async () => {
+    // Ensure database exists
+    database = new PouchDB(configuration.database.url + '/_users')
+    await database.info()
+  })
 
   beforeEach(async () => {
 

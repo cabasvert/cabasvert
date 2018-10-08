@@ -44,10 +44,6 @@ export interface Configuration {
   smtpConnection: SMTPTransport.Options
 }
 
-export function defaultConfiguration() {
-  return parseJsonFile<Configuration>('config.json')
-}
-
 export function parseJsonFile<T>(path: string): T {
   let data = readFileSync(path, 'utf8')
   return JSON.parse(data)

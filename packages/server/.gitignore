@@ -46,6 +46,12 @@ dist
 
 *.js
 
+# Served public directory populated by the docker container
 public
 
+# Build artifacts
 artifacts
+
+# PouchDB Server log and config file
+log.txt
+pouchdb-server-config.json

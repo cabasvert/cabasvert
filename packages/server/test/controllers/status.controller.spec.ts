@@ -24,14 +24,15 @@ import 'reflect-metadata'
 import * as winston from 'winston'
 import { LoggerInstance } from 'winston'
 
-import { Configuration, defaultConfiguration } from '../../src/config'
-
+import { Configuration } from '../../src/config'
 import '../../src/controllers/user.controller'
 import { initializeServer } from '../../src/server'
 import { DatabaseService } from '../../src/services/database.service'
 import { MailService } from '../../src/services/mail.service'
 import { TokenService } from '../../src/services/token.service'
 import { Services } from '../../src/types'
+
+import { testConfiguration } from '../config'
 
 const request = require('supertest')
 
@@ -76,7 +77,7 @@ class MailServiceMock extends MailService {
 
 describe('StatusController', () => {
 
-  let configuration = defaultConfiguration()
+  let configuration = testConfiguration()
 
   let nullLogger = new winston.Logger({})
   let databaseServiceMock = new DatabaseServiceMock(configuration, nullLogger)
