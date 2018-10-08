@@ -20,6 +20,8 @@
 import { Observable, of } from 'rxjs'
 import { map } from 'rxjs/operators'
 
+import '../../utils/dates'
+
 import { SeasonService } from './season.service'
 
 interface SeasonData {

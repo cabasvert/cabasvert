@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Input, OnChanges, OnInit } from '@angular/core'
+import { Component, Input, OnChanges } from '@angular/core'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { SeasonWeek } from '../season.model'

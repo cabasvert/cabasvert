@@ -18,27 +18,59 @@
  */
 
 import { async, ComponentFixture, TestBed } from '@angular/core/testing'
+import { of } from 'rxjs'
+import { SeasonService } from '../season.service'
 
 import { WeekViewComponent } from './week-view.component'
 
 describe('WeekViewComponent', () => {
-  let component: WeekViewComponent
-  let fixture: ComponentFixture<WeekViewComponent>
+  let seasonService
 
   beforeEach(async(() => {
+    seasonService = jasmine.createSpyObj('SeasonService', ['seasonById$'])
+
     TestBed.configureTestingModule({
         declarations: [WeekViewComponent],
+        providers: [
+          { provide: SeasonService, useValue: seasonService },
+        ],
       })
       .compileComponents()
   }))
 
+  let component: WeekViewComponent
+  let fixture: ComponentFixture<WeekViewComponent>
+
   beforeEach(() => {
     fixture = TestBed.createComponent(WeekViewComponent)
     component = fixture.componentInstance
-    fixture.detectChanges()
   })
 
   it('should create', () => {
     expect(component).toBeTruthy()
+  })
+
+  it('should display the week', () => {
+    let seasonId = 'season:2018S'
+    let weekNumber = 7
+
+    let season = jasmine.createSpyObj('Season', ['seasonWeekByNumber'])
+    seasonService.seasonById$.withArgs(seasonId).and.returnValue(of(season))
+
+    let week = { distributionDate: new Date(2018, 3, 1), seasonWeek: 7 }
+    season.seasonWeekByNumber.withArgs(weekNumber).and.returnValue(week)
+
+    component.seasonId = seasonId
+    component.weekNumber = weekNumber
+
+    component.ngOnChanges()
+    fixture.detectChanges()
+
+    expect(seasonService.seasonById$).toHaveBeenCalled()
+
+    expect(season.seasonWeekByNumber).toHaveBeenCalled()
+
+    let content = fixture.nativeElement.textContent
+    expect(content).toContain('4/1/18 (7)')
   })
 })

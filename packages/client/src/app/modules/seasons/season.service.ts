@@ -20,7 +20,10 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core'
 import { Observable, Subscription, timer } from 'rxjs'
 import { distinctUntilChanged, map, publishReplay, refCount, switchMap } from 'rxjs/operators'
+
 import { DatabaseService } from '../../toolkit/providers/database-service'
+
+import '../../utils/dates'
 import { observeInsideAngular } from '../../utils/observables'
 import { Season, SeasonWeek } from './season.model'
 
