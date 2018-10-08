@@ -31,10 +31,10 @@ import { LogService } from './log-service'
 import { Logger } from './logger'
 
 interface UserData {
-  roles: string[];
-  name: string;
-  email: string;
-  database?: string;
+  roles: string[]
+  name: string
+  email: string
+  database?: string
 }
 
 export class User {
@@ -79,15 +79,15 @@ export class Roles {
 }
 
 export interface Credentials {
-  username: string;
-  password: string;
-  data?: UserData;
+  username: string
+  password: string
+  data?: UserData
 }
 
 export interface PasswordSet {
-  oldPassword: string;
-  newPassword: string;
-  confirmedPassword: string;
+  oldPassword: string
+  newPassword: string
+  confirmedPassword: string
 }
 
 const SECURE_STORAGE_NAME = 'CabasVert'

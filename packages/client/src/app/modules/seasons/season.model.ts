@@ -23,20 +23,20 @@ import { map } from 'rxjs/operators'
 import { SeasonService } from './season.service'
 
 interface SeasonData {
-  _id: string;
-  name: string;
-  startWeek: CalendarWeek;
-  endWeek: CalendarWeek;
-  distributionDay: DayString;
-  weekCount: number;
-  ignoredWeeks: CalendarWeek[];
-  doubleWeeks: CalendarWeek[];
+  _id: string
+  name: string
+  startWeek: CalendarWeek
+  endWeek: CalendarWeek
+  distributionDay: DayString
+  weekCount: number
+  ignoredWeeks: CalendarWeek[]
+  doubleWeeks: CalendarWeek[]
 }
 
-type CalendarWeek = [number, number];
+type CalendarWeek = [number, number]
 
 type DayString =
-  'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+  'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
 
 const dayStringToISODay = {
   'monday': 0,

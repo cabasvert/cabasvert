@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Input } from '@angular/core'
+import { Component, Input, OnInit } from '@angular/core'
 import { Observable } from 'rxjs'
 import { TrialBasket } from '../members/member.model'
 import { SeasonService } from '../seasons/season.service'
@@ -28,7 +28,7 @@ import { ContractKind } from './contract.model'
   templateUrl: './trial-basket-view.html',
   styleUrls: ['./trial-basket-view.scss'],
 })
-export class TrialBasketView {
+export class TrialBasketView implements OnInit {
   @Input() trialBasket: TrialBasket
   seasonName: Observable<string>
 

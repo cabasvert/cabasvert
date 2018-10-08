@@ -18,7 +18,7 @@
  */
 
 import { Observable, ReplaySubject, Subject } from 'rxjs'
-import Sync = PouchDB.Replication.Sync;
+import Sync = PouchDB.Replication.Sync
 
 export enum SyncStatus {
   ACTIVE,
@@ -29,8 +29,8 @@ export enum SyncStatus {
 }
 
 export interface SyncState {
-  status: SyncStatus;
-  error?: any;
+  status: SyncStatus
+  error?: any
 }
 
 export class SyncStateListener {

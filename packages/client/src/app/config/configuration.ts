@@ -30,10 +30,10 @@ export interface Configuration {
     remoteDBOnly: boolean
     wipeLocalDB: boolean
     debugPouch: boolean
-  };
+  }
   log: {
     [name: string]: LogLevel
-  };
+  }
 }
 
 export function defaultConfiguration() {

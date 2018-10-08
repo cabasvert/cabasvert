@@ -20,17 +20,17 @@
 import { Roles } from './toolkit/providers/auth-service'
 
 export interface PageGroup {
-  title?: string;
-  acceptedRoles?: string[];
-  pages: PageDescription[];
+  title?: string
+  acceptedRoles?: string[]
+  pages: PageDescription[]
 }
 
 export interface PageDescription {
-  title: string;
-  icon: string;
-  acceptedRoles?: string[];
-  path: string;
-  params?: any;
+  title: string
+  icon: string
+  acceptedRoles?: string[]
+  path: string
+  params?: any
 }
 
 export const PAGES = [

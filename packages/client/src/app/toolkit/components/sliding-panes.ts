@@ -53,7 +53,7 @@ export class SlidingPanes implements AfterContentInit {
     this._paneCount = this._panes.length
 
     this._perNamePaneIndex = {}
-    var index = 0
+    let index = 0
     this._panes.forEach(pane => {
       this._perNamePaneIndex[pane.name] = index++
       pane.setWidth(100 / this._paneCount)

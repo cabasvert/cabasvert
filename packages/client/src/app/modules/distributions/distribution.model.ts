@@ -111,7 +111,7 @@ export class Distribution {
   }
 
   pushNoteToBasket(basket: Basket, note?: { content: string }) {
-    if (note && note.content == '') note = null
+    if (note && note.content === '') note = null
 
     let found = this.findByBasket(basket)
     if (found) {
@@ -140,7 +140,7 @@ export class Distribution {
 
   private findByBasket(basket: Basket) {
     let id = basket.member._id
-    let found = this.baskets.find((b) => b.member == id)
+    let found = this.baskets.find((b) => b.member === id)
     return found
   }
 
@@ -174,12 +174,12 @@ export class Basket {
   }
 }
 
-export type BasketSection = {
+export interface BasketSection {
   kind: string
   count: number
 }
 
-export type BasketSectionTotals = {
+export interface BasketSectionTotals {
   kind: string
   allBasketCount: number
   trialBasketCount: number

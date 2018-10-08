@@ -259,8 +259,8 @@ export class PerYearMemberListReport implements Report {
     )
 
     interface MemberPresence {
-      member: Member;
-      seasons: Season[];
+      member: Member
+      seasons: Season[]
     }
 
     return combineLatest(membersIndexed$, seasons$, scss$).pipe(

@@ -22,29 +22,29 @@ interface Date {
   /**
    * Returns the ISO day. (0 = monday, 6 = sunday)
    */
-  getISODay(): number;
+  getISODay(): number
 
   /**
    * Sets the day to a day of the week.
    * @param day the day of the week (0 = monday, 6 = sunday)
    */
-  setISODay(day: number): Date;
+  setISODay(day: number): Date
 
-  addDays(days: number): Date;
+  addDays(days: number): Date
 
-  subtract(other: Date): number;
+  subtract(other: Date): number
 
-  getISOWeek(): [number, number];
+  getISOWeek(): [number, number]
 
-  isBefore(other: Date): boolean;
+  isBefore(other: Date): boolean
 }
 
 // noinspection JSUnusedGlobalSymbols
 interface DateConstructor {
 
-  today(): Date;
+  today(): Date
 
-  fromISOWeek(week: [number, number]): Date;
+  fromISOWeek(week: [number, number]): Date
 }
 
 const MILLISECONDS_IN_A_MINUTE = 1000 * 60

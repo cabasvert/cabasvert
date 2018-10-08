@@ -33,6 +33,6 @@ export function weekSelect(config: WeekSelectConfig): WeekSelectConfig & Compone
 }
 
 export interface WeekSelectConfig extends ChildControlConfig {
-  season: ConfigFn<Observable<Season>>;
-  nullAllowed?: boolean;
+  season: ConfigFn<Observable<Season>>
+  nullAllowed?: boolean
 }

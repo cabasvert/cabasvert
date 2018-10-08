@@ -24,6 +24,6 @@ export enum LogLevel {
   DEBUG = 4,
 }
 
-export type LogConfiguration = {
+export interface LogConfiguration {
   [name: string]: LogLevel
 }

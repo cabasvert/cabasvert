@@ -26,8 +26,8 @@ import { Person } from './member.model'
 import { MemberService } from './member.service'
 
 export interface EditFormOptions {
-  component: Type<any>;
-  data: any;
+  component: Type<any>
+  data: any
 }
 
 @Component({

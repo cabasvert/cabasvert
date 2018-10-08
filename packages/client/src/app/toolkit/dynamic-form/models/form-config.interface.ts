@@ -33,14 +33,14 @@ import { DynamicTextareaComponent } from '../components/dynamic-textarea.compone
 import { DynamicControl } from '../dynamic-form.service'
 
 export interface ControlConfig {
-  disabled?: ConfigFn<boolean | Observable<boolean>>;
-  validator?: ValidatorFn | ValidatorFn[];
-  asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[];
-  errorLabels?: { [error: string]: string };
+  disabled?: ConfigFn<boolean | Observable<boolean>>
+  validator?: ValidatorFn | ValidatorFn[]
+  asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[]
+  errorLabels?: { [error: string]: string }
 }
 
 export interface ContainerConfig extends ControlConfig {
-  controls: (ChildControlConfig & ComponentConfig)[];
+  controls: (ChildControlConfig & ComponentConfig)[]
 }
 
 export function form(config: FormConfig): FormConfig & ComponentConfig {
@@ -50,14 +50,13 @@ export function form(config: FormConfig): FormConfig & ComponentConfig {
   }
 }
 
-// noinspection TsLint
 export interface FormConfig extends ContainerConfig {
 }
 
 export interface ChildControlConfig extends ControlConfig {
-  label?: string;
-  name: string;
-  value?: any;
+  label?: string
+  name: string
+  value?: any
 }
 
 export function array(config: ArrayConfig): ArrayConfig & ComponentConfig {
@@ -68,7 +67,7 @@ export function array(config: ArrayConfig): ArrayConfig & ComponentConfig {
 }
 
 export interface ArrayConfig extends ChildControlConfig, ContainerConfig {
-  icon?: string;
+  icon?: string
 }
 
 export function group(config: GroupConfig): GroupConfig & ComponentConfig {
@@ -79,7 +78,7 @@ export function group(config: GroupConfig): GroupConfig & ComponentConfig {
 }
 
 export interface GroupConfig extends ChildControlConfig, ContainerConfig {
-  icon?: string;
+  icon?: string
 }
 
 export function checkbox(config: CheckboxConfig): CheckboxConfig & ComponentConfig {
@@ -90,7 +89,7 @@ export function checkbox(config: CheckboxConfig): CheckboxConfig & ComponentConf
 }
 
 export interface CheckboxConfig extends ChildControlConfig {
-  value?: boolean;
+  value?: boolean
 }
 
 export function hiddenInput(config: HiddenInputConfig): HiddenInputConfig & ComponentConfig {
@@ -101,8 +100,8 @@ export function hiddenInput(config: HiddenInputConfig): HiddenInputConfig & Comp
 }
 
 export interface HiddenInputConfig extends ChildControlConfig {
-  value?: any;
-  type?: string;
+  value?: any
+  type?: string
 }
 
 export function input(config: InputConfig): InputConfig & ComponentConfig {
@@ -113,9 +112,9 @@ export function input(config: InputConfig): InputConfig & ComponentConfig {
 }
 
 export interface InputConfig extends ChildControlConfig {
-  value?: any;
-  placeholder?: string;
-  type?: string;
+  value?: any
+  placeholder?: string
+  type?: string
 }
 
 export function select<T>(config: SelectConfig<T>): SelectConfig<T> & ComponentConfig {
@@ -126,13 +125,13 @@ export function select<T>(config: SelectConfig<T>): SelectConfig<T> & ComponentC
 }
 
 export interface SelectConfig<T> extends ChildControlConfig {
-  value?: any;
-  placeholder?: string;
-  interface?: SelectInterface;
-  options: ConfigFn<T[] | Observable<T[]>>;
-  nullOption?: boolean;
-  optionLabel?: (option: T, index: number) => any;
-  optionValue?: (option: T, index: number) => any;
+  value?: any
+  placeholder?: string
+  interface?: SelectInterface
+  options: ConfigFn<T[] | Observable<T[]>>
+  nullOption?: boolean
+  optionLabel?: (option: T, index: number) => any
+  optionValue?: (option: T, index: number) => any
 }
 
 export function textArea(config: TextAreaConfig): TextAreaConfig & ComponentConfig {
@@ -143,12 +142,12 @@ export function textArea(config: TextAreaConfig): TextAreaConfig & ComponentConf
 }
 
 export interface TextAreaConfig extends ChildControlConfig {
-  value?: any;
-  placeholder?: string;
+  value?: any
+  placeholder?: string
 }
 
 export interface ComponentConfig {
-  component: Type<DynamicControlComponent<any>>;
+  component: Type<DynamicControlComponent<any>>
 }
 
-export type ConfigFn<T> = ((form: DynamicControl, group: DynamicControl) => T) | T;
+export type ConfigFn<T> = ((form: DynamicControl, group: DynamicControl) => T) | T

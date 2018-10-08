@@ -109,8 +109,8 @@ export class ResetPasswordPage implements OnInit {
       const serverUrl = this.config.base.serverUrl
 
       interface ResetResponse {
-        ok: boolean;
-        error?: string;
+        ok: boolean
+        error?: string
       }
 
       try {

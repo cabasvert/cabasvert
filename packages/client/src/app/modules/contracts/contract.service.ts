@@ -212,6 +212,6 @@ export class ContractService implements OnDestroy {
 }
 
 export interface SeasonContractsPair {
-  season: Season;
-  contracts: Array<Contract>;
+  season: Season
+  contracts: Array<Contract>
 }

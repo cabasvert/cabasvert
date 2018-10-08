@@ -92,7 +92,7 @@ export class DatabaseHelper {
 }
 
 export interface Cancelable {
-  cancel(): void;
+  cancel(): void
 }
 
 export class Database {
@@ -493,10 +493,10 @@ export class Database {
 }
 
 interface Change {
-  id: string;
-  doc?: any;
-  deleted?: boolean;
-  seq: number;
+  id: string
+  doc?: any
+  deleted?: boolean
+  seq: number
 }
 
 export class PouchError extends Error {

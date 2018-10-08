@@ -24,8 +24,8 @@ import { Season, SeasonWeek } from '../season.model'
 import { SeasonService } from '../season.service'
 
 interface WeekInfo {
-  week: SeasonWeek;
-  isFirstOfMonth: boolean;
+  week: SeasonWeek
+  isFirstOfMonth: boolean
 }
 
 @Component({

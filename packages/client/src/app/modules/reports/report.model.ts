@@ -23,29 +23,29 @@ import { MemberService } from '../members/member.service'
 import { SeasonService } from '../seasons/season.service'
 
 export interface ReportDescription {
-  name: string;
-  title: string;
-  icon: string;
-  description: string;
-  report: new () => Report;
-  acceptedRoles: string[];
+  name: string
+  title: string
+  icon: string
+  description: string
+  report: new () => Report
+  acceptedRoles: string[]
 }
 
 export interface ReportHelper {
-  seasons: SeasonService;
-  members: MemberService;
-  contracts: ContractService;
-  translateService: TranslateService;
+  seasons: SeasonService
+  members: MemberService
+  contracts: ContractService
+  translateService: TranslateService
 }
 
 export interface Report {
-  generate$(generator: ReportHelper): Observable<ReportTable[]>;
+  generate$(generator: ReportHelper): Observable<ReportTable[]>
 }
 
 export interface ReportTable {
-  name: string;
-  title: string;
-  content: any[][];
-  headerRowCount: number;
-  style: (row, col) => string;
+  name: string
+  title: string
+  content: any[][]
+  headerRowCount: number
+  style: (row, col) => string
 }

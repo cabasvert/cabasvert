@@ -22,7 +22,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core'
 @Component({
   selector: 'ion-item-action',
   template: `
-    <button>
+    <button (click)="click.next($event)">
       <ion-icon [name]="icon" [color]="color"></ion-icon>
       <ion-label [color]="color">{{ label }}</ion-label>
     </button>
@@ -31,11 +31,11 @@ import { Component, EventEmitter, Input, Output } from '@angular/core'
 })
 export class ItemAction {
 
-  @Output('click') click$ = new EventEmitter<Event>()
+  @Output() click = new EventEmitter<Event>()
 
-  @Input('icon') icon: string
-  @Input('label') label: string
-  @Input('color') color: string
+  @Input() icon: string
+  @Input() label: string
+  @Input() color: string
 
   constructor() {
 

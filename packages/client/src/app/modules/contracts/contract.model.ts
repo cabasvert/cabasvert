@@ -19,7 +19,7 @@
 
 const { isArray } = Array
 
-export type Contract = {
+export interface Contract {
   _id: string
   type: string
   srev: string
@@ -32,25 +32,25 @@ export type Contract = {
   postponements?: ContractPostponement[]
 }
 
-export type ContractSection = {
+export interface ContractSection {
   kind: string
   formula: number | [number, number]
   firstWeek: number
   lastWeek?: number
 }
 
-export type ContractAmendment = {
+export interface ContractAmendment {
   week: number
   deltas: ContractSectionCounts
 }
 
-export type ContractPostponement = {
+export interface ContractPostponement {
   week: number
   deltas: ContractSectionCounts
   rescheduledWeek: number
 }
 
-export type ContractSectionCounts = {
+export interface ContractSectionCounts {
   [kind: string]: {
     kind: string
     count: number
@@ -70,7 +70,7 @@ export class ContractKind {
   }
 }
 
-export type ContractValidation = {
+export interface ContractValidation {
   wish?: boolean
   paperCopies?: {
     forAssociation: boolean
