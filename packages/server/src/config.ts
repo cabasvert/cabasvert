@@ -20,7 +20,7 @@
 import { readFileSync, writeFileSync } from 'graceful-fs'
 import * as SMTPTransport from 'nodemailer/lib/smtp-transport'
 
-export type Configuration = {
+export interface Configuration {
   port: number
 
   clientApplication: {

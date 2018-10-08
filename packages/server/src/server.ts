@@ -73,11 +73,11 @@ export async function initializeServer(containerPromise: Promise<Container>) {
     }))
   })
 
-  let app = server.build()
+  let application = server.build()
 
   return new Promise<http.Server>((resolve) => {
     // start the server
-    let httpServer = app.listen(config.port, () => {
+    let httpServer = application.listen(config.port, () => {
       logger.info(`Starter server listening on port ${config.port}`)
       resolve(httpServer)
     })

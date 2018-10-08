@@ -17,13 +17,13 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export type User = {
+export interface User {
   name: string
   roles: string[]
   metadata: UserMetadata
 }
 
-export type UserMetadata = {
+export interface UserMetadata {
   name: string
   email: string
   'password-reset-token'?: {
