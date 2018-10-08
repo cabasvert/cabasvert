@@ -17,18 +17,18 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
-import { Observable, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core'
+import { NavController } from '@ionic/angular'
+import { Observable, Subscription } from 'rxjs'
 
-import { AuthService, Roles, User } from '../../toolkit/providers/auth-service';
-import { errors, ignoreErrors } from '../../utils/observables';
+import { AuthService, Roles, User } from '../../toolkit/providers/auth-service'
+import { errors, ignoreErrors } from '../../utils/observables'
 
-import { ContractKind } from '../contracts/contract.model';
-import { BasketSectionTotals } from '../distributions/distribution.model';
-import { DistributionService } from '../distributions/distribution.service';
-import { SeasonWeek } from '../seasons/season.model';
-import { SeasonService } from '../seasons/season.service';
+import { ContractKind } from '../contracts/contract.model'
+import { BasketSectionTotals } from '../distributions/distribution.model'
+import { DistributionService } from '../distributions/distribution.service'
+import { SeasonWeek } from '../seasons/season.model'
+import { SeasonService } from '../seasons/season.service'
 
 @Component({
   selector: 'page-welcome',
@@ -37,15 +37,15 @@ import { SeasonService } from '../seasons/season.service';
 })
 export class WelcomePage implements OnInit, OnDestroy {
 
-  Kinds = ContractKind;
+  Kinds = ContractKind
 
-  week$: Observable<SeasonWeek>;
-  totals$: Observable<{ [kind: string]: BasketSectionTotals }>;
+  week$: Observable<SeasonWeek>
+  totals$: Observable<{ [kind: string]: BasketSectionTotals }>
 
-  error$: Observable<string>;
+  error$: Observable<string>
 
-  user: User;
-  private subscription: Subscription;
+  user: User
+  private subscription: Subscription
 
   constructor(private navCtrl: NavController,
               public seasons: SeasonService,
@@ -54,24 +54,24 @@ export class WelcomePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    let seasonWeek$ = this.seasons.todaysSeasonWeek$;
-    this.week$ = seasonWeek$.pipe(ignoreErrors());
-    this.error$ = seasonWeek$.pipe(errors());
+    let seasonWeek$ = this.seasons.todaysSeasonWeek$
+    this.week$ = seasonWeek$.pipe(ignoreErrors())
+    this.error$ = seasonWeek$.pipe(errors())
 
-    this.totals$ = this.distributions.todaysTotals$;
+    this.totals$ = this.distributions.todaysTotals$
 
-    this.subscription = this.authService.loggedInUser$.subscribe(user => this.user = user);
+    this.subscription = this.authService.loggedInUser$.subscribe(user => this.user = user)
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.subscription.unsubscribe()
   }
 
   isDistributor(): boolean {
-    return this.user && this.user.hasRole(Roles.DISTRIBUTOR);
+    return this.user && this.user.hasRole(Roles.DISTRIBUTOR)
   }
 
   async openDistributionPage() {
-    await this.navCtrl.navigateRoot(['./distribution']);
+    await this.navCtrl.navigateRoot(['./distribution'])
   }
 }

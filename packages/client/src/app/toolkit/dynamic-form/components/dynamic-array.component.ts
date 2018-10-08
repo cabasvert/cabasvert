@@ -17,9 +17,9 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from '@angular/core';
-import { ComponentConfig, GroupConfig } from '../models/form-config.interface';
-import { DynamicChildControlComponent } from './dynamic-child-control.component';
+import { Component } from '@angular/core'
+import { ComponentConfig, GroupConfig } from '../models/form-config.interface'
+import { DynamicChildControlComponent } from './dynamic-child-control.component'
 
 @Component({
   selector: 'dynamic-array',
@@ -38,7 +38,7 @@ import { DynamicChildControlComponent } from './dynamic-child-control.component'
     </ng-container>
   `,
   styles: [
-    '.group-disabled ion-item-divider * { cursor: default; opacity: .3; }'
+    '.group-disabled ion-item-divider * { cursor: default; opacity: .3; }',
   ],
 })
 export class DynamicArrayComponent extends DynamicChildControlComponent<GroupConfig & ComponentConfig> {

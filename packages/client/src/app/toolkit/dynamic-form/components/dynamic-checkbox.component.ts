@@ -17,9 +17,9 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from '@angular/core';
-import { CheckboxConfig, ComponentConfig } from '../models/form-config.interface';
-import { DynamicChildControlComponent } from './dynamic-child-control.component';
+import { Component } from '@angular/core'
+import { CheckboxConfig, ComponentConfig } from '../models/form-config.interface'
+import { DynamicChildControlComponent } from './dynamic-child-control.component'
 
 @Component({
   selector: 'dynamic-checkbox',

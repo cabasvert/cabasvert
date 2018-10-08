@@ -17,11 +17,11 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Input } from '@angular/core';
-import { Observable } from 'rxjs';
-import { SeasonService } from '../seasons/season.service';
-import { Contract, ContractFormulas, ContractKind } from './contract.model';
-import { ContractService } from './contract.service';
+import { Component, Input } from '@angular/core'
+import { Observable } from 'rxjs'
+import { SeasonService } from '../seasons/season.service'
+import { Contract, ContractFormulas, ContractKind } from './contract.model'
+import { ContractService } from './contract.service'
 
 @Component({
   selector: 'contracts-view',
@@ -29,25 +29,25 @@ import { ContractService } from './contract.service';
   styleUrls: ['./contracts-view.scss'],
 })
 export class ContractsView {
-  @Input() contract: Contract;
-  seasonName: Observable<string>;
+  @Input() contract: Contract
+  seasonName: Observable<string>
 
-  messages: string[];
-  severity: string;
+  messages: string[]
+  severity: string
 
-  Kinds = ContractKind;
-  Formulas = ContractFormulas;
+  Kinds = ContractKind
+  Formulas = ContractFormulas
 
-  JSON = JSON;
+  JSON = JSON
 
   constructor(public seasonService: SeasonService) {
   }
 
   ngOnInit() {
-    let problems = ContractService.validateContract(this.contract);
-    this.messages = ContractService.contractValidationMessages(problems);
-    this.severity = ContractService.contractValidationSeverity(problems);
+    let problems = ContractService.validateContract(this.contract)
+    this.messages = ContractService.contractValidationMessages(problems)
+    this.severity = ContractService.contractValidationSeverity(problems)
 
-    this.seasonName = this.seasonService.seasonNameById$(this.contract.season);
+    this.seasonName = this.seasonService.seasonNameById$(this.contract.season)
   }
 }

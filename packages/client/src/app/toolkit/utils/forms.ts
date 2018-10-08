@@ -17,14 +17,14 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AbstractControl } from '@angular/forms';
+import { AbstractControl } from '@angular/forms'
 
 export class Forms {
 
   public static forceCastAsNumberOrNull(control: AbstractControl) {
     control.valueChanges.subscribe(value => {
-      if (value == null || value.length === 0) return;
-      control.setValue(+value, { emitEvent: false });
-    });
+      if (value == null || value.length === 0) return
+      control.setValue(+value, { emitEvent: false })
+    })
   }
 }

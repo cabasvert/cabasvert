@@ -19,20 +19,21 @@
 
 declare global {
   interface Array<T> {
-    contains(x: T): boolean;
+    contains(x: T): boolean
 
-    indexed(f: (t: T) => string): { [key: string]: T };
+    indexed(f: (t: T) => string): { [key: string]: T }
 
-    indexedAsMap(f: (t: T) => string): Map<string, T>;
+    indexedAsMap(f: (t: T) => string): Map<string, T>
 
-    groupBy(f: (x: T) => string): Group<T>[];
+    groupBy(f: (x: T) => string): Group<T>[]
 
-    first(): T | null;
+    first(): T | null
   }
 
   interface ArrayConstructor {
-    zip<A, B>(as: A[], bs: B[]): [A, B][];
-    zip<A, B, C>(as: A[], bs: B[], f?: (A, B) => C): C[];
+    zip<A, B>(as: A[], bs: B[]): [A, B][]
+
+    zip<A, B, C>(as: A[], bs: B[], f?: (A, B) => C): C[]
   }
 }
 
@@ -42,84 +43,84 @@ export class Group<T> {
 }
 
 Array.prototype.contains = function <T>(x: T): boolean {
-  return contains(this, x);
-};
+  return contains(this, x)
+}
 
 export function contains<T>(array: T[], elt: T) {
-  return array.indexOf(elt) > -1;
+  return array.indexOf(elt) > -1
 }
 
 Array.prototype.indexed = function <T>(f: (t: T) => string): { [key: string]: T } {
-  return arrayIndexed(this, f);
-};
+  return arrayIndexed(this, f)
+}
 
 export function arrayIndexed<T>(array: T[], f: (t: T) => string): { [key: string]: T } {
   return array.reduce(
     (acc, elt) => {
-      acc[f(elt)] = elt;
-      return acc;
+      acc[f(elt)] = elt
+      return acc
     },
     {},
-  );
+  )
 }
 
 Array.prototype.indexedAsMap = function <T>(f: (t: T) => string): Map<string, T> {
-  return arrayIndexedAsMap(this, f);
-};
+  return arrayIndexedAsMap(this, f)
+}
 
 export function arrayIndexedAsMap<T>(array: T[], f: (t: T) => string): Map<string, T> {
   return array.reduce(
     (acc, elt) => {
-      acc.set(f(elt), elt);
-      return acc;
+      acc.set(f(elt), elt)
+      return acc
     },
     new Map(),
-  );
+  )
 }
 
 // TODO Investigate why Ionic does not see this method but WebStorm does
 Array.prototype.groupBy = function <T>(f: (x: T) => string): Group<T>[] {
-  return groupBy(this, f);
-};
+  return groupBy(this, f)
+}
 
 export function groupBy<T>(as: T[], f: (x: T) => string): Group<T>[] {
-  let groups: { [k: string]: T[] } = {};
+  let groups: { [k: string]: T[] } = {}
   as.forEach((o) => {
-    let key = f(o);
-    if (key in groups) groups[key].push(o);
-    else groups[key] = [o];
-  });
+    let key = f(o)
+    if (key in groups) groups[key].push(o)
+    else groups[key] = [o]
+  })
   return Object
     .keys(groups)
     .map(key => new Group(key, groups[key]))
-    .reduce((acc, g) => [...acc, g], []);
+    .reduce((acc, g) => [...acc, g], [])
 }
 
 Array.prototype.first = function <T>(): T {
-  return this.length === 0 ? null : this[0];
-};
+  return this.length === 0 ? null : this[0]
+}
 
 export function copyWith<T>(source: T[], index: number, value: T): T[] {
-  let copy = source.slice();
-  copy[index] = value;
-  return copy;
+  let copy = source.slice()
+  copy[index] = value
+  return copy
 }
 
 export function copyAdd<T>(source: T[], value: T): T[] {
-  let copy = source.slice();
-  copy.push(value);
-  return copy;
+  let copy = source.slice()
+  copy.push(value)
+  return copy
 }
 
 export function copyRemove<T>(source: T[], index: number): T[] {
-  return source.slice(0, index).concat(source.slice(index + 1, source.length));
+  return source.slice(0, index).concat(source.slice(index + 1, source.length))
 }
 
 Array.zip = function (as: any[], bs: any[], f?: (a: any, b: any) => any) {
-  f = f || ((a, b) => ([a, b]));
-  const cs = [];
+  f = f || ((a, b) => ([a, b]))
+  const cs = []
   for (let i = 0; i < Math.min(as.length, bs.length); i++) {
-    cs.push(f(as[i], bs[i]));
+    cs.push(f(as[i], bs[i]))
   }
-  return cs;
-};
+  return cs
+}

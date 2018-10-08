@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, HostBinding, Input } from '@angular/core';
+import { Component, HostBinding, Input } from '@angular/core'
 
 @Component({
   selector: 'sliding-pane',
@@ -27,17 +27,19 @@ import { Component, HostBinding, Input } from '@angular/core';
 })
 export class SlidingPane {
 
-  @Input() name: string;
+  @Input() name: string
 
-  @HostBinding('style.display') private styleDisplay = 'inline-block';
-  @HostBinding('style.height') private styleHeight = '100%';
-  @HostBinding('style.width') private get styleWidth() {
-    return this._width + '%';
+  @HostBinding('style.display') private styleDisplay = 'inline-block'
+  @HostBinding('style.height') private styleHeight = '100%'
+
+  @HostBinding('style.width')
+  private get styleWidth() {
+    return this._width + '%'
   }
 
-  _width: number;
+  _width: number
 
   setWidth(width: number) {
-    this._width = width;
+    this._width = width
   }
 }

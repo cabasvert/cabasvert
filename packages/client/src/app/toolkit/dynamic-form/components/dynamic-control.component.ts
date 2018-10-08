@@ -17,55 +17,55 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Observable } from 'rxjs';
-import { DynamicGroup } from '../dynamic-form.service';
-import { ComponentConfig, ConfigFn, ControlConfig } from '../models/form-config.interface';
+import { Observable } from 'rxjs'
+import { DynamicGroup } from '../dynamic-form.service'
+import { ComponentConfig, ConfigFn, ControlConfig } from '../models/form-config.interface'
 
 export abstract class DynamicControlComponent<C extends ControlConfig & ComponentConfig> {
-  config: C;
-  group: DynamicGroup;
-  form: DynamicGroup;
+  config: C
+  group: DynamicGroup
+  form: DynamicGroup
 
   initialize(config: C,
              group: DynamicGroup,
              form: DynamicGroup) {
-    this.config = config;
-    this.group = group;
-    this.form = form;
+    this.config = config
+    this.group = group
+    this.form = form
   }
 
   abstract get dynamicControl()
 
   get control() {
-    return this.dynamicControl.control;
+    return this.dynamicControl.control
   }
 
   get changes() {
-    return this.control.valueChanges;
+    return this.control.valueChanges
   }
 
   get valid() {
-    return this.control.valid;
+    return this.control.valid
   }
 
   get value() {
-    return this.control.value;
+    return this.control.value
   }
 
   patchValue(value: any) {
-    this.control.patchValue(value);
+    this.control.patchValue(value)
   }
 
   get problems() {
-    let control = this.control;
-    return control.invalid && control.errors ? control.errors : null;
+    let control = this.control
+    return control.invalid && control.errors ? control.errors : null
   }
 
   get disabled$(): Observable<boolean> {
-    return this.dynamicControl.disabled$;
+    return this.dynamicControl.disabled$
   }
 
   protected applyConfigFn<T>(config: ConfigFn<T>): T {
-    return config instanceof Function ? config(this.form, this.group) : config;
+    return config instanceof Function ? config(this.form, this.group) : config
   }
 }

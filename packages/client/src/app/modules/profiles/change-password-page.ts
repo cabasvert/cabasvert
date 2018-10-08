@@ -17,12 +17,12 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { AlertController, LoadingController, ModalController } from '@ionic/angular';
-import { Observable, of, Subject } from 'rxjs';
-import { AuthService } from '../../toolkit/providers/auth-service';
-import { Feedback } from '../authentication/login-page';
+import { Component, OnInit } from '@angular/core'
+import { FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms'
+import { AlertController, LoadingController, ModalController } from '@ionic/angular'
+import { Observable, of, Subject } from 'rxjs'
+import { AuthService } from '../../toolkit/providers/auth-service'
+import { Feedback } from '../authentication/login-page'
 
 @Component({
   selector: 'page-change-password',
@@ -30,12 +30,12 @@ import { Feedback } from '../authentication/login-page';
 })
 export class ChangePasswordPage implements OnInit {
 
-  feedbackEvents: Subject<Feedback> = new Subject<Feedback>();
-  feedback: Observable<Feedback>;
+  feedbackEvents: Subject<Feedback> = new Subject<Feedback>()
+  feedback: Observable<Feedback>
 
-  hasPasswordStorage = false;
+  hasPasswordStorage = false
 
-  form: FormGroup;
+  form: FormGroup
 
   constructor(private auth: AuthService,
               private modalCtrl: ModalController,
@@ -48,91 +48,91 @@ export class ChangePasswordPage implements OnInit {
       newPassword: ['', Validators.required],
       confirmedPassword: ['', Validators.required],
       storePassword: false,
-    }, { validator: this.passwordsDoNotMatch });
+    }, { validator: this.passwordsDoNotMatch })
   }
 
   ngOnInit() {
-    this.auth.hasPasswordStorage.then(has => this.hasPasswordStorage = has);
+    this.auth.hasPasswordStorage.then(has => this.hasPasswordStorage = has)
   }
 
   async doChangePassword() {
-    await this.showLoading();
+    await this.showLoading()
 
     try {
       const success = await this.auth.changePassword({
         oldPassword: this.form.get('oldPassword').value,
         newPassword: this.form.get('newPassword').value,
         confirmedPassword: this.form.get('confirmedPassword').value,
-      });
+      })
 
       if (success) {
         if (this.form.get('storePassword').value) {
-          await this.auth.tryStoreCredentials();
+          await this.auth.tryStoreCredentials()
         }
 
-        await this.dismissLoading();
+        await this.dismissLoading()
 
-        await this.modalCtrl.dismiss();
+        await this.modalCtrl.dismiss()
       } else {
-        await this.showError('Access Denied.');
+        await this.showError('Access Denied.')
       }
     } catch (error) {
-      await this.showError(error);
+      await this.showError(error)
     }
   }
 
   async showLoading() {
     const loading = await this.loadingCtrl.create({
       message: 'Please wait...',
-    });
-    await loading.present();
+    })
+    await loading.present()
   }
 
   async dismissLoading() {
-    await this.loadingCtrl.dismiss();
+    await this.loadingCtrl.dismiss()
   }
 
   async dismiss() {
-    await this.modalCtrl.dismiss();
+    await this.modalCtrl.dismiss()
   }
 
   async showError(text) {
-    await this.dismissLoading();
+    await this.dismissLoading()
 
     const alert = await this.alertCtrl.create({
       header: 'Fail',
       subHeader: text,
       buttons: ['OK'],
-    });
-    await alert.present();
+    })
+    await alert.present()
   }
 
   get isValid() {
-    return this.form.valid;
+    return this.form.valid
   }
 
   get problems() {
-    return this.problemsForControl(this.form);
+    return this.problemsForControl(this.form)
   }
 
   problemsFor(path: string) {
-    const control = this.form.get(path);
-    return this.problemsForControl(control);
+    const control = this.form.get(path)
+    return this.problemsForControl(control)
   }
 
   private problemsForControl(control) {
     return (control.invalid && control.errors) ?
-      control.errors : null;
+      control.errors : null
   }
 
   passwordsDoNotMatch: ValidatorFn = c => {
-    const newPassword = c.get('newPassword');
-    const confirmedPassword = c.get('confirmedPassword');
+    const newPassword = c.get('newPassword')
+    const confirmedPassword = c.get('confirmedPassword')
 
     if (!newPassword.value || !confirmedPassword.value) {
-      return of(null);
+      return of(null)
     }
 
-    return newPassword.value === confirmedPassword.value ? null : { 'passwordsDoNotMatch': true };
+    return newPassword.value === confirmedPassword.value ? null : { 'passwordsDoNotMatch': true }
   }
 }

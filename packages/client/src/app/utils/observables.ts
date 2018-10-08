@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgZone } from '@angular/core';
+import { NgZone } from '@angular/core'
 import {
   asyncScheduler,
   EMPTY,
@@ -28,7 +28,7 @@ import {
   pipe,
   SchedulerLike,
   Subscription,
-} from 'rxjs';
+} from 'rxjs'
 import {
   catchError,
   filter,
@@ -38,26 +38,26 @@ import {
   observeOn,
   pairwise, subscribeOn,
   tap,
-} from 'rxjs/operators';
+} from 'rxjs/operators'
 
 export function previous<T>(): MonoTypeOperatorFunction<T> {
-  return pipe(pairwise(), map(([p, _]) => p));
+  return pipe(pairwise(), map(([p, _]) => p))
 }
 
 export function filterNotNull<T>(): MonoTypeOperatorFunction<T> {
-  return filter(element => !!element);
+  return filter(element => !!element)
 }
 
 export function errors<T>(): OperatorFunction<T, string> {
-  return pipe(mapTo(null), ignoreElements(), catchError(e => of(e.message + '\n' + e.stack)));
+  return pipe(mapTo(null), ignoreElements(), catchError(e => of(e.message + '\n' + e.stack)))
 }
 
 export function ignoreErrors<T>(): MonoTypeOperatorFunction<T> {
-  return catchError(_ => EMPTY);
+  return catchError(_ => EMPTY)
 }
 
 export function debugObservable<T>(prefix: string, f: (T) => any = v => v): MonoTypeOperatorFunction<T> {
-  return tap(new DebugObserver<T>(prefix, f));
+  return tap(new DebugObserver<T>(prefix, f))
 }
 
 class DebugObserver<T> implements Observer<T> {
@@ -66,61 +66,61 @@ class DebugObserver<T> implements Observer<T> {
               private f: (T) => any = v => v) {
   }
 
-  next: (value: T) => void = v => console.log(`${this.prefix} [${zoneName()}] Next value:`, this.f(v));
-  error: (err: any) => void = e => console.error(`${this.prefix} [${zoneName()}] Error:`, e);
-  complete: () => void = () => console.log(`${this.prefix} [${zoneName()}] Complete!`);
+  next: (value: T) => void = v => console.log(`${this.prefix} [${zoneName()}] Next value:`, this.f(v))
+  error: (err: any) => void = e => console.error(`${this.prefix} [${zoneName()}] Error:`, e)
+  complete: () => void = () => console.log(`${this.prefix} [${zoneName()}] Complete!`)
 }
 
 export function subscribeOutsideAngular<T>(zone: NgZone): MonoTypeOperatorFunction<T> {
-  return subscribeOn(leaveZone(zone));
+  return subscribeOn(leaveZone(zone))
 }
 
 export function observeInsideAngular<T>(zone: NgZone): MonoTypeOperatorFunction<T> {
-  return observeOn(enterZone(zone));
+  return observeOn(enterZone(zone))
 }
 
 export function observeOutsideAngular<T>(zone: NgZone): MonoTypeOperatorFunction<T> {
-  return observeOn(leaveZone(zone));
+  return observeOn(leaveZone(zone))
 }
 
 export function leaveZone(zone: NgZone, scheduler: SchedulerLike = asyncScheduler): SchedulerLike {
-  return new LeaveZoneScheduler(zone, scheduler) as any;
+  return new LeaveZoneScheduler(zone, scheduler) as any
 }
 
 export function enterZone(zone: NgZone, scheduler: SchedulerLike = asyncScheduler): SchedulerLike {
-  return new EnterZoneScheduler(zone, scheduler) as any;
+  return new EnterZoneScheduler(zone, scheduler) as any
 }
 
 class LeaveZoneScheduler implements SchedulerLike {
-  static now: () => number;
+  static now: () => number
 
   constructor(private zone: NgZone, private scheduler: SchedulerLike) {
   }
 
-  now: () => number = LeaveZoneScheduler.now;
+  now: () => number = LeaveZoneScheduler.now
 
   schedule(...args: any[]): Subscription {
     return this.zone.runOutsideAngular(() =>
       this.scheduler.schedule.apply(this.scheduler, args),
-    );
+    )
   }
 }
 
 class EnterZoneScheduler implements SchedulerLike {
-  static now: () => number;
+  static now: () => number
 
   constructor(private zone: NgZone, private scheduler: SchedulerLike) {
   }
 
-  now: () => number = EnterZoneScheduler.now;
+  now: () => number = EnterZoneScheduler.now
 
   schedule(...args: any[]): Subscription {
     return this.zone.run(() =>
       this.scheduler.schedule.apply(this.scheduler, args),
-    );
+    )
   }
 }
 
 export const zoneName: () => string = typeof Zone !== 'undefined' && Zone.current
   ? () => Zone.current.name
-  : () => 'no zone';
+  : () => 'no zone'

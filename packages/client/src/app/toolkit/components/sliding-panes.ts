@@ -17,8 +17,8 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AfterContentInit, Component, ContentChildren, HostBinding, Input, QueryList } from '@angular/core';
-import { SlidingPane } from './sliding-pane';
+import { AfterContentInit, Component, ContentChildren, HostBinding, Input, QueryList } from '@angular/core'
+import { SlidingPane } from './sliding-pane'
 
 @Component({
   selector: 'sliding-panes',
@@ -33,30 +33,30 @@ import { SlidingPane } from './sliding-pane';
 })
 export class SlidingPanes implements AfterContentInit {
 
-  @Input() selectedPane: string;
+  @Input() selectedPane: string
 
-  @ContentChildren(SlidingPane) private _panes: QueryList<SlidingPane>;
+  @ContentChildren(SlidingPane) private _panes: QueryList<SlidingPane>
 
-  _paneCount: number;
-  _perNamePaneIndex: { [name: string]: number };
+  _paneCount: number
+  _perNamePaneIndex: { [name: string]: number }
 
-  @HostBinding('attr.slot') private readonly slot = 'fixed';
+  @HostBinding('attr.slot') private readonly slot = 'fixed'
 
   constructor() {
   }
 
   ngAfterContentInit(): void {
-    this.updatePaneSizes();
+    this.updatePaneSizes()
   }
 
   private updatePaneSizes() {
-    this._paneCount = this._panes.length;
+    this._paneCount = this._panes.length
 
-    this._perNamePaneIndex = {};
-    var index = 0;
+    this._perNamePaneIndex = {}
+    var index = 0
     this._panes.forEach(pane => {
-      this._perNamePaneIndex[pane.name] = index++;
-      pane.setWidth(100 / this._paneCount);
-    });
+      this._perNamePaneIndex[pane.name] = index++
+      pane.setWidth(100 / this._paneCount)
+    })
   }
 }

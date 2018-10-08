@@ -17,8 +17,8 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable, NgZone, OnDestroy } from '@angular/core';
-import PouchDB from 'pouchdb-core';
+import { Injectable, NgZone, OnDestroy } from '@angular/core'
+import PouchDB from 'pouchdb-core'
 
 import {
   BehaviorSubject,
@@ -31,7 +31,7 @@ import {
   Subject,
   Subscription,
   throwError,
-} from 'rxjs';
+} from 'rxjs'
 import {
   delay,
   distinctUntilChanged,
@@ -44,21 +44,21 @@ import {
   switchMapTo,
   take,
   withLatestFrom,
-} from 'rxjs/operators';
+} from 'rxjs/operators'
 
-import { environment } from '../../../environments/environment';
-import { ConfigurationService } from '../../config/configuration.service';
+import { environment } from '../../../environments/environment'
+import { ConfigurationService } from '../../config/configuration.service'
 
 import {
   debugObservable,
   filterNotNull,
   observeOutsideAngular,
   previous,
-} from '../../utils/observables';
-import { SyncState } from '../components/sync-state-listener';
-import { AppBridge } from './app-bridge';
-import { AuthService } from './auth-service';
-import { Database, DatabaseHelper } from './database-helper';
+} from '../../utils/observables'
+import { SyncState } from '../components/sync-state-listener'
+import { AppBridge } from './app-bridge'
+import { AuthService } from './auth-service'
+import { Database, DatabaseHelper } from './database-helper'
 
 @Injectable()
 export class DatabaseService implements OnDestroy {
@@ -74,24 +74,24 @@ export class DatabaseService implements OnDestroy {
     return this._database$.pipe(
       filterNotNull(),
       observeOutsideAngular(this.ngZone),
-    );
+    )
   }
 
   get syncState$(): Observable<SyncState | null> {
-    return this._syncState$;
+    return this._syncState$
   }
 
-  forceReset$ = new BehaviorSubject<void>(null);
+  forceReset$ = new BehaviorSubject<void>(null)
 
-  private _database$: Observable<Database | null>;
-  private _syncState$: Observable<SyncState | null>;
+  private _database$: Observable<Database | null>
+  private _syncState$: Observable<SyncState | null>
 
-  private _subscription: Subscription = new Subscription();
+  private _subscription: Subscription = new Subscription()
 
   private static closeDatabase$(db: Database): Observable<never> {
     return from(db.close()).pipe(
       switchMapTo(EMPTY),
-    );
+    )
   }
 
   private static setupSync(localDatabase: Database, remoteDatabase: Database) {
@@ -101,38 +101,38 @@ export class DatabaseService implements OnDestroy {
       continuous: true,
       push: {
         filter: function (doc) {
-          return !doc._id.startsWith('_design/');
+          return !doc._id.startsWith('_design/')
         },
       },
-    });
+    })
   }
 
   private static cancelSync(localDB: Database) {
-    localDB.doCancelSync();
+    localDB.doCancelSync()
   }
 
   initialize() {
-    const loggedInUser$ = this.authService.loggedInUser$;
-    const loggedIn$ = loggedInUser$.pipe(map(user => !!user));
+    const loggedInUser$ = this.authService.loggedInUser$
+    const loggedIn$ = loggedInUser$.pipe(map(user => !!user))
 
-    const active$ = this.appBridge.appIsActive$;
-    const connected$ = this.appBridge.networkIsConnected$;
+    const active$ = this.appBridge.appIsActive$
+    const connected$ = this.appBridge.networkIsConnected$
 
     const localDb$: Observable<Database> = loggedIn$.pipe(
       withLatestFrom(loggedInUser$, (loggedIn, user) => {
         if (!loggedIn) {
-          return of(null);
+          return of(null)
         }
 
         // Add a suffix for development local database to avoid conflicts with production
-        let dbName = user.database || 'cabasvert';
-        dbName = `${dbName}-${user.username}` + (environment.production ? '' : '-dev');
-        return this.createLocalDatabase$(dbName);
+        let dbName = user.database || 'cabasvert'
+        dbName = `${dbName}-${user.username}` + (environment.production ? '' : '-dev')
+        return this.createLocalDatabase$(dbName)
       }),
       switchAll(),
       publishReplay(1),
       refCount(),
-    );
+    )
 
     this._subscription.add(
       localDb$.pipe(
@@ -140,22 +140,22 @@ export class DatabaseService implements OnDestroy {
         filterNotNull(),
         switchMap(db => DatabaseService.closeDatabase$(db)),
       ).subscribe(),
-    );
+    )
 
     const remoteDbNeeded$ = combineLatest(active$, loggedIn$, connected$, this.forceReset$).pipe(
       map(([active, loggedIn, connected]) =>
-        active && loggedIn && connected
+        active && loggedIn && connected,
       ),
       distinctUntilChanged(),
-    );
+    )
     const remoteDb$: Observable<Database> = remoteDbNeeded$.pipe(
       withLatestFrom(loggedInUser$, (needed, user) => {
         if (!needed) {
-          return of(null);
+          return of(null)
         }
 
-        const dbName = user.database || 'cabasvert';
-        const creation = this.createRemoteDatabase$(dbName);
+        const dbName = user.database || 'cabasvert'
+        const creation = this.createRemoteDatabase$(dbName)
 
         // Make multiple attempts to login to remote database
         // in case the network is not yet fully operable
@@ -165,12 +165,12 @@ export class DatabaseService implements OnDestroy {
               retryWhen(errors => errors.pipe(delay(500), take(10))),
             ),
           ),
-        );
+        )
       }),
       switchAll(),
       publishReplay(1),
       refCount(),
-    );
+    )
 
     this._subscription.add(
       remoteDb$.pipe(
@@ -179,30 +179,30 @@ export class DatabaseService implements OnDestroy {
         // Do not try to logout database as cookie is shared
         switchMap(db => DatabaseService.closeDatabase$(db)),
       ).subscribe(),
-    );
+    )
 
     const maintainSync$ = combineLatest(localDb$, remoteDb$).pipe(
       map(([localDB, remoteDB]) => {
         if (localDB) {
-          DatabaseService.cancelSync(localDB);
+          DatabaseService.cancelSync(localDB)
         }
         if (localDB && remoteDB) {
-          DatabaseService.setupSync(localDB, remoteDB);
+          DatabaseService.setupSync(localDB, remoteDB)
         }
       }),
-    );
+    )
     this._subscription.add(
       maintainSync$.subscribe(),
-    );
+    )
 
-    this._database$ = this.config.base.remoteDBOnly ? remoteDb$ : localDb$;
+    this._database$ = this.config.base.remoteDBOnly ? remoteDb$ : localDb$
     this._syncState$ = this._database$.pipe(
       switchMap(d => d ? d.syncState$ : of(null)),
-    );
+    )
   }
 
   ngOnDestroy() {
-    this._subscription.unsubscribe();
+    this._subscription.unsubscribe()
   }
 
   private createLocalDatabase$(dbName: string): Observable<Database> {
@@ -212,42 +212,42 @@ export class DatabaseService implements OnDestroy {
           this.dbHelper.newLocalDatabase(dbName),
         ),
       ),
-    );
+    )
   }
 
   private maybeWipeLocalDB(dbName: string): Promise<void> {
     if (this.config.base.wipeLocalDB) {
-      const tempDB = this.dbHelper.newLocalDatabase(dbName);
-      console.log('For debugging purposes, wiping local database !');
-      return tempDB.destroy();
+      const tempDB = this.dbHelper.newLocalDatabase(dbName)
+      console.log('For debugging purposes, wiping local database !')
+      return tempDB.destroy()
     } else {
-      return Promise.resolve();
+      return Promise.resolve()
     }
   }
 
   private createRemoteDatabase$(dbName: string): Observable<Database> {
     return defer(() =>
       of(this.dbHelper.newRemoteDatabase(dbName)),
-    );
+    )
   }
 
   private loginDatabase$(db: Database): Observable<Database> {
     return from(this.authService.loginDatabase(db)).pipe(
       switchMap(ok => ok ? of(db) : throwError('Can\'t login database')),
-    );
+    )
   }
 
   private logoutDatabase$(db: Database): Observable<never> {
     return from(this.authService.logoutDatabase(db)).pipe(
       switchMapTo(EMPTY),
-    );
+    )
   }
 
   createIndex(index: PouchDB.Find.CreateIndexOptions): Subscription {
     if (this.config.base.remoteDBOnly) {
-      return new Subscription();
+      return new Subscription()
     }
-    return this.database$.pipe(switchMap(db => from(db.withIndex(index)))).subscribe();
+    return this.database$.pipe(switchMap(db => from(db.withIndex(index)))).subscribe()
   }
 
   findOne$<T>(
@@ -262,7 +262,7 @@ export class DatabaseService implements OnDestroy {
         publishReplay(1),
         refCount(),
       ),
-    );
+    )
   }
 
   findAll$<T>(
@@ -277,7 +277,7 @@ export class DatabaseService implements OnDestroy {
         publishReplay(1),
         refCount(),
       ),
-    );
+    )
   }
 
   findAllIndexed$<T>(
@@ -292,15 +292,15 @@ export class DatabaseService implements OnDestroy {
         publishReplay(1),
         refCount(),
       ),
-    );
+    )
   }
 
   public put$<T>(doc: T & { _id: string }): Observable<T> {
-    return this.database$.pipe(switchMap(db => db.put$(doc)));
+    return this.database$.pipe(switchMap(db => db.put$(doc)))
   }
 
   public remove$<T>(doc: T & { _id: string }): Observable<void> {
-    return this.database$.pipe(switchMap(db => db.remove$(doc)));
+    return this.database$.pipe(switchMap(db => db.remove$(doc)))
   }
 
   public get$<T>(id: string): Observable<T> {
@@ -308,6 +308,6 @@ export class DatabaseService implements OnDestroy {
       switchMap(db => db.get$(id)),
       publishReplay(1),
       refCount(),
-    );
+    )
   }
 }

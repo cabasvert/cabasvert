@@ -17,13 +17,13 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, ElementRef, HostBinding, NgZone, OnDestroy, OnInit } from '@angular/core';
-import { Content } from '@ionic/angular';
-import { ScrollDetail } from '@ionic/core';
-import { defer, merge, Subscription, timer } from 'rxjs';
-import { filter, switchMap, switchMapTo } from 'rxjs/operators';
+import { Component, ElementRef, HostBinding, NgZone, OnDestroy, OnInit } from '@angular/core'
+import { Content } from '@ionic/angular'
+import { ScrollDetail } from '@ionic/core'
+import { defer, merge, Subscription, timer } from 'rxjs'
+import { filter, switchMap, switchMapTo } from 'rxjs/operators'
 
-const VISIBILITY_DURATION = 2000;
+const VISIBILITY_DURATION = 2000
 
 @Component({
   selector: 'scroll-to-top',
@@ -32,13 +32,13 @@ const VISIBILITY_DURATION = 2000;
 })
 export class ScrollToTop implements OnInit, OnDestroy {
 
-  _visible = false;
+  _visible = false
 
-  @HostBinding('attr.slot') private readonly slot = 'fixed';
+  @HostBinding('attr.slot') private readonly slot = 'fixed'
 
-  private _scrollSelfInitiated = false;
+  private _scrollSelfInitiated = false
 
-  private subscription: Subscription = new Subscription();
+  private subscription: Subscription = new Subscription()
 
   constructor(private content: Content,
               private elementRef: ElementRef,
@@ -46,15 +46,15 @@ export class ScrollToTop implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.setupScrollListener();
+    this.setupScrollListener()
   }
 
   private async setupScrollListener() {
-    let show$ = defer(() => this._setVisible(true));
-    let hide$ = defer(() => this._setVisible(false));
-    let ionScroll = this.content.ionScroll;
+    let show$ = defer(() => this._setVisible(true))
+    let hide$ = defer(() => this._setVisible(false))
+    let ionScroll = this.content.ionScroll
 
-    this.content.scrollEvents = true;
+    this.content.scrollEvents = true
     this.subscription.add(
       ionScroll.pipe(
         filter(e => !this._scrollSelfInitiated),
@@ -63,26 +63,26 @@ export class ScrollToTop implements OnInit, OnDestroy {
             merge(show$, timer(VISIBILITY_DURATION).pipe(switchMapTo(hide$))),
         ),
       ).subscribe(),
-    );
+    )
   }
 
   _setVisible(visible: boolean): void {
     if (this._visible !== visible) {
       this.zone.run(() => {
-        this._visible = visible;
-      });
+        this._visible = visible
+      })
     }
   }
 
   ngOnDestroy(): void {
-    if (this.subscription) this.subscription.unsubscribe();
+    if (this.subscription) this.subscription.unsubscribe()
   }
 
   async scrollToTop() {
-    if (!this._visible) return;
+    if (!this._visible) return
 
-    this._scrollSelfInitiated = true;
-    await this.content.scrollToTop(300);
-    this._scrollSelfInitiated = false;
+    this._scrollSelfInitiated = true
+    await this.content.scrollToTop(300)
+    this._scrollSelfInitiated = false
   }
 }

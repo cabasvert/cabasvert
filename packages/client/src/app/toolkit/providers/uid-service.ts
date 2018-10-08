@@ -17,18 +17,18 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-import * as UIDGenerator from 'uid-generator';
+import { Injectable } from '@angular/core'
+import * as UIDGenerator from 'uid-generator'
 
 @Injectable()
 export class UidService {
 
-  private uidGenerator = new UIDGenerator(64, UIDGenerator.BASE62);
+  private uidGenerator = new UIDGenerator(64, UIDGenerator.BASE62)
 
   constructor() {
   }
 
   generate(): string {
-    return this.uidGenerator.generateSync();
+    return this.uidGenerator.generateSync()
   }
 }

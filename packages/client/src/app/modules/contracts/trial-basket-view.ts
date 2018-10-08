@@ -17,32 +17,32 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Input } from '@angular/core';
-import { Observable } from 'rxjs';
-import { TrialBasket } from '../members/member.model';
-import { SeasonService } from '../seasons/season.service';
-import { ContractKind } from './contract.model';
+import { Component, Input } from '@angular/core'
+import { Observable } from 'rxjs'
+import { TrialBasket } from '../members/member.model'
+import { SeasonService } from '../seasons/season.service'
+import { ContractKind } from './contract.model'
 
 @Component({
   selector: 'trial-basket',
   templateUrl: './trial-basket-view.html',
-  styleUrls: ['./trial-basket-view.scss']
+  styleUrls: ['./trial-basket-view.scss'],
 })
 export class TrialBasketView {
-  @Input() trialBasket: TrialBasket;
-  seasonName: Observable<string>;
+  @Input() trialBasket: TrialBasket
+  seasonName: Observable<string>
 
-  messages: string[];
-  severity: string;
+  messages: string[]
+  severity: string
 
-  Kinds = ContractKind;
+  Kinds = ContractKind
 
-  JSON = JSON;
+  JSON = JSON
 
   constructor(public seasonService: SeasonService) {
   }
 
   ngOnInit() {
-    this.seasonName = this.seasonService.seasonNameById$(this.trialBasket.season);
+    this.seasonName = this.seasonService.seasonNameById$(this.trialBasket.season)
   }
 }

@@ -17,18 +17,18 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule, Routes } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { AuthGuard } from '../../toolkit/providers/auth-guard';
+import { CommonModule } from '@angular/common'
+import { NgModule } from '@angular/core'
+import { ReactiveFormsModule } from '@angular/forms'
+import { RouterModule, Routes } from '@angular/router'
+import { IonicModule } from '@ionic/angular'
+import { TranslateModule } from '@ngx-translate/core'
+import { AuthGuard } from '../../toolkit/providers/auth-guard'
 
-import { ToolkitModule } from '../../toolkit/toolkit.module';
-import { ResetPasswordPageModule } from '../authentication/reset-password-page.module';
-import { MainPage } from './main-page';
-import { WelcomePage } from './welcome-page';
+import { ToolkitModule } from '../../toolkit/toolkit.module'
+import { ResetPasswordPageModule } from '../authentication/reset-password-page.module'
+import { MainPage } from './main-page'
+import { WelcomePage } from './welcome-page'
 
 let routes: Routes = [
   {
@@ -36,7 +36,7 @@ let routes: Routes = [
     component: WelcomePage,
     canActivate: [AuthGuard],
   },
-];
+]
 
 @NgModule({
   imports: [

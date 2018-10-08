@@ -17,19 +17,19 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { DynamicFormModule } from '../../toolkit/dynamic-form/dynamic-form.module';
-import { SeasonModule } from '../seasons/season.module';
-import { ContractService } from './contract.service';
+import { CommonModule } from '@angular/common'
+import { NgModule } from '@angular/core'
+import { ReactiveFormsModule } from '@angular/forms'
+import { IonicModule } from '@ionic/angular'
+import { TranslateModule } from '@ngx-translate/core'
+import { DynamicFormModule } from '../../toolkit/dynamic-form/dynamic-form.module'
+import { SeasonModule } from '../seasons/season.module'
+import { ContractService } from './contract.service'
 
-import { ContractsEditPage } from './contracts-edit-page';
-import { ContractsView } from './contracts-view';
-import { TrialBasketEditPage } from './trial-basket-edit-page';
-import { TrialBasketView } from './trial-basket-view';
+import { ContractsEditPage } from './contracts-edit-page'
+import { ContractsView } from './contracts-view'
+import { TrialBasketEditPage } from './trial-basket-edit-page'
+import { TrialBasketView } from './trial-basket-view'
 
 @NgModule({
   imports: [

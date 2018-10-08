@@ -62,11 +62,11 @@
 
 /** Evergreen browsers require these. **/
 // Used for reflect-metadata in JIT. If you use AOT (and only Angular decorators), you can remove.
-import 'core-js/es7/reflect';
+import 'core-js/es7/reflect'
 /***************************************************************************************************
  * Zone JS is required by Angular itself.
  */
-import 'zone.js/dist/zone'; // Included with Angular CLI.
+import 'zone.js/dist/zone' // Included with Angular CLI.
 
 
 /**
@@ -96,4 +96,4 @@ import 'zone.js/dist/zone'; // Included with Angular CLI.
 
 (window as any).global = window;
 (window as any).process = {};
-(window as any).process.nextTick = setTimeout;
+(window as any).process.nextTick = setTimeout

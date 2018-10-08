@@ -17,25 +17,25 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule, Routes } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { DynamicFormModule } from '../../toolkit/dynamic-form/dynamic-form.module';
-import { AuthGuard } from '../../toolkit/providers/auth-guard';
-import { Roles } from '../../toolkit/providers/auth-service';
-import { ToolkitModule } from '../../toolkit/toolkit.module';
+import { CommonModule } from '@angular/common'
+import { NgModule } from '@angular/core'
+import { ReactiveFormsModule } from '@angular/forms'
+import { RouterModule, Routes } from '@angular/router'
+import { IonicModule } from '@ionic/angular'
+import { TranslateModule } from '@ngx-translate/core'
+import { DynamicFormModule } from '../../toolkit/dynamic-form/dynamic-form.module'
+import { AuthGuard } from '../../toolkit/providers/auth-guard'
+import { Roles } from '../../toolkit/providers/auth-service'
+import { ToolkitModule } from '../../toolkit/toolkit.module'
 
-import { ContractModule } from '../contracts/contract.module';
+import { ContractModule } from '../contracts/contract.module'
 
-import { MemberDetailsPage } from './member-details-page';
-import { MemberResolver } from './member-resolver';
-import { MemberView } from './member-view';
-import { MemberService } from './member.service';
-import { MembersPage } from './members-page';
-import { PersonEditFormComponent } from './person-edit-form.component';
+import { MemberDetailsPage } from './member-details-page'
+import { MemberResolver } from './member-resolver'
+import { MemberView } from './member-view'
+import { MemberService } from './member.service'
+import { MembersPage } from './members-page'
+import { PersonEditFormComponent } from './person-edit-form.component'
 
 let routes: Routes = [
   {
@@ -53,7 +53,7 @@ let routes: Routes = [
       member$: MemberResolver,
     },
   },
-];
+]
 
 @NgModule({
   imports: [

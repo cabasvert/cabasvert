@@ -17,8 +17,8 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-import { HammerGestureConfig } from '@angular/platform-browser';
+import { Injectable } from '@angular/core'
+import { HammerGestureConfig } from '@angular/platform-browser'
 
 /**
  * @hidden
@@ -28,14 +28,14 @@ import { HammerGestureConfig } from '@angular/platform-browser';
 export class IonicGestureConfig extends HammerGestureConfig {
 
   buildHammer(element: HTMLElement) {
-    const mc = new (<any> window).Hammer(element);
+    const mc = new (<any> window).Hammer(element)
 
     for (const eventName in this.overrides) {
       if (eventName) {
-        mc.get(eventName).set(this.overrides[eventName]);
+        mc.get(eventName).set(this.overrides[eventName])
       }
     }
 
-    return mc;
+    return mc
   }
 }

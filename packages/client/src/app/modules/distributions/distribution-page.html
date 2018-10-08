@@ -74,8 +74,10 @@
 
         <scroll-to-top></scroll-to-top>
 
-        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution" style="visibility: visible;">
-          <ion-item-expanding #item *ngFor="let basket of distributedBaskets$ | async; trackBy: basketDistributionDate">
+        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution"
+                  style="visibility: visible;">
+          <ion-item-expanding #item
+                              *ngFor="let basket of distributedBaskets$ | async; trackBy: basketDistributionDate">
 
             <ion-item>
               <ion-note *ngIf="distribution.getBasketDistributionDate(basket) as date"
@@ -94,7 +96,8 @@
                         name="cash" item-right
                         color="{{ !isTrialBasketPaid(basket, item) ? 'danger' : 'primary' }}"></ion-icon>
               <ion-icon *ngIf="(!basket.isTrial && contractProblems(basket.member)) as severity"
-                        [name]="severity === 'danger' ? 'alert' : 'warning'" item-right [color]="severity"></ion-icon>
+                        [name]="severity === 'danger' ? 'alert' : 'warning'" item-right
+                        [color]="severity"></ion-icon>
               <ion-icon *ngIf="distribution.isBasketDelayed(basket)"
                         name="clock" item-right color="warning"></ion-icon>
               <ion-icon *ngIf="distribution.isBasketHaveNote(basket)"
@@ -148,7 +151,8 @@
 
         <scroll-to-top></scroll-to-top>
 
-        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution" style="visibility: visible;">
+        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution"
+                  style="visibility: visible;">
           <ng-container *ngFor="let group of remainingBaskets$ | async; trackBy: groupKey">
             <ion-item-divider id="divider-{{ group.key }}">
               <ion-label>{{ group.key }}</ion-label>
@@ -165,7 +169,8 @@
                           name="cash" item-right
                           color="{{ !isTrialBasketPaid(basket, item) ? 'danger' : 'primary' }}"></ion-icon>
                 <ion-icon *ngIf="(!basket.isTrial && contractProblems(basket.member)) as severity"
-                          [name]="severity === 'danger' ? 'alert' : 'warning'" item-right [color]="severity"></ion-icon>
+                          [name]="severity === 'danger' ? 'alert' : 'warning'" item-right
+                          [color]="severity"></ion-icon>
                 <ion-icon *ngIf="distribution.isBasketDelayed(basket)"
                           name="clock" item-right color="warning"></ion-icon>
                 <ion-icon *ngIf="distribution.isBasketHaveNote(basket)"
@@ -219,8 +224,10 @@
 
         <scroll-to-top></scroll-to-top>
 
-        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution" style="visibility: visible;">
-          <ion-item-expanding #item *ngFor="let basket of delayedBaskets$ | async; trackBy: basketMemberId">
+        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution"
+                  style="visibility: visible;">
+          <ion-item-expanding #item
+                              *ngFor="let basket of delayedBaskets$ | async; trackBy: basketMemberId">
 
             <ion-item>
               <ion-label>
@@ -231,7 +238,8 @@
                         name="cash" item-right
                         color="{{ !isTrialBasketPaid(basket, item) ? 'danger' : 'primary' }}"></ion-icon>
               <ion-icon *ngIf="(!basket.isTrial && contractProblems(basket.member)) as severity"
-                        [name]="severity === 'danger' ? 'alert' : 'warning'" item-right [color]="severity"></ion-icon>
+                        [name]="severity === 'danger' ? 'alert' : 'warning'" item-right
+                        [color]="severity"></ion-icon>
               <ion-icon *ngIf="distribution.isBasketDelayed(basket)"
                         name="clock" item-right color="warning"></ion-icon>
               <ion-icon *ngIf="distribution.isBasketHaveNote(basket)"

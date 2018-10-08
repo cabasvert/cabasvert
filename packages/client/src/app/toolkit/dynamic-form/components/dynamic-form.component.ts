@@ -17,11 +17,11 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { DynamicFormService, DynamicGroup } from '../dynamic-form.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { DynamicFormService, DynamicGroup } from '../dynamic-form.service'
 
-import { ComponentConfig, FormConfig } from '../models/form-config.interface';
-import { DynamicControlComponent } from './dynamic-control.component';
+import { ComponentConfig, FormConfig } from '../models/form-config.interface'
+import { DynamicControlComponent } from './dynamic-control.component'
 
 @Component({
   exportAs: 'dynamicForm',
@@ -38,25 +38,25 @@ import { DynamicControlComponent } from './dynamic-control.component';
 })
 export class DynamicFormComponent extends DynamicControlComponent<FormConfig & ComponentConfig> implements OnInit {
 
-  @Input() config: FormConfig & ComponentConfig;
-  @Input() form: DynamicGroup;
-  @Output() submit: EventEmitter<any> = new EventEmitter<any>();
+  @Input() config: FormConfig & ComponentConfig
+  @Input() form: DynamicGroup
+  @Output() submit: EventEmitter<any> = new EventEmitter<any>()
 
   get dynamicControl() {
-    return this.form;
+    return this.form
   }
 
   constructor(private dynamicFormService: DynamicFormService) {
-    super();
+    super()
   }
 
   ngOnInit() {
-    if (!this.form) this.form = this.dynamicFormService.createForm(this.config);
+    if (!this.form) this.form = this.dynamicFormService.createForm(this.config)
   }
 
   handleSubmit(event: Event) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.submit.emit(this.value);
+    event.preventDefault()
+    event.stopPropagation()
+    this.submit.emit(this.value)
   }
 }

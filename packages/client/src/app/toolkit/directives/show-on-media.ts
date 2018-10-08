@@ -17,21 +17,21 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Attribute, Directive, ElementRef, HostBinding, HostListener } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { Attribute, Directive, ElementRef, HostBinding, HostListener } from '@angular/core'
+import { Platform } from '@ionic/angular'
 
 @Directive({ selector: '[showOnMedia]' })
 export class ShowOnMediaDirective {
 
-  @HostBinding('style.display') styleDisplay = 'none';
+  @HostBinding('style.display') styleDisplay = 'none'
 
   constructor(@Attribute('showOnMedia') private media: string) {
-    this.checkIfDisplayed();
+    this.checkIfDisplayed()
   }
 
   @HostListener('window:resize')
   private onResize() {
-    this.checkIfDisplayed();
+    this.checkIfDisplayed()
   }
 
   private checkIfDisplayed() {
@@ -40,9 +40,9 @@ export class ShowOnMediaDirective {
         this.media === 'md' ? 'screen and (min-width:768px)' :
           this.media === 'lg' ? 'screen and (min-width:992px)' :
             this.media === 'xl' ? 'screen and (min-width:1200px)' :
-              this.media;
+              this.media
 
-    let matches = window.matchMedia(mediaQuery).matches;
-    this.styleDisplay = matches ? null : 'none';
+    let matches = window.matchMedia(mediaQuery).matches
+    this.styleDisplay = matches ? null : 'none'
   }
 }

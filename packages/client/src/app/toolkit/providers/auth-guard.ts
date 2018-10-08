@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core'
 import {
   ActivatedRouteSnapshot,
   CanActivate,
@@ -26,24 +26,24 @@ import {
   Route,
   Router,
   RouterStateSnapshot,
-} from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { fromPromise } from 'rxjs/internal-compatibility';
-import { map, switchMap, take, tap } from 'rxjs/operators';
-import { AuthService } from './auth-service';
-import { LogService } from './log-service';
-import { Logger } from './logger';
+} from '@angular/router'
+import { Observable, of } from 'rxjs'
+import { fromPromise } from 'rxjs/internal-compatibility'
+import { map, switchMap, take, tap } from 'rxjs/operators'
+import { AuthService } from './auth-service'
+import { LogService } from './log-service'
+import { Logger } from './logger'
 
 @Injectable()
 export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
 
-  private _logger: Logger;
+  private _logger: Logger
 
   private get log() {
     if (this._logger == null) {
-      this._logger = this.logService.logger('Auth');
+      this._logger = this.logService.logger('Auth')
     }
-    return this._logger;
+    return this._logger
   }
 
   constructor(private authService: AuthService,
@@ -52,7 +52,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
   }
 
   private checkAuthorization(data: any | null): Observable<boolean> {
-    const roles = data && data.roles;
+    const roles = data && data.roles
     return this.authService.loggedInUser$.pipe(
       take(1),
       switchMap(user =>
@@ -62,31 +62,31 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
         ),
       ),
       map(user => {
-        const authenticated = !!user;
-        const granted = authenticated && (!roles || user.hasAnyRoleIn(roles));
+        const authenticated = !!user
+        const granted = authenticated && (!roles || user.hasAnyRoleIn(roles))
 
         this.log.info('Checking authorization ' +
-          `(user: ${user && user.username || '<none>'}, accepted roles: ${JSON.stringify(roles || [])}, granted: ${granted})`);
+          `(user: ${user && user.username || '<none>'}, accepted roles: ${JSON.stringify(roles || [])}, granted: ${granted})`)
 
-        return [authenticated, granted];
+        return [authenticated, granted]
       }),
       tap(([authenticated, granted]) => {
-        if (!authenticated) this.router.navigate(['/login']);
-        else if (!granted) this.router.navigate(['/']);
+        if (!authenticated) this.router.navigate(['/login'])
+        else if (!granted) this.router.navigate(['/'])
       }),
       map(([authenticated, granted]) => granted),
-    );
+    )
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.checkAuthorization(route.data);
+    return this.checkAuthorization(route.data)
   }
 
   canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.checkAuthorization(childRoute.data);
+    return this.checkAuthorization(childRoute.data)
   }
 
   canLoad(route: Route): Observable<boolean> {
-    return this.checkAuthorization(route.data);
+    return this.checkAuthorization(route.data)
   }
 }

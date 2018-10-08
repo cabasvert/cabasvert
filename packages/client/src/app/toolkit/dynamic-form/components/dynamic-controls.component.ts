@@ -17,9 +17,9 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Input } from '@angular/core';
-import { DynamicGroup } from '../dynamic-form.service';
-import { ContainerConfig } from '../models/form-config.interface';
+import { Component, Input } from '@angular/core'
+import { DynamicGroup } from '../dynamic-form.service'
+import { ContainerConfig } from '../models/form-config.interface'
 
 @Component({
   selector: 'dynamic-controls',
@@ -37,14 +37,14 @@ import { ContainerConfig } from '../models/form-config.interface';
 })
 export class DynamicControlsComponent {
 
-  @Input() config: ContainerConfig;
-  @Input() form: DynamicGroup;
-  @Input() group: DynamicGroup;
+  @Input() config: ContainerConfig
+  @Input() form: DynamicGroup
+  @Input() group: DynamicGroup
 
   get errors() {
-    let control = this.group.control;
-    let errors = control.errors;
+    let control = this.group.control
+    let errors = control.errors
     return control.invalid && errors ?
-      Object.keys(errors).filter(error => errors[error]) : null;
+      Object.keys(errors).filter(error => errors[error]) : null
   }
 }

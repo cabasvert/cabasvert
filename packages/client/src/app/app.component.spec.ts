@@ -17,30 +17,30 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { HttpClient, HttpClientModule } from '@angular/common/http'
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
+import { TestBed } from '@angular/core/testing'
+import { AppVersion } from '@ionic-native/app-version/ngx'
+import { SplashScreen } from '@ionic-native/splash-screen/ngx'
+import { StatusBar } from '@ionic-native/status-bar/ngx'
 
-import { Platform } from '@ionic/angular';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { Platform } from '@ionic/angular'
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 
-import { AppComponent } from './app.component';
+import { AppComponent } from './app.component'
 
 describe('AppComponent', () => {
 
-  let statusBarSpy, splashScreenSpy, platformReadySpy, platformSpy, versionNumberSpy, appVersionSpy;
+  let statusBarSpy, splashScreenSpy, platformReadySpy, platformSpy, versionNumberSpy, appVersionSpy
 
   beforeEach(async () => {
-    statusBarSpy = jasmine.createSpyObj('StatusBar', ['styleDefault']);
-    splashScreenSpy = jasmine.createSpyObj('SplashScreen', ['hide']);
-    platformReadySpy = Promise.resolve();
-    platformSpy = jasmine.createSpyObj('Platform', { ready: platformReadySpy });
-    versionNumberSpy = Promise.resolve('x.x.x');
-    appVersionSpy = jasmine.createSpyObj('AppVersion', { 'getVersionNumber': versionNumberSpy });
+    statusBarSpy = jasmine.createSpyObj('StatusBar', ['styleDefault'])
+    splashScreenSpy = jasmine.createSpyObj('SplashScreen', ['hide'])
+    platformReadySpy = Promise.resolve()
+    platformSpy = jasmine.createSpyObj('Platform', { ready: platformReadySpy })
+    versionNumberSpy = Promise.resolve('x.x.x')
+    appVersionSpy = jasmine.createSpyObj('AppVersion', { 'getVersionNumber': versionNumberSpy })
 
     TestBed.configureTestingModule({
       declarations: [AppComponent],
@@ -61,23 +61,23 @@ describe('AppComponent', () => {
         { provide: Platform, useValue: platformSpy },
         { provide: AppVersion, useValue: appVersionSpy },
       ],
-    }).compileComponents();
-  });
+    }).compileComponents()
+  })
 
   it('should create the app', async () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
-  });
+    const fixture = TestBed.createComponent(AppComponent)
+    const app = fixture.debugElement.componentInstance
+    expect(app).toBeTruthy()
+  })
 
   it('should initialize the app', async () => {
-    TestBed.createComponent(AppComponent);
-    expect(platformSpy.ready).toHaveBeenCalled();
-    await platformReadySpy;
-    expect(statusBarSpy.styleDefault).toHaveBeenCalled();
-    expect(splashScreenSpy.hide).toHaveBeenCalled();
-  });
+    TestBed.createComponent(AppComponent)
+    expect(platformSpy.ready).toHaveBeenCalled()
+    await platformReadySpy
+    expect(statusBarSpy.styleDefault).toHaveBeenCalled()
+    expect(splashScreenSpy.hide).toHaveBeenCalled()
+  })
 
   // TODO: add more tests!
 
-});
+})

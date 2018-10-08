@@ -17,11 +17,11 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { SeasonWeek } from '../season.model';
-import { SeasonService } from '../season.service';
+import { Component, Input, OnChanges, OnInit } from '@angular/core'
+import { Observable } from 'rxjs'
+import { map } from 'rxjs/operators'
+import { SeasonWeek } from '../season.model'
+import { SeasonService } from '../season.service'
 
 @Component({
   selector: 'app-week-view',
@@ -30,10 +30,10 @@ import { SeasonService } from '../season.service';
 })
 export class WeekViewComponent implements OnChanges {
 
-  @Input() seasonId: string;
-  @Input() weekNumber: number;
+  @Input() seasonId: string
+  @Input() weekNumber: number
 
-  seasonWeek$: Observable<SeasonWeek>;
+  seasonWeek$: Observable<SeasonWeek>
 
   constructor(private seasonService: SeasonService) {
   }
@@ -41,6 +41,6 @@ export class WeekViewComponent implements OnChanges {
   ngOnChanges() {
     this.seasonWeek$ = this.seasonService.seasonById$(this.seasonId).pipe(
       map(season => season.seasonWeekByNumber(this.weekNumber)),
-    );
+    )
   }
 }

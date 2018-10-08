@@ -17,10 +17,10 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http'
+import { NgModule } from '@angular/core'
 
-import { ConfigurationService } from './configuration.service';
+import { ConfigurationService } from './configuration.service'
 
 @NgModule({
   imports: [

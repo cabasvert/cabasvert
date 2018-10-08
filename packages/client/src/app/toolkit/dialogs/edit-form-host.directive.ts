@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Directive, ViewContainerRef } from '@angular/core';
+import { Directive, ViewContainerRef } from '@angular/core'
 
 @Directive({
   selector: '[edit-form-host]',

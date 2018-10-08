@@ -17,19 +17,19 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs'
 import {
   ChildControlConfig,
   ComponentConfig, ConfigFn,
-} from '../../../toolkit/dynamic-form/models/form-config.interface';
-import { Season } from '../season.model';
-import { DynamicWeekSelectComponent } from './dynamic-week-select.component';
+} from '../../../toolkit/dynamic-form/models/form-config.interface'
+import { Season } from '../season.model'
+import { DynamicWeekSelectComponent } from './dynamic-week-select.component'
 
 export function weekSelect(config: WeekSelectConfig): WeekSelectConfig & ComponentConfig {
   return {
     ...config,
     component: DynamicWeekSelectComponent,
-  };
+  }
 }
 
 export interface WeekSelectConfig extends ChildControlConfig {

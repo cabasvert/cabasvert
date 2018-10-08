@@ -17,8 +17,8 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AfterViewInit, Directive, HostBinding } from '@angular/core';
-import { Content } from '@ionic/angular';
+import { AfterViewInit, Directive, HostBinding } from '@angular/core'
+import { Content } from '@ionic/angular'
 
 @Directive({
   selector: '[elastic]',
@@ -28,20 +28,21 @@ export class ElasticDirective implements AfterViewInit {
   constructor(private content: Content) {
   }
 
-  @HostBinding('class.elastic-textarea') private readonly classElastic = true;
+  @HostBinding('class.elastic-textarea') private readonly classElastic = true
 
-  @HostBinding('style.height.px') private get styleHeight() {
-    return this._height;
+  @HostBinding('style.height.px')
+  private get styleHeight() {
+    return this._height
   }
 
-  _height: number;
+  _height: number
 
   ngAfterViewInit() {
-    this.initHeight();
+    this.initHeight()
   }
 
   private async initHeight() {
-    let scrollElement = await this.content.getScrollElement();
-    this._height = scrollElement.scrollHeight;
+    let scrollElement = await this.content.getScrollElement()
+    this._height = scrollElement.scrollHeight
   }
 }

@@ -17,12 +17,12 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { AuthService, User } from '../../toolkit/providers/auth-service';
-import { Navigation } from '../../toolkit/providers/navigation';
-import { ContractsEditPage } from '../contracts/contracts-edit-page';
-import { ChangePasswordPage } from './change-password-page';
+import { Component, OnDestroy, OnInit } from '@angular/core'
+import { Subscription } from 'rxjs'
+import { AuthService, User } from '../../toolkit/providers/auth-service'
+import { Navigation } from '../../toolkit/providers/navigation'
+import { ContractsEditPage } from '../contracts/contracts-edit-page'
+import { ChangePasswordPage } from './change-password-page'
 
 @Component({
   selector: 'page-profile',
@@ -31,24 +31,24 @@ import { ChangePasswordPage } from './change-password-page';
 })
 export class ProfilePage implements OnInit, OnDestroy {
 
-  user: User;
-  private subscription: Subscription;
+  user: User
+  private subscription: Subscription
 
   constructor(private authService: AuthService,
               private navigator: Navigation) {
   }
 
   ngOnInit() {
-    this.subscription = this.authService.loggedInUser$.subscribe(user => this.user = user);
+    this.subscription = this.authService.loggedInUser$.subscribe(user => this.user = user)
   }
 
-  ngOnDestroy () {
-    this.subscription.unsubscribe();
+  ngOnDestroy() {
+    this.subscription.unsubscribe()
   }
 
   public changePassword() {
     this.navigator.showModal$({ component: ChangePasswordPage, componentProps: {} })
       .subscribe(() => {
-      });
+      })
   }
 }

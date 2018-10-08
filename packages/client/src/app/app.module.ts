@@ -17,42 +17,42 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
-import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
-import { RouteReuseStrategy } from '@angular/router';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { SecureStorage } from '@ionic-native/secure-storage/ngx';
+import { HttpClient, HttpClientModule } from '@angular/common/http'
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core'
+import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser'
+import { RouteReuseStrategy } from '@angular/router'
+import { ServiceWorkerModule } from '@angular/service-worker'
+import { AppVersion } from '@ionic-native/app-version/ngx'
+import { SecureStorage } from '@ionic-native/secure-storage/ngx'
 
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { environment } from '../environments/environment';
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular'
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+import { environment } from '../environments/environment'
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module'
+import { AppComponent } from './app.component'
 
-import { ConfigurationModule } from './config/configuration.module';
-import { ConfigurationService } from './config/configuration.service';
-import { inferLocale, registerLocales } from './locales';
-import { AuthenticationModule } from './modules/authentication/authentication.module';
+import { ConfigurationModule } from './config/configuration.module'
+import { ConfigurationService } from './config/configuration.service'
+import { inferLocale, registerLocales } from './locales'
+import { AuthenticationModule } from './modules/authentication/authentication.module'
 
-import { ContractModule } from './modules/contracts/contract.module';
-import { DashboardModule } from './modules/dashboard/dashboard.module';
-import { DistributionModule } from './modules/distributions/distribution.module';
-import { MemberModule } from './modules/members/member.module';
-import { ProfileModule } from './modules/profiles/profile.module';
-import { ReportModule } from './modules/reports/report.module';
-import { SeasonModule } from './modules/seasons/season.module';
-import { AuthService } from './toolkit/providers/auth-service';
-import { DatabaseHelper } from './toolkit/providers/database-helper';
+import { ContractModule } from './modules/contracts/contract.module'
+import { DashboardModule } from './modules/dashboard/dashboard.module'
+import { DistributionModule } from './modules/distributions/distribution.module'
+import { MemberModule } from './modules/members/member.module'
+import { ProfileModule } from './modules/profiles/profile.module'
+import { ReportModule } from './modules/reports/report.module'
+import { SeasonModule } from './modules/seasons/season.module'
+import { AuthService } from './toolkit/providers/auth-service'
+import { DatabaseHelper } from './toolkit/providers/database-helper'
 
-import { DatabaseService } from './toolkit/providers/database-service';
-import { ToolkitModule } from './toolkit/toolkit.module';
-import { IonicGestureConfig } from './toolkit/utils/gestures';
+import { DatabaseService } from './toolkit/providers/database-service'
+import { ToolkitModule } from './toolkit/toolkit.module'
+import { IonicGestureConfig } from './toolkit/utils/gestures'
 
-registerLocales();
+registerLocales()
 
 @NgModule({
   declarations: [AppComponent],
@@ -116,9 +116,9 @@ export function initializeApplication(configuration: ConfigurationService,
                                       authService: AuthService,
                                       databaseService: DatabaseService) {
   return async () => {
-    await configuration.loadConfiguration();
-    await databaseHelper.initialize();
-    await authService.initialize();
-    await databaseService.initialize();
-  };
+    await configuration.loadConfiguration()
+    await databaseHelper.initialize()
+    await authService.initialize()
+    await databaseService.initialize()
+  }
 }

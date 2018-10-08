@@ -24,32 +24,32 @@ import {
   Input,
   OnChanges,
   ViewContainerRef,
-} from '@angular/core';
-import { DynamicGroup } from '../dynamic-form.service';
-import { ChildControlConfig, ComponentConfig } from '../models/form-config.interface';
+} from '@angular/core'
+import { DynamicGroup } from '../dynamic-form.service'
+import { ChildControlConfig, ComponentConfig } from '../models/form-config.interface'
 
-import { DynamicControlComponent } from './dynamic-control.component';
+import { DynamicControlComponent } from './dynamic-control.component'
 
-import { FormButtonComponent } from './form-button.component';
+import { FormButtonComponent } from './form-button.component'
 
 @Directive({
   selector: '[dynamicControlHost]',
 })
 export class DynamicControlHostDirective implements OnChanges {
-  @Input() config: ChildControlConfig & ComponentConfig;
-  @Input() form: DynamicGroup;
-  @Input() group: DynamicGroup;
+  @Input() config: ChildControlConfig & ComponentConfig
+  @Input() form: DynamicGroup
+  @Input() group: DynamicGroup
 
-  component: ComponentRef<DynamicControlComponent<any>>;
+  component: ComponentRef<DynamicControlComponent<any>>
 
   constructor(private resolver: ComponentFactoryResolver,
               private container: ViewContainerRef) {
   }
 
   ngOnChanges() {
-    let type = this.config.component;
-    const factory = this.resolver.resolveComponentFactory<DynamicControlComponent<any>>(type);
-    this.component = this.container.createComponent(factory);
-    this.component.instance.initialize(this.config, this.group, this.form);
+    let type = this.config.component
+    const factory = this.resolver.resolveComponentFactory<DynamicControlComponent<any>>(type)
+    this.component = this.container.createComponent(factory)
+    this.component.instance.initialize(this.config, this.group, this.form)
   }
 }

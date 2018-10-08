@@ -17,19 +17,19 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { formatDate } from '@angular/common';
-import { combineLatest, Observable, of, zip } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { formatDate } from '@angular/common'
+import { combineLatest, Observable, of, zip } from 'rxjs'
+import { map, switchMap } from 'rxjs/operators'
 
-import { groupBy } from '../../utils/arrays';
+import { groupBy } from '../../utils/arrays'
 
-import { Contract, ContractFormulas, ContractKind } from '../contracts/contract.model';
-import { ContractService } from '../contracts/contract.service';
-import { DistributionService } from '../distributions/distribution.service';
-import { Member } from '../members/member.model';
-import { Season } from '../seasons/season.model';
+import { Contract, ContractFormulas, ContractKind } from '../contracts/contract.model'
+import { ContractService } from '../contracts/contract.service'
+import { DistributionService } from '../distributions/distribution.service'
+import { Member } from '../members/member.model'
+import { Season } from '../seasons/season.model'
 
-import { Report, ReportHelper, ReportTable } from './report.model';
+import { Report, ReportHelper, ReportTable } from './report.model'
 
 export class BasketPerMonthReport implements Report {
 
@@ -53,55 +53,55 @@ export class BasketPerMonthReport implements Report {
           style: this.style,
         })),
       ),
-    );
+    )
   }
 
   private basketsPerMonth(basketType$: Observable<string>, helper: ReportHelper): Observable<any[][]> {
-    const seasons$ = helper.seasons.latestSeasons$(3);
+    const seasons$ = helper.seasons.latestSeasons$(3)
 
-    const membersIndexed$ = helper.members.allMembersIndexed$;
+    const membersIndexed$ = helper.members.allMembersIndexed$
 
     const scss$ = seasons$.pipe(
       switchMap(seasons => helper.contracts.contractsForSeasons$(seasons)),
-    );
+    )
 
     return combineLatest(basketType$, membersIndexed$, scss$).pipe(
       map(([basketType, msi, scss]) => {
 
-        const sms: { season: Season, month: Date, member: Member, formulaId: string, }[] = [];
+        const sms: { season: Season, month: Date, member: Member, formulaId: string, }[] = []
 
         scss.forEach(scs => {
-          const { season, contracts } = scs;
-          const seasonWeeks = season.seasonWeeks();
+          const { season, contracts } = scs
+          const seasonWeeks = season.seasonWeeks()
 
           contracts.forEach(c => {
-            if (c.type !== 'contract' && c.srev !== 'v1') return;
-            if (!c.sections) return;
+            if (c.type !== 'contract' && c.srev !== 'v1') return
+            if (!c.sections) return
 
             c.sections.forEach(s => {
-              if (s.kind !== basketType) return;
-              if (!s.formula) return;
+              if (s.kind !== basketType) return
+              if (!s.formula) return
 
-              const member = msi.get(c.member);
-              const monthlyPresence = new Map<string, Date>();
+              const member = msi.get(c.member)
+              const monthlyPresence = new Map<string, Date>()
               seasonWeeks.forEach(week => {
-                const month: Date = this.monthFor(week);
+                const month: Date = this.monthFor(week)
 
                 if (DistributionService.contractSpansOverWeek(s, week)) {
-                  monthlyPresence.set(month.toISOString(), month);
+                  monthlyPresence.set(month.toISOString(), month)
                 }
-              });
+              })
               monthlyPresence.forEach(month => {
                 sms.push({
                   season: season, month: month, member: member,
                   formulaId: ContractFormulas.formulaFor(s.formula).id,
-                });
-              });
-            });
-          });
-        });
+                })
+              })
+            })
+          })
+        })
 
-        let formulas = ContractFormulas.formulas.slice(0, -1);
+        let formulas = ContractFormulas.formulas.slice(0, -1)
 
         const bsByMonth = groupBy(sms, sm => sm.month.toISOString())
           .map(group => ({
@@ -111,7 +111,7 @@ export class BasketPerMonthReport implements Report {
               group.values.reduce((acc, v) => v.formulaId === id ? acc + 1 : acc, 0),
             ),
           }))
-          .sort((sm1, sm2) => sm1.month.toISOString().localeCompare(sm2.month.toISOString()));
+          .sort((sm1, sm2) => sm1.month.toISOString().localeCompare(sm2.month.toISOString()))
 
         // TODO Update to take trial baskets in account
 
@@ -122,17 +122,17 @@ export class BasketPerMonthReport implements Report {
           ...bsByMonth.map(mc =>
             [this.formatMonth(mc.month), mc.total, ... mc.counts.map(c => '' + c)],
           ),
-        ];
+        ]
       }),
-    );
+    )
   }
 
   private style = (row, col) =>
     col === 0 ? (row === 0 ? 'left' : 'right') :
-      row === 0 && col >= 2 ? 'rotate' : 'center';
+      row === 0 && col >= 2 ? 'rotate' : 'center'
 
   private formatMonth(date: Date) {
-    return formatDate(date, 'MMM y', 'fr');
+    return formatDate(date, 'MMM y', 'fr')
   }
 
   private monthFor(week): Date {
@@ -140,7 +140,7 @@ export class BasketPerMonthReport implements Report {
       week.distributionDate.getFullYear(),
       week.distributionDate.getMonth(),
       1,
-    );
+    )
   }
 }
 
@@ -166,49 +166,49 @@ export class DistributionChecklistReport implements Report {
           style: this.style,
         })),
       ),
-    );
+    )
   }
 
   private baskets(basketType$: Observable<string>, helper: ReportHelper): Observable<any[][]> {
-    const season$ = helper.seasons.todaysSeason$;
+    const season$ = helper.seasons.todaysSeason$
 
-    const membersIndexed$ = helper.members.allMembersIndexed$;
+    const membersIndexed$ = helper.members.allMembersIndexed$
 
     const cs$: Observable<Contract[]> = season$.pipe(
       switchMap(season => helper.contracts.contractsBySeason$(season)),
-    );
+    )
 
     return combineLatest(basketType$, membersIndexed$, season$, cs$).pipe(
       map(([basketType, msi, season, cs]) => {
 
-        const presence = [];
+        const presence = []
 
-        const seasonWeeks = season.seasonWeeks();
+        const seasonWeeks = season.seasonWeeks()
 
         cs.forEach(c => {
-          if (c.type !== 'contract' && c.srev !== 'v1') return;
-          if (!c.sections) return;
+          if (c.type !== 'contract' && c.srev !== 'v1') return
+          if (!c.sections) return
 
           c.sections.forEach(s => {
-            if (s.kind !== basketType) return;
-            if (!s.formula) return;
+            if (s.kind !== basketType) return
+            if (!s.formula) return
 
-            const member = msi.get(c.member);
-            const weeklyPresence = [];
+            const member = msi.get(c.member)
+            const weeklyPresence = []
             seasonWeeks.forEach(week => {
-              const count = DistributionService.basketCount(c, s, week);
-              weeklyPresence.push(count);
-            });
+              const count = DistributionService.basketCount(c, s, week)
+              weeklyPresence.push(count)
+            })
 
-            presence.push({ member: member, presence: weeklyPresence });
-          });
-        });
+            presence.push({ member: member, presence: weeklyPresence })
+          })
+        })
 
         // TODO Update to take trial baskets in account
 
         const totals = presence.reduce((acc, mp) =>
           Array.zip(acc, mp.presence, (a, b) => a + b), seasonWeeks.map(() => 0),
-        );
+        )
 
         return [
           ['', '', '', ...seasonWeeks.map(w => w.seasonWeek)],
@@ -216,18 +216,18 @@ export class DistributionChecklistReport implements Report {
           ['', '', 'Totals', ...totals],
           ['Nom', 'Prénom', 'Téléphone', ...seasonWeeks.map(() => '')],
           ...presence.map(mp => {
-            let p = mp.member.persons[0];
-            return [p.lastname, p.firstname, p.phoneNumber, ...mp.presence];
+            let p = mp.member.persons[0]
+            return [p.lastname, p.firstname, p.phoneNumber, ...mp.presence]
           }).sort(([l1, f1], [l2, f2]) => (l1 + '#' + f1).localeCompare(l2 + '#' + f2)),
-        ];
+        ]
       }),
-    );
+    )
   }
 
-  private style = (row, col) => row === 1 ? 'rotate' : col < 2 ? 'left' : 'center';
+  private style = (row, col) => row === 1 ? 'rotate' : col < 2 ? 'left' : 'center'
 
   private formatDate(w) {
-    return formatDate(w.distributionDate, 'shortDate', 'fr');
+    return formatDate(w.distributionDate, 'shortDate', 'fr')
   }
 }
 
@@ -244,19 +244,19 @@ export class PerYearMemberListReport implements Report {
           style: this.style,
         },
       ])),
-    );
+    )
   }
 
   private memberList(helper: ReportHelper): Observable<any[][]> {
-    const year = new Date().getFullYear();
+    const year = new Date().getFullYear()
 
-    const seasons$ = helper.seasons.seasonsForYear$(year);
+    const seasons$ = helper.seasons.seasonsForYear$(year)
 
-    const membersIndexed$ = helper.members.allMembersIndexed$;
+    const membersIndexed$ = helper.members.allMembersIndexed$
 
     const scss$ = seasons$.pipe(
       switchMap(seasons => helper.contracts.contractsForSeasons$(seasons)),
-    );
+    )
 
     interface MemberPresence {
       member: Member;
@@ -266,44 +266,44 @@ export class PerYearMemberListReport implements Report {
     return combineLatest(membersIndexed$, seasons$, scss$).pipe(
       map(([msi, seasons, scss]) => {
 
-        const memberPresence = new Map<String, MemberPresence>();
+        const memberPresence = new Map<String, MemberPresence>()
 
         scss.forEach(({ season, contracts }) => {
           contracts.forEach(contract => {
-            const section = contract.sections.find(s => s.kind === ContractKind.VEGETABLES);
+            const section = contract.sections.find(s => s.kind === ContractKind.VEGETABLES)
 
             if (!section.formula) {
-              return;
+              return
             }
             if (ContractService.hasNoneFormula(section)) {
-              return;
+              return
             }
 
-            const memberId = contract.member;
-            const member = msi.get(memberId);
+            const memberId = contract.member
+            const member = msi.get(memberId)
 
             if (memberPresence.has(memberId)) {
-              memberPresence.get(memberId).seasons.push(season);
+              memberPresence.get(memberId).seasons.push(season)
             } else {
               memberPresence.set(memberId, {
                 member: member,
                 seasons: [season],
-              });
+              })
             }
-          });
-        });
+          })
+        })
 
         return [
           ['Nom', 'Prénom', 'Téléphone', 'Courriel', 'Saisons'],
           ...Array.from(memberPresence, ([id, mp]) => {
-            let p = mp.member.persons[0];
-            let seasonPresence = mp.seasons.map(s => s.name).join(', ');
-            return [p.lastname, p.firstname, p.phoneNumber, p.emailAddress, seasonPresence];
+            let p = mp.member.persons[0]
+            let seasonPresence = mp.seasons.map(s => s.name).join(', ')
+            return [p.lastname, p.firstname, p.phoneNumber, p.emailAddress, seasonPresence]
           }).sort(([l1, f1], [l2, f2]) => (l1 + '#' + f1).localeCompare(l2 + '#' + f2)),
-        ];
+        ]
       }),
-    );
+    )
   }
 
-  private style = (row, col) => col < 2 ? 'left' : 'center';
+  private style = (row, col) => col < 2 ? 'left' : 'center'
 }

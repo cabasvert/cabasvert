@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Roles } from './toolkit/providers/auth-service';
+import { Roles } from './toolkit/providers/auth-service'
 
 export interface PageGroup {
   title?: string;
@@ -70,4 +70,4 @@ export const PAGES = [
       },
     ],
   },
-];
+]

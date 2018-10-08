@@ -17,11 +17,11 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { map, publishReplay, refCount } from 'rxjs/operators';
-import { ComponentConfig, SelectConfig } from '../models/form-config.interface';
-import { DynamicChildControlComponent } from './dynamic-child-control.component';
+import { Component, OnInit } from '@angular/core'
+import { Observable, of } from 'rxjs'
+import { map, publishReplay, refCount } from 'rxjs/operators'
+import { ComponentConfig, SelectConfig } from '../models/form-config.interface'
+import { DynamicChildControlComponent } from './dynamic-child-control.component'
 
 @Component({
   selector: 'dynamic-select',
@@ -40,31 +40,31 @@ import { DynamicChildControlComponent } from './dynamic-child-control.component'
 })
 export class DynamicSelectComponent extends DynamicChildControlComponent<SelectConfig<any> & ComponentConfig> implements OnInit {
 
-  options$: Observable<any[]>;
+  options$: Observable<any[]>
 
   ngOnInit() {
-    let options = this.applyConfigFn(this.config.options);
+    let options = this.applyConfigFn(this.config.options)
 
     this.options$ = (options instanceof Observable ? options : of(options)).pipe(
       map(os => {
         if (this.config.nullOption) {
-          os = os.slice();
-          os.unshift(null);
+          os = os.slice()
+          os.unshift(null)
         }
-        return os;
+        return os
       }),
       publishReplay(1),
       refCount(),
-    );
+    )
   }
 
   optionLabel(option: any, index: number) {
-    let optionLabelFn = this.config.optionLabel;
-    return optionLabelFn ? optionLabelFn(option, index) : option;
+    let optionLabelFn = this.config.optionLabel
+    return optionLabelFn ? optionLabelFn(option, index) : option
   }
 
   optionValue(option: any, index: number) {
-    let optionValueFn = this.config.optionValue;
-    return optionValueFn ? optionValueFn(option, index) : option;
+    let optionValueFn = this.config.optionValue
+    return optionValueFn ? optionValueFn(option, index) : option
   }
 }

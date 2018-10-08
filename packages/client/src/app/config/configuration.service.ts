@@ -17,82 +17,82 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
-import { catchError, take, tap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http'
+import { Injectable } from '@angular/core'
+import { of } from 'rxjs'
+import { catchError, take, tap } from 'rxjs/operators'
 
-import { environment } from '../../environments/environment';
-import { Logger } from '../toolkit/providers/logger';
-import { LogLevel } from '../toolkit/providers/log.model';
-import { Configuration, defaultConfiguration } from './configuration';
+import { environment } from '../../environments/environment'
+import { Logger } from '../toolkit/providers/logger'
+import { LogLevel } from '../toolkit/providers/log.model'
+import { Configuration, defaultConfiguration } from './configuration'
 
 @Injectable()
 export class ConfigurationService {
 
   // LoggerService can't be injected as it depends on this service
   // Manually construct a logger instance
-  private _logger = new Logger('Configuration', { 'Configuration': LogLevel.DEBUG });
+  private _logger = new Logger('Configuration', { 'Configuration': LogLevel.DEBUG })
 
-  private configData: Configuration;
+  private configData: Configuration
 
   constructor(private http: HttpClient) {
   }
 
   async loadConfiguration() {
-    this._logger.groupCollapsed('Loading configuration...');
+    this._logger.groupCollapsed('Loading configuration...')
 
     let fromFile = await this.http.get<Configuration>(environment.configFileName)
       .pipe(
         take(1),
         tap({
           error: error => {
-            console.error(`Error while loading configuration file: ${error.message}`);
+            console.error(`Error while loading configuration file: ${error.message}`)
           },
         }),
         catchError(() => of({})),
       )
-      .toPromise();
+      .toPromise()
 
-    let defaults = defaultConfiguration();
+    let defaults = defaultConfiguration()
 
-    this.configData = this.merge(this.merge({}, defaults), fromFile);
+    this.configData = this.merge(this.merge({}, defaults), fromFile)
 
-    this._logger.info('Loaded configuration:', this.configData);
-    this._logger.groupEnd();
+    this._logger.info('Loaded configuration:', this.configData)
+    this._logger.groupEnd()
   }
 
   async tryLoadDevCredentials() {
-    if (environment.production) return null;
+    if (environment.production) return null
 
-    this._logger.info('Loading development credentials...');
+    this._logger.info('Loading development credentials...')
 
     return await this.http.get<Configuration>(`credentials.dev.json`)
       .pipe(
         take(1),
         catchError(() => of(null)),
       )
-      .toPromise();
+      .toPromise()
   }
 
   private merge(target, source) {
     for (let i in source) {
       if (source.hasOwnProperty(i)) {
         if (typeof source[i] === 'object' && source[i] !== null) {
-          target[i] = this.merge(target[i] || {}, source[i]);
+          target[i] = this.merge(target[i] || {}, source[i])
         } else {
-          target[i] = source[i];
+          target[i] = source[i]
         }
       }
     }
-    return target;
+    return target
   }
 
   get base() {
-    return this.configData.base;
+    return this.configData.base
   }
 
   get log() {
-    return this.configData.log;
+    return this.configData.log
   }
 }

@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs'
 import Sync = PouchDB.Replication.Sync;
 
 export enum SyncStatus {
@@ -35,28 +35,28 @@ export interface SyncState {
 
 export class SyncStateListener {
 
-  private _subject: Subject<SyncState> = new ReplaySubject(1);
-  private _syncState: SyncState;
-  private _currentHandler: SyncEventsHandler;
+  private _subject: Subject<SyncState> = new ReplaySubject(1)
+  private _syncState: SyncState
+  private _currentHandler: SyncEventsHandler
 
   constructor() {
-    this.setState(null, SyncStatus.COMPLETE);
+    this.setState(null, SyncStatus.COMPLETE)
   }
 
   public listenToSync(sync: Sync<{}>) {
-    this._currentHandler = new SyncEventsHandler(this);
-    this._currentHandler.setup(sync);
+    this._currentHandler = new SyncEventsHandler(this)
+    this._currentHandler.setup(sync)
   }
 
   get changes$(): Observable<SyncState> {
-    return this._subject;
+    return this._subject
   }
 
   setState(handler: SyncEventsHandler, status: SyncStatus, error ?: any) {
-    if (handler !== this._currentHandler) return;
+    if (handler !== this._currentHandler) return
 
-    this._syncState = { status: status, error: error };
-    this._subject.next(this._syncState);
+    this._syncState = { status: status, error: error }
+    this._subject.next(this._syncState)
   }
 }
 
@@ -66,24 +66,24 @@ class SyncEventsHandler {
   }
 
   setup(sync: PouchDB.Replication.Sync<{}>) {
-    this.handle(SyncStatus.ACTIVE);
+    this.handle(SyncStatus.ACTIVE)
 
     sync.on('change', change => {
-      this.handle(change.direction === 'pull' ? SyncStatus.PULLING : SyncStatus.PUSHING);
+      this.handle(change.direction === 'pull' ? SyncStatus.PULLING : SyncStatus.PUSHING)
     }).on('paused', error => {
-      this.handle(SyncStatus.PAUSED, error);
+      this.handle(SyncStatus.PAUSED, error)
     }).on('denied', error => {
-      this.handle(SyncStatus.ACTIVE, error);
+      this.handle(SyncStatus.ACTIVE, error)
     }).on('error', error => {
-      this.handle(SyncStatus.COMPLETE, error);
+      this.handle(SyncStatus.COMPLETE, error)
     }).on('active', () => {
-      this.handle(SyncStatus.ACTIVE);
+      this.handle(SyncStatus.ACTIVE)
     }).on('complete', info => {
-      this.handle(SyncStatus.COMPLETE);
-    });
+      this.handle(SyncStatus.COMPLETE)
+    })
   }
 
   private handle(status: SyncStatus, error ?: any) {
-    this.listener.setState(this, status, error);
+    this.listener.setState(this, status, error)
   }
 }

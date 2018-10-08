@@ -17,10 +17,10 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { environment } from '../../environments/environment';
-import { LogLevel } from '../toolkit/providers/log.model';
+import { environment } from '../../environments/environment'
+import { LogLevel } from '../toolkit/providers/log.model'
 
-declare const process: any;
+declare const process: any
 
 export interface Configuration {
   base: {
@@ -37,7 +37,7 @@ export interface Configuration {
 }
 
 export function defaultConfiguration() {
-  let defaultLogLevel = environment.defaultLogLevel;
+  let defaultLogLevel = environment.defaultLogLevel
 
   return {
     base: {
@@ -55,5 +55,5 @@ export function defaultConfiguration() {
       'Database|Local': defaultLogLevel,
       'Auth': defaultLogLevel,
     },
-  };
+  }
 }

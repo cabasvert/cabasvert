@@ -17,22 +17,22 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable, NgZone } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { Roles } from '../../toolkit/providers/auth-service';
-import { observeInsideAngular } from '../../utils/observables';
+import { Injectable, NgZone } from '@angular/core'
+import { TranslateService } from '@ngx-translate/core'
+import { Observable } from 'rxjs'
+import { Roles } from '../../toolkit/providers/auth-service'
+import { observeInsideAngular } from '../../utils/observables'
 
-import { ContractService } from '../contracts/contract.service';
-import { MemberService } from '../members/member.service';
-import { SeasonService } from '../seasons/season.service';
+import { ContractService } from '../contracts/contract.service'
+import { MemberService } from '../members/member.service'
+import { SeasonService } from '../seasons/season.service'
 
-import { ReportDescription, ReportHelper, ReportTable } from './report.model';
+import { ReportDescription, ReportHelper, ReportTable } from './report.model'
 import {
   BasketPerMonthReport,
   DistributionChecklistReport,
   PerYearMemberListReport,
-} from './reports';
+} from './reports'
 
 const REPORTS = [
   {
@@ -56,7 +56,7 @@ const REPORTS = [
     report: PerYearMemberListReport,
     acceptedRoles: [Roles.ADMINISTRATOR],
   },
-];
+]
 
 @Injectable()
 export class ReportService implements ReportHelper {
@@ -68,25 +68,25 @@ export class ReportService implements ReportHelper {
               private ngZone: NgZone) {
   }
 
-  public readonly reports: ReportDescription[] = REPORTS;
+  public readonly reports: ReportDescription[] = REPORTS
 
   public reportByName(name: string): ReportDescription {
-    return this.reports.find(r => r.name === name);
+    return this.reports.find(r => r.name === name)
   }
 
   public generate$(name: string): Observable<ReportTable[]> {
-    let report = this.reportByName(name).report;
+    let report = this.reportByName(name).report
     return new report().generate$(this).pipe(
       observeInsideAngular(this.ngZone),
-    );
+    )
   }
 
   public writeReport(name: string) {
     this.generate$(name).subscribe(tables => {
       tables.forEach(table => {
-        this.writeFile(`./${table.name}.csv`, ReportService.toCSV(table.content));
-      });
-    });
+        this.writeFile(`./${table.name}.csv`, ReportService.toCSV(table.content))
+      })
+    })
   }
 
   private writeFile(fileName: string, csv: string) {
@@ -94,6 +94,6 @@ export class ReportService implements ReportHelper {
   }
 
   private static toCSV(values: any[][]) {
-    return values.map(rows => rows.map(v => v ? v.toString() : '').join(',')).join('\n');
+    return values.map(rows => rows.map(v => v ? v.toString() : '').join(',')).join('\n')
   }
 }

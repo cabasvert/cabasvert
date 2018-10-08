@@ -17,14 +17,14 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NavController } from '@ionic/angular';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { ReportTable } from './report.model';
+import { Component, OnInit } from '@angular/core'
+import { ActivatedRoute, Router } from '@angular/router'
+import { NavController } from '@ionic/angular'
+import { Observable } from 'rxjs'
+import { map, switchMap } from 'rxjs/operators'
+import { ReportTable } from './report.model'
 
-import { ReportService} from './report.service';
+import { ReportService } from './report.service'
 
 @Component({
   selector: 'page-report-result',
@@ -33,9 +33,9 @@ import { ReportService} from './report.service';
 })
 export class ReportResultPage implements OnInit {
 
-  reportTitle: string;
+  reportTitle: string
 
-  tables$: Observable<ReportTable[]>;
+  tables$: Observable<ReportTable[]>
 
   constructor(private router: Router,
               private navCtrl: NavController,
@@ -46,13 +46,13 @@ export class ReportResultPage implements OnInit {
   ngOnInit() {
     let reportName$ = this.route.paramMap.pipe(
       map(params => params.get('name')),
-    );
+    )
     this.tables$ = reportName$.pipe(
       switchMap(report => this.reportsGenerator.generate$(report)),
-    );
+    )
   }
 
   dismiss() {
-    this.navCtrl.goBack();
+    this.navCtrl.goBack()
   }
 }

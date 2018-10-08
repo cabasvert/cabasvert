@@ -17,14 +17,14 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core'
 
-import { NavController, Platform } from '@ionic/angular';
+import { NavController, Platform } from '@ionic/angular'
 
-import { Subscription } from 'rxjs';
-import { AuthService, User } from '../../toolkit/providers/auth-service';
-import { ReportDescription } from './report.model';
-import { ReportService } from './report.service';
+import { Subscription } from 'rxjs'
+import { AuthService, User } from '../../toolkit/providers/auth-service'
+import { ReportDescription } from './report.model'
+import { ReportService } from './report.service'
 
 @Component({
   selector: 'page-reports',
@@ -32,10 +32,10 @@ import { ReportService } from './report.service';
 })
 export class ReportsPage implements OnInit, OnDestroy {
 
-  user: User;
-  private subscription: Subscription;
+  user: User
+  private subscription: Subscription
 
-  reports = this.reportsGenerator.reports;
+  reports = this.reportsGenerator.reports
 
   constructor(public navCtrl: NavController,
               public authService: AuthService,
@@ -44,20 +44,20 @@ export class ReportsPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.subscription = this.authService.loggedInUser$.subscribe(user => this.user = user);
+    this.subscription = this.authService.loggedInUser$.subscribe(user => this.user = user)
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.subscription.unsubscribe()
   }
 
   openReport(report: ReportDescription) {
-    this.navCtrl.navigateForward(`/reports/${report.name}`);
+    this.navCtrl.navigateForward(`/reports/${report.name}`)
   }
 
   writeReport(report: ReportDescription) {
     this.platform.ready()
       .then(_ => this.reportsGenerator.writeReport(report.name))
-      .catch(error => console.log(error));
+      .catch(error => console.log(error))
   }
 }

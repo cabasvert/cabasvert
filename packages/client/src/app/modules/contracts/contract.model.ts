@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const { isArray } = Array;
+const { isArray } = Array
 
 export type Contract = {
   _id: string
@@ -58,15 +58,15 @@ export type ContractSectionCounts = {
 }
 
 export class ContractKind {
-  public static readonly VEGETABLES = 'legumes';
-  public static readonly EGGS = 'oeufs';
+  public static readonly VEGETABLES = 'legumes'
+  public static readonly EGGS = 'oeufs'
 
-  public static readonly ALL = [ContractKind.VEGETABLES, ContractKind.EGGS];
+  public static readonly ALL = [ContractKind.VEGETABLES, ContractKind.EGGS]
 
   public static icon(kind: string) {
-    if (kind === ContractKind.VEGETABLES) return 'basket';
-    else if (kind === ContractKind.EGGS) return 'egg';
-    else return null;
+    if (kind === ContractKind.VEGETABLES) return 'basket'
+    else if (kind === ContractKind.EGGS) return 'egg'
+    else return null
   }
 }
 
@@ -92,20 +92,20 @@ export class ContractFormula {
   }
 
   isNoneFormula() {
-    let value = this.value;
-    return (isArray(value) && value[0] === 0 && value[1] === 0) || value === 0;
+    let value = this.value
+    return (isArray(value) && value[0] === 0 && value[1] === 0) || value === 0
   }
 
   isRegularFormula() {
-    let value = this.value;
-    return (isArray(value) && value[0] === value[1]) || value === parseInt('' + value, 10);
+    let value = this.value
+    return (isArray(value) && value[0] === value[1]) || value === parseInt('' + value, 10)
   }
 
   hasValue(value: number | [number, number]) {
     if (isArray(this.value) && isArray(value)) {
-      return this.value[0] === value[0] && this.value[1] === value[1];
+      return this.value[0] === value[0] && this.value[1] === value[1]
     } else {
-      return this.value === value || (this.alternativeValue && this.alternativeValue === value);
+      return this.value === value || (this.alternativeValue && this.alternativeValue === value)
     }
   }
 }
@@ -155,22 +155,22 @@ export class ContractFormulas {
       null,
       'CONTRACT.FORMULA_NONE',
     ),
-  ];
+  ]
 
   static formulaForId(id: string): ContractFormula {
-    return ContractFormulas.formulas.find(f => f.id === id);
+    return ContractFormulas.formulas.find(f => f.id === id)
   }
 
   static formulaFor(value: number | [number, number]): ContractFormula {
     return ContractFormulas.formulas.find(f => f.hasValue(value),
-    );
+    )
   }
 
   static hasNoneFormula(value: number | [number, number]) {
-    return this.formulaFor(value).isNoneFormula();
+    return this.formulaFor(value).isNoneFormula()
   }
 
   static hasRegularFormula(value: number | [number, number]) {
-    return this.formulaFor(value).isRegularFormula();
+    return this.formulaFor(value).isRegularFormula()
   }
 }

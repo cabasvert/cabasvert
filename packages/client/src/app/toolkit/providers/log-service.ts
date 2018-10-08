@@ -17,9 +17,9 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-import { ConfigurationService } from '../../config/configuration.service';
-import { Logger } from './logger';
+import { Injectable } from '@angular/core'
+import { ConfigurationService } from '../../config/configuration.service'
+import { Logger } from './logger'
 
 @Injectable()
 export class LogService {
@@ -28,6 +28,6 @@ export class LogService {
   }
 
   logger(name: string) {
-    return new Logger(name, this.config.log);
+    return new Logger(name, this.config.log)
   }
 }

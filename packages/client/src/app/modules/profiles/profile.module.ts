@@ -17,19 +17,19 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule, Routes } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { AuthGuard } from '../../toolkit/providers/auth-guard';
-import { Roles } from '../../toolkit/providers/auth-service';
-import { ToolkitModule } from '../../toolkit/toolkit.module';
-import { ReportsPage } from '../reports/reports-page';
+import { CommonModule } from '@angular/common'
+import { NgModule } from '@angular/core'
+import { ReactiveFormsModule } from '@angular/forms'
+import { RouterModule, Routes } from '@angular/router'
+import { IonicModule } from '@ionic/angular'
+import { TranslateModule } from '@ngx-translate/core'
+import { AuthGuard } from '../../toolkit/providers/auth-guard'
+import { Roles } from '../../toolkit/providers/auth-service'
+import { ToolkitModule } from '../../toolkit/toolkit.module'
+import { ReportsPage } from '../reports/reports-page'
 
-import { ChangePasswordPage } from './change-password-page';
-import { ProfilePage } from './profile-page';
+import { ChangePasswordPage } from './change-password-page'
+import { ProfilePage } from './profile-page'
 
 let routes: Routes = [
   {
@@ -37,7 +37,7 @@ let routes: Routes = [
     component: ProfilePage,
     canActivate: [AuthGuard],
   },
-];
+]
 
 @NgModule({
   imports: [

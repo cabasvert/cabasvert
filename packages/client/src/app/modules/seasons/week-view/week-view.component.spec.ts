@@ -17,28 +17,28 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { WeekViewComponent } from './week-view.component';
+import { WeekViewComponent } from './week-view.component'
 
 describe('WeekViewComponent', () => {
-  let component: WeekViewComponent;
-  let fixture: ComponentFixture<WeekViewComponent>;
+  let component: WeekViewComponent
+  let fixture: ComponentFixture<WeekViewComponent>
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ WeekViewComponent ]
-    })
-    .compileComponents();
-  }));
+        declarations: [WeekViewComponent],
+      })
+      .compileComponents()
+  }))
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(WeekViewComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    fixture = TestBed.createComponent(WeekViewComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  })
 
   it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+    expect(component).toBeTruthy()
+  })
+})

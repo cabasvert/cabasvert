@@ -17,9 +17,9 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core'
 
-import { Member } from './member.model';
+import { Member } from './member.model'
 
 @Component({
   selector: 'member-view',
@@ -27,5 +27,5 @@ import { Member } from './member.model';
   styleUrls: ['./member-view.scss'],
 })
 export class MemberView {
-  @Input() member: Member;
+  @Input() member: Member
 }

@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { LogLevel } from '../app/toolkit/providers/log.model';
+import { LogLevel } from '../app/toolkit/providers/log.model'
 
 export const environment = {
   production: false,
@@ -27,4 +27,4 @@ export const environment = {
   localeOverride: null,
   configFileName: 'config.prod.json',
   defaultLogLevel: LogLevel.DEBUG,
-};
+}

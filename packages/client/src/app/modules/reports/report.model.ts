@@ -1,4 +1,4 @@
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core'
 /*
  * This file is part of CabasVert.
  *
@@ -17,10 +17,10 @@ import { TranslateService } from '@ngx-translate/core';
  * You should have received a copy of the GNU General Public License
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Observable } from 'rxjs';
-import { ContractService } from '../contracts/contract.service';
-import { MemberService } from '../members/member.service';
-import { SeasonService } from '../seasons/season.service';
+import { Observable } from 'rxjs'
+import { ContractService } from '../contracts/contract.service'
+import { MemberService } from '../members/member.service'
+import { SeasonService } from '../seasons/season.service'
 
 export interface ReportDescription {
   name: string;

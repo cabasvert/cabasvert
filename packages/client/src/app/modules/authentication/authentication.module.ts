@@ -17,22 +17,22 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule, Routes } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { CommonModule } from '@angular/common'
+import { NgModule } from '@angular/core'
+import { ReactiveFormsModule } from '@angular/forms'
+import { RouterModule, Routes } from '@angular/router'
+import { IonicModule } from '@ionic/angular'
+import { TranslateModule } from '@ngx-translate/core'
 
-import { ToolkitModule } from '../../toolkit/toolkit.module';
+import { ToolkitModule } from '../../toolkit/toolkit.module'
 
-import { LoginPage } from './login-page';
-import { ResetPasswordPage } from './reset-password-page';
+import { LoginPage } from './login-page'
+import { ResetPasswordPage } from './reset-password-page'
 
 let routes: Routes = [
   { path: 'login', component: LoginPage },
   { path: 'reset-password/:username/:token', component: ResetPasswordPage },
-];
+]
 
 @NgModule({
   imports: [

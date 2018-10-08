@@ -17,15 +17,15 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AlertController, LoadingController, NavController } from '@ionic/angular';
-import { EMPTY, merge, Observable, Subject, timer } from 'rxjs';
-import { mapTo, switchMap, take } from 'rxjs/operators';
-import { ConfigurationService } from '../../config/configuration.service';
-import { AuthService } from '../../toolkit/providers/auth-service';
+import { HttpClient } from '@angular/common/http'
+import { Component, OnInit } from '@angular/core'
+import { FormBuilder, FormGroup, Validators } from '@angular/forms'
+import { ActivatedRoute, Router } from '@angular/router'
+import { AlertController, LoadingController, NavController } from '@ionic/angular'
+import { EMPTY, merge, Observable, Subject, timer } from 'rxjs'
+import { mapTo, switchMap, take } from 'rxjs/operators'
+import { ConfigurationService } from '../../config/configuration.service'
+import { AuthService } from '../../toolkit/providers/auth-service'
 
 export class Feedback {
   constructor(public message: string, public isError: boolean = false) {
@@ -38,12 +38,12 @@ export class Feedback {
 })
 export class LoginPage implements OnInit {
 
-  feedbackEvents: Subject<Feedback> = new Subject<Feedback>();
-  feedback: Observable<Feedback>;
+  feedbackEvents: Subject<Feedback> = new Subject<Feedback>()
+  feedback: Observable<Feedback>
 
-  hasPasswordStorage = false;
+  hasPasswordStorage = false
 
-  form: FormGroup;
+  form: FormGroup
 
   constructor(private navCtrl: NavController,
               private route: ActivatedRoute,
@@ -58,7 +58,7 @@ export class LoginPage implements OnInit {
       username: ['', Validators.required],
       password: ['', Validators.required],
       storePassword: false,
-    });
+    })
   }
 
   ngOnInit() {
@@ -68,47 +68,47 @@ export class LoginPage implements OnInit {
         switchMap(f => f == null ? EMPTY : timer(4000)),
         mapTo(null),
       ),
-    );
+    )
 
-    const paramMap = this.route.snapshot.paramMap;
-    const username = paramMap.get('username');
-    const password = paramMap.get('password');
+    const paramMap = this.route.snapshot.paramMap
+    const username = paramMap.get('username')
+    const password = paramMap.get('password')
     if (username) {
-      this.form.get('username').patchValue(username);
+      this.form.get('username').patchValue(username)
     }
     if (password) {
-      this.form.get('password').patchValue(password);
+      this.form.get('password').patchValue(password)
     }
 
-    this.auth.hasPasswordStorage.then(has => this.hasPasswordStorage = has);
+    this.auth.hasPasswordStorage.then(has => this.hasPasswordStorage = has)
 
     this.auth.tryLoadCredentials().then(credentials => {
       if (credentials) {
-        this.form.patchValue(credentials);
-        this.form.get('storePassword').patchValue(true);
+        this.form.patchValue(credentials)
+        this.form.get('storePassword').patchValue(true)
       }
-    });
+    })
   }
 
   public async login() {
-    await this.showLoading();
+    await this.showLoading()
 
     try {
-      const granted = await this.auth.login(this.form.getRawValue());
+      const granted = await this.auth.login(this.form.getRawValue())
 
-      await this.dismissLoading();
+      await this.dismissLoading()
 
       if (granted) {
         if (this.form.get('storePassword').value) {
-          await this.auth.tryStoreCredentials();
+          await this.auth.tryStoreCredentials()
         }
 
-        await this.navCtrl.navigateRoot(['/']);
+        await this.navCtrl.navigateRoot(['/'])
       } else {
-        this.updateFeedback('Access Denied.', true);
+        this.updateFeedback('Access Denied.', true)
       }
     } catch (error) {
-      await this.showError(`Login failed: ${error.message}`);
+      await this.showError(`Login failed: ${error.message}`)
     } finally {
       // await this.dismissLoading();
     }
@@ -135,25 +135,25 @@ export class LoginPage implements OnInit {
           handler: data => this.handleRequestPasswordReset(data),
         },
       ],
-    });
-    await mailInput.present();
+    })
+    await mailInput.present()
   }
 
   private async handleRequestPasswordReset(data) {
     (async () => {
-      await this.requestPasswordReset(data.email);
+      await this.requestPasswordReset(data.email)
 
-      await this.alertCtrl.dismiss();
+      await this.alertCtrl.dismiss()
 
-      this.updateFeedback('An email will be sent to you shortly.');
-    })();
-    return false;
+      this.updateFeedback('An email will be sent to you shortly.')
+    })()
+    return false
   }
 
   private async requestPasswordReset(email: string) {
-    await this.showLoading();
+    await this.showLoading()
 
-    const serverUrl = this.config.base.serverUrl;
+    const serverUrl = this.config.base.serverUrl
 
     interface ResetResponse {
       ok: boolean;
@@ -163,43 +163,43 @@ export class LoginPage implements OnInit {
     try {
       const response = await this.http.get<ResetResponse>(
         `${serverUrl}/api/user/request-password-reset/${email}`,
-      ).pipe(take(1)).toPromise();
+      ).pipe(take(1)).toPromise()
 
       if (response.ok) {
-        await this.navCtrl.navigateRoot(['/login']);
+        await this.navCtrl.navigateRoot(['/login'])
       } else {
-        await this.showError(`Reset password failed: ${response.error}`);
+        await this.showError(`Reset password failed: ${response.error}`)
       }
     } catch (error) {
-      await this.showError(`Reset password failed: ${error.message}`);
+      await this.showError(`Reset password failed: ${error.message}`)
     } finally {
-      await this.dismissLoading();
+      await this.dismissLoading()
     }
   }
 
   async showLoading() {
     const loading = await this.loadingCtrl.create({
       message: 'Please wait...',
-    });
-    await loading.present();
+    })
+    await loading.present()
   }
 
   async dismissLoading() {
-    await this.loadingCtrl.dismiss();
+    await this.loadingCtrl.dismiss()
   }
 
   async showError(text) {
-    await this.dismissLoading();
+    await this.dismissLoading()
 
     const alert = await this.alertCtrl.create({
       header: 'Fail',
       subHeader: text,
       buttons: ['OK'],
-    });
-    await alert.present();
+    })
+    await alert.present()
   }
 
   private updateFeedback(message: string, error: boolean = false) {
-    this.feedbackEvents.next(new Feedback(message, error));
+    this.feedbackEvents.next(new Feedback(message, error))
   }
 }

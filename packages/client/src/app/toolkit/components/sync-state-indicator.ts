@@ -17,13 +17,13 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, NgZone, OnInit } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
-import { observeInsideAngular } from '../../utils/observables';
+import { Component, NgZone, OnInit } from '@angular/core'
+import { Observable, Subject } from 'rxjs'
+import { map, startWith } from 'rxjs/operators'
+import { observeInsideAngular } from '../../utils/observables'
 
-import { DatabaseService } from '../providers/database-service';
-import { SyncState, SyncStatus } from './sync-state-listener';
+import { DatabaseService } from '../providers/database-service'
+import { SyncState, SyncStatus } from './sync-state-listener'
 
 @Component({
   selector: 'sync-state',
@@ -37,16 +37,16 @@ import { SyncState, SyncStatus } from './sync-state-listener';
 })
 export class SyncStateIndicator implements OnInit {
 
-  syncState$: Observable<SyncState>;
-  forceReset$: Subject<void>;
+  syncState$: Observable<SyncState>
+  forceReset$: Subject<void>
 
-  icon$: Observable<string>;
-  isAlive$: Observable<boolean>;
+  icon$: Observable<string>
+  isAlive$: Observable<boolean>
 
   constructor(private databaseService: DatabaseService,
               private zone: NgZone) {
-    this.syncState$ = this.databaseService.syncState$;
-    this.forceReset$ = this.databaseService.forceReset$;
+    this.syncState$ = this.databaseService.syncState$
+    this.forceReset$ = this.databaseService.forceReset$
   }
 
   ngOnInit() {
@@ -54,27 +54,27 @@ export class SyncStateIndicator implements OnInit {
       observeInsideAngular(this.zone),
       map(s => {
         if (!s) {
-          return 'cloud-outline';
+          return 'cloud-outline'
         }
         switch (s.status) {
           case SyncStatus.ACTIVE:
-            return 'cloud';
+            return 'cloud'
           case SyncStatus.PUSHING:
-            return 'cloud-upload';
+            return 'cloud-upload'
           case SyncStatus.PULLING:
-            return 'cloud-download';
+            return 'cloud-download'
           case SyncStatus.PAUSED:
-            return 'cloud-done';
+            return 'cloud-done'
           case SyncStatus.COMPLETE:
-            return 'cloud-outline';
+            return 'cloud-outline'
         }
       }),
       startWith('cloud'),
-    );
+    )
 
     this.isAlive$ = this.syncState$.pipe(
       observeInsideAngular(this.zone),
       map(s => s && s.status !== SyncStatus.COMPLETE),
-    );
+    )
   }
 }

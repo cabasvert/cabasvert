@@ -17,17 +17,17 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators'
 
-import { DatabaseService } from '../../toolkit/providers/database-service';
+import { DatabaseService } from '../../toolkit/providers/database-service'
 
-import { Member } from '../members/member.model';
-import { SeasonWeek } from '../seasons/season.model';
+import { Member } from '../members/member.model'
+import { SeasonWeek } from '../seasons/season.model'
 
 export class Distribution {
-  private _doc: any;
+  private _doc: any
 
-  week: SeasonWeek;
+  week: SeasonWeek
   // TODO Use a dictionary to avoid inconsistencies
   baskets: {
     member: string
@@ -38,10 +38,10 @@ export class Distribution {
     note?: {
       content: string
     }
-  }[];
+  }[]
 
   static create(week: SeasonWeek, mainDatabase: DatabaseService) {
-    return new Distribution(Distribution.createDoc(week), week, mainDatabase);
+    return new Distribution(Distribution.createDoc(week), week, mainDatabase)
   }
 
   private static createDoc(week: SeasonWeek) {
@@ -53,119 +53,119 @@ export class Distribution {
       week: week.seasonWeek,
       // distributorId: string,
       baskets: [],
-    };
-    return doc;
+    }
+    return doc
   }
 
   private static createDocId(week: SeasonWeek) {
-    return 'distribution:' + week.season.id.substring('season:'.length) + '-' + week.seasonWeek;
+    return 'distribution:' + week.season.id.substring('season:'.length) + '-' + week.seasonWeek
   }
 
   constructor(doc: any, week: SeasonWeek, private mainDatabase: DatabaseService) {
-    this._doc = doc;
-    this.week = week;
-    this.baskets = this._doc.baskets;
+    this._doc = doc
+    this.week = week
+    this.baskets = this._doc.baskets
   }
 
   updateDatabase() {
     if (!this._doc.srev) {
-      this._doc.srev = 'v1';
+      this._doc.srev = 'v1'
     }
-    this.mainDatabase.put$(this._doc).subscribe();
+    this.mainDatabase.put$(this._doc).subscribe()
   }
 
   isBasketDistributed(basket: Basket) {
-    let found = this.findByBasket(basket);
-    return found && found.distributed;
+    let found = this.findByBasket(basket)
+    return found && found.distributed
   }
 
   toggleBasketDistributed(basket: Basket) {
-    let found = this.findByBasket(basket);
+    let found = this.findByBasket(basket)
     if (found) {
-      found.distributed = !found.distributed;
-      if (found.distributed) found.date = new Date().toISOString();
+      found.distributed = !found.distributed
+      if (found.distributed) found.date = new Date().toISOString()
     } else {
-      this.addForBasket(basket, true, false, new Date());
+      this.addForBasket(basket, true, false, new Date())
     }
-    this.updateDatabase();
+    this.updateDatabase()
   }
 
   isBasketDelayed(basket: Basket) {
-    let found = this.findByBasket(basket);
-    return found && found.delayed;
+    let found = this.findByBasket(basket)
+    return found && found.delayed
   }
 
   isBasketPrepared(basket: Basket) {
-    let found = this.findByBasket(basket);
-    return found && found.delayed && found.distributed;
+    let found = this.findByBasket(basket)
+    return found && found.delayed && found.distributed
   }
 
   toggleBasketDelayed(basket: Basket) {
-    let found = this.findByBasket(basket);
+    let found = this.findByBasket(basket)
     if (found) {
-      found.delayed = !found.delayed;
+      found.delayed = !found.delayed
     } else {
-      this.addForBasket(basket, false, true);
+      this.addForBasket(basket, false, true)
     }
-    this.updateDatabase();
+    this.updateDatabase()
   }
 
   pushNoteToBasket(basket: Basket, note?: { content: string }) {
-    if (note && note.content == '') note = null;
+    if (note && note.content == '') note = null
 
-    let found = this.findByBasket(basket);
+    let found = this.findByBasket(basket)
     if (found) {
-      found.note = note;
+      found.note = note
     } else {
-      if (!note) return;
-      this.addForBasket(basket, false, false, new Date(), note);
+      if (!note) return
+      this.addForBasket(basket, false, false, new Date(), note)
     }
-    this.updateDatabase();
+    this.updateDatabase()
   }
 
   isBasketHaveNote(basket: Basket) {
-    let found = this.findByBasket(basket);
-    return found && found.note;
+    let found = this.findByBasket(basket)
+    return found && found.note
   }
 
   getNoteFromBasket(basket: Basket): { content: string } {
-    let found = this.findByBasket(basket);
-    return found ? found.note : null;
+    let found = this.findByBasket(basket)
+    return found ? found.note : null
   }
 
   getBasketDistributionDate(basket: Basket) {
-    let found = this.findByBasket(basket);
-    return found && found.date ? new Date(found.date) : null;
+    let found = this.findByBasket(basket)
+    return found && found.date ? new Date(found.date) : null
   }
 
   private findByBasket(basket: Basket) {
-    let id = basket.member._id;
-    let found = this.baskets.find((b) => b.member == id);
-    return found;
+    let id = basket.member._id
+    let found = this.baskets.find((b) => b.member == id)
+    return found
   }
 
   private addForBasket(basket: Basket, distributed: boolean, delayed: boolean, date?: Date, note?: { content: string }) {
     let item = {
       member: basket.member._id,
       sections: basket.sections,
-    };
-    if (distributed) item['distributed'] = true;
-    if (delayed) item['delayed'] = true;
-    if (date) item['date'] = date.toISOString();
-    if (note) item['note'] = note;
-    this.baskets.push(item);
+    }
+    if (distributed) item['distributed'] = true
+    if (delayed) item['delayed'] = true
+    if (date) item['date'] = date.toISOString()
+    if (note) item['note'] = note
+    this.baskets.push(item)
   }
 
   distributedCount() {
-    return this.baskets.reduce((a, b) => a + (b.distributed ? 1 : 0), 0);
+    return this.baskets.reduce((a, b) => a + (b.distributed ? 1 : 0), 0)
   }
 
   delayedCount() {
-    return this.baskets.reduce((a, b) => a + (b.delayed && !b.distributed ? 1 : 0), 0);
+    return this.baskets.reduce((a, b) => a + (b.delayed && !b.distributed ? 1 : 0), 0)
   }
 
   preparedCount() {
-    return this.baskets.reduce((a, b) => a + (b.delayed && b.distributed ? 1 : 0), 0);
+    return this.baskets.reduce((a, b) => a + (b.delayed && b.distributed ? 1 : 0), 0)
   }
 }
 

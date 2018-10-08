@@ -17,12 +17,12 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Plugins } from '@capacitor/core';
-import { NavController, Platform } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
-import { Observable, of, Subscription } from 'rxjs';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core'
+import { ActivatedRoute } from '@angular/router'
+import { Plugins } from '@capacitor/core'
+import { NavController, Platform } from '@ionic/angular'
+import { TranslateService } from '@ngx-translate/core'
+import { Observable, of, Subscription } from 'rxjs'
 import {
   filter,
   map,
@@ -31,24 +31,24 @@ import {
   switchMap,
   take,
   withLatestFrom,
-} from 'rxjs/operators';
+} from 'rxjs/operators'
 
-import { AuthService, Roles, User } from '../../toolkit/providers/auth-service';
-import { Navigation } from '../../toolkit/providers/navigation';
-import { copyAdd, copyRemove, copyWith } from '../../utils/arrays';
-import { debugObservable, observeInsideAngular } from '../../utils/observables';
-import { Contract, ContractKind, ContractSection } from '../contracts/contract.model';
-import { ContractService } from '../contracts/contract.service';
-import { ContractsEditPage } from '../contracts/contracts-edit-page';
-import { TrialBasketEditPage } from '../contracts/trial-basket-edit-page';
-import { Season, SeasonWeek } from '../seasons/season.model';
-import { SeasonService } from '../seasons/season.service';
+import { AuthService, Roles, User } from '../../toolkit/providers/auth-service'
+import { Navigation } from '../../toolkit/providers/navigation'
+import { copyAdd, copyRemove, copyWith } from '../../utils/arrays'
+import { debugObservable, observeInsideAngular } from '../../utils/observables'
+import { Contract, ContractKind, ContractSection } from '../contracts/contract.model'
+import { ContractService } from '../contracts/contract.service'
+import { ContractsEditPage } from '../contracts/contracts-edit-page'
+import { TrialBasketEditPage } from '../contracts/trial-basket-edit-page'
+import { Season, SeasonWeek } from '../seasons/season.model'
+import { SeasonService } from '../seasons/season.service'
 
-import { Member, Person, TrialBasket } from './member.model';
-import { MemberService } from './member.service';
-import { PersonEditFormComponent } from './person-edit-form.component';
+import { Member, Person, TrialBasket } from './member.model'
+import { MemberService } from './member.service'
+import { PersonEditFormComponent } from './person-edit-form.component'
 
-const { App } = Plugins;
+const { App } = Plugins
 
 @Component({
   selector: 'page-member-detail',
@@ -58,16 +58,16 @@ const { App } = Plugins;
 })
 export class MemberDetailsPage implements OnInit, OnDestroy {
 
-  error$: Observable<string>;
+  error$: Observable<string>
 
-  member$: Observable<Member>;
-  contracts$: Observable<Contract[]>;
-  trialBaskets$: Observable<TrialBasket[]>;
+  member$: Observable<Member>
+  contracts$: Observable<Contract[]>
+  trialBaskets$: Observable<TrialBasket[]>
 
-  user: User;
-  private subscription: Subscription;
+  user: User
+  private subscription: Subscription
 
-  Kinds = ContractKind;
+  Kinds = ContractKind
 
   constructor(private platform: Platform,
               private navCtrl: NavController,
@@ -84,7 +84,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.member$ = this.route.data.pipe(
       switchMap(data => data.member$ as Observable<Member>),
-    );
+    )
 
     this.contracts$ = this.member$.pipe(
       switchMap(m => this.contractService.contractsByMember$(m)),
@@ -92,41 +92,41 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
       observeInsideAngular(this.ngZone),
       publishReplay(1),
       refCount(),
-    );
+    )
 
     this.trialBaskets$ = this.member$.pipe(
       map(m => m.trialBaskets || []),
       map(tbs => tbs.sort((tb1, tb2) => -this.trialBasketCompare(tb1, tb2))),
       publishReplay(1),
       refCount(),
-    );
+    )
 
-    this.subscription = this.authService.loggedInUser$.subscribe(user => this.user = user);
+    this.subscription = this.authService.loggedInUser$.subscribe(user => this.user = user)
   }
 
   private trialBasketCompare(tb1, tb2) {
     return (tb1.season + '-' + tb1.week.toString().padStart(2, '0'))
-      .localeCompare(tb2.season + '-' + tb2.week.toString().padStart(2, '0'));
+      .localeCompare(tb2.season + '-' + tb2.week.toString().padStart(2, '0'))
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.subscription.unsubscribe()
   }
 
   dismiss() {
-    this.navCtrl.goBack();
+    this.navCtrl.goBack()
   }
 
   canContactPerson() {
-    return this.platform.is('android');
+    return this.platform.is('android')
   }
 
   conctactPerson(person: Person, type: 'sms' | 'tel') {
-    App.openUrl({ url: type + ':' + person.phoneNumber });
+    App.openUrl({ url: type + ':' + person.phoneNumber })
   }
 
   canEdit() {
-    return this.user && this.user.hasRole(Roles.ADMINISTRATOR);
+    return this.user && this.user.hasRole(Roles.ADMINISTRATOR)
   }
 
   createPerson() {
@@ -141,7 +141,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         (p, m) => Object.assign({}, m, { persons: copyAdd(m.persons, p) }),
       ),
       switchMap(m => this.memberService.putMember$(m)),
-    ).subscribe();
+    ).subscribe()
   }
 
   editPerson(person: Person, index: number) {
@@ -156,7 +156,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         (p, m) => Object.assign({}, m, { persons: copyWith(m.persons, index, p) }),
       ),
       switchMap(m => this.memberService.putMember$(m)),
-    ).subscribe();
+    ).subscribe()
   }
 
   deletePerson(person: Person, index: number) {
@@ -172,7 +172,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         (p, m) => Object.assign({}, m, { persons: copyRemove(m.persons, index) }),
       ),
       switchMap(m => this.memberService.putMember$(m)),
-    ).subscribe();
+    ).subscribe()
   }
 
   createContract() {
@@ -198,13 +198,13 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
       filter(r => r.role === 'save'),
       map(r => r.data),
       map(c => {
-        const seasonId = c.season.substring('season:'.length);
-        const memberId = c.member.substring('member:'.length);
-        c._id = `contract:${seasonId}-${memberId}`;
-        return c;
+        const seasonId = c.season.substring('season:'.length)
+        const memberId = c.member.substring('member:'.length)
+        c._id = `contract:${seasonId}-${memberId}`
+        return c
       }),
       switchMap(c => this.contractService.putContracts$(c)),
-    ).subscribe();
+    ).subscribe()
   }
 
   private inferNewContract(currentSeason: Season, latestSeason: Season,
@@ -213,26 +213,26 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
     // If latest contract is the contract for the current season,
     // then prepare a contract for the latest season
     const season =
-      latestContract && latestContract.season === currentSeason.id ? latestSeason : currentSeason;
+      latestContract && latestContract.season === currentSeason.id ? latestSeason : currentSeason
 
-    const seasonId = season.id.substring('season:'.length);
-    const memberId = member._id.substring('member:'.length);
+    const seasonId = season.id.substring('season:'.length)
+    const memberId = member._id.substring('member:'.length)
 
     const latestVegetableContract = !latestContract ? null :
-      latestContract.sections.find(c => c.kind === ContractKind.VEGETABLES);
+      latestContract.sections.find(c => c.kind === ContractKind.VEGETABLES)
     const latestEggContract = !latestContract ? null :
-      latestContract.sections.find(c => c.kind === ContractKind.EGGS);
+      latestContract.sections.find(c => c.kind === ContractKind.EGGS)
 
     const latestVegetableTrial = !latestTrial ? null :
-      latestTrial.sections.find(c => c.kind === ContractKind.VEGETABLES);
+      latestTrial.sections.find(c => c.kind === ContractKind.VEGETABLES)
     const latestEggTrial = !latestTrial ? null :
-      latestTrial.sections.find(c => c.kind === ContractKind.EGGS);
+      latestTrial.sections.find(c => c.kind === ContractKind.EGGS)
 
     function inferFirstWeek(maybeContract: ContractSection) {
       if (!maybeContract || ContractService.hasRegularFormula(maybeContract)) {
-        return 1;
+        return 1
       } else {
-        return maybeContract.firstWeek % 2 === 1 ? 1 : 2;
+        return maybeContract.firstWeek % 2 === 1 ? 1 : 2
       }
     }
 
@@ -261,7 +261,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
       validation: {
         wish: true,
       },
-    };
+    }
   }
 
   editContract(contract: Contract, index: number) {
@@ -275,7 +275,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
       map(r => r.data),
       map(c => Object.assign({}, contract, c)),
       switchMap(c => this.contractService.putContracts$(c)),
-    ).subscribe();
+    ).subscribe()
   }
 
   deleteContract(contract: Contract, index: number) {
@@ -290,7 +290,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
       .pipe(
         switchMap(() => this.contractService.removeContracts$(contract)),
       )
-      .subscribe();
+      .subscribe()
   }
 
   addTrialBasket() {
@@ -314,7 +314,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         (tb, m) => Object.assign({}, m, { trialBaskets: copyAdd(m.trialBaskets || [], tb) }),
       ),
       switchMap(m => this.memberService.putMember$(m)),
-    ).subscribe();
+    ).subscribe()
   }
 
   private inferNewTrialBasket(currentWeek: SeasonWeek, latestTrial: TrialBasket | null) {
@@ -322,9 +322,9 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
     // TODO Use nextWeek() to properly compute next week
 
     const latestVegetableSection = !latestTrial ? null :
-      latestTrial.sections.find(c => c.kind === ContractKind.VEGETABLES);
+      latestTrial.sections.find(c => c.kind === ContractKind.VEGETABLES)
     const latestEggSection = !latestTrial ? null :
-      latestTrial.sections.find(c => c.kind === ContractKind.EGGS);
+      latestTrial.sections.find(c => c.kind === ContractKind.EGGS)
 
     return {
       season: latestTrial ? latestTrial.season : currentWeek.season.id,
@@ -341,7 +341,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
           count: latestEggSection ? latestEggSection.count : 0,
         },
       ],
-    };
+    }
   }
 
   editTrialBasket(trialBasket: TrialBasket, index: number) {
@@ -360,7 +360,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         (tb, m) => Object.assign({}, m, { trialBaskets: copyWith(m.trialBaskets, index, tb) }),
       ),
       switchMap(m => this.memberService.putMember$(m)),
-    ).subscribe();
+    ).subscribe()
   }
 
   deleteTrialBasket(trialBasket: TrialBasket, index: number) {
@@ -378,6 +378,6 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         ),
         switchMap(m => this.memberService.putMember$(m)),
       )
-      .subscribe();
+      .subscribe()
   }
 }

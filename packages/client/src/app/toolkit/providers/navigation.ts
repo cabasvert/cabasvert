@@ -17,12 +17,12 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-import { AlertController, ModalController, NavController } from '@ionic/angular';
-import { AlertOptions, ModalOptions, NavOptions } from '@ionic/core';
-import { Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
-import { EditDialogComponent, EditFormOptions } from '../dialogs/edit-dialog.component';
+import { Injectable } from '@angular/core'
+import { AlertController, ModalController, NavController } from '@ionic/angular'
+import { AlertOptions, ModalOptions, NavOptions } from '@ionic/core'
+import { Observable } from 'rxjs'
+import { filter, map } from 'rxjs/operators'
+import { EditDialogComponent, EditFormOptions } from '../dialogs/edit-dialog.component'
 
 @Injectable()
 export class Navigation {
@@ -38,29 +38,29 @@ export class Navigation {
         if (typeof b !== 'string') {
           if (b.role === 'cancel') {
             b.handler = () => {
-              return true;
-            };
+              return true
+            }
           } else {
             b.handler = data => {
               if (b.role) {
-                data['button'] = b.role;
+                data['button'] = b.role
               }
-              observer.next(data);
-              return true;
-            };
+              observer.next(data)
+              return true
+            }
           }
-          return b;
+          return b
         }
-      });
+      })
       this.alertCtrl.create(opts)
         .then(alert => {
           alert.onDidDismiss().then(() => {
-            observer.complete();
-          });
-          return alert.present();
+            observer.complete()
+          })
+          return alert.present()
         })
-        .catch(e => observer.error(e));
-    });
+        .catch(e => observer.error(e))
+    })
   }
 
   showModal$(opts ?: ModalOptions): Observable<any> {
@@ -68,19 +68,19 @@ export class Navigation {
       this.modalCtrl.create(opts)
         .then(modal => {
           modal.onDidDismiss().then(r => {
-            observer.next(r);
-            observer.complete();
-          });
-          return modal.present();
+            observer.next(r)
+            observer.complete()
+          })
+          return modal.present()
         })
-        .catch(e => observer.error(e));
-    });
+        .catch(e => observer.error(e))
+    })
   }
 
   async showModal(opts ?: ModalOptions): Promise<any> {
-    const modal = await this.modalCtrl.create(opts);
-    await modal.present();
-    return await modal.onDidDismiss();
+    const modal = await this.modalCtrl.create(opts)
+    await modal.present()
+    return await modal.onDidDismiss()
   }
 
   showEditDialog$(opts ?: EditFormOptions): Observable<any> {
@@ -90,14 +90,14 @@ export class Navigation {
     }).pipe(
       filter(r => r.role === 'save'),
       map(r => r.data),
-    );
+    )
   }
 
   async showEditDialog(opts ?: EditFormOptions): Promise<any> {
     const result = await this.showModal({
       component: EditDialogComponent,
       componentProps: opts,
-    });
-    return result.role === 'save' ? result.data : null;
+    })
+    return result.role === 'save' ? result.data : null
   }
 }

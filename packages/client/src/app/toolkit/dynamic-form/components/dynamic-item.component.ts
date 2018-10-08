@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core'
 
 @Component({
   selector: 'dynamic-item',
@@ -39,7 +39,7 @@ import { Component, Input } from '@angular/core';
 })
 export class DynamicItemComponent {
 
-  @Input() formGroup;
-  @Input() label;
-  @Input() problems;
+  @Input() formGroup
+  @Input() label
+  @Input() problems
 }

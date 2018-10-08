@@ -17,10 +17,10 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { Forms } from '../../utils/forms';
-import { ComponentConfig, InputConfig } from '../models/form-config.interface';
-import { DynamicChildControlComponent } from './dynamic-child-control.component';
+import { Component, OnInit } from '@angular/core'
+import { Forms } from '../../utils/forms'
+import { ComponentConfig, InputConfig } from '../models/form-config.interface'
+import { DynamicChildControlComponent } from './dynamic-child-control.component'
 
 @Component({
   selector: 'dynamic-input',
@@ -38,7 +38,7 @@ export class DynamicInputComponent extends DynamicChildControlComponent<InputCon
 
   ngOnInit() {
     if (this.config.type === 'number') {
-      Forms.forceCastAsNumberOrNull(this.control);
+      Forms.forceCastAsNumberOrNull(this.control)
     }
   }
 }

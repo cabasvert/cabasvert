@@ -17,12 +17,12 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
-import { Member } from './member.model';
-import { MemberService } from './member.service';
+import { Injectable } from '@angular/core'
+import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router'
+import { Observable, of } from 'rxjs'
+import { map, switchMap, take, tap } from 'rxjs/operators'
+import { Member } from './member.model'
+import { MemberService } from './member.service'
 
 @Injectable()
 export class MemberResolver implements Resolve<Observable<Member>> {
@@ -32,18 +32,18 @@ export class MemberResolver implements Resolve<Observable<Member>> {
   }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Observable<Member>> {
-    let id = route.paramMap.get('id');
+    let id = route.paramMap.get('id')
 
     return this.memberService.memberById$(id).pipe(
       take(1),
       map(m => {
         if (!m) {
-          this.router.navigate(['/members']);
-          return null;
+          this.router.navigate(['/members'])
+          return null
         } else {
-          return this.memberService.memberById$(id);
+          return this.memberService.memberById$(id)
         }
       }),
-    );
+    )
   }
 }

@@ -17,21 +17,21 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { formatDate } from '@angular/common';
-import { Component, Inject, LOCALE_ID } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { formatDate } from '@angular/common'
+import { Component, Inject, LOCALE_ID } from '@angular/core'
+import { Validators } from '@angular/forms'
 
-import { ModalController, NavParams } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
-import { map, switchMap } from 'rxjs/operators';
-import { DynamicFormService, DynamicGroup } from '../../toolkit/dynamic-form/dynamic-form.service';
-import * as forms from '../../toolkit/dynamic-form/models/form-config.interface';
-import { objectAssignNoNulls } from '../../utils/objects';
-import { filterNotNull } from '../../utils/observables';
-import { Season, SeasonWeek } from '../seasons/season.model';
-import { SeasonService } from '../seasons/season.service';
-import { weekSelect } from '../seasons/week-selector/dynamic-week-select';
-import { Contract, ContractFormulas, ContractKind } from './contract.model';
+import { ModalController, NavParams } from '@ionic/angular'
+import { TranslateService } from '@ngx-translate/core'
+import { map, switchMap } from 'rxjs/operators'
+import { DynamicFormService, DynamicGroup } from '../../toolkit/dynamic-form/dynamic-form.service'
+import * as forms from '../../toolkit/dynamic-form/models/form-config.interface'
+import { objectAssignNoNulls } from '../../utils/objects'
+import { filterNotNull } from '../../utils/observables'
+import { Season, SeasonWeek } from '../seasons/season.model'
+import { SeasonService } from '../seasons/season.service'
+import { weekSelect } from '../seasons/week-selector/dynamic-week-select'
+import { Contract, ContractFormulas, ContractKind } from './contract.model'
 
 @Component({
   selector: 'page-edit-contracts',
@@ -169,12 +169,12 @@ export class ContractsEditPage {
         ],
       }),
     ],
-  });
+  })
 
-  form: DynamicGroup;
+  form: DynamicGroup
 
-  title: string;
-  contract: Contract;
+  title: string
+  contract: Contract
 
   constructor(private navParams: NavParams,
               private modalController: ModalController,
@@ -183,50 +183,50 @@ export class ContractsEditPage {
               @Inject(LOCALE_ID) private locale: string,
               private translateService: TranslateService) {
 
-    this.form = this.dynamicFormService.createForm(this.config);
+    this.form = this.dynamicFormService.createForm(this.config)
 
     if (this.navParams.data) {
-      this.title = this.navParams.data.title;
-      this.contract = this.clone(this.navParams.data.contract);
+      this.title = this.navParams.data.title
+      this.contract = this.clone(this.navParams.data.contract)
 
       // Compute formula index in formulas list
-      this.formulasToForm(this.contract);
+      this.formulasToForm(this.contract)
 
-      this.form.patchValue(this.contract);
+      this.form.patchValue(this.contract)
     }
   }
 
   private clone(contract) {
-    return JSON.parse(JSON.stringify(contract));
+    return JSON.parse(JSON.stringify(contract))
   }
 
   private formatWeek(week) {
     return formatDate(week.distributionDate, 'shortDate', this.locale) +
-      ' (' + week.seasonWeek + ')';
+      ' (' + week.seasonWeek + ')'
   }
 
   async cancel() {
-    await this.modalController.dismiss(null, 'cancel');
+    await this.modalController.dismiss(null, 'cancel')
   }
 
   async save() {
     // Recompute formula
-    this.formulasFromForm(this.form.value);
+    this.formulasFromForm(this.form.value)
 
-    let data = objectAssignNoNulls({}, this.contract, this.form.value);
-    await this.modalController.dismiss(data, 'save');
+    let data = objectAssignNoNulls({}, this.contract, this.form.value)
+    await this.modalController.dismiss(data, 'save')
   }
 
   formulasToForm(contracts) {
     contracts.sections.forEach(s => {
-      s.formulaId = ContractFormulas.formulaFor(s.formula).id;
-    });
+      s.formulaId = ContractFormulas.formulaFor(s.formula).id
+    })
   }
 
   formulasFromForm(contracts) {
     contracts.sections.forEach(s => {
-      s.formula = ContractFormulas.formulaForId(s.formulaId).value;
-      delete s.formulaId;
-    });
+      s.formula = ContractFormulas.formulaForId(s.formulaId).value
+      delete s.formulaId
+    })
   }
 }

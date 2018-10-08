@@ -47,59 +47,59 @@ interface DateConstructor {
   fromISOWeek(week: [number, number]): Date;
 }
 
-const MILLISECONDS_IN_A_MINUTE = 1000 * 60;
-const MILLISECONDS_IN_A_DAY = MILLISECONDS_IN_A_MINUTE * 60 * 24;
+const MILLISECONDS_IN_A_MINUTE = 1000 * 60
+const MILLISECONDS_IN_A_DAY = MILLISECONDS_IN_A_MINUTE * 60 * 24
 
 Date.prototype.getISODay = function () {
-  return (this.getDay() || 7) - 1;
-};
+  return (this.getDay() || 7) - 1
+}
 
 Date.prototype.setISODay = function (day) {
-  return this.addDays(-this.getISODay() + day);
-};
+  return this.addDays(-this.getISODay() + day)
+}
 
 Date.prototype.addDays = function (days) {
-  let date = new Date(this.valueOf());
-  date.setDate(date.getDate() + days);
-  return date;
-};
+  let date = new Date(this.valueOf())
+  date.setDate(date.getDate() + days)
+  return date
+}
 
 Date.prototype.subtract = function (other) {
-  return Math.round((this.getTime() - other.getTime()) / MILLISECONDS_IN_A_DAY);
-};
+  return Math.round((this.getTime() - other.getTime()) / MILLISECONDS_IN_A_DAY)
+}
 
 Date.prototype.getISOWeek = function () {
   // Copy date so don't modify original
-  let d = new Date(+this);
-  d.setHours(0, 0, 0, 0);
+  let d = new Date(+this)
+  d.setHours(0, 0, 0, 0)
   // Set to nearest Thursday: current date + 4 - current day number
   // Make Sunday's day number 7
-  d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+  d.setDate(d.getDate() + 4 - (d.getDay() || 7))
   // Get first day of year
-  let yearStart = new Date(d.getFullYear(), 0, 1);
+  let yearStart = new Date(d.getFullYear(), 0, 1)
   // Calculate full weeks to nearest Thursday
-  let weekNo = Math.ceil((((d.getTime() - yearStart.getTime()) / MILLISECONDS_IN_A_DAY) + 1) / 7);
+  let weekNo = Math.ceil((((d.getTime() - yearStart.getTime()) / MILLISECONDS_IN_A_DAY) + 1) / 7)
   // Return array of year and week number
-  return [d.getFullYear(), weekNo];
-};
+  return [d.getFullYear(), weekNo]
+}
 
 Date.prototype.isBefore = function (other) {
-  return this.toISOString() < other.toISOString();
-};
+  return this.toISOString() < other.toISOString()
+}
 
 Date.today = function () {
-  let date = new Date();
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-};
+  let date = new Date()
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate())
+}
 
 Date.fromISOWeek = function (week) {
-  let year = week[0];
-  let weekNumber = week[1];
+  let year = week[0]
+  let weekNumber = week[1]
 
-  let simple = new Date(year, 0, 1).addDays((weekNumber - 1) * 7);
-  let isoDay = simple.getISODay();
+  let simple = new Date(year, 0, 1).addDays((weekNumber - 1) * 7)
+  let isoDay = simple.getISODay()
   if (isoDay <= 3)
-    return simple.addDays(-isoDay);
+    return simple.addDays(-isoDay)
   else
-    return simple.addDays(-isoDay + 7);
-};
+    return simple.addDays(-isoDay + 7)
+}

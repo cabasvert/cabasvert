@@ -17,14 +17,14 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { publishReplay, refCount } from 'rxjs/operators';
-import { DynamicChildControlComponent } from '../../../toolkit/dynamic-form/components/dynamic-child-control.component';
-import { ComponentConfig } from '../../../toolkit/dynamic-form/models/form-config.interface';
-import { Forms } from '../../utils/forms';
-import { Season } from '../season.model';
-import { WeekSelectConfig } from './dynamic-week-select';
+import { Component, OnInit } from '@angular/core'
+import { Observable } from 'rxjs'
+import { publishReplay, refCount } from 'rxjs/operators'
+import { DynamicChildControlComponent } from '../../../toolkit/dynamic-form/components/dynamic-child-control.component'
+import { ComponentConfig } from '../../../toolkit/dynamic-form/models/form-config.interface'
+import { Forms } from '../../utils/forms'
+import { Season } from '../season.model'
+import { WeekSelectConfig } from './dynamic-week-select'
 
 @Component({
   selector: 'dynamic-week-select',
@@ -39,12 +39,12 @@ import { WeekSelectConfig } from './dynamic-week-select';
 })
 export class DynamicWeekSelectComponent extends DynamicChildControlComponent<WeekSelectConfig & ComponentConfig> implements OnInit {
 
-  season$: Observable<Season>;
+  season$: Observable<Season>
 
   ngOnInit() {
     this.season$ = this.applyConfigFn(this.config.season).pipe(
       publishReplay(1),
       refCount(),
-    );
+    )
   }
 }

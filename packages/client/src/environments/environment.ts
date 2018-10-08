@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { LogLevel } from '../app/toolkit/providers/log.model';  // Included with Angular CLI.
+import { LogLevel } from '../app/toolkit/providers/log.model'  // Included with Angular CLI.
 
 // The file contents for the current environment will overwrite these during build.
 // The build system defaults to the dev environment which uses `environment.ts`, but if you do
@@ -31,7 +31,7 @@ export const environment = {
   localeOverride: 'fr-FR',
   configFileName: 'config.dev.json',
   defaultLogLevel: LogLevel.DEBUG,
-};
+}
 
 /*
  * In development mode, to ignore zone related error stack frames such as
@@ -39,4 +39,4 @@ export const environment = {
  * import the following file, but please comment it out in production mode
  * because it will have performance impact when throw error
  */
-import 'zone.js/dist/zone-error';
+import 'zone.js/dist/zone-error'

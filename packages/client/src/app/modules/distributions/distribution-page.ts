@@ -17,11 +17,11 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AfterViewInit, Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { AfterViewInit, Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { ActivatedRoute, Router } from '@angular/router'
 
-import { Content, ModalController, NavController } from '@ionic/angular';
-import { combineLatest, merge, Observable, of, Subject, Subscription } from 'rxjs';
+import { Content, ModalController, NavController } from '@ionic/angular'
+import { combineLatest, merge, Observable, of, Subject, Subscription } from 'rxjs'
 import {
   map,
   mapTo,
@@ -32,27 +32,27 @@ import {
   switchAll,
   switchMap,
   withLatestFrom,
-} from 'rxjs/operators';
-import { IndexedScroller } from '../../toolkit/components/indexed-scroller';
-import { ItemExpanding } from '../../toolkit/components/item-expanding';
-import { SlidingPanes } from '../../toolkit/components/sliding-panes';
-import { Navigation } from '../../toolkit/providers/navigation';
-import { contains, Group, groupBy } from '../../utils/arrays';
-import { observeInsideAngular } from '../../utils/observables';
+} from 'rxjs/operators'
+import { IndexedScroller } from '../../toolkit/components/indexed-scroller'
+import { ItemExpanding } from '../../toolkit/components/item-expanding'
+import { SlidingPanes } from '../../toolkit/components/sliding-panes'
+import { Navigation } from '../../toolkit/providers/navigation'
+import { contains, Group, groupBy } from '../../utils/arrays'
+import { observeInsideAngular } from '../../utils/observables'
 
-import { ContractKind } from '../contracts/contract.model';
-import { ContractService } from '../contracts/contract.service';
-import { Member } from '../members/member.model';
-import { MemberService } from '../members/member.service';
-import { SeasonWeek } from '../seasons/season.model';
-import { SeasonService } from '../seasons/season.service';
+import { ContractKind } from '../contracts/contract.model'
+import { ContractService } from '../contracts/contract.service'
+import { Member } from '../members/member.model'
+import { MemberService } from '../members/member.service'
+import { SeasonWeek } from '../seasons/season.model'
+import { SeasonService } from '../seasons/season.service'
 
-import { Basket, Distribution } from './distribution.model';
-import { DistributionService } from './distribution.service';
-import { NotePopup } from './note-popup';
+import { Basket, Distribution } from './distribution.model'
+import { DistributionService } from './distribution.service'
+import { NotePopup } from './note-popup'
 
-const STAR_CHAR = '★';
-const ALPHA_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const STAR_CHAR = '★'
+const ALPHA_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 @Component({
   selector: 'page-distribution',
@@ -74,86 +74,86 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
               private ngZone: NgZone) {
   }
 
-  Kinds = ContractKind;
+  Kinds = ContractKind
 
-  previousWeekClicks$ = new Subject();
-  nextWeekClicks$ = new Subject();
+  previousWeekClicks$ = new Subject()
+  nextWeekClicks$ = new Subject()
 
-  filter = 'remaining';
+  filter = 'remaining'
 
-  alphabeticLabels: string[] = (STAR_CHAR + ALPHA_LETTERS).split('');
+  alphabeticLabels: string[] = (STAR_CHAR + ALPHA_LETTERS).split('')
 
-  week$: Observable<SeasonWeek>;
+  week$: Observable<SeasonWeek>
 
-  distributedBaskets$: Observable<Basket[]>;
-  remainingBaskets$: Observable<Group<Basket>[]>;
-  delayedBaskets$: Observable<Basket[]>;
+  distributedBaskets$: Observable<Basket[]>
+  remainingBaskets$: Observable<Group<Basket>[]>
+  delayedBaskets$: Observable<Basket[]>
 
-  distributedBasketsCount$: Observable<any>;
-  remainingBasketsCount$: Observable<any>;
-  delayedBasketsCount$: Observable<any>;
+  distributedBasketsCount$: Observable<any>
+  remainingBasketsCount$: Observable<any>
+  delayedBasketsCount$: Observable<any>
 
-  distribution$: Observable<Distribution>;
+  distribution$: Observable<Distribution>
 
-  previousDisablement$: Observable<boolean>;
-  nextDisablement$: Observable<boolean>;
+  previousDisablement$: Observable<boolean>
+  nextDisablement$: Observable<boolean>
 
-  private subscription = new Subscription();
-  distribution: Distribution;
-  private perMemberIdProblemSeverity: Map<string, string>;
+  private subscription = new Subscription()
+  distribution: Distribution
+  private perMemberIdProblemSeverity: Map<string, string>
 
-  @ViewChild(SlidingPanes) private panes: SlidingPanes;
+  @ViewChild(SlidingPanes) private panes: SlidingPanes
 
-  @ViewChild('secondPaneContent') secondPaneContent: Content;
-  @ViewChild('secondPaneScroller') secondPaneScroller: IndexedScroller;
+  @ViewChild('secondPaneContent') secondPaneContent: Content
+  @ViewChild('secondPaneScroller') secondPaneScroller: IndexedScroller
 
   private static firstLastnameLetter(member: Member) {
-    let firstLetter = member.persons[0].lastname.charAt(0).toLocaleUpperCase();
+    let firstLetter = member.persons[0].lastname.charAt(0).toLocaleUpperCase()
     if (firstLetter === ' ') {
-      return STAR_CHAR;
+      return STAR_CHAR
     } else {
-      return firstLetter;
+      return firstLetter
     }
   }
 
-  private _groupedRemainingBaskets$: Observable<any>;
+  private _groupedRemainingBaskets$: Observable<any>
 
   ngOnInit() {
     let date$ = this.route.paramMap.pipe(
       map(params => params.get('date')),
       map(dateString => !dateString ? new Date() : new Date(dateString)),
-    );
+    )
 
     let initialWeek$ = date$.pipe(
       switchMap(date => this.seasonService.seasonWeekForDate$(date)),
-    );
+    )
 
     let previousNextClicks$ =
       merge(
         of(0),
         this.previousWeekClicks$.pipe(map(() => -1)),
         this.nextWeekClicks$.pipe(map(() => +1)),
-      );
+      )
 
     this.week$ = previousNextClicks$.pipe(
       mergeScan((w, pn) => {
         if (pn === 0) {
-          return initialWeek$;
+          return initialWeek$
         } else if (pn < 0) {
-          return w.previousWeek$();
+          return w.previousWeek$()
         } else {
-          return w.nextWeek$();
+          return w.nextWeek$()
         }
       }, null),
       publishReplay(1),
       refCount(),
-    );
+    )
 
     let baskets$ = this.week$.pipe(
       switchMap(week => this.distributionService.basketsForWeek$(week)),
       publishReplay(1),
       refCount(),
-    );
+    )
 
     let basketsAndDistribution$ = baskets$.pipe(
       withLatestFrom(this.week$,
@@ -164,14 +164,14 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
       switchAll(),
       publishReplay(1),
       refCount(),
-    );
+    )
 
-    let allBaskets$ = basketsAndDistribution$.pipe(map(({ baskets, ..._ }) => baskets));
-    let distribution$ = basketsAndDistribution$.pipe(map(({ distribution, ..._ }) => distribution));
+    let allBaskets$ = basketsAndDistribution$.pipe(map(({ baskets, ..._ }) => baskets))
+    let distribution$ = basketsAndDistribution$.pipe(map(({ distribution, ..._ }) => distribution))
 
     let allBasketsIndexed$ = allBaskets$.pipe(
       map(bs => bs.indexedAsMap(b => b.member._id)),
-    );
+    )
     let distributedBaskets$ = combineLatest(allBasketsIndexed$, distribution$).pipe(
       map(([ibs, distribution]) =>
         distribution.baskets
@@ -183,13 +183,13 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
       observeInsideAngular(this.ngZone),
       publishReplay(1),
       refCount(),
-    );
+    )
 
     let distributedBasketsCount$ = distributedBaskets$.pipe(
       map(bs => bs.length),
       publishReplay(1),
       refCount(),
-    );
+    )
 
     let allRemainingBaskets$ = combineLatest(allBaskets$, distribution$).pipe(
       map(([bs, distribution]) =>
@@ -197,21 +197,21 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
       ),
       publishReplay(1),
       refCount(),
-    );
+    )
 
     this._groupedRemainingBaskets$ = allRemainingBaskets$.pipe(
       map((bs: Basket[]) => groupBy(bs, b => DistributionPage.firstLastnameLetter(b.member))),
       observeInsideAngular(this.ngZone),
       publishReplay(1),
       refCount(),
-    );
+    )
 
     let remainingBasketsCount$ = allRemainingBaskets$.pipe(
       map(bs => bs.length),
       observeInsideAngular(this.ngZone),
       publishReplay(1),
       refCount(),
-    );
+    )
 
     let delayedBaskets$ = combineLatest(allBaskets$, distribution$).pipe(
       map(([bs, distribution]) =>
@@ -220,23 +220,23 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
       observeInsideAngular(this.ngZone),
       publishReplay(1),
       refCount(),
-    );
+    )
 
     let delayedBasketsCount$ = delayedBaskets$.pipe(
       map(bs => bs.length),
       publishReplay(1),
       refCount(),
-    );
+    )
 
-    let moves$ = previousNextClicks$.pipe(mapTo(null));
-    this.distribution$ = merge(moves$, distribution$);
+    let moves$ = previousNextClicks$.pipe(mapTo(null))
+    this.distribution$ = merge(moves$, distribution$)
 
-    this.distributedBaskets$ = merge(moves$, distributedBaskets$);
-    this.distributedBasketsCount$ = merge(moves$, distributedBasketsCount$);
-    this.remainingBaskets$ = merge(moves$, this._groupedRemainingBaskets$);
-    this.remainingBasketsCount$ = merge(moves$, remainingBasketsCount$);
-    this.delayedBaskets$ = merge(moves$, delayedBaskets$);
-    this.delayedBasketsCount$ = merge(moves$, delayedBasketsCount$);
+    this.distributedBaskets$ = merge(moves$, distributedBaskets$)
+    this.distributedBasketsCount$ = merge(moves$, distributedBasketsCount$)
+    this.remainingBaskets$ = merge(moves$, this._groupedRemainingBaskets$)
+    this.remainingBasketsCount$ = merge(moves$, remainingBasketsCount$)
+    this.delayedBaskets$ = merge(moves$, delayedBaskets$)
+    this.delayedBasketsCount$ = merge(moves$, delayedBasketsCount$)
 
     let navigationDisablement$ =
       combineLatest(
@@ -251,7 +251,7 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
         ],
       ).pipe(
         map(values => values.some(v => v === null)),
-      );
+      )
 
     this.previousDisablement$ = combineLatest(
       navigationDisablement$,
@@ -261,7 +261,7 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
       ),
     ).pipe(
       map(([d1, d2]) => d1 || d2),
-    );
+    )
 
     this.nextDisablement$ = combineLatest(
       navigationDisablement$,
@@ -271,13 +271,13 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
       ),
     ).pipe(
       map(([d1, d2]) => d1 || d2),
-    );
+    )
 
     this.subscription.add(
       distribution$.subscribe(distribution => {
-        this.distribution = distribution;
+        this.distribution = distribution
       }),
-    );
+    )
 
     this.subscription.add(
       this.week$.pipe(
@@ -289,107 +289,107 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
         publishReplay(1),
         refCount(),
       ).subscribe(perIdSeverity => {
-        this.perMemberIdProblemSeverity = perIdSeverity;
+        this.perMemberIdProblemSeverity = perIdSeverity
       }),
-    );
+    )
   }
 
   ngAfterViewInit() {
     this.subscription.add(
       combineLatest(this.secondPaneScroller.scrollToIndex$, this._groupedRemainingBaskets$).pipe(
         map(([i, groups]) => {
-          let laterLabels = this.alphabeticLabels.slice(i);
-          let group = groups.find(mg => contains(laterLabels, mg.key));
-          return group ? group.key : null;
+          let laterLabels = this.alphabeticLabels.slice(i)
+          let group = groups.find(mg => contains(laterLabels, mg.key))
+          return group ? group.key : null
         }),
       ).subscribe(label => {
         if (!label) {
-          this.secondPaneContent.scrollToBottom();
+          this.secondPaneContent.scrollToBottom()
         }
 
-        let element = document.getElementById('divider-' + label);
+        let element = document.getElementById('divider-' + label)
         if (!element) {
-          return;
+          return
         }
 
-        this.secondPaneContent.scrollToPoint(0, element.offsetTop);
+        this.secondPaneContent.scrollToPoint(0, element.offsetTop)
       }),
-    );
+    )
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscription.unsubscribe()
   }
 
   contractProblems(member: Member): string {
-    return this.perMemberIdProblemSeverity && this.perMemberIdProblemSeverity.get(member._id);
+    return this.perMemberIdProblemSeverity && this.perMemberIdProblemSeverity.get(member._id)
   }
 
   async goToMemberPage(member: Member, item: ItemExpanding) {
-    await this.navCtrl.navigateForward(['/members', member._id]);
-    item.close();
+    await this.navCtrl.navigateForward(['/members', member._id])
+    item.close()
   }
 
   isTrialBasketPaid(basket: Basket, item: ItemExpanding): boolean {
-    let trialBasket = MemberService.memberGetTrialBasketForWeek(basket.member, this.distribution.week);
-    return trialBasket ? trialBasket.paid : null;
+    let trialBasket = MemberService.memberGetTrialBasketForWeek(basket.member, this.distribution.week)
+    return trialBasket ? trialBasket.paid : null
   }
 
   toggleTrialBasketPaid(basket: Basket, item: ItemExpanding) {
-    let trialBasket = MemberService.memberGetTrialBasketForWeek(basket.member, this.distribution.week);
-    trialBasket.paid = !trialBasket.paid;
-    this.memberService.putMember$(basket.member).subscribe();
-    item.close();
+    let trialBasket = MemberService.memberGetTrialBasketForWeek(basket.member, this.distribution.week)
+    trialBasket.paid = !trialBasket.paid
+    this.memberService.putMember$(basket.member).subscribe()
+    item.close()
   }
 
   toggleBasketDistributed(basket: Basket, item: ItemExpanding) {
-    this.distribution.toggleBasketDistributed(basket);
-    item.close();
+    this.distribution.toggleBasketDistributed(basket)
+    item.close()
   }
 
   toggleBasketDelayed(basket: Basket, item: ItemExpanding) {
-    this.distribution.toggleBasketDelayed(basket);
-    item.close();
+    this.distribution.toggleBasketDelayed(basket)
+    item.close()
   }
 
   async setNote(basket: Basket, item: ItemExpanding) {
 
-    let note = this.distribution.getNoteFromBasket(basket);
+    let note = this.distribution.getNoteFromBasket(basket)
 
-    let modal = await this.modalCtrl.create({ component: NotePopup, componentProps: note });
+    let modal = await this.modalCtrl.create({ component: NotePopup, componentProps: note })
 
     modal.onDidDismiss().then(newNote => {
       if (!newNote.data) {
-        return;
+        return
       }
       if (newNote.data.content === '' && !note) {
-        return;
+        return
       }
-      this.distribution.pushNoteToBasket(basket, newNote.data);
-    });
+      this.distribution.pushNoteToBasket(basket, newNote.data)
+    })
 
-    await modal.present();
-    item.close();
+    await modal.present()
+    item.close()
   }
 
   range(value: number) {
-    let range = [];
+    let range = []
     for (let i = 0; i < value; ++i) {
-      range.push(i + 1);
+      range.push(i + 1)
     }
-    return range;
+    return range
   }
 
   basketDistributionDate(index: number, basket: Basket) {
-    return !this.distribution ? index : this.distribution.getBasketDistributionDate(basket);
+    return !this.distribution ? index : this.distribution.getBasketDistributionDate(basket)
   }
 
   groupKey(index: number, group: Group<Member>) {
-    return group.key;
+    return group.key
   }
 
   basketMemberId(index: number, basket: Basket) {
-    return basket.member._id;
+    return basket.member._id
   }
 }
 

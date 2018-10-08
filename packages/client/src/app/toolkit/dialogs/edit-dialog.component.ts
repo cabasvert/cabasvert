@@ -17,13 +17,13 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, ComponentFactoryResolver, OnInit, Type, ViewChild } from '@angular/core';
+import { Component, ComponentFactoryResolver, OnInit, Type, ViewChild } from '@angular/core'
 
-import { ModalController, NavParams } from '@ionic/angular';
-import { EditFormHostDirective } from './edit-form-host.directive';
-import { EditFormComponent } from './edit-form.interface';
-import { Person } from './member.model';
-import { MemberService } from './member.service';
+import { ModalController, NavParams } from '@ionic/angular'
+import { EditFormHostDirective } from './edit-form-host.directive'
+import { EditFormComponent } from './edit-form.interface'
+import { Person } from './member.model'
+import { MemberService } from './member.service'
 
 export interface EditFormOptions {
   component: Type<any>;
@@ -36,9 +36,9 @@ export interface EditFormOptions {
 })
 export class EditDialogComponent implements OnInit {
 
-  title: string;
-  @ViewChild(EditFormHostDirective) host: EditFormHostDirective;
-  editFormInstance: EditFormComponent;
+  title: string
+  @ViewChild(EditFormHostDirective) host: EditFormHostDirective
+  editFormInstance: EditFormComponent
 
   constructor(public navParams: NavParams,
               public modalController: ModalController,
@@ -47,35 +47,35 @@ export class EditDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    let editFormOptions: EditFormOptions = <EditFormOptions> this.navParams.data;
+    let editFormOptions: EditFormOptions = <EditFormOptions> this.navParams.data
 
     if (editFormOptions) {
-      this.loadFormComponent(editFormOptions);
+      this.loadFormComponent(editFormOptions)
     }
   }
 
   loadFormComponent(editFormOptions: any) {
-    let componentFactory = this.componentFactoryResolver.resolveComponentFactory(editFormOptions.component);
+    let componentFactory = this.componentFactoryResolver.resolveComponentFactory(editFormOptions.component)
 
-    let viewContainerRef = this.host.viewContainerRef;
-    viewContainerRef.clear();
+    let viewContainerRef = this.host.viewContainerRef
+    viewContainerRef.clear()
 
-    let componentRef = viewContainerRef.createComponent(componentFactory);
-    this.editFormInstance = <EditFormComponent> componentRef.instance;
-    this.editFormInstance.data = editFormOptions.data;
+    let componentRef = viewContainerRef.createComponent(componentFactory)
+    this.editFormInstance = <EditFormComponent> componentRef.instance
+    this.editFormInstance.data = editFormOptions.data
 
-    this.title = this.editFormInstance.title;
+    this.title = this.editFormInstance.title
   }
 
   get isFormValid() {
-    return this.editFormInstance.valid;
+    return this.editFormInstance.valid
   }
 
   async cancel() {
-    await this.modalController.dismiss(null, 'cancel');
+    await this.modalController.dismiss(null, 'cancel')
   }
 
   async save() {
-    await this.modalController.dismiss(this.editFormInstance.data, 'save');
+    await this.modalController.dismiss(this.editFormInstance.data, 'save')
   }
 }

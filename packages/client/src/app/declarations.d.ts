@@ -34,4 +34,4 @@ declare module '*';
 
 declare const Zone: {
   current: { name: string };
-};
+}

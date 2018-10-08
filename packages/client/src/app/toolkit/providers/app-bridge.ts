@@ -17,31 +17,31 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-import { AppState, NetworkStatus, Plugins } from '@capacitor/core';
-import { Platform } from '@ionic/angular';
-import { fromEvent, merge, Observable, of } from 'rxjs';
-import { fromPromise } from 'rxjs/internal-compatibility';
-import { map, publishReplay, refCount, tap } from 'rxjs/operators';
-import { LogService } from './log-service';
-import { Logger } from './logger';
+import { Injectable } from '@angular/core'
+import { AppState, NetworkStatus, Plugins } from '@capacitor/core'
+import { Platform } from '@ionic/angular'
+import { fromEvent, merge, Observable, of } from 'rxjs'
+import { fromPromise } from 'rxjs/internal-compatibility'
+import { map, publishReplay, refCount, tap } from 'rxjs/operators'
+import { LogService } from './log-service'
+import { Logger } from './logger'
 
-const { App, Network } = Plugins;
+const { App, Network } = Plugins
 
 @Injectable()
 export class AppBridge {
 
-  private _logger: Logger;
+  private _logger: Logger
 
   private get logger() {
-    return this._logger || (this._logger = this.logService.logger('App'));
+    return this._logger || (this._logger = this.logService.logger('App'))
   }
 
-  private isHybrid = this.platform.is('hybrid');
+  private isHybrid = this.platform.is('hybrid')
 
-  public readonly appIsActive$: Observable<boolean>;
-  public readonly networkStatus$: Observable<NetworkStatus>;
-  public readonly networkIsConnected$: Observable<boolean>;
+  public readonly appIsActive$: Observable<boolean>
+  public readonly networkStatus$: Observable<NetworkStatus>
+  public readonly networkIsConnected$: Observable<boolean>
 
   constructor(private logService: LogService,
               private platform: Platform) {
@@ -56,7 +56,7 @@ export class AppBridge {
       of(true).pipe(
         publishReplay(1),
         refCount(),
-      );
+      )
 
     this.networkStatus$ = this.isHybrid ?
       merge(
@@ -69,18 +69,18 @@ export class AppBridge {
       of<NetworkStatus>({ connected: true, connectionType: 'wifi' }).pipe(
         publishReplay(1),
         refCount(),
-      );
+      )
 
     this.networkIsConnected$ = this.networkStatus$.pipe(
       map((status: NetworkStatus) => status.connected),
       tap(connected => this.logger.info(`Network is ${connected ? 'connected' : 'disconnected'}`)),
       publishReplay(1),
       refCount(),
-    );
+    )
   }
 
   get networkStatus(): Promise<NetworkStatus> {
     return this.isHybrid ? Network.getStatus() :
-      Promise.resolve<NetworkStatus>({ connected: true, connectionType: 'wifi' });
+      Promise.resolve<NetworkStatus>({ connected: true, connectionType: 'wifi' })
   }
 }

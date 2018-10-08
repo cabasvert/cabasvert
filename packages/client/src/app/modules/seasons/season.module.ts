@@ -17,18 +17,18 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { DynamicFormModule } from '../../toolkit/dynamic-form/dynamic-form.module';
+import { CommonModule } from '@angular/common'
+import { NgModule } from '@angular/core'
+import { ReactiveFormsModule } from '@angular/forms'
+import { IonicModule } from '@ionic/angular'
+import { TranslateModule } from '@ngx-translate/core'
+import { DynamicFormModule } from '../../toolkit/dynamic-form/dynamic-form.module'
 
-import { SeasonService } from './season.service';
-import { DynamicWeekSelectComponent } from './week-selector/dynamic-week-select.component';
-import { WeekSelectControl } from './week-selector/week-select-control.component';
-import { WeekSelectorComponent } from './week-selector/week-selector.component';
-import { WeekViewComponent } from './week-view/week-view.component';
+import { SeasonService } from './season.service'
+import { DynamicWeekSelectComponent } from './week-selector/dynamic-week-select.component'
+import { WeekSelectControl } from './week-selector/week-select-control.component'
+import { WeekSelectorComponent } from './week-selector/week-selector.component'
+import { WeekViewComponent } from './week-view/week-view.component'
 
 @NgModule({
   imports: [

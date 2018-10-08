@@ -17,9 +17,9 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { ModalController, NavParams } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core'
+import { FormBuilder, FormGroup } from '@angular/forms'
+import { ModalController, NavParams } from '@ionic/angular'
 
 @Component({
   template: `
@@ -55,7 +55,7 @@ import { ModalController, NavParams } from '@ionic/angular';
 })
 export class NotePopup implements OnInit {
 
-  form: FormGroup;
+  form: FormGroup
 
   constructor(private params: NavParams,
               private modalController: ModalController,
@@ -63,20 +63,20 @@ export class NotePopup implements OnInit {
 
     this.form = this.formBuilder.group({
       content: this.formBuilder.control(['']),
-    });
+    })
   }
 
   ngOnInit() {
     if (this.params.data) {
-      this.form.patchValue(this.params.data);
+      this.form.patchValue(this.params.data)
     }
   }
 
   async save() {
-    await this.modalController.dismiss(this.form.value);
+    await this.modalController.dismiss(this.form.value)
   }
 
   async dismiss() {
-    await this.modalController.dismiss();
+    await this.modalController.dismiss()
   }
 }
