@@ -1,7 +1,7 @@
 {
   "name": "@cabasvert/server",
   "author": "Cabas Vert",
-  "version": "0.2.2-beta.1",
+  "version": "0.2.2-beta.2",
   "description": "The server app for Cabas Vert",
   "license": "GPL-3.0",
   "private": true,
@@ -74,8 +74,8 @@
     "pouchdb-security-helper": "^1.1.1",
     "request": "^2.83.0",
     "supertest": "^3.0.0",
-    "tslint": "^5.8.0",
     "ts-node": "^7.0.1",
+    "tslint": "^5.8.0",
     "typescript": "^2.6.2",
     "watch": "^1.0.2"
   }
