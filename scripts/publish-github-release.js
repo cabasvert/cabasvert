@@ -33,7 +33,7 @@ async function main() {
       throw new Error('env.GH_TOKEN is undefined');
     }
 
-    await utils.checkGit();
+    // await utils.checkGit();
 
     let { name, version } = utils.readPackageJson(packageDir);
     let tag = `${name}@${version}`;
@@ -52,6 +52,8 @@ async function publishGithub(version, tag, artifactsDir) {
     type: 'oauth',
     token: process.env.GH_TOKEN
   });
+
+  console.log(`Creating GitHub release for ${tag}`);
 
   // Create the GitHub release
   const result = await octokit.repos.createRelease({
@@ -81,17 +83,20 @@ async function publishGithub(version, tag, artifactsDir) {
         return;
       }
 
-      const content = await fs.readFile(file);
+      console.log(`Uploading GitHub release asset ${file}`);
+
+      const content = await fs.readFile(path.join(artifactsDir, file));
 
       await octokit.repos.uploadAsset({
         url: uploadUrl,
         file: content,
         contentType: contentType,
-        contentLength: file.byteLength,
-        name: path.basename(file),
+        contentLength: content.byteLength,
+        name: file,
       });
     }
   } catch (err) {
+    console.error(err);
   }
 }
 
@@ -108,7 +113,7 @@ function lastChangelog() {
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    if (line.startsWith('# [')) {
+    if (line.startsWith('## [')) {
       if (start === -1) {
         start = i + 1;
       } else {
