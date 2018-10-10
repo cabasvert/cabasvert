@@ -15,7 +15,7 @@
     "config.json"
   ],
   "scripts": {
-    "clean": "rm -rf dist/ && rm -rf .nyc_output/ && rm -rf coverage/ && rm -rf logs/",
+    "clean": "rm -rf dist/ && rm -rf artifacts/ && rm -rf .nyc_output/ && rm -rf coverage/ && rm -rf logs/",
     "compile": "tsc",
     "compile-test": "tsc",
     "prestart": "npm-run-all compile",
@@ -27,7 +27,7 @@
     "test": "nyc -r lcov -e .ts -x \"**/*.spec.ts\" node ../../scripts/run-tests.js \"test/**/*.spec.ts\"",
     "test:watch": "watch 'npm run test' dist --wait=0.1",
     "prebuild": "DATABASE=couchdb npm-run-all lint license-check test",
-    "build": "npm-run-all compile pack",
+    "build": "npm-run-all clean compile pack",
     "pack": "npm pack && mkdir artifacts ; mv cabasvert-server-*.tgz artifacts/",
     "lint": "tslint --project '../../tslint.json' 'src/**/*.ts' 'test/**/*.ts'",
     "license-check": "node ../../scripts/license-check.js"
