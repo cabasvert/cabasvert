@@ -5,17 +5,20 @@
     "packages/*"
   ],
   "scripts": {
-    "postinstall": "lerna run postinstall",
-    "build": "lerna run build",
+    "postinstall": "lerna run postinstall --stream",
+    "build": "lerna run build --stream",
+    "test": "lerna run test --stream",
     "start-client": "npm-run-all start --prefix packages/client",
     "start-server": "npm-run-all start --prefix packages/server",
-    "prerelease": "npm-run-all build test",
-    "release-alpha": "npm-run-all release -- preversion --preid alpha",
-    "release-beta": "npm-run-all release -- preversion --preid beta",
-    "release-rc": "npm-run-all release -- preversion --preid rc",
+    "prerelease": "npm-run-all build",
+    "release-alpha": "npm-run-all \"release -- preversion --preid alpha\"",
+    "release-beta": "npm-run-all \"release -- preversion --preid beta\"",
+    "release-rc": "npm-run-all \"release -- preversion --preid rc\"",
     "release": "lerna version",
-    "publish": "lerna run publish",
-    "license-check": "lerna run license-check"
+    "prepublish": "npm-run-all build",
+    "publish": "lerna exec --stream -- node ../../scripts/publish-github-release.js",
+    "lint": "lerna run lint --stream",
+    "license-check": "lerna run license-check --stream"
   },
   "devDependencies": {
     "add-cors-to-couchdb": "^0.0.6",

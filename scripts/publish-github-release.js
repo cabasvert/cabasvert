@@ -26,7 +26,6 @@ const owner = 'cabasvert';
 const repository = 'cabasvert';
 
 let packageDir = process.cwd();
-let rootDir = path.join(packageDir, '../../');
 
 async function main() {
   try {
