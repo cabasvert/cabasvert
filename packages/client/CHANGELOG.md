@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [0.3.0-beta.12](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.11...@cabasvert/client@0.3.0-beta.12) (2018-10-10)
+## [0.3.0-beta.12](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.11...@cabasvert/client@0.3.0-beta.12) (2018-10-10)
 
 **Note:** Version bump only for package @cabasvert/client
 

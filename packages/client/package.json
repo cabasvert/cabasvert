@@ -56,7 +56,6 @@
     "pouchdb-find": "^6.4.1",
     "pouchdb-replication": "^6.4.1",
     "rxjs": "^6.3.3",
-    "standard-version": "^4.4.0",
     "uid-generator": "^1.0.0",
     "zone.js": "^0.8.26"
   },
