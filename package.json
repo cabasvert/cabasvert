@@ -15,7 +15,7 @@
     "release-beta": "npm-run-all \"release -- prerelease --preid beta\"",
     "release-rc": "npm-run-all \"release -- prerelease --preid rc\"",
     "release": "lerna version --no-push",
-    "prepublish": "npm-run-all build",
+    "prepublishOnly": "npm-run-all build",
     "publish": "lerna exec --stream -- node ../../scripts/publish-github-release.js",
     "lint": "lerna run lint --stream",
     "license-check": "lerna run license-check --stream"
