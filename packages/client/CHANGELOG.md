@@ -1,5 +1,22 @@
 # Change Log
 
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+# [0.3.0-beta.10](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.9...@cabasvert/client@0.3.0-beta.10) (2018-10-10)
+
+
+### Features
+
+* **contracts:** use week selector in forms ([fb3f3fc](https://github.com/cabasvert/cabasvert/commit/fb3f3fc))
+* **seasons:** add a week selector control ([7abf546](https://github.com/cabasvert/cabasvert/commit/7abf546))
+
+
+
+
+
+# Change Log
+
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 <a name="0.3.0-beta.9"></a>

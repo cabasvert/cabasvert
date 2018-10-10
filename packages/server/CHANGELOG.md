@@ -1,3 +1,16 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [0.2.2-beta.0](https://github.com/cabasvert/cabasvert/compare/@cabasvert/server@0.2.1...@cabasvert/server@0.2.2-beta.0) (2018-10-10)
+
+**Note:** Version bump only for package @cabasvert/server
+
+
+
+
+
 <a name="0.2.1"></a>
 ## [0.2.1](/compare/@cabasvert/server@0.2.1...@cabasvert/server@0.2.1) (2018-10-06)
 
@@ -27,6 +40,3 @@
 * **logs:** add more debugging messages of actions or problems b9e19f3
 * **status:** add a status check controller at /status/check 7498ac4
 * **token:** clear token after request with expired/invalid token bb09994
-
-
-
