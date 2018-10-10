@@ -24,12 +24,12 @@
     "start:watch:compile": "tsc -w",
     "start:watch:node": "nodemon --inspect dist/cli --watch dist",
     "pretest": "npm-run-all compile",
-    "test": "nyc -r lcov -e .ts -x \"**/*.spec.ts\" node ../../scripts/run-tests.js \"test/**/*.spec.ts\"",
+    "test": "nyc -r lcov -e .ts -x \"**/*.spec.ts\" node scripts/run-tests.js \"test/**/*.spec.ts\"",
     "test:watch": "watch 'npm run test' dist --wait=0.1",
     "prebuild": "DATABASE=couchdb npm-run-all lint license-check test",
     "build": "npm-run-all clean compile pack",
     "pack": "npm pack && mkdir artifacts ; mv cabasvert-server-*.tgz artifacts/",
-    "lint": "tslint --project '../../tslint.json' 'src/**/*.ts' 'test/**/*.ts'",
+    "lint": "tslint --project 'tslint.json' 'src/**/*.ts' 'test/**/*.ts'",
     "license-check": "node ../../scripts/license-check.js"
   },
   "dependencies": {
@@ -64,11 +64,10 @@
     "winston": "^2.4.0"
   },
   "devDependencies": {
-    "@types/jasmine": "^2.8.2",
+    "@types/jasmine": "^2.8.9",
     "codelyzer": "^4.5.0",
-    "jasmine": "^3.1.0",
+    "jasmine": "^3.2.0",
     "jasmine-spec-reporter": "^4.2.1",
-    "jasmine-ts": "^0.2.1",
     "listr": "^0.14.2",
     "nodemon": "^1.14.3",
     "nyc": "^11.4.1",
@@ -76,6 +75,7 @@
     "request": "^2.83.0",
     "supertest": "^3.0.0",
     "tslint": "^5.8.0",
+    "ts-node": "^7.0.1",
     "typescript": "^2.6.2",
     "watch": "^1.0.2"
   }

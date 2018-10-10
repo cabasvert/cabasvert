@@ -27,11 +27,14 @@
  * }
  */
 
-const fs = require('fs');
+const fs = require('fs-extra');
+const utils = require('./../../../scripts/utils');
+
 const VERSION_FILE = 'src/version.ts';
 const ANDROID_VERSION_FILE = 'android/version.properties';
 
-const version = process.env.npm_package_version;
+const packageDir = process.cwd();
+const { version } = utils.readPackageJson(packageDir);
 
 writeFile(VERSION_FILE, `/*
  * This file is part of CabasVert.

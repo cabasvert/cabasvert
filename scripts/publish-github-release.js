@@ -33,7 +33,7 @@ async function main() {
       throw new Error('env.GH_TOKEN is undefined');
     }
 
-    // await utils.checkGit();
+    await utils.checkGit();
 
     let { name, version } = utils.readPackageJson(packageDir);
     let tag = `${name}@${version}`;

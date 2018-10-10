@@ -27,7 +27,7 @@
  * }
  */
 
-const fs = require('fs');
+const fs = require('fs-extra');
 
 let filename = '/src/angular-cli-files/models/webpack-configs/browser.js';
 let localModule = 'node_modules/@angular-devkit/build-angular';
