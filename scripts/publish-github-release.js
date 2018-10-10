@@ -39,7 +39,7 @@ async function main() {
     let tag = `${name}@${version}`;
     let artifactsDir = path.join(packageDir, 'artifacts');
 
-    await publishGithub(version, tag, artifactsDir);
+    await publishGithub(name, version, tag, artifactsDir);
 
   } catch (err) {
     console.error('\n', err, '\n');
@@ -47,7 +47,7 @@ async function main() {
   }
 }
 
-async function publishGithub(version, tag, artifactsDir) {
+async function publishGithub(pkg, version, tag, artifactsDir) {
   octokit.authenticate({
     type: 'oauth',
     token: process.env.GH_TOKEN
@@ -61,7 +61,7 @@ async function publishGithub(version, tag, artifactsDir) {
     repo: repository,
     target_commitish: 'master',
     tag_name: tag,
-    name: version,
+    name: `${pkg} ${version}`,
     prerelease: isPreRelease(version),
     body: lastChangelog(),
   });

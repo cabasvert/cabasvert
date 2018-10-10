@@ -3,10 +3,9 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [0.3.0-beta.11](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.10...@cabasvert/client@0.3.0-beta.11) (2018-10-10)
+## [0.3.0-beta.11](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.10...@cabasvert/client@0.3.0-beta.11) (2018-10-10)
 
 **Note:** Version bump only for package @cabasvert/client
-
 
 
 
@@ -20,8 +19,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **seasons:** add a week selector control ([7abf546](https://github.com/cabasvert/cabasvert/commit/7abf546))
 
 
-
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 <a name="0.3.0-beta.9"></a>
 ## [0.3.0-beta.9](https://github.com/cabasvert/cabasvert-client/compare/v0.3.0-beta.8...v0.3.0-beta.9) (2018-09-29)
