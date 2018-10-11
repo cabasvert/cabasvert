@@ -53,10 +53,23 @@ async function publishGithub(pkg, version, tag, artifactsDir) {
     token: process.env.GH_TOKEN
   });
 
+  try {
+    await octokit.repos.getReleaseByTag({
+      owner: owner,
+      repo: repository,
+      tag: tag,
+    });
+
+    console.log(`GitHub release for ${tag} already exists – Skipping!`);
+    return;
+  } catch (err) {
+    // Release does not yet exist
+  }
+
   console.log(`Creating GitHub release for ${tag}`);
 
   // Create the GitHub release
-  const result = await octokit.repos.createRelease({
+  const newRelease = await octokit.repos.createRelease({
     owner: owner,
     repo: repository,
     target_commitish: 'master',
@@ -66,7 +79,7 @@ async function publishGithub(pkg, version, tag, artifactsDir) {
     body: lastChangelog(),
   });
 
-  let uploadUrl = result.data.upload_url;
+  let uploadUrl = newRelease.data.upload_url;
 
   // Check if there are any artifacts to publish
   try {
