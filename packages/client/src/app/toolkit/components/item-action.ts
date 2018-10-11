@@ -17,12 +17,12 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, EventEmitter, Input, Output } from '@angular/core'
+import { Component, Input } from '@angular/core'
 
 @Component({
   selector: 'ion-item-action',
   template: `
-    <button (click)="click.next($event)">
+    <button>
       <ion-icon [name]="icon" [color]="color"></ion-icon>
       <ion-label [color]="color">{{ label }}</ion-label>
     </button>
@@ -30,8 +30,6 @@ import { Component, EventEmitter, Input, Output } from '@angular/core'
   styleUrls: ['item-action.scss'],
 })
 export class ItemAction {
-
-  @Output() click = new EventEmitter<Event>()
 
   @Input() icon: string
   @Input() label: string
