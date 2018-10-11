@@ -126,7 +126,7 @@ function lastChangelog() {
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    if (line.startsWith('## [')) {
+    if (line.startsWith('# [') || line.startsWith('## [')) {
       if (start === -1) {
         start = i + 1;
       } else {
