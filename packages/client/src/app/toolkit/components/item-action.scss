@@ -31,7 +31,10 @@
 button {
   padding: 0;
   height: 54px;
-  background-color: var(--ion-color-light);
+
+  background-color: transparent;
+  color: inherit;
+
   outline: none;
 
   display: flex;
@@ -41,7 +44,7 @@ button {
 }
 
 button:hover {
-  background-color: var(--ion-color-light-shade);
+  background-color: var(--ion-background-color-step-150);
 }
 
 ion-icon {

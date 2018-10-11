@@ -17,31 +17,35 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-:host {
-  position: relative;
-  z-index: 1; // $z-index-item-options;
+import { Injectable } from '@angular/core'
+import { Plugins } from '@capacitor/core'
+import { BehaviorSubject } from 'rxjs'
 
-  width: 100%;
-  display: flex;
-  align-items: center;
+const { Storage } = Plugins
 
-  padding-left: 16px;
-  padding-right: 16px;
+export type Theme = 'light' | 'dark'
 
-  background-color: var(--ion-background-color-step-100);
-  color: var(--ion-text-color);
+@Injectable()
+export class ThemeManagerService {
 
-  font-size: 14px;
+  theme$ = new BehaviorSubject<Theme>(null)
 
-  height: 0px;
-  //opacity: 0;
-  pointer-events: none;
+  constructor() {
+    this.initializeTheme()
+  }
 
-  transition: all 150ms ease-in-out;
-}
+  private async initializeTheme() {
+    let storedTheme = await Storage.get({ key: 'theme' })
+    let theme = !(storedTheme && storedTheme.value) ? 'light' : storedTheme.value as Theme
+    this.theme$.next(theme)
+  }
 
-:host-context(.expanded) {
-  height: 54px;
-  opacity: 1;
-  pointer-events: all;
+  private async storeTheme(theme: Theme) {
+    await Storage.set({ key: 'theme', value: theme })
+  }
+
+  set theme(theme: Theme) {
+    this.theme$.next(theme)
+    this.storeTheme(theme)
+  }
 }

@@ -334,10 +334,18 @@ class Filter {
   }
 
   get(id: string): boolean | undefined {
-    return this.flags[id] == null ? undefined : this.flags[id]
+    return this.flags[id] === undefined ? undefined : this.flags[id]
+  }
+
+  isSet(id: string): boolean | undefined {
+    return this.flags[id] !== undefined
   }
 
   colorFor(id: string): string {
-    return this.flags[id] === undefined ? 'inactive' : this.flags[id] ? 'primary' : 'danger'
+    return this.isSet(id) ? this.get(id) ? 'primary' : 'danger' : null
+  }
+
+  fillFor(id: string): string {
+    return this.isSet(id) ? 'solid' : 'outline'
   }
 }

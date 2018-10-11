@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Inject, LOCALE_ID, OnInit, QueryList, ViewChildren } from '@angular/core'
+import { Component, HostBinding, Inject, LOCALE_ID, OnInit, QueryList, ViewChildren } from '@angular/core'
 import { ActivatedRoute, Router, Scroll } from '@angular/router'
 import { SwUpdate } from '@angular/service-worker'
 import { Plugins, StatusBarStyle } from '@capacitor/core'
@@ -36,6 +36,7 @@ import { environment } from '../environments/environment'
 import { APP_VERSION } from '../version'
 
 import { PageGroup, PAGES } from './menu-page.interface'
+import { Theme, ThemeManagerService } from './toolkit/providers/theme-manager.service'
 import { AuthService, User } from './toolkit/providers/auth-service'
 import { LogService } from './toolkit/providers/log-service'
 import { Logger } from './toolkit/providers/logger'
@@ -65,6 +66,8 @@ export class AppComponent implements OnInit {
 
   @ViewChildren(IonRouterOutlet) routerOutlets: QueryList<IonRouterOutlet>
 
+  theme$: Observable<Theme>
+
   constructor(private platform: Platform,
               private translate: TranslateService,
               private swUpdate: SwUpdate,
@@ -75,12 +78,15 @@ export class AppComponent implements OnInit {
               private menuCtrl: MenuController,
               private router: Router,
               private route: ActivatedRoute,
-              @Inject(LOCALE_ID) private locale: string) {
+              @Inject(LOCALE_ID) private locale: string,
+              private themeManager: ThemeManagerService) {
 
     this.initializeApp()
   }
 
   private async initializeApp() {
+
+    this.theme$ = this.themeManager.theme$
 
     this.initTranslation()
 

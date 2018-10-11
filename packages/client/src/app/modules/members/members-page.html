@@ -42,29 +42,29 @@
   </ion-toolbar>
 
   <ion-toolbar class="toolbar-thinner filter-toggles">
-    <div>
+    <div *ngIf="filter$ | async as filter">
       <ng-container *ngIf="seasons$ | async as seasons">
         <ion-button *ngFor="let season of seasons"
                     (click)="filterToggle$.next(season.id)"
-                    [color]="(filter$ | async).colorFor(season.id)"
-                    [fill]="(filter$ | async).get(season.id) === undefined ? 'outline' : 'solid'">
+                    [color]="filter.colorFor(season.id)"
+                    [fill]="filter.fillFor(season.id)">
           {{ season.name }}
         </ion-button>
       </ng-container>
 
       <ion-button (click)="filterToggle$.next('contract')"
-                  [color]="(filter$ | async).colorFor('contract')"
-                  [fill]="(filter$ | async).get('contract') === undefined ? 'outline' : 'solid'">
+                  [color]="filter.colorFor('contract')"
+                  [fill]="filter.fillFor('contract')">
         <ion-icon name="paper"></ion-icon>
       </ion-button>
       <ion-button (click)="filterToggle$.next('trial')"
-                  [color]="(filter$ | async).colorFor('trial')"
-                  [fill]="(filter$ | async).get('trial') === undefined ? 'outline' : 'solid'">
+                  [color]="filter.colorFor('trial')"
+                  [fill]="filter.fillFor('trial')">
         <ion-icon name="basket"></ion-icon>
       </ion-button>
       <ion-button (click)="filterToggle$.next('problem')"
-                  [color]="(filter$ | async).colorFor('problem')"
-                  [fill]="(filter$ | async).get('problem') === undefined ? 'outline' : 'solid'">
+                  [color]="filter.colorFor('problem')"
+                  [fill]="filter.fillFor('problem')">
         <ion-icon name="warning"></ion-icon>
       </ion-button>
     </div>

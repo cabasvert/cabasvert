@@ -18,9 +18,11 @@
  */
 
 import { Component, OnDestroy, OnInit } from '@angular/core'
-import { Subscription } from 'rxjs'
+import { Observable, Subscription } from 'rxjs'
+import { map } from 'rxjs/operators'
 import { AuthService, User } from '../../toolkit/providers/auth-service'
 import { Navigation } from '../../toolkit/providers/navigation'
+import { ThemeManagerService } from '../../toolkit/providers/theme-manager.service'
 import { ContractsEditPage } from '../contracts/contracts-edit-page'
 import { ChangePasswordPage } from './change-password-page'
 
@@ -34,12 +36,19 @@ export class ProfilePage implements OnInit, OnDestroy {
   user: User
   private subscription: Subscription
 
+  isDarkTheme$: Observable<boolean>
+
   constructor(private authService: AuthService,
-              private navigator: Navigation) {
+              private navigator: Navigation,
+              private themeManager: ThemeManagerService) {
   }
 
   ngOnInit() {
     this.subscription = this.authService.loggedInUser$.subscribe(user => this.user = user)
+
+    this.isDarkTheme$ = this.themeManager.theme$.pipe(
+      map(theme => theme === 'dark'),
+    )
   }
 
   ngOnDestroy() {
@@ -47,8 +56,10 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   public changePassword() {
-    this.navigator.showModal$({ component: ChangePasswordPage, componentProps: {} })
-      .subscribe(() => {
-      })
+    this.navigator.showModal$({ component: ChangePasswordPage, componentProps: {} }).subscribe()
+  }
+
+  toggleDarkTheme($event) {
+    this.themeManager.theme = $event.detail.checked ? 'dark' : 'light'
   }
 }

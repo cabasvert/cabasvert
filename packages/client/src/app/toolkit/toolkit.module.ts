@@ -45,6 +45,7 @@ import { DatabaseHelper } from './providers/database-helper'
 import { DatabaseService } from './providers/database-service'
 import { LogService } from './providers/log-service'
 import { Navigation } from './providers/navigation'
+import { ThemeManagerService } from './providers/theme-manager.service'
 import { UidService } from './providers/uid-service'
 
 @NgModule({
@@ -112,6 +113,7 @@ export class ToolkitModule {
         AuthGuard,
         DatabaseService,
         UidService,
+        ThemeManagerService,
       ],
     }
   }

@@ -32,7 +32,6 @@
   --padding-start: 0;
   --padding-end: 0;
 
-  color: var(--ion-color-light-contrast);
   font-weight: bold;
   font-size: 1.2rem;
 }
@@ -44,6 +43,15 @@
 ion-item-divider ion-icon[slot=start],
 ion-item-divider ion-icon[slot=end] {
   margin: 2px 8px 2px 0;
+}
+
+// Bigger list header
+
+ion-list-header {
+  padding-top: 5px;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 
 // Fixes for ion-select not occupying full space

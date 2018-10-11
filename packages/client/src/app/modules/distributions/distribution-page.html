@@ -119,7 +119,7 @@
               </ion-item-action>
               <ion-item-action [label]="'DISTRIBUTION.NOTES' | translate"
                                icon="create"
-                               [color]="distribution.isBasketHaveNote(basket) ? 'danger' : 'dark'"
+                               [color]="distribution.isBasketHaveNote(basket) ? 'danger' : null"
                                (click)="setNote(basket, item)">
               </ion-item-action>
               <ion-item-action *ngIf="basket.isTrial"
@@ -135,7 +135,7 @@
               </ion-item-action>
               <ion-item-action [label]="'DISTRIBUTION.TO_PREPARE' | translate"
                                icon="clock"
-                               [color]="distribution.isBasketDelayed(basket) ? 'warning' : 'dark'"
+                               [color]="distribution.isBasketDelayed(basket) ? 'warning' : null"
                                (click)="toggleBasketDelayed(basket, item)">
               </ion-item-action>
             </ion-item-actions>
@@ -192,7 +192,7 @@
                 </ion-item-action>
                 <ion-item-action [label]="'DISTRIBUTION.NOTES' | translate"
                                  icon="create"
-                                 [color]="distribution.isBasketHaveNote(basket) ? 'danger' : 'dark'"
+                                 [color]="distribution.isBasketHaveNote(basket) ? 'danger' : null"
                                  (click)="setNote(basket, item)">
                 </ion-item-action>
                 <ion-item-action *ngIf="basket.isTrial"
@@ -208,7 +208,7 @@
                 </ion-item-action>
                 <ion-item-action [label]="'DISTRIBUTION.TO_PREPARE' | translate"
                                  icon="clock"
-                                 [color]="distribution.isBasketDelayed(basket) ? 'warning' : 'dark'"
+                                 [color]="distribution.isBasketDelayed(basket) ? 'warning' : null"
                                  (click)="toggleBasketDelayed(basket, item)">
                 </ion-item-action>
               </ion-item-actions>
@@ -261,7 +261,7 @@
               </ion-item-action>
               <ion-item-action [label]="'DISTRIBUTION.NOTES' | translate"
                                icon="create"
-                               [color]="distribution.isBasketHaveNote(basket) ? 'danger' : 'dark'"
+                               [color]="distribution.isBasketHaveNote(basket) ? 'danger' : null"
                                (click)="setNote(basket, item)">
               </ion-item-action>
               <ion-item-action *ngIf="basket.isTrial"
@@ -277,7 +277,7 @@
               </ion-item-action>
               <ion-item-action [label]="'DISTRIBUTION.TO_PREPARE' | translate"
                                icon="clock"
-                               [color]="distribution.isBasketDelayed(basket) ? 'warning' : 'dark'"
+                               [color]="distribution.isBasketDelayed(basket) ? 'warning' : null"
                                (click)="toggleBasketDelayed(basket, item)">
               </ion-item-action>
             </ion-item-actions>

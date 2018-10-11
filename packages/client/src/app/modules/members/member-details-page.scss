@@ -21,15 +21,16 @@ ion-list-header {
   padding-top: 5px;
   margin-bottom: 5px;
 
-  border-top: solid 1px var(--ion-color-light-shade);
-
   font-weight: bold;
   font-size: 1.2rem;
-  color: var(--ion-color-light-contrast);
 
   ion-buttons {
     margin-right: 12px;
   }
+}
+
+ion-list:not(:first-of-type) ion-list-header {
+    border-top: solid 1px var(--ion-text-color-step-400);
 }
 
 ion-button {

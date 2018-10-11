@@ -17,7 +17,7 @@
   along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<ion-app>
+<ion-app [ngClass]="'theme-' + (theme$ | async)">
   <ion-split-pane [disabled]="!(user$ | async)">
     <ion-menu class="split-pane-side" side="start" [swipeGesture]="true">
       <div class="ion-page" *ngIf="user$ | async as user">

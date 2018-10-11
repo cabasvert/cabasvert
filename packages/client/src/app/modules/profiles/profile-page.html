@@ -28,13 +28,36 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-grid fixed>
-    <ion-row justify-content-center>
-      <ion-col size-lg="6" size-md="8" size-sm="12">
-        <ion-button expand="full" (click)="changePassword()">
-          {{ 'PROFILE.CHANGE_PASSWORD' | translate }}
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label>Settings</ion-label>
+    </ion-list-header>
+
+    <ion-item>
+      <ion-label>Dark theme</ion-label>
+      <ion-toggle [checked]="isDarkTheme$ | async"
+                  (ionChange)="toggleDarkTheme($event)">
+      </ion-toggle>
+    </ion-item>
+  </ion-list>
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label>Security</ion-label>
+    </ion-list-header>
+
+    <ion-item>
+      <ion-grid fixed>
+        <ion-row justify-content-center>
+          <ion-col size-lg="6" size-md="8" size-sm="12">
+            <ion-button expand="full" (click)="changePassword()">
+              {{ 'PROFILE.CHANGE_PASSWORD' | translate }}
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-item>
+  </ion-list>
+
 </ion-content>
