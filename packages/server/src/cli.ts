@@ -31,6 +31,11 @@ let argv = parseCli(process.argv.slice(2))
 let configPath = argv['config'] || 'config.json'
 let configuration = parseJsonFile<Configuration>(configPath)
 
+let databaseHost = process.env['DATABASE_HOST']
+if (databaseHost) {
+  configuration.database.url = databaseHost
+}
+
 let generateClientConfig = argv['generate-client-config']
 if (generateClientConfig !== null) {
   writeClientConfiguration(configuration, generateClientConfig)

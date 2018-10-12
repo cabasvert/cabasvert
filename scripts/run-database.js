@@ -19,30 +19,13 @@
 
 const fs = require('fs-extra');
 const http = require('http');
-const runUtils = require('./run-utils');
+const { docker, run, runDaemon } = require('./run-utils');
 
-async function runDatabase({ databaseName, databaseHost }, promiseFactory) {
+async function runWithDatabase(options, promiseFactory) {
 
-  const tmp = databaseName == null ? null : databaseName.split(':');
-  const database = databaseName == null ? null : {
-    name: tmp[0] || 'couchdb',
-    version: tmp[1] || 'latest',
-  };
+  const { ready, destroy, host } = await runDatabase(options);
 
-  const { handlePromise, host } = selectDatabase(database, databaseHost);
-
-  // Launch the database host
-  const handle = await handlePromise;
-
-  // Wait for the database to be ready
-  await waitForDatabase(host);
-
-  // Add CORS to the database configuration
-  // Fails with pouchdb-server (see pouchdb/add-cors-to-couchdb#24)
-  if (database && database.name !== 'pouchdb-server') {
-    console.log('\nExecuting add-cors-to-couchdb');
-    await runUtils.npm('add-cors-to-couchdb', [host]);
-  }
+  await ready();
 
   try {
     try {
@@ -50,19 +33,44 @@ async function runDatabase({ databaseName, databaseHost }, promiseFactory) {
       await promiseFactory(host);
     } finally {
       // Destroy the database host
-      if (handle) {
-        await handle.destroy();
-      }
+      if (destroy) await destroy();
     }
   } catch (exitCode) {
     process.exit(exitCode);
   }
 }
 
+async function runDatabase({ databaseName, databaseHost }) {
+
+  const tmp = databaseName == null ? null : databaseName.split(':');
+  const database = databaseName == null ? null : {
+    name: tmp[0] || 'couchdb',
+    version: tmp[1] || 'latest',
+  };
+
+  const { handle, host } = selectDatabase(database, databaseHost);
+
+  // Launch the database host
+  const destroy = await handle;
+
+  async function ready() {
+    // Wait for the database to be ready
+    await waitForDatabase(host);
+
+    // Add CORS to the database configuration
+    // Fails with pouchdb-server (see pouchdb/add-cors-to-couchdb#24)
+    if (database && database.name !== 'pouchdb-server') {
+      await run('add-cors-to-couchdb', [host]);
+    }
+  }
+
+  return { ready, destroy, host };
+}
+
 function selectDatabase(database, databaseHost) {
   if (!database) {
     return {
-      handlePromise: Promise.resolve(null),
+      handle: Promise.resolve(null),
       host: databaseHost || 'http://localhost:5984',
     };
   }
@@ -71,7 +79,7 @@ function selectDatabase(database, databaseHost) {
   if (database.name === 'couchdb') {
     const dockerImage = 'couchdb:' + database.version;
     return {
-      handlePromise: runUtils.docker(dockerImage, ['3000:5984']),
+      handle: docker(dockerImage, ['3000:5984']),
       host: 'http://localhost:3000',
     };
   }
@@ -80,13 +88,15 @@ function selectDatabase(database, databaseHost) {
   else if (database.name === 'pouchdb-server') {
     let configFile = 'pouchdb-server-config.json';
     return {
-      handlePromise: runUtils.npmDaemon('pouchdb-server', [
+      handle: runDaemon('pouchdb-server', [
         '--in-memory',
         '--port', '3000',
         '--config', configFile,
-      ], async () => {
-        await fs.unlink('log.txt');
-        await fs.unlink(configFile);
+      ], {
+        cleanupHandler: async () => {
+          await fs.unlink('log.txt');
+          await fs.unlink(configFile);
+        }
       }),
       host: 'http://localhost:3000',
     };
@@ -113,4 +123,7 @@ function waitForDatabase(url) {
   });
 }
 
-module.exports = runDatabase;
+module.exports = {
+  runDatabase,
+  runWithDatabase
+};

@@ -19,16 +19,6 @@
 
 const execa = require('execa');
 
-function npm(cmd, args) {
-  console.log('> ' + cmd + (args ? ' ' + args.join(' ') : ''));
-  return execa('npx', [cmd, ...(args || [])]);
-}
-
-function npmDaemon(cmd, args, cleanup) {
-  console.log('> ' + cmd + (args ? ' ' + args.join(' ') : ''));
-  return runDaemon('npx', [cmd, ...(args || [])], cleanup);
-}
-
 function docker(image, ports) {
   const name = image.replace('/', '-').replace(':', '-') + '-' + Date.now();
 
@@ -39,44 +29,40 @@ function docker(image, ports) {
     '-d', image
   ];
 
-  console.log('Starting docker image \'' + image + '\'');
   return run('docker', args).then(function () {
-    return {
-      destroy: function () {
-        console.log('Stopping docker container');
-        return run('docker', ['stop', name]).then(function () {
-          console.log('Removing docker container');
-          return run('docker', ['rm', name]);
-        });
-      },
+    return async () => {
+      await run('docker', ['stop', name]);
+      await run('docker', ['rm', name]);
     };
   });
 }
 
-function run(cmd, args) {
-  console.log('> ' + cmd + (args ? ' ' + args.join(' ') : ''));
-  return execa(cmd, args);
+function run(bin, args, opts) {
+  console.log('$ ' + bin + (args ? ' ' + args.join(' ') : ''));
+  return execa(bin, args, opts);
 }
 
-function runDaemon(bin, args, cleanup) {
-  const cmd = bin + (args ? ' ' + args.join(' ') : '');
+function runDaemon(bin, args, opts) {
+  console.log('$ ' + bin + (args ? ' ' + args.join(' ') : ''));
 
-  const daemonProcess = execa(bin, args);
+  const { cleanupHandler } = opts || {};
+  const daemonProcess = execa(bin, args, opts);
 
-  console.log('Starting daemon');
   return Promise.resolve().then(function () {
-    return {
-      destroy: async function () {
-        console.log('Stopping daemon');
-        await daemonProcess.kill();
-        if (cleanup) await cleanup();
-      },
+    return async () => {
+      await daemonProcess.kill();
+      if (cleanupHandler) await cleanupHandler();
     };
   });
+}
+
+function sleep(timeout) {
+  return new Promise(resolve => setTimeout(resolve, timeout));
 }
 
 module.exports = {
-  npm,
-  npmDaemon,
   docker,
+  run,
+  runDaemon,
+  sleep,
 };

@@ -44,8 +44,6 @@ dist
 
 .idea
 
-*.js
-
 # Served public directory populated by the docker container
 public
 

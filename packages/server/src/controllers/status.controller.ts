@@ -46,10 +46,14 @@ export class StatusController {
 
     let allStatuses: { ok: boolean, error?: any }[] = [databaseStatus, mailStatus]
 
-    res.json({
+    let status = {
       ok: allStatuses.every(s => s.ok),
       database: databaseStatus,
       mail: mailStatus,
-    })
+    }
+
+    this.logger.debug(`Received status check request – response: '${JSON.stringify(status)}'`)
+
+    res.json(status)
   }
 }

@@ -19,10 +19,8 @@
     "compile": "tsc",
     "compile-test": "tsc",
     "prestart": "npm-run-all compile",
-    "start": "node dist/cli",
-    "start:watch": "npm-run-all --parallel start:watch:*",
-    "start:watch:compile": "tsc -w",
-    "start:watch:node": "nodemon --inspect dist/cli --watch dist",
+    "start": "node scripts/run-server.js",
+    "start:watch": "node scripts/run-server.js --watch",
     "pretest": "npm-run-all compile",
     "test": "nyc -r lcov -e .ts -x \"**/*.spec.ts\" node scripts/run-tests.js \"test/**/*.spec.ts\"",
     "test:watch": "watch 'npm run test' dist --wait=0.1",
@@ -65,10 +63,10 @@
   },
   "devDependencies": {
     "@types/jasmine": "^2.8.9",
-    "codelyzer": "^4.5.0",
     "jasmine": "^3.2.0",
     "jasmine-spec-reporter": "^4.2.1",
     "listr": "^0.14.2",
+    "node-cleanup": "^2.1.2",
     "nodemon": "^1.14.3",
     "nyc": "^11.4.1",
     "pouchdb-security-helper": "^1.1.1",
@@ -76,7 +74,6 @@
     "supertest": "^3.0.0",
     "ts-node": "^7.0.1",
     "tslint": "^5.8.0",
-    "typescript": "^2.6.2",
-    "watch": "^1.0.2"
+    "typescript": "^2.6.2"
   }
 }
