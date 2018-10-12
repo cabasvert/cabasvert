@@ -20,7 +20,7 @@
 import { inject, injectable } from 'inversify'
 import { LoggerInstance } from 'winston'
 import { Command } from '../command'
-import { Configuration } from '../config'
+import { Configuration, locationFromOptions } from '../config'
 import { DatabaseBackup } from '../services/business/backup'
 import { DatabaseGenerator } from '../services/business/generator'
 import { DatabaseService } from '../services/technical/database.service'
@@ -42,8 +42,7 @@ export class GenerateCommand extends Command {
   }
 
   async execute(args: string[], opts: { [name: string]: any }) {
-    let locationName = opts['location'] || this.config.defaultLocation
-    let location = this.config.locations[locationName]
+    let location = locationFromOptions(opts, this.config)
 
     let dbName = opts['db-name']
     if (!dbName) throw new Error('Database name is not set (--db-name)')

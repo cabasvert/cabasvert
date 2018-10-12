@@ -28,9 +28,6 @@ export interface Configuration {
 
 export interface Location {
   name: string
-  server: {
-    url: string
-  }
   database: {
     url: string
     auth?: {
@@ -58,4 +55,30 @@ export function parseJsonFile<T>(path: string): T {
   } catch (error) {
     return null
   }
+}
+
+export function locationFromOptions(opts: { [p: string]: any }, config: Configuration) {
+  const host = opts['host']
+  if (host) {
+    const username = opts['username']
+    const password = opts['password']
+    return {
+      name: normalizeName(host),
+      database: {
+        url: host,
+        auth: username ? { username, password } : null,
+      },
+    }
+  } else {
+    let locationName = opts['location'] || this.config.defaultLocation
+    return config.locations[locationName]
+  }
+}
+
+function normalizeName(host: string) {
+  return host
+    .replace('http://', '')
+    .replace('https://', '')
+    .replace('/', '-')
+    .replace(':', '')
 }
