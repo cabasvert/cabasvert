@@ -43,12 +43,14 @@ export class CabasVertTools {
 
   static parseAndExecute(argv: any) {
     if (argv[0].endsWith('/node')) argv = argv.slice(2)
-    else if (argv[0].endsWith('/cabasvert')) argv = argv.slice(1)
+    else if (argv[0].endsWith('/cvt')) argv = argv.slice(1)
 
     let parsed = parseCli(argv, {
       '--': true,
       'alias': {
+        'db-name': ['d'],
         'help': ['h'],
+        'location': ['l'],
       },
       'default': {},
     })
@@ -59,7 +61,7 @@ export class CabasVertTools {
     let configPath = argv['config']
     let configuration =
       configPath === null ? null : parseJsonFile<Configuration>(configPath)
-      || parseJsonFile<Configuration>(HOME_DIRECTORY + '/.cabasvertrc.json')
+        || parseJsonFile<Configuration>(HOME_DIRECTORY + '/.cabasvertrc.json')
 
     let tools = new CabasVertTools(configuration)
     tools.execute(args, opts)
@@ -91,7 +93,7 @@ export class CabasVertTools {
   }
 
   private displayUsage() {
-    console.log('Usage: cabasvert [OPTION]... COMMAND')
+    console.log('Usage: cvt [OPTION]... COMMAND')
 
     console.log()
     console.log('Commands:')
@@ -101,6 +103,37 @@ export class CabasVertTools {
 
     console.log()
     console.log('Common options:')
-    console.log('    --help, -h        Shows this help message')
+    console.log('    -l, --location=NAME      Specify the server location')
+    console.log('    -d, --db-name=NAME       Specify the database name')
+    console.log('    -h, --help                Shows this help message')
+    console.log()
+    console.log('Server locations:')
+    console.log('    You can have location shortcuts in a .cabasvertrc.json file in your')
+    console.log('    home directory. It has the following format:')
+    console.log()
+    console.log(JSON.stringify({
+        'defaultLocation': 'local',
+        'locations': {
+          'local': {
+            'name': 'local',
+            'database': {
+              'url': 'http://localhost:5984',
+            },
+          },
+          'prod': {
+            'name': 'prod',
+            'database': {
+              'url': 'https://my-database.com',
+              'auth': {
+                'username': 'my-username',
+                'password': 'my-password',
+              },
+            },
+          },
+        },
+      },
+      null,
+      '  ',
+    ))
   }
 }
