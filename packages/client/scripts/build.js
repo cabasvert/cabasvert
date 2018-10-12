@@ -81,6 +81,11 @@ function makeBuildTask(target, env) {
   let tasks = [];
 
   tasks.push({
+    title: `Clean`,
+    task: () => execa('rm', ['-rf', `www`, `artifacts`])
+  });
+
+  tasks.push({
     title: `Build with Angular (${env})`,
     task: () => execa('ng', ['run', `app:build:${env}`])
   });
