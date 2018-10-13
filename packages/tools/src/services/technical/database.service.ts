@@ -43,6 +43,14 @@ export class DatabaseService {
               @inject(Services.Logger) private logger: LoggerInstance) {
   }
 
+  async createAdmin(location: Location) {
+    let dbUrl = location.database.url + '/_users'
+    let database = new PouchDB(dbUrl)
+
+    let auth = location.database.auth
+    await database.signUpAdmin(auth.username, auth.password)
+  }
+
   async createDatabase(location: Location, dbName: string, create: boolean) {
     let dbUrl = location.database.url + '/' + dbName
     let database = new PouchDB(dbUrl)

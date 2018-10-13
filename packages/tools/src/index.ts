@@ -105,6 +105,8 @@ export class CabasVertTools {
     console.log('Common options:')
     console.log('    -l, --location=NAME      Specify the server location')
     console.log('    -H, --host=URL           Specify the database host')
+    console.log('    --username=...           Specify an admin username')
+    console.log('    --password=...           Specify an admin password')
     console.log('    -d, --db-name=NAME       Specify the database name')
     console.log('    -h, --help               Shows this help message')
     console.log()
