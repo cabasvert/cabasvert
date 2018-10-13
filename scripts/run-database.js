@@ -48,7 +48,7 @@ async function runDatabase({ databaseName, databaseHost }) {
     version: tmp[1] || 'latest',
   };
 
-  const { handle, host } = selectDatabase(database, databaseHost);
+  const { handle, host, oneShot } = selectDatabase(database, databaseHost);
 
   // Launch the database host
   const destroy = await handle;
@@ -59,12 +59,12 @@ async function runDatabase({ databaseName, databaseHost }) {
 
     // Add CORS to the database configuration
     // Fails with pouchdb-server (see pouchdb/add-cors-to-couchdb#24)
-    if (database && database.name !== 'pouchdb-server') {
+    if (oneShot && database && database.name !== 'pouchdb-server') {
       await run('add-cors-to-couchdb', [host]);
     }
   }
 
-  return { ready, destroy, host };
+  return { ready, destroy, host, oneShot };
 }
 
 function selectDatabase(database, databaseHost) {
@@ -72,6 +72,7 @@ function selectDatabase(database, databaseHost) {
     return {
       handle: Promise.resolve(null),
       host: databaseHost || 'http://localhost:5984',
+      oneShot: false,
     };
   }
 
@@ -81,6 +82,7 @@ function selectDatabase(database, databaseHost) {
     return {
       handle: docker(dockerImage, ['3000:5984']),
       host: 'http://localhost:3000',
+      oneShot: true,
     };
   }
 
@@ -99,6 +101,7 @@ function selectDatabase(database, databaseHost) {
         }
       }),
       host: 'http://localhost:3000',
+      oneShot: true,
     };
   }
 

@@ -39,9 +39,12 @@ export interface Configuration {
     }
   }
 
-  email: string
+  mail: {
+    email: string
 
-  smtpConnection: SMTPTransport.Options
+    mailToConsole?: boolean
+    smtpConnection: SMTPTransport.Options
+  }
 }
 
 export function parseJsonFile<T>(path: string): T {

@@ -38,16 +38,18 @@ export function testConfiguration(): Configuration {
         'password': 'server-password',
       },
     },
-    'email': 'email@example.com',
-    'smtpConnection': {
-      'host': 'smtp.example.com',
-      'port': 587,
-      'secure': false,
-      'auth': {
-        'user': 'email-username',
-        'pass': 'email-password',
+    mail: {
+      'email': 'email@example.com',
+      'smtpConnection': {
+        'host': 'smtp.example.com',
+        'port': 587,
+        'secure': false,
+        'auth': {
+          'user': 'email-username',
+          'pass': 'email-password',
+        },
+        'requireTLS': true,
       },
-      'requireTLS': true,
     },
   }
 }

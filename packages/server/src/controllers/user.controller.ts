@@ -173,7 +173,7 @@ export class UserController {
     let baseUrl = this.config.clientApplication.url
 
     return this.mailSender.sendMail({
-      from: `Cabas Vert <${this.config.email}>`,
+      from: `Cabas Vert <${this.config.mail.email}>`,
       to: `${metadata.name} <${metadata.email}>`,
       subject: `[Cabas Vert] Réinitialisation du mot de passe du compte de ${metadata.name} (${metadata.email})`,
       text: `

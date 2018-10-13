@@ -62,6 +62,7 @@
     "winston": "^2.4.0"
   },
   "devDependencies": {
+    "@cabasvert/tools": "^0.1.0",
     "@types/jasmine": "^2.8.9",
     "jasmine": "^3.2.0",
     "jasmine-spec-reporter": "^4.2.1",

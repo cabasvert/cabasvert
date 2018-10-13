@@ -34,6 +34,10 @@ export class MailService {
   }
 
   async status(): Promise<{ ok: boolean, error?: any }> {
+    if (this.config.mail.mailToConsole) {
+      return { ok: true, error: 'mailToConsole is set' }
+    }
+
     let smtpTransport = this.createTransport()
 
     try {
@@ -47,6 +51,12 @@ export class MailService {
   }
 
   async sendMail(mail: Mail.Options) {
+    if (this.config.mail.mailToConsole) {
+      this.logger.info('The following mail is wrote to console instead of being sent because mailToConsole is set.')
+      this.logger.info(`\nFrom: ${mail.from}\nTo: ${mail.to}\nSubject: ${mail.subject}\n${mail.text}`)
+      return
+    }
+
     let smtpTransport = this.createTransport()
 
     try {
@@ -60,6 +70,6 @@ export class MailService {
   }
 
   private createTransport() {
-    return createTransport(this.config.smtpConnection)
+    return createTransport(this.config.mail.smtpConnection)
   }
 }

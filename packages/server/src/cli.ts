@@ -31,10 +31,10 @@ let argv = parseCli(process.argv.slice(2))
 let configPath = argv['config'] || 'config.json'
 let configuration = parseJsonFile<Configuration>(configPath)
 
-let databaseHost = process.env['DATABASE_HOST']
-if (databaseHost) {
-  configuration.database.url = databaseHost
-}
+pullConfigFromEnv(configuration.database, 'url', 'DATABASE_HOST')
+pullConfigFromEnv(configuration.database.auth, 'username', 'DATABASE_USERNAME')
+pullConfigFromEnv(configuration.database.auth, 'password', 'DATABASE_PASSWORD')
+pullConfigFromEnv(configuration.mail, 'mailToConsole', 'MAIL_TO_CONSOLE')
 
 let generateClientConfig = argv['generate-client-config']
 if (generateClientConfig !== null) {
@@ -42,3 +42,8 @@ if (generateClientConfig !== null) {
 }
 
 let server: Promise<http.Server> = startServer(configuration)
+
+function pullConfigFromEnv(obj, key, envKey) {
+  let value = process.env[envKey]
+  if (value) obj[key] = value
+}

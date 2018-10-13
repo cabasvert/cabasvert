@@ -37,7 +37,7 @@ async function main() {
   try {
 
     // Launch database
-    const { ready: dbReady, destroy: dbDestroy, host: dbHost } = await runDatabase({
+    const { ready: dbReady, destroy: dbDestroy, host: dbHost, oneShot } = await runDatabase({
       databaseName: process.env.DATABASE,
       databaseHost: process.env.DATABASE_HOST,
     });
@@ -46,13 +46,34 @@ async function main() {
     // Wait for database to be ready
     await dbReady();
 
+    let authEnv;
+
     // Setup database
-    // ...
+    if (oneShot) {
+
+      authEnv = { 'DATABASE_USERNAME': 'username', 'DATABASE_PASSWORD': 'password' };
+      const authParams = ['--username=username', '--password=password'];
+
+      await run('cvt', [
+        `--host=${dbHost}`, ...authParams,
+        'setup',
+      ], { stdio: 'inherit' });
+
+      await run('cvt', [
+        `--host=${dbHost}`, ...authParams, '--db-name=_users',
+        'backup', 'restore', './data/sample-users.json',
+      ], { stdio: 'inherit' });
+
+      await run('cvt', [
+        `--host=${dbHost}`, ...authParams, '--db-name=test',
+        'backup', 'restore', './data/sample-data.json',
+      ], { stdio: 'inherit' });
+    }
 
     // Launch tsc
     if (watch) {
       cleanupHandlers.push(
-          await runDaemon('tsc', ['--watch', '--preserveWatchOutput'], { stdio: 'inherit' })
+          await runDaemon('tsc', ['--watch', '--preserveWatchOutput'], { stdio: 'inherit' }),
       );
 
       // Wait for tsc to kick in
@@ -61,7 +82,10 @@ async function main() {
 
     // Launch server
     try {
-      const env = { 'DATABASE_HOST': dbHost };
+      const env = {
+        'DATABASE_HOST': dbHost,
+        ...(authEnv || {}),
+      };
       await (watch ? runWatchServer : runServer)(env);
     } catch (err) {
       // Ignore server's SIGINT
@@ -101,7 +125,7 @@ function setupExitHandler(cleanup) {
 }
 
 function usage() {
-  console.log('usage: node scripts/run-server.js [--watch]')
+  console.log('usage: node scripts/run-server.js [--watch]');
 }
 
 function parseArgs() {
@@ -121,7 +145,7 @@ function parseArgs() {
     process.exit(1);
   }
 
-  return { watch: watch === '--watch' }
+  return { watch: watch === '--watch' };
 }
 
 main();
