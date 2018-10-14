@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.2-beta.3](https://github.com/cabasvert/cabasvert/compare/@cabasvert/server@0.2.2-beta.2...@cabasvert/server@0.2.2-beta.3) (2018-10-14)
+
+
+### Bug Fixes
+
+* **user:** better report error when unknown user ([28d72e8](https://github.com/cabasvert/cabasvert/commit/28d72e8))
+
+
+### Features
+
+* **cli:** minimal support for isolated development database ([09fcf50](https://github.com/cabasvert/cabasvert/commit/09fcf50))
+
+
+
+
+
 ## [0.2.2-beta.2](https://github.com/cabasvert/cabasvert/compare/@cabasvert/server@0.2.2-beta.1...@cabasvert/server@0.2.2-beta.2) (2018-10-10)
 
 **Note:** Version bump only for package @cabasvert/server

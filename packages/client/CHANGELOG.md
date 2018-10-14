@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-beta.14](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.12...@cabasvert/client@0.3.0-beta.14) (2018-10-14)
+
+
+### Bug Fixes
+
+* **auth:** enhance reset password reliability ([12ef7aa](https://github.com/cabasvert/cabasvert/commit/12ef7aa))
+* **distribution:** fix double click on actions ([7f000ba](https://github.com/cabasvert/cabasvert/commit/7f000ba))
+* **theme:** set better border colors ([9a0a5e7](https://github.com/cabasvert/cabasvert/commit/9a0a5e7))
+
+
+### Features
+
+* **client:** add dark UI theme ([3d4c2b7](https://github.com/cabasvert/cabasvert/commit/3d4c2b7))
+
+
+
+
+
 ## [0.3.0-beta.13](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.12...@cabasvert/client@0.3.0-beta.13) (2018-10-11)
 
 
