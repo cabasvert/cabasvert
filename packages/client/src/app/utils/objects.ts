@@ -25,7 +25,7 @@ export function objectAssignNoNulls(target: any, ...sources: any[]): any {
     for (let key in source) {
       if (source.hasOwnProperty(key)) {
         let value = source[key]
-        if (value === null || value === undefined) target[key] = value
+        if (value !== null && value !== undefined) target[key] = value
         else delete target[key]
       }
     }
