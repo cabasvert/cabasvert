@@ -21,6 +21,8 @@ import { Injectable, NgZone } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { Observable } from 'rxjs'
 import { Roles } from '../../toolkit/providers/auth-service'
+import { LogService } from '../../toolkit/providers/log-service'
+import { Logger } from '../../toolkit/providers/logger'
 import { observeInsideAngular } from '../../utils/observables'
 
 import { ContractService } from '../contracts/contract.service'
@@ -61,7 +63,13 @@ const REPORTS = [
 @Injectable()
 export class ReportService implements ReportHelper {
 
-  constructor(public seasons: SeasonService,
+  private _logger: Logger
+  public get logger() {
+    return this._logger == null ? this._logger = this.logService.logger('Report') : this._logger
+  }
+
+  constructor(private logService: LogService,
+              public seasons: SeasonService,
               public members: MemberService,
               public contracts: ContractService,
               public translateService: TranslateService,

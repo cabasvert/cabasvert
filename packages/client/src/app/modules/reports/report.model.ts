@@ -18,6 +18,7 @@ import { TranslateService } from '@ngx-translate/core'
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { Observable } from 'rxjs'
+import { Logger } from '../../toolkit/providers/logger'
 import { ContractService } from '../contracts/contract.service'
 import { MemberService } from '../members/member.service'
 import { SeasonService } from '../seasons/season.service'
@@ -32,6 +33,8 @@ export interface ReportDescription {
 }
 
 export interface ReportHelper {
+  logger: Logger
+
   seasons: SeasonService
   members: MemberService
   contracts: ContractService

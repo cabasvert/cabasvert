@@ -189,11 +189,16 @@ export class DistributionChecklistReport implements Report {
           if (c.type !== 'contract' && c.srev !== 'v1') return
           if (!c.sections) return
 
+          const member = msi.get(c.member)
+          if (!member) {
+            helper.logger.warn(`Member not found for id '${c.member}' in contract '${c._id}'`)
+            return
+          }
+
           c.sections.forEach(s => {
             if (s.kind !== basketType) return
             if (!s.formula) return
 
-            const member = msi.get(c.member)
             const weeklyPresence = []
             seasonWeeks.forEach(week => {
               const count = DistributionService.basketCount(c, s, week)
@@ -281,6 +286,10 @@ export class PerYearMemberListReport implements Report {
 
             const memberId = contract.member
             const member = msi.get(memberId)
+            if (!member) {
+              helper.logger.warn(`Member not found for id '${memberId}' in contract '${contract._id}'`)
+              return
+            }
 
             if (memberPresence.has(memberId)) {
               memberPresence.get(memberId).seasons.push(season)
