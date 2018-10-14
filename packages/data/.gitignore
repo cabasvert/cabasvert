@@ -43,6 +43,3 @@ dist
 .vscode
 
 .idea
-
-# Backup files
-backup-*.json

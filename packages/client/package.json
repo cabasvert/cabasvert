@@ -34,6 +34,7 @@
     "@angular/platform-browser-dynamic": "^6.1.10",
     "@angular/router": "^6.1.10",
     "@angular/service-worker": "^6.1.10",
+    "@cabasvert/data": "^0.1.0-beta.0",
     "@capacitor/android": "^1.0.0-beta.8",
     "@capacitor/cli": "^1.0.0-beta.8",
     "@capacitor/core": "^1.0.0-beta.8",

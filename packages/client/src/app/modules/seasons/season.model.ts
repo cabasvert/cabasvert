@@ -17,6 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { dayStringToISODay, SeasonDocument } from '@cabasvert/data'
 import { Observable, of } from 'rxjs'
 import { map } from 'rxjs/operators'
 
@@ -24,38 +25,12 @@ import '../../utils/dates'
 
 import { SeasonService } from './season.service'
 
-interface SeasonData {
-  _id: string
-  name: string
-  startWeek: CalendarWeek
-  endWeek: CalendarWeek
-  distributionDay: DayString
-  weekCount: number
-  ignoredWeeks: CalendarWeek[]
-  doubleWeeks: CalendarWeek[]
-}
-
-type CalendarWeek = [number, number]
-
-type DayString =
-  'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
-
-const dayStringToISODay = {
-  'monday': 0,
-  'tuesday': 1,
-  'wednesday': 2,
-  'thursday': 3,
-  'friday': 4,
-  'saturday': 5,
-  'sunday': 6,
-}
-
 export class Season {
 
   private _calendarToSeasonWeeks: Map<string, SeasonWeek> = new Map()
   private _seasonWeeks: Map<number, SeasonWeek> = new Map()
 
-  constructor(private seasons: SeasonService, public seasonData: SeasonData) {
+  constructor(private seasons: SeasonService, private seasonData: SeasonDocument) {
     try {
       this.computeWeeks()
     } catch (error) {
