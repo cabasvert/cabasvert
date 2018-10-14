@@ -14,7 +14,9 @@
     "release-rc": "npm-run-all \"release -- prerelease --preid rc\"",
     "release": "lerna version --no-push",
     "prepublish-release": "npm-run-all build",
-    "publish-release": "lerna exec --stream -- node ../../scripts/publish-github-release.js",
+    "publish-release": "npm-run-all publish-github-release publish-npm",
+    "publish-github-release": "lerna exec --stream -- node ../../scripts/publish-github-release.js",
+    "publish-npm": "lerna publish from-git",
     "lint": "lerna run lint --stream",
     "license-check": "lerna run license-check --stream"
   },
