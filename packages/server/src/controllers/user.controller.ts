@@ -54,9 +54,15 @@ export class UserController {
     try {
       await this.userDatabase.logIn()
 
-      let doc = await this.userDatabase.getUser(userId)
+      let doc
+      try {
+        doc = await this.userDatabase.getUser(userId)
+      } catch (e) {
+        doc = null
+      }
+
       if (!doc) {
-        res.status(400).json({ ok: false, error: 'Unknown user' })
+        res.status(400).json({ code: 'UNKNOWN_USER', message: 'Unknown user' })
         this.logger.warn(`Failed processing request: Unknown user '${userId}'`)
         return
       }
@@ -78,7 +84,7 @@ export class UserController {
       res.json({ ok: true })
     } catch (error) {
       this.logger.error(`An error occurred while processing request: ${error.message}`)
-      res.status(500).json({ ok: false, error: error.message })
+      res.status(500).json({ code: 'PROCESSING_ERROR', message: error.message })
     } finally {
       await this.userDatabase.logOut()
     }
@@ -99,7 +105,7 @@ export class UserController {
     this.logger.debug(`Received confirmation for password reset for user '${userId}'`)
 
     if (!userId || !token || !newPassword) {
-      res.status(400).json({ ok: false, error: 'Missing data for password reset' })
+      res.status(400).json({ code: 'MISSING_DATA', message: 'Missing data for password reset' })
       this.logger.warn(`Failed processing request: Missing data for password reset in '${JSON.stringify(body)}'`)
       return
     }
@@ -109,13 +115,13 @@ export class UserController {
 
       let doc = await this.userDatabase.getUser(userId)
       if (!doc) {
-        res.status(400).json({ ok: false, error: 'Unknown user' })
+        res.status(400).json({ code: 'UNKNOWN_USER', message: 'Unknown user' })
         this.logger.warn(`Failed processing request: Unknown user '${userId}'`)
         return
       }
 
       if (!doc.metadata || !doc.metadata[PASSWORD_RESET_TOKEN_KEY]) {
-        res.status(400).json({ ok: false, error: 'No password reset request done' })
+        res.status(400).json({ code: 'NO_PASSWORD_RESET_REQUEST', message: 'No password reset request done' })
         this.logger.warn(`Failed processing request: No password reset request done for ${userId}`)
         return
       }
@@ -128,13 +134,13 @@ export class UserController {
       let hash = await this.tokenGenerator.hashToken(token)
 
       if (expiryDate < new Date()) {
-        res.status(400).json({ ok: false, error: 'Token has expired' })
+        res.status(400).json({ code: 'EXPIRED_TOKEN', message: 'Token has expired' })
         this.logger.warn(`Failed processing request: Token has expired for ${userId}`)
         await this.clearPasswordResetToken(userId, doc)
         return
       }
       if (expectedHash !== hash) {
-        res.status(400).json({ ok: false, error: 'Token is invalid' })
+        res.status(400).json({ code: 'INVALID_TOKEN', message: 'Token is invalid' })
         this.logger.warn(`Failed processing request: Token is invalid for ${userId}`)
         await this.clearPasswordResetToken(userId, doc)
         return
@@ -153,7 +159,7 @@ export class UserController {
       res.json({ ok })
     } catch (error) {
       this.logger.error(`An error occurred while processing request: ${error.message}`)
-      res.status(500).json({ ok: false, error: error.message })
+      res.status(500).json({ code: 'PROCESSING_ERROR', message: error.message })
     } finally {
       await this.userDatabase.logOut()
     }
@@ -189,7 +195,7 @@ Si vous êtes à l'origine de cette demande, et si vous êtes toujours d'accord
 pour obtenir un nouveau mot de passe. Vous serez alors redirigé vers une page
 sécurisée où vous devrez entrer votre identifiant client :
 
-${baseUrl}/#/reset-password/${userId}/${token}
+${baseUrl}/reset-password/${userId}/${token}
 
 Vous pourrez alors choisir votre nouveau mot de passe.
 
@@ -199,7 +205,7 @@ Chaque lien est valable uniquement une heure. Passé ce délai, vous devrez
 faire une nouvelle demande. Pour cela, veuillez vous rendre sur la page
 d'identification d'adhérent :
 
-${baseUrl}/#/login
+${baseUrl}/login
 
 Il vous sera nécessaire de cliquer sur le lien "Mot de passe oublié".
 
