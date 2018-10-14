@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-beta.15](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.14...@cabasvert/client@0.3.0-beta.15) (2018-10-14)
+
+
+### Bug Fixes
+
+* **objects:** correctly filter non-null properties ([55c7c4b](https://github.com/cabasvert/cabasvert/commit/55c7c4b))
+* **reports:** ignore member not found during processing ([87dd554](https://github.com/cabasvert/cabasvert/commit/87dd554))
+
+
+
+
+
 # [0.3.0-beta.14](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.12...@cabasvert/client@0.3.0-beta.14) (2018-10-14)
 
 

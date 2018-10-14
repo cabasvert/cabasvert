@@ -1,7 +1,7 @@
 {
   "name": "@cabasvert/server",
   "author": "Cabas Vert",
-  "version": "0.2.2-beta.3",
+  "version": "0.2.2-beta.4",
   "description": "The server app for Cabas Vert",
   "license": "GPL-3.0",
   "private": true,
@@ -62,7 +62,7 @@
     "winston": "^2.4.0"
   },
   "devDependencies": {
-    "@cabasvert/tools": "^0.1.1-beta.0",
+    "@cabasvert/tools": "^0.1.1-beta.1",
     "@types/jasmine": "^2.8.9",
     "jasmine": "^3.2.0",
     "jasmine-spec-reporter": "^4.2.1",
