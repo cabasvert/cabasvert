@@ -172,7 +172,7 @@ describe('UserController', () => {
     expect(mailServiceMock.sentMail.to).toContain(fakeUserId)
     let baseUrl = configuration.clientApplication.url
     expect(mailServiceMock.sentMail.text).toContain(
-      `${baseUrl}/#/reset-password/${fakeUserId}/fake-token`)
+      `${baseUrl}/reset-password/${fakeUserId}/fake-token`)
 
     let user = await databaseServiceMock.getUser(fakeUserId)
     let prt = user.metadata['password-reset-token']
@@ -201,7 +201,7 @@ describe('UserController', () => {
       .get('/api/user/request-password-reset/' + fakeUserId)
       .expect(500)
       .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ ok: false, error: 'Email sending failed' })
+      .expect({ code: 'PROCESSING_ERROR', message: 'Email sending failed' })
 
     let user = await databaseServiceMock.getUser(fakeUserId)
     let prt = user.metadata['password-reset-token']
@@ -216,7 +216,7 @@ describe('UserController', () => {
         'token': 'invalid-token',
         'new-password': 'newPassword',
       },
-      'Token is invalid',
+      { code: 'INVALID_TOKEN', message: 'Token is invalid' },
       true,
     )
   })
@@ -229,7 +229,7 @@ describe('UserController', () => {
         'token': 'invalid-token',
         'new-password': 'newPassword',
       },
-      'Token has expired',
+      { code: 'EXPIRED_TOKEN', message: 'Token has expired' },
       true,
       async () => {
         // Tamper with token's expiry date !
@@ -247,7 +247,7 @@ describe('UserController', () => {
         'token': 'invalid-token',
         'new-password': 'newPassword',
       },
-      'Missing data for password reset',
+      { code: 'MISSING_DATA', message: 'Missing data for password reset' },
     )
   })
 
@@ -258,7 +258,7 @@ describe('UserController', () => {
         'username': fakeUserId,
         'new-password': 'newPassword',
       },
-      'Missing data for password reset',
+      { code: 'MISSING_DATA', message: 'Missing data for password reset' },
     )
   })
 
@@ -269,7 +269,7 @@ describe('UserController', () => {
         'username': fakeUserId,
         'token': 'invalid-token',
       },
-      'Missing data for password reset',
+      { code: 'MISSING_DATA', message: 'Missing data for password reset' },
     )
   })
 
@@ -278,7 +278,7 @@ describe('UserController', () => {
 
   async function testRequestConfirmFailure(userId: string,
                                            confirmData: any,
-                                           errorMessage: string,
+                                           error: { code: string, message: string },
                                            testTokenHasBeenCleared: boolean = false,
                                            beforeConfirm: () => Promise<void> = noop) {
     await request(server)
@@ -294,7 +294,7 @@ describe('UserController', () => {
       .send(confirmData)
       .expect(400)
       .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ ok: false, error: errorMessage })
+      .expect(error)
 
     let user = await databaseServiceMock.getUser(userId)
     expect(user.password).toBe('password')
@@ -309,7 +309,7 @@ describe('UserController', () => {
       .get('/api/user/request-password-reset/' + wrongUserId)
       .expect(400)
       .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ ok: false, error: 'Unknown user' })
+      .expect({ code: 'UNKNOWN_USER', message: 'Unknown user' })
   })
 
   it('rejects confirmations for unknown users', async () => {
@@ -322,7 +322,7 @@ describe('UserController', () => {
       })
       .expect(400)
       .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ ok: false, error: 'Unknown user' })
+      .expect({ code: 'UNKNOWN_USER', message: 'Unknown user' })
   })
 
   it('rejects confirmations without prior request', async () => {
@@ -335,7 +335,7 @@ describe('UserController', () => {
       })
       .expect(400)
       .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ ok: false, error: 'No password reset request done' })
+      .expect({ code: 'NO_PASSWORD_RESET_REQUEST', message: 'No password reset request done' })
   })
 
   it('errors requests if database fails', async () => {
@@ -345,7 +345,7 @@ describe('UserController', () => {
       .get('/api/user/request-password-reset/' + fakeUserId)
       .expect(500)
       .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ ok: false, error: 'Database failed' })
+      .expect({ code: 'PROCESSING_ERROR', message: 'Database failed' })
   })
 
   it('errors confirmations if database fails', async () => {
@@ -360,6 +360,6 @@ describe('UserController', () => {
       })
       .expect(500)
       .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ ok: false, error: 'Database failed' })
+      .expect({ code: 'PROCESSING_ERROR', message: 'Database failed' })
   })
 })
