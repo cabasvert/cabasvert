@@ -20,9 +20,11 @@
 import { HttpClient } from '@angular/common/http'
 import { Component, OnInit } from '@angular/core'
 import { FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms'
-import { AlertController, LoadingController, NavController, NavParams } from '@ionic/angular'
-import { EMPTY, merge, Observable, Subject, timer } from 'rxjs'
-import { mapTo, switchMap, take } from 'rxjs/operators'
+import { ActivatedRoute } from '@angular/router'
+import { AlertController, LoadingController, NavController, ToastController } from '@ionic/angular'
+import { TranslateService } from '@ngx-translate/core'
+import { of } from 'rxjs'
+import { catchError, take } from 'rxjs/operators'
 import { ConfigurationService } from '../../config/configuration.service'
 
 export class Feedback {
@@ -36,34 +38,34 @@ export class Feedback {
 })
 export class ResetPasswordPage implements OnInit {
 
-  feedbackEvents: Subject<Feedback> = new Subject<Feedback>()
-  feedback: Observable<Feedback>
-
   username: string
   token: string
 
   form: FormGroup
 
-  constructor(private navParams: NavParams,
+  constructor(private nav: NavController,
+              private route: ActivatedRoute,
               private formBuilder: FormBuilder,
-              private nav: NavController,
               private alertCtrl: AlertController,
               private loadingCtrl: LoadingController,
+              private toastCtrl: ToastController,
               private http: HttpClient,
-              private config: ConfigurationService) {
+              private config: ConfigurationService,
+              private translate: TranslateService) {
 
     this.form = this.formBuilder.group({
       username: [null, Validators.required],
       password: [null, Validators.required],
       confirmedPassword: [null, Validators.required],
     }, {
-      validator: this.passwordsDontMatch,
+      validator: this.passwordsDoNotMatch,
     })
   }
 
   ngOnInit() {
-    this.username = this.navParams.get('username')
-    this.token = this.navParams.get('token')
+    let params = this.route.snapshot.paramMap
+    this.username = params.get('username')
+    this.token = params.get('token')
 
     if (!this.username || !this.token) {
       this.nav.navigateRoot('/login')
@@ -71,40 +73,14 @@ export class ResetPasswordPage implements OnInit {
     }
 
     this.form.get('username').patchValue(this.username)
-
-    this.form.statusChanges.subscribe(() => {
-      if (this.form.invalid && (this.form.dirty || this.form.touched) && this.form.errors) {
-        const errors = this.form.errors
-        const errorName = Object.getOwnPropertyNames(errors)[0]
-        const inError = errors[errorName]
-
-        if (inError) {
-          this.updateFeedback({
-            'passwordsMismatch': `Passwords don't match`,
-          }[errorName], true)
-        }
-      } else {
-        this.clearFeedback()
-      }
-    })
-
-    this.feedback = merge(
-      this.feedbackEvents,
-      this.feedbackEvents.pipe(
-        switchMap(f => f == null ? EMPTY : timer(4000)),
-        mapTo(null),
-      ),
-    )
   }
 
   public async resetPassword() {
     const password = this.form.get('password').value
     const confirmedPassword = this.form.get('confirmedPassword').value
 
-    if (password !== confirmedPassword) {
-      this.updateFeedback(`Passwords don't match`, true)
-    } else {
-      await this.showLoading()
+    if (password === confirmedPassword) {
+      await this.showLoading(this.translate.instant('RESET_PASSWORD.CHANGING_PASSWORD'))
 
       const serverUrl = this.config.base.serverUrl
 
@@ -117,52 +93,77 @@ export class ResetPasswordPage implements OnInit {
         const response = await this.http.post<ResetResponse>(
           `${serverUrl}/api/user/confirm-password-reset`,
           { 'username': this.username, 'token': this.token, 'new-password': password },
-        ).pipe(take(1)).toPromise()
+        ).pipe(
+          take(1),
+          catchError(err => of(err)),
+        ).toPromise()
 
         if (response.ok) {
+          await this.dismissLoading()
+          await this.showFeedback(this.translate.instant('RESET_PASSWORD.PASSWORD_CHANGED'))
           await this.nav.navigateRoot('/login')
         } else {
-          await this.showError(`Reset password failed: ${response.error}`)
+          await this.dismissLoading()
+          await this.showError(
+            this.translate.instant('RESET_PASSWORD.RESET_PASSWORD_FAILED'),
+            this.translate.instant('RESET_PASSWORD.ERROR_' + response.error.code),
+          )
         }
       } catch (error) {
-        await this.showError(`Reset password failed: ${error.message}`)
-      } finally {
         await this.dismissLoading()
+        await this.showError(
+          this.translate.instant('RESET_PASSWORD.RESET_PASSWORD_FAILED'),
+          error.message
+        )
+      } finally {
       }
     }
   }
 
-  async showLoading() {
-    const loading = await this.loadingCtrl.create({
-      message: 'Please wait...',
-    })
+  private async showLoading(message: string) {
+    const loading = await this.loadingCtrl.create({ message })
     await loading.present()
   }
 
-  async dismissLoading() {
+  private async dismissLoading() {
     await this.loadingCtrl.dismiss()
   }
 
-  async showError(text) {
-    await this.dismissLoading()
-
+  private async showError(header, message) {
     const alert = await this.alertCtrl.create({
-      header: 'Fail',
-      subHeader: text,
+      header,
+      message,
       buttons: ['OK'],
     })
     await alert.present()
   }
 
-  private updateFeedback(message: string, error: boolean = false) {
-    this.feedbackEvents.next(new Feedback(message, error))
+  private feedbackVisible = false
+
+  private async showFeedback(message: string, error: boolean = false) {
+    let oldFeedback = this.feedbackVisible ? await this.toastCtrl.getTop() : null
+
+    const toast = await this.toastCtrl.create({
+      message,
+      cssClass: error ? 'error-toast' : 'success-toast',
+      duration: 5000,
+    })
+    await toast.present()
+    if (oldFeedback) {
+      await oldFeedback.dismiss()
+    }
+    this.feedbackVisible = true
+
+    await toast.onDidDismiss()
+    this.feedbackVisible = false
   }
 
-  private clearFeedback() {
-    this.feedbackEvents.next(null)
+  get problems() {
+    let control = this.form
+    return control.invalid && control.errors ? control.errors : null
   }
 
-  passwordsDontMatch: ValidatorFn = c => {
+  passwordsDoNotMatch: ValidatorFn = c => {
     const password = c.get('password').value
     const confirmedPassword = c.get('confirmedPassword').value
     return password === null || confirmedPassword === null || password === confirmedPassword ?

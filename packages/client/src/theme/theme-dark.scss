@@ -91,6 +91,8 @@ $text-color-value: #ffffff;
   //--ion-backdrop-color                    Color the backdrop component
   //--ion-overlay-background-color          Background color of the overlays
 
+  --ion-overlay-background-color: #{var(--ion-background-color)};
+
   //--ion-border-color                      Border color
   //--ion-box-shadow-color                  Box shadow color
 

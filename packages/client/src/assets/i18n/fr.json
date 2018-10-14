@@ -18,6 +18,7 @@
   "DIALOGS": {
     "CANCEL": "Annuler",
     "SAVE": "Enregistrer",
+    "SEND": "Envoyer",
     "DELETE": "Supprimer",
     "REQUIRED": "Requis",
     "CONFIRM_DELETION": "Confirmer la suppression"
@@ -50,13 +51,34 @@
     "PASSWORD": "Mot de passe",
     "STORE_PASSWORD": "Enregistrer le mot de passe",
     "LOGIN": "Se connecter",
-    "FORGOT_PASSWORD": "Mot de passe oublié"
+    "FORGOT_PASSWORD": "Mot de passe oublié",
+    "LOGGING_IN": "Connexion...",
+    "ACCESS_DENIED": "Connexion refusée",
+    "LOGIN_FAILED": "Connexion échouée",
+    "PASSWORD_RECOVERY": "Récupération mot de passe",
+    "REQUEST_PASSWORD_RESET": "Envoyez une demande de réinitialisation",
+    "ENTER_EMAIL_ADDRESS": "Entrez votre adresse courriel",
+    "SENDING_PASSWORD_RESET": "Envoi de la demande...",
+    "EMAIL_SENT": "Un courriel vous a été envoyé.",
+    "REQUEST_PASSWORD_FAILED": "Réinitialisation échouée",
+    "ERROR_UNKNOWN_USER": "Utilisateur inconnu",
+    "ERROR_PROCESSING_ERROR": "Erreur de traitement"
   },
   "RESET_PASSWORD": {
     "TITLE": "Réinitialisation mot de passe",
     "NEW_PASSWORD": "Nouveau mot de passe",
     "CONFIRMED_PASSWORD": "Confirmer mot de passe",
-    "RESET_PASSWORD": "Réinitialiser"
+    "RESET_PASSWORD": "Réinitialiser",
+    "PASSWORDS_DO_NOT_MATCH": "Mots de passe différents",
+    "CHANGING_PASSWORD": "Réinitialisation...",
+    "PASSWORD_CHANGED": "Mot de passe réinitialisé",
+    "RESET_PASSWORD_FAILED": "Réinitialisation échouée",
+    "ERROR_MISSING_DATA": "Données manquantes",
+    "ERROR_UNKNOWN_USER": "Utilisateur inconnu",
+    "ERROR_NO_PASSWORD_RESET_REQUEST": "Aucune demande de réinitialisation préalablement effectuée",
+    "ERROR_EXPIRED_TOKEN": "Jeton expiré",
+    "ERROR_INVALID_TOKEN": "Jeton invalide",
+    "ERROR_PROCESSING_ERROR": "Erreur de traitement"
   },
   "PROFILE": {
     "TITLE": "Profil",

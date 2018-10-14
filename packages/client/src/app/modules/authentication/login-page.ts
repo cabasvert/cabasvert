@@ -20,10 +20,11 @@
 import { HttpClient } from '@angular/common/http'
 import { Component, OnInit } from '@angular/core'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms'
-import { ActivatedRoute, Router } from '@angular/router'
-import { AlertController, LoadingController, NavController } from '@ionic/angular'
-import { EMPTY, merge, Observable, Subject, timer } from 'rxjs'
-import { mapTo, switchMap, take } from 'rxjs/operators'
+import { ActivatedRoute } from '@angular/router'
+import { AlertController, LoadingController, NavController, ToastController } from '@ionic/angular'
+import { TranslateService } from '@ngx-translate/core'
+import { of } from 'rxjs'
+import { catchError, take } from 'rxjs/operators'
 import { ConfigurationService } from '../../config/configuration.service'
 import { AuthService } from '../../toolkit/providers/auth-service'
 
@@ -38,9 +39,6 @@ export class Feedback {
 })
 export class LoginPage implements OnInit {
 
-  feedbackEvents: Subject<Feedback> = new Subject<Feedback>()
-  feedback: Observable<Feedback>
-
   hasPasswordStorage = false
 
   form: FormGroup
@@ -50,9 +48,11 @@ export class LoginPage implements OnInit {
               private auth: AuthService,
               private alertCtrl: AlertController,
               private loadingCtrl: LoadingController,
+              private toastCtrl: ToastController,
               private formBuilder: FormBuilder,
               private http: HttpClient,
-              private config: ConfigurationService) {
+              private config: ConfigurationService,
+              private translate: TranslateService) {
 
     this.form = this.formBuilder.group({
       username: ['', Validators.required],
@@ -62,14 +62,6 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit() {
-    this.feedback = merge(
-      this.feedbackEvents,
-      this.feedbackEvents.pipe(
-        switchMap(f => f == null ? EMPTY : timer(4000)),
-        mapTo(null),
-      ),
-    )
-
     const paramMap = this.route.snapshot.paramMap
     const username = paramMap.get('username')
     const password = paramMap.get('password')
@@ -91,48 +83,51 @@ export class LoginPage implements OnInit {
   }
 
   public async login() {
-    await this.showLoading()
+    await this.showLoading(this.translate.instant('LOGIN.LOGGING_IN'))
 
     try {
       const granted = await this.auth.login(this.form.getRawValue())
-
-      await this.dismissLoading()
 
       if (granted) {
         if (this.form.get('storePassword').value) {
           await this.auth.tryStoreCredentials()
         }
 
+        await this.dismissLoading()
         await this.navCtrl.navigateRoot(['/'])
       } else {
-        this.updateFeedback('Access Denied.', true)
+        await this.dismissLoading()
+        await this.showFeedback(this.translate.instant('LOGIN.ACCESS_DENIED'), true)
       }
     } catch (error) {
-      await this.showError(`Login failed: ${error.message}`)
-    } finally {
-      // await this.dismissLoading();
+      await this.dismissLoading()
+      await this.showError(this.translate.instant('LOGIN.ACCESS_DENIED'), error.message)
     }
   }
 
   public async forgotPassword() {
     const mailInput = await this.alertCtrl.create({
-      header: 'Password Recovery',
-      message: 'Request a password reset.',
+      header: this.translate.instant('LOGIN.PASSWORD_RECOVERY'),
+      message: this.translate.instant('LOGIN.REQUEST_PASSWORD_RESET'),
       inputs: [
         {
           id: 'email',
           type: 'email',
           name: 'email',
-          placeholder: 'Enter your email address',
+          placeholder: this.translate.instant('LOGIN.ENTER_EMAIL_ADDRESS'),
         },
       ],
       buttons: [
         {
-          text: 'Cancel', role: 'cancel',
+          text: this.translate.instant('DIALOGS.CANCEL'),
+          role: 'cancel',
         },
         {
-          text: 'Send',
-          handler: data => this.handleRequestPasswordReset(data),
+          text: this.translate.instant('DIALOGS.SEND'),
+          handler: data => {
+            this.handleRequestPasswordReset(data)
+            return false
+          },
         },
       ],
     })
@@ -140,18 +135,7 @@ export class LoginPage implements OnInit {
   }
 
   private async handleRequestPasswordReset(data) {
-    (async () => {
-      await this.requestPasswordReset(data.email)
-
-      await this.alertCtrl.dismiss()
-
-      this.updateFeedback('An email will be sent to you shortly.')
-    })()
-    return false
-  }
-
-  private async requestPasswordReset(email: string) {
-    await this.showLoading()
+    await this.showLoading(this.translate.instant('LOGIN.SENDING_PASSWORD_RESET'))
 
     const serverUrl = this.config.base.serverUrl
 
@@ -162,44 +146,67 @@ export class LoginPage implements OnInit {
 
     try {
       const response = await this.http.get<ResetResponse>(
-        `${serverUrl}/api/user/request-password-reset/${email}`,
-      ).pipe(take(1)).toPromise()
+        `${serverUrl}/api/user/request-password-reset/${data.email}`,
+      ).pipe(
+        take(1),
+        catchError(err => of(err)),
+      ).toPromise()
 
       if (response.ok) {
-        await this.navCtrl.navigateRoot(['/login'])
+        await this.dismissLoading()
+        await this.alertCtrl.dismiss()
+        await this.showFeedback(this.translate.instant('LOGIN.EMAIL_SENT'))
       } else {
-        await this.showError(`Reset password failed: ${response.error}`)
+        await this.dismissLoading()
+        await this.showError(
+          this.translate.instant('LOGIN.REQUEST_PASSWORD_FAILED'),
+          this.translate.instant('LOGIN.ERROR_' + response.error.code),
+        )
       }
     } catch (error) {
-      await this.showError(`Reset password failed: ${error.message}`)
-    } finally {
       await this.dismissLoading()
+      await this.showError(
+        this.translate.instant('LOGIN.REQUEST_PASSWORD_FAILED'),
+        error.message
+      )
     }
   }
 
-  async showLoading() {
-    const loading = await this.loadingCtrl.create({
-      message: 'Please wait...',
-    })
+  private async showLoading(message: string) {
+    const loading = await this.loadingCtrl.create({ message })
     await loading.present()
   }
 
-  async dismissLoading() {
+  private async dismissLoading() {
     await this.loadingCtrl.dismiss()
   }
 
-  async showError(text) {
-    await this.dismissLoading()
-
+  private async showError(header, message) {
     const alert = await this.alertCtrl.create({
-      header: 'Fail',
-      subHeader: text,
+      header,
+      message,
       buttons: ['OK'],
     })
     await alert.present()
   }
 
-  private updateFeedback(message: string, error: boolean = false) {
-    this.feedbackEvents.next(new Feedback(message, error))
+  private feedbackVisible = false
+
+  private async showFeedback(message: string, error: boolean = false) {
+    let oldFeedback = this.feedbackVisible ? await this.toastCtrl.getTop() : null
+
+    const toast = await this.toastCtrl.create({
+      message,
+      cssClass: error ? 'error-toast' : 'success-toast',
+      duration: 5000,
+    })
+    await toast.present()
+    if (oldFeedback) {
+      await oldFeedback.dismiss()
+    }
+    this.feedbackVisible = true
+
+    await toast.onDidDismiss()
+    this.feedbackVisible = false
   }
 }

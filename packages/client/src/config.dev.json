@@ -1,6 +1,6 @@
 {
   "base": {
-    "databaseUrl": "http://localhost:5984",
+    "databaseUrl": "http://localhost:3000",
     "serverUrl": "http://localhost:4000"
   }
 }

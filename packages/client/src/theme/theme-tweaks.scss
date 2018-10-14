@@ -88,3 +88,13 @@ ion-toolbar.toolbar-thinner {
   right: 16px !important;
   left: unset !important;
 }
+
+// Toasts
+
+.error-toast {
+  color: var(--ion-color-danger);
+}
+
+.success-toast {
+  color: var(--ion-color-primary);
+}

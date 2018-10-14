@@ -64,22 +64,11 @@
           </ion-row>
 
           <ion-row>
-            <ion-col>
-              <div style="height: 1.2em;">
-                <ion-text *ngIf="feedback | async as f"
-                          color="{{ f.isError ? 'danger' : 'primary' }}"
-                          text-center style="min-height: 2em; font-size: small;">{{ f.message }}
-                </ion-text>
-              </div>
-            </ion-col>
-          </ion-row>
-
-          <ion-row>
             <ion-col class="signup-col">
               <ion-button class="submit-btn" expand="full" type="submit" [disabled]="!form.valid">
                 {{ 'LOGIN.LOGIN' | translate }}
               </ion-button>
-              <ion-button expand="block" fill="clear" type="reset" (click)="forgotPassword()">
+              <ion-button expand="block" fill="clear" (click)="forgotPassword()">
                 {{ 'LOGIN.FORGOT_PASSWORD' | translate }}
               </ion-button>
             </ion-col>

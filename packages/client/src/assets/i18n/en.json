@@ -18,6 +18,7 @@
   "DIALOGS": {
     "CANCEL": "Cancel",
     "SAVE": "Save",
+    "SEND": "Send",
     "DELETE": "Delete",
     "REQUIRED": "Required",
     "CONFIRM_DELETION": "Confirm Deletion"
@@ -50,13 +51,34 @@
     "PASSWORD": "Password",
     "STORE_PASSWORD": "Store password",
     "LOGIN": "Login",
-    "FORGOT_PASSWORD": "Forgot password"
+    "FORGOT_PASSWORD": "Forgot password",
+    "LOGGING_IN": "Logging in...",
+    "ACCESS_DENIED": "Access Denied",
+    "LOGIN_FAILED": "Login failed",
+    "PASSWORD_RECOVERY": "Password Recovery",
+    "REQUEST_PASSWORD_RESET": "Request a password reset.",
+    "ENTER_EMAIL_ADDRESS": "Enter your email address",
+    "SENDING_PASSWORD_RESET": "Sending password request...",
+    "EMAIL_SENT": "An email will be sent to you shortly.",
+    "REQUEST_PASSWORD_FAILED": "Reset password failed",
+    "ERROR_UNKNOWN_USER": "Unknown user",
+    "ERROR_PROCESSING_ERROR": "Processing error"
   },
   "RESET_PASSWORD": {
     "TITLE": "Reset password",
     "NEW_PASSWORD": "New password",
     "CONFIRMED_PASSWORD": "Confirm password",
-    "RESET_PASSWORD": "Reset password"
+    "RESET_PASSWORD": "Reset password",
+    "PASSWORDS_DO_NOT_MATCH": "Passwords don't match",
+    "CHANGING_PASSWORD": "Changing password...",
+    "PASSWORD_CHANGED": "Password changed successfully",
+    "RESET_PASSWORD_FAILED": "Reset password failed",
+    "ERROR_MISSING_DATA": "Missing data for password reset",
+    "ERROR_UNKNOWN_USER": "Unknown user",
+    "ERROR_NO_PASSWORD_RESET_REQUEST": "No password reset request has been done",
+    "ERROR_EXPIRED_TOKEN": "Token has expired",
+    "ERROR_INVALID_TOKEN": "Token is invalid",
+    "ERROR_PROCESSING_ERROR": "Processing error"
   },
   "PROFILE": {
     "TITLE": "Profile",
