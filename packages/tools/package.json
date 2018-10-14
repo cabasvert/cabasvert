@@ -3,6 +3,9 @@
   "author": "Cabas Vert",
   "version": "0.1.1-beta.0",
   "description": "The admin and dev tools for Cabas Vert",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/index.js",
   "bin": {
     "cvt": "dist/cli.js"
@@ -50,18 +53,5 @@
     "tslint": "^5.8.0",
     "typescript": "^3.0.3",
     "watch": "^1.0.2"
-  },
-  "license-check-config": {
-    "src": [
-      "src/**/*.js",
-      "src/**/*.ts",
-      "test/**/*.js",
-      "test/**/*.ts",
-      "!./node_modules/**/*"
-    ],
-    "path": "config/header.txt",
-    "blocking": false,
-    "logInfo": false,
-    "logError": true
   }
 }
