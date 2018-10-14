@@ -33,7 +33,7 @@ async function main() {
       throw new Error('env.GH_TOKEN is undefined');
     }
 
-    await utils.checkGit();
+    // await utils.checkGit();
 
     let { name, version } = utils.readPackageJson(packageDir);
     let tag = `${name}@${version}`;
@@ -50,7 +50,7 @@ async function main() {
 async function publishGithub(pkg, version, tag, artifactsDir) {
   octokit.authenticate({
     type: 'oauth',
-    token: process.env.GH_TOKEN
+    token: process.env.GH_TOKEN,
   });
 
   try {
@@ -82,34 +82,36 @@ async function publishGithub(pkg, version, tag, artifactsDir) {
   let uploadUrl = newRelease.data.upload_url;
 
   // Check if there are any artifacts to publish
-  try {
-    let files = fs.readdirSync(artifactsDir);
-    for (let file of files) {
+  if (fs.existsSync(artifactsDir)) {
+    try {
+      let files = fs.readdirSync(artifactsDir);
+      for (let file of files) {
 
-      let contentType = null;
-      if (file.endsWith('.tar.gz') || file.endsWith('.tgz')) {
-        contentType = 'application/tar+gzip';
-      } else if (file.endsWith('.apk')) {
-        contentType = 'application/vnd.android.package-archive';
-      } else {
-        console.warn(`Unknown content type for '${file}' – Skipping`);
-        return;
+        let contentType = null;
+        if (file.endsWith('.tar.gz') || file.endsWith('.tgz')) {
+          contentType = 'application/tar+gzip';
+        } else if (file.endsWith('.apk')) {
+          contentType = 'application/vnd.android.package-archive';
+        } else {
+          console.warn(`Unknown content type for '${file}' – Skipping`);
+          return;
+        }
+
+        console.log(`Uploading GitHub release asset ${file}`);
+
+        const content = await fs.readFile(path.join(artifactsDir, file));
+
+        await octokit.repos.uploadAsset({
+          url: uploadUrl,
+          file: content,
+          contentType: contentType,
+          contentLength: content.byteLength,
+          name: file,
+        });
       }
-
-      console.log(`Uploading GitHub release asset ${file}`);
-
-      const content = await fs.readFile(path.join(artifactsDir, file));
-
-      await octokit.repos.uploadAsset({
-        url: uploadUrl,
-        file: content,
-        contentType: contentType,
-        contentLength: content.byteLength,
-        name: file,
-      });
+    } catch (err) {
+      console.error(err);
     }
-  } catch (err) {
-    console.error(err);
   }
 }
 
@@ -122,11 +124,14 @@ function isPreRelease(version) {
 function lastChangelog() {
   const lines = fs.readFileSync('CHANGELOG.md', 'utf-8').toString().split('\n');
   let start = -1;
-  let end = -1;
+  let end = null;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    if (line.startsWith('# [') || line.startsWith('## [')) {
+    if (
+        !line.startsWith('# Change Log') &&
+        (line.startsWith('# ') || line.startsWith('## '))
+    ) {
       if (start === -1) {
         start = i + 1;
       } else {
@@ -136,7 +141,7 @@ function lastChangelog() {
     }
   }
 
-  if (start === -1 || end === -1) {
+  if (start === -1) {
     throw new Error('changelog diff was not found');
   }
   return lines.slice(start, end).join('\n').trim();
