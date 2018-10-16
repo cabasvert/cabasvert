@@ -4,6 +4,8 @@
   "scripts": {
     "postinstall": "npm-run-all bootstrap",
     "bootstrap": "lerna bootstrap --no-hoist",
+    "clean": "lerna run clean --stream",
+    "compile": "lerna run compile --stream",
     "build": "lerna run build --stream",
     "test": "lerna run test --stream",
     "start-client": "npm-run-all start --prefix packages/client",

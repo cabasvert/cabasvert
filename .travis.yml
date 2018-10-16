@@ -7,7 +7,6 @@ services:
 
 node_js:
   - "10"
-  - "8"
 
 before_install:
   - yarn config set no-progress
@@ -18,9 +17,10 @@ before_install:
 before_script:
   #  - greenkeeper-lockfile-update
 
-  # Check we lint correctly first
+  # Check we lint and compile correctly first
   - yarn run lint
   - yarn run license-check
+  - yarn run compile
 
 after_script:
   #  - greenkeeper-lockfile-upload
