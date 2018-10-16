@@ -24,9 +24,9 @@
     "@types/jasmine": "^2.8.9",
     "jasmine": "^3.2.0",
     "jasmine-spec-reporter": "^4.2.1",
-    "jasmine-ts": "^0.2.1",
-    "nyc": "^11.4.1",
+    "jasmine-ts": "^0.3.0",
+    "nyc": "^13.1.0",
     "tslint": "^5.8.0",
-    "typescript": "~2.9.2"
+    "typescript": "^3.1.3"
   }
 }
