@@ -1,0 +1,13 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "package.json",
+        "packages/client/package.json",
+        "packages/data/package.json",
+        "packages/server/package.json",
+        "packages/tools/package.json"
+      ]
+    }
+  }
+}
