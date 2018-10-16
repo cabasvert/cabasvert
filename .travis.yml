@@ -1,6 +1,10 @@
 language: node_js
 
-sudo: false
+dist: trusty
+sudo: true
+
+addons:
+  chrome: stable
 
 services:
   - docker
