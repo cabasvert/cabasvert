@@ -21,7 +21,7 @@ import { inject, injectable } from 'inversify'
 
 import { createTransport } from 'nodemailer'
 import * as Mail from 'nodemailer/lib/mailer'
-import { LoggerInstance } from 'winston'
+import { Logger } from 'winston'
 
 import { Configuration } from '../config'
 import { Services } from '../types'
@@ -30,7 +30,7 @@ import { Services } from '../types'
 export class MailService {
 
   constructor(@inject(Services.Config) private config: Configuration,
-              @inject(Services.Logger) private logger: LoggerInstance) {
+              @inject(Services.Logger) private logger: Logger) {
   }
 
   async status(): Promise<{ ok: boolean, error?: any }> {

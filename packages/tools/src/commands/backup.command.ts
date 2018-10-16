@@ -18,7 +18,7 @@
  */
 
 import { inject, injectable } from 'inversify'
-import { LoggerInstance } from 'winston'
+import { Logger } from 'winston'
 import { Command } from '../command'
 import { Configuration, locationFromOptions } from '../config'
 import { DatabaseBackup } from '../services/business/backup'
@@ -28,7 +28,7 @@ import { Services } from '../types'
 @injectable()
 export class BackupCommand extends Command {
 
-  constructor(@inject(Services.Logger) private logger: LoggerInstance,
+  constructor(@inject(Services.Logger) private logger: Logger,
               @inject(Services.Config) private config: Configuration,
               @inject(Services.Database) private database: DatabaseService,
               @inject(Services.Backup) private backup: DatabaseBackup) {

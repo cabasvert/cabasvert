@@ -20,7 +20,7 @@
 import { inject, injectable } from 'inversify'
 
 import { readFile, writeFile } from 'mz/fs'
-import { LoggerInstance } from 'winston'
+import { Logger } from 'winston'
 import { Location } from '../../config'
 import { Services } from '../../types'
 import { DatabaseService } from '../technical/database.service'
@@ -28,7 +28,7 @@ import { DatabaseService } from '../technical/database.service'
 @injectable()
 export class DatabaseBackup {
 
-  constructor(@inject(Services.Logger) private logger: LoggerInstance,
+  constructor(@inject(Services.Logger) private logger: Logger,
               @inject(Services.Database) private database: DatabaseService) {
   }
 

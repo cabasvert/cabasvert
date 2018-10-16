@@ -53,7 +53,9 @@ describe('DatabaseService', () => {
 
   beforeEach(async () => {
 
-    let nullLogger = new winston.Logger()
+    let nullLogger = winston.createLogger({
+      transports: [new winston.transports.Console({ silent: true })],
+    })
     databaseService = new DatabaseService(configuration, nullLogger)
 
     // Create user database

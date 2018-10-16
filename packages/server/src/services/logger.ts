@@ -18,6 +18,7 @@
  */
 
 import * as fs from 'fs'
+import { format } from 'winston'
 import * as winston from 'winston'
 
 const logDir = './logs/'
@@ -28,22 +29,25 @@ if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir)
 }
 
-export let logger: winston.LoggerInstance = new winston.Logger({
+export let logger: winston.Logger = winston.createLogger({
   transports: [
     new winston.transports.File({
       level: 'info',
       filename: logDir + logFile,
       handleExceptions: true,
-      json: true,
+      format: format.json(),
       maxsize: 5242880, // 5MB
       maxFiles: 5,
-      colorize: false,
     }),
     new winston.transports.Console({
       level: 'debug',
       handleExceptions: true,
-      json: false,
-      colorize: true,
+      format: format.combine(
+        format.colorize(),
+        format.timestamp(),
+        format.align(),
+        format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+      ),
     }),
   ],
   exitOnError: false,

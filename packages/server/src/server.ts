@@ -26,7 +26,7 @@ import * as http from 'http'
 import { Container } from 'inversify'
 import { InversifyExpressServer } from 'inversify-express-utils'
 import * as morgan from 'morgan'
-import { LoggerInstance } from 'winston'
+import { Logger } from 'winston'
 import { Configuration } from './config'
 
 import './controllers/user.controller'
@@ -44,7 +44,7 @@ export async function initializeServer(containerPromise: Promise<Container>) {
   let databaseService = container.get<DatabaseService>(Services.Database)
   await databaseService.initialize()
 
-  let logger = container.get<LoggerInstance>(Services.Logger)
+  let logger = container.get<Logger>(Services.Logger)
 
   // start the server
   let server = new InversifyExpressServer(container)

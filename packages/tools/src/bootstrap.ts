@@ -19,7 +19,7 @@
 
 import { Container } from 'inversify'
 import { interfaces } from 'inversify/dts/interfaces/interfaces'
-import { LoggerInstance } from 'winston'
+import { Logger } from 'winston'
 import { Command, CommandRegistry } from './command'
 
 import { BackupCommand } from './commands/backup.command'
@@ -43,7 +43,7 @@ export const CommandTypes: interfaces.Newable<Command>[] = [
 export function initializeContainer(configuration: Configuration) {
   let container = new Container()
   container.bind<Configuration>(Services.Config).toConstantValue(configuration)
-  container.bind<LoggerInstance>(Services.Logger).toConstantValue(logger)
+  container.bind<Logger>(Services.Logger).toConstantValue(logger)
   container.bind<DatabaseService>(Services.Database).to(DatabaseService).inSingletonScope()
   container.bind<CommandRegistry>(Services.CommandRegistry).to(CommandRegistry).inSingletonScope()
 

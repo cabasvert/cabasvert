@@ -20,7 +20,7 @@
 import * as express from 'express'
 import { inject } from 'inversify'
 import { controller, httpGet, httpPost, request, requestParam, response } from 'inversify-express-utils'
-import { LoggerInstance } from 'winston'
+import { Logger } from 'winston'
 import { Configuration } from '../config'
 
 import { User, UserMetadata } from '../models/user.model'
@@ -37,7 +37,7 @@ const EXPIRY_TIME = 24 // hours
 export class UserController {
 
   constructor(@inject(Services.Config) private config: Configuration,
-              @inject(Services.Logger) private logger: LoggerInstance,
+              @inject(Services.Logger) private logger: Logger,
               @inject(Services.Database) private userDatabase: DatabaseService,
               @inject(Services.Mail) private mailSender: MailService,
               @inject(Services.Token) private tokenGenerator: TokenService) {

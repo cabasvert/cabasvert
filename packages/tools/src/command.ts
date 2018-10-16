@@ -18,7 +18,7 @@
  */
 
 import { inject, injectable } from 'inversify'
-import { LoggerInstance } from 'winston'
+import { Logger } from 'winston'
 import { Services } from './types'
 
 @injectable()
@@ -46,7 +46,7 @@ export class CommandRegistry {
   private byName: { [name: string]: Command } = {}
   private byNameAndAlias: { [name: string]: Command } = {}
 
-  constructor(@inject(Services.Logger) private logger: LoggerInstance) {
+  constructor(@inject(Services.Logger) private logger: Logger) {
   }
 
   register(command: Command) {

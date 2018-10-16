@@ -20,7 +20,7 @@
 import * as express from 'express'
 import { inject } from 'inversify'
 import { controller, httpGet, response } from 'inversify-express-utils'
-import { LoggerInstance } from 'winston'
+import { Logger } from 'winston'
 import { Configuration } from '../config'
 import { DatabaseService } from '../services/database.service'
 
@@ -31,7 +31,7 @@ import { Services } from '../types'
 export class StatusController {
 
   constructor(@inject(Services.Config) private config: Configuration,
-              @inject(Services.Logger) private logger: LoggerInstance,
+              @inject(Services.Logger) private logger: Logger,
               @inject(Services.Database) private userDatabase: DatabaseService,
               @inject(Services.Mail) private mailSender: MailService) {
   }

@@ -24,7 +24,7 @@ import * as PouchAuth from 'pouchdb-authentication'
 import * as PouchDB from 'pouchdb-core'
 import * as PouchFind from 'pouchdb-find'
 
-import { LoggerInstance } from 'winston'
+import { Logger } from 'winston'
 
 import { Configuration } from '../config'
 
@@ -43,7 +43,7 @@ export class DatabaseService {
   private db: any
 
   constructor(@inject(Services.Config) private config: Configuration,
-              @inject(Services.Logger) private logger: LoggerInstance) {
+              @inject(Services.Logger) private logger: Logger) {
     this.db = new PouchDB(this.config.database.url + '/_users', { skip_setup: true })
   }
 

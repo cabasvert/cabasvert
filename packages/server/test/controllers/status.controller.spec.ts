@@ -22,7 +22,7 @@ import { Container } from 'inversify'
 import 'jasmine'
 import 'reflect-metadata'
 import * as winston from 'winston'
-import { LoggerInstance } from 'winston'
+import { Logger } from 'winston'
 
 import { Configuration } from '../../src/config'
 import '../../src/controllers/user.controller'
@@ -79,7 +79,9 @@ describe('StatusController', () => {
 
   let configuration = testConfiguration()
 
-  let nullLogger = new winston.Logger({})
+  let nullLogger = winston.createLogger({
+    transports: [new winston.transports.Console({ silent: true })],
+  })
   let databaseServiceMock = new DatabaseServiceMock(configuration, nullLogger)
   let tokenServiceMock = new TokenServiceMock()
   let mailServiceMock = new MailServiceMock(configuration, nullLogger)
@@ -94,7 +96,7 @@ describe('StatusController', () => {
     let container = new Container()
 
     container.bind<Configuration>(Services.Config).toConstantValue(configuration)
-    container.bind<LoggerInstance>(Services.Logger).toConstantValue(nullLogger)
+    container.bind<Logger>(Services.Logger).toConstantValue(nullLogger)
     container.bind<DatabaseService>(Services.Database).toConstantValue(databaseServiceMock)
     container.bind<MailService>(Services.Mail).toConstantValue(mailServiceMock)
     container.bind<TokenService>(Services.Token).toConstantValue(tokenServiceMock)

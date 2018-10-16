@@ -20,7 +20,7 @@
 import { Container, injectable } from 'inversify'
 import * as parseCli from 'minimist'
 import 'reflect-metadata'
-import { LoggerInstance } from 'winston'
+import { Logger } from 'winston'
 
 import { initializeContainer } from './bootstrap'
 import { CommandRegistry } from './command'
@@ -32,7 +32,7 @@ import './utils/dates'
 export class CabasVertTools {
 
   private container: Container
-  private logger: LoggerInstance
+  private logger: Logger
   private registry: CommandRegistry
 
   constructor(private configuration: Configuration) {
