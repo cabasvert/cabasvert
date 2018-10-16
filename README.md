@@ -1,5 +1,7 @@
 # Cabas Vert
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/cabasvert/cabasvert.svg)](https://greenkeeper.io/)
+
 <table>
   <tr>
     <td width="150px">
