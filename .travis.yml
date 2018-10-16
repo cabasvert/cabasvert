@@ -1,0 +1,41 @@
+language: node_js
+
+sudo: false
+
+services:
+  - docker
+
+node_js:
+  - "10"
+  - "8"
+
+before_install:
+  - yarn config set no-progress
+
+  # Use greenkeeper-lockfile >= 2.0 for monorepo support
+  #  - yarn global add greenkeeper-lockfile@2
+
+before_script:
+  #  - greenkeeper-lockfile-update
+
+  # Check we lint correctly first
+  - yarn run lint
+  - yarn run license-check
+
+after_script:
+  #  - greenkeeper-lockfile-upload
+
+script: yarn run $COMMAND
+
+env:
+  global:
+
+  matrix:
+  - DATABASE=couchdb:latest COMMAND=test
+
+branches:
+  only:
+  - master
+  - /^greenkeeper/.*$/
+
+cache: yarn
