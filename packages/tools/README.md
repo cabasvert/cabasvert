@@ -4,7 +4,7 @@
   <tr>
     <td width="150px">
       <img alt="Cabas Vert logo" valign="top" title="Cabas Vert logo"
-           src="https://raw.githubusercontent.com/cabasvert/cabasvert-server/master/docs/img/icon.svg?sanitize=true"/>
+           src="https://raw.githubusercontent.com/cabasvert/cabasvert/master/docs/img/icon.svg?sanitize=true"/>
     </td>
     <td>
       <p>
@@ -23,7 +23,7 @@
 Execute:
 
 ```bash
-npm run build
+yarn build
 ```
 
 ## Running
@@ -32,17 +32,14 @@ Copy the `config.json` file to `my-config.json` and edit it according to your wi
 Then execute:
 
 ```bash
-npm run build
+yarn build
 node dist/cli --help
 ```
 
 ## Testing
 
-Launch a CouchDB instance, accessible at `http://localhost:5984`, in [Admin Party](http://guide.couchdb.org/draft/security.html#party) and with CORS enabled.
-Then execute:
-
 ```bash
-npm run test
+yarn test
 ```
 
 Test coverage is automatically generated in a `coverage` directory.

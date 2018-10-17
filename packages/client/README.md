@@ -4,7 +4,7 @@
   <tr>
     <td width="150px">
       <img alt="Cabas Vert logo" valign="top" title="Cabas Vert logo"
-           src="https://raw.githubusercontent.com/cabasvert/cabasvert-client/master/docs/img/icon.svg?sanitize=true"/>
+           src="https://raw.githubusercontent.com/cabasvert/cabasvert/master/docs/img/icon.svg?sanitize=true"/>
     </td>
     <td>
       <p>
@@ -18,44 +18,58 @@
   </tr>
 </table>
 
-## Building
+## Serve
 
-### Serve
+1. Ensure that every libraries are compiled by running **in the root directory**:
+```bash
+yarn compile
+```
 
-Run `npm start`.
+2. Then [run a server and a database instance](https://github.com/cabasvert/cabasvert/tree/master/packages/server#serve) in another terminal.
 
-### Browser Builds
+3. Edit the `src/config.dev.json`, if necessary.
 
-#### Release build
+4. Finally, run the browser version of the client app by running:
+```bash
+yarn start
+```
 
-1. Run `npm run build-production`. The result will be in `www/`.
+## Test
 
-2. Run `(cd www && http-server)`.
+1. Ensure that every libraries are compiled by running **in the root directory**:
+```bash
+yarn compile
+```
 
-#### Make a release and publish to GitHub
+2. Run
+```bash
+yarn test
+```
 
-Add `-p beta` (or `alpha`, or `rc`) to the `npm release` below if necessary.
+## Build
 
-1. First, do a release build and check that everything runs smoothly.
+Ensure that every libraries are compiled by running **in the root directory**:
+```bash
+yarn compile
+```
 
-2. Run `npm release -- --dry-run` to dry run the release.
+### Browser Release build
 
-3. Run `npm release`
+Run `yarn run build-browser-release`.
+This will make a production build in `www/` and also pack it in `artifacts/`.
 
-4. Run `git push --follow-tags`.
+You can start a webserver (mainly to test the service worker)
+  by running `(cd www && http-server)`.
 
-5. Run `npm run publish-release` to publish to GitHub.
+### Android Debug Builds
 
-### Android Builds
+Run `yarn run build-android-debug`.
+The result will be in `artifacts/`.
 
-#### Debug Builds
+To deploy on your device connected via USB,
+  run `yarn run deploy-android-debug`.
 
-Run `npm run build-android-debug`.
-The result will be in `android/app/build/outputs/apk/debug/`.
-
-To build and deploy on your device connected via USB, run `npm run install-android-debug`.
-
-#### Release Builds
+### Release Builds
 
 First, configure the `android/keystore.properties` file to include the release signing information:
 ```
@@ -66,7 +80,8 @@ storePassword=<storePassword>
 keyPassword=<keyPassword>
 ```
 
-Run `npm run build-android-release`.
-The result will be in `android/app/build/outputs/apk/release/`.
+Run `yarn run build-android-release`.
+The result will be in `artifacts/`.
 
-To build and deploy on your device connected via USB, run `npm run install-android-release`.
+To deploy on your device connected via USB,
+  run `npm run deploy-android-release`.

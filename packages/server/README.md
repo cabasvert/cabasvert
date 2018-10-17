@@ -1,13 +1,10 @@
 # Cabas Vert server
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/cabasvert/cabasvert-server.svg)](https://greenkeeper.io/)
-[![Build Status](https://travis-ci.org/cabasvert/cabasvert-server.svg?branch=master)](https://travis-ci.org/cabasvert/cabasvert-server)
-
 <table>
   <tr>
     <td width="150px">
       <img alt="Cabas Vert logo" valign="top" title="Cabas Vert logo"
-           src="https://raw.githubusercontent.com/cabasvert/cabasvert-server/master/docs/img/icon.svg?sanitize=true"/>
+           src="https://raw.githubusercontent.com/cabasvert/cabasvert/master/docs/img/icon.svg?sanitize=true"/>
     </td>
     <td>
       <p>
@@ -21,31 +18,80 @@
   </tr>
 </table>
 
-## Building
+## Serve
 
-Execute:
+The easiest root is using Docker.
 
+### With your own database
+
+1. Ensure that every libraries are compiled by running **in the root directory**:
 ```bash
-npm run build
+yarn compile
 ```
 
-## Running
+2. Edit the `config.json` according to your wishes.
 
-Copy the `config.json` file to `my-config.json` and edit it according to your wishes.
-Then execute:
+3. Launch a clean CouchDB instance, accessible at `http://localhost:5984`,
+    with already setup `_users` and `cabasvert` databases.
 
+4. Then execute:
 ```bash
-npm run build
-node dist/cli --config=my-config.json
+yarn start
+```
+You can use the `DATABASE_HOST` environment variable
+  to specify another URL than `http://localhost:5984` for the database.
+
+### With a database run on Docker
+
+1. Ensure that every libraries are compiled by running **in the root directory**:
+```bash
+yarn compile
 ```
 
-## Testing
+2. Edit the `config.json` according to your wishes.
 
-Launch a CouchDB instance, accessible at `http://localhost:5984`, in [Admin Party](http://guide.couchdb.org/draft/security.html#party) and with CORS enabled.
-Then execute:
+3. Start your docker daemon.
 
+4. Then execute:
 ```bash
-npm run test
+DATABASE=couchdb:latest yarn start
+```
+
+## Test
+
+The easiest root is using Docker.
+
+### With your own database
+
+1. Ensure that every libraries are compiled by running **in the root directory**:
+```bash
+yarn compile
+```
+
+2. Launch a clean CouchDB instance, accessible at `http://localhost:5984`,
+    with already setup `_users` and `cabasvert` databases.
+
+3. Then execute:
+```bash
+yarn test
+```
+You can use the `DATABASE_HOST` environment variable
+  to specify another URL than `http://localhost:5984` for the database.
+
+Test coverage is automatically generated in a `coverage` directory.
+
+### With a database run on Docker
+
+1. Ensure that every libraries are compiled by running **in the root directory**:
+```bash
+yarn compile
+```
+
+2. Start your docker daemon.
+
+3. Then execute:
+```bash
+DATABASE=couchdb:latest yarn test
 ```
 
 Test coverage is automatically generated in a `coverage` directory.

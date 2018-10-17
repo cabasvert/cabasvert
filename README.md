@@ -7,7 +7,7 @@
   <tr>
     <td width="150px">
       <img alt="Cabas Vert logo" valign="top" title="Cabas Vert logo"
-           src="https://raw.githubusercontent.com/cabasvert/cabasvert-server/master/docs/img/icon.svg?sanitize=true"/>
+           src="https://raw.githubusercontent.com/cabasvert/cabasvert/master/docs/img/icon.svg?sanitize=true"/>
     </td>
     <td>
       <p>
@@ -20,6 +20,36 @@
     </td>
   </tr>
 </table>
+
+## Setup
+
+```bash
+yarn install
+```
+
+This will install all the dependencies and bootstrap the whole project.
+
+## Compile
+
+```bash
+yarn compile
+```
+
+## Test
+
+```bash
+yarn test
+```
+
+You will find more information in the `README.md` files of the individual packages.
+
+## Build
+
+```bash
+yarn build
+```
+
+You will find more information in the `README.md` files of the individual packages.
 
 ## Package Maintenance
 
