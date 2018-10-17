@@ -53,7 +53,7 @@ Ensure that every libraries are compiled by running **in the root directory**:
 yarn compile
 ```
 
-### Browser Release build
+### Browser Release Build
 
 Run `yarn run build-browser-release`.
 This will make a production build in `www/` and also pack it in `artifacts/`.
@@ -61,7 +61,7 @@ This will make a production build in `www/` and also pack it in `artifacts/`.
 You can start a webserver (mainly to test the service worker)
   by running `(cd www && http-server)`.
 
-### Android Debug Builds
+### Android Debug Build
 
 Run `yarn run build-android-debug`.
 The result will be in `artifacts/`.
@@ -69,7 +69,7 @@ The result will be in `artifacts/`.
 To deploy on your device connected via USB,
   run `yarn run deploy-android-debug`.
 
-### Release Builds
+### Android Release Build
 
 First, configure the `android/keystore.properties` file to include the release signing information:
 ```

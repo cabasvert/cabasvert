@@ -18,13 +18,13 @@
   </tr>
 </table>
 
-## Building
+## Build
 
 ```bash
 yarn build
 ```
 
-## Testing
+## Test
 
 ```bash
 yarn test

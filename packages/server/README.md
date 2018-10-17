@@ -20,7 +20,7 @@
 
 ## Serve
 
-The easiest root is using Docker.
+The easiest route is by using Docker.
 
 ### With your own database
 
@@ -59,7 +59,7 @@ DATABASE=couchdb:latest yarn start
 
 ## Test
 
-The easiest root is using Docker.
+The easiest route is by using Docker.
 
 ### With your own database
 

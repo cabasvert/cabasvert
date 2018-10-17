@@ -18,7 +18,7 @@
   </tr>
 </table>
 
-## Building
+## Build
 
 Execute:
 
@@ -26,7 +26,7 @@ Execute:
 yarn build
 ```
 
-## Running
+## Run
 
 Copy the `config.json` file to `my-config.json` and edit it according to your wishes.
 Then execute:
@@ -36,7 +36,7 @@ yarn build
 node dist/cli --help
 ```
 
-## Testing
+## Test
 
 ```bash
 yarn test

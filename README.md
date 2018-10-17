@@ -41,7 +41,9 @@ yarn compile
 yarn test
 ```
 
-You will find more information in the `README.md` files of the individual packages.
+You will find additional information in the `README.md` files of the
+    [server](https://github.com/cabasvert/cabasvert/tree/master/packages/server#test) and
+    [client](https://github.com/cabasvert/cabasvert/tree/master/packages/client#test) packages.
 
 ## Build
 
@@ -49,7 +51,8 @@ You will find more information in the `README.md` files of the individual packag
 yarn build
 ```
 
-You will find more information in the `README.md` files of the individual packages.
+You will find additional information in the `README.md` files of the
+    [client](https://github.com/cabasvert/cabasvert/tree/master/packages/client#build) package.
 
 ## Package Maintenance
 
