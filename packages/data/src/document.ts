@@ -19,10 +19,10 @@
 
 export interface Document {
   _id: string
-  _rev: string
-  _sver: string
+  _rev?: string
+  sver: string
 }
 
 export interface VersionedDocument<V extends string> extends Document {
-  _sver: V
+  sver: V
 }

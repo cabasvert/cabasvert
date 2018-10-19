@@ -18,18 +18,18 @@
  */
 
 import { Injectable, NgZone, OnDestroy } from '@angular/core'
+import { SeasonWeek } from '@cabasvert/data'
+import '@cabasvert/data/dist/utils/dates'
 import { combineLatest, Observable, of, Subscription } from 'rxjs'
 import { map, publishReplay, refCount, switchMap } from 'rxjs/operators'
 
 import { DatabaseService } from '../../toolkit/providers/database-service'
-import '../../utils/dates'
 import { observeInsideAngular } from '../../utils/observables'
 
 import { Contract, ContractKind, ContractSection } from '../contracts/contract.model'
 import { ContractService } from '../contracts/contract.service'
 import { Member } from '../members/member.model'
 import { MemberService } from '../members/member.service'
-import { SeasonWeek } from '../seasons/season.model'
 import { SeasonService } from '../seasons/season.service'
 
 import { Basket, BasketSection, BasketSectionTotals, Distribution } from './distribution.model'

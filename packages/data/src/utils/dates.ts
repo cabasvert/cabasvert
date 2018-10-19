@@ -84,7 +84,7 @@ Date.prototype.getISOWeek = function () {
 }
 
 Date.prototype.isBefore = function (other) {
-  return this.toISOString() < other.toISOString()
+  return this < other
 }
 
 Date.today = function () {

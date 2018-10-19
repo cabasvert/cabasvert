@@ -19,6 +19,7 @@
 
 import { AfterViewInit, Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
+import { Season } from '@cabasvert/data'
 import { Content, NavController } from '@ionic/angular'
 import { combineLatest, Observable, of, Subject, Subscription } from 'rxjs'
 import {
@@ -43,7 +44,6 @@ import { observeInsideAngular, observeOutsideAngular } from '../../utils/observa
 import { timeout } from '../../utils/promises'
 
 import { ContractService } from '../contracts/contract.service'
-import { Season } from '../seasons/season.model'
 import { SeasonService } from '../seasons/season.service'
 import { Member } from './member.model'
 import { MemberService } from './member.service'

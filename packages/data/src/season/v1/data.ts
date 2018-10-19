@@ -17,15 +17,19 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ReadonlyTuple } from '../../type-utils'
 import { VersionedDocument } from '../../document'
 
 export const VERSION = 'v1'
 
-export type SeasonDocument = SeasonData & VersionedDocument<'v1'>
+/**
+ * A document of a season of distributions.
+ */
+export interface SeasonDocument extends SeasonData, VersionedDocument<'v1'> {
+  readonly type: 'season'
+}
 
 /**
- * A season of distributions.
+ * The data of a season of distributions.
  */
 export interface SeasonData {
   readonly name: string
@@ -37,8 +41,8 @@ export interface SeasonData {
   readonly startWeek: CalendarWeek
   readonly endWeek: CalendarWeek
 
-  readonly ignoredWeeks: ReadonlyArray<CalendarWeek>
-  readonly doubleWeeks: ReadonlyArray<CalendarWeek>
+  readonly ignoredWeeks?: ReadonlyArray<CalendarWeek>
+  readonly doubleWeeks?: ReadonlyArray<CalendarWeek>
 }
 
 /**

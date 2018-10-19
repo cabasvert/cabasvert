@@ -18,9 +18,10 @@
  */
 
 import { Component, Input, OnChanges } from '@angular/core'
+import { SeasonWeek } from '@cabasvert/data'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { SeasonWeek } from '../season.model'
+
 import { SeasonService } from '../season.service'
 
 @Component({

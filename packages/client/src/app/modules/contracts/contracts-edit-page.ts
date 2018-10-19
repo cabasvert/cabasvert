@@ -20,6 +20,7 @@
 import { formatDate } from '@angular/common'
 import { Component, Inject, LOCALE_ID } from '@angular/core'
 import { Validators } from '@angular/forms'
+import { Season } from '@cabasvert/data'
 
 import { ModalController, NavParams } from '@ionic/angular'
 import { TranslateService } from '@ngx-translate/core'
@@ -28,7 +29,6 @@ import { DynamicFormService, DynamicGroup } from '../../toolkit/dynamic-form/dyn
 import * as forms from '../../toolkit/dynamic-form/models/form-config.interface'
 import { objectAssignNoNulls } from '../../utils/objects'
 import { filterNotNull } from '../../utils/observables'
-import { Season, SeasonWeek } from '../seasons/season.model'
 import { SeasonService } from '../seasons/season.service'
 import { weekSelect } from '../seasons/week-selector/dynamic-week-select'
 import { Contract, ContractFormulas, ContractKind } from './contract.model'

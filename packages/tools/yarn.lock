@@ -90,6 +90,11 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
+"@cabasvert/data@^0.1.0-beta.1":
+  version "0.1.0-beta.1"
+  resolved "https://registry.yarnpkg.com/@cabasvert/data/-/data-0.1.0-beta.1.tgz#e44e06d0896518845e25b527583c6494b34cb126"
+  integrity sha512-1uXrK2eaWCZRRucjPhhiYv/YH181EUyffI6z2w48NNXu2o+lN3OQuf1TJ3Xre6xRuw/TzOOKLmcZFkBbJfFImg==
+
 "@types/crypto-js@^3.1.38":
   version "3.1.43"
   resolved "https://registry.yarnpkg.com/@types/crypto-js/-/crypto-js-3.1.43.tgz#b859347d6289ba13e347c335a4c9efa63337a748"

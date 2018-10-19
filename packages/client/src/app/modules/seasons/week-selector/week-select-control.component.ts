@@ -19,10 +19,10 @@
 
 import { Component, forwardRef, HostBinding, Input, OnDestroy, OnInit } from '@angular/core'
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms'
+import { Season } from '@cabasvert/data'
 import { PopoverController } from '@ionic/angular'
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { Season } from '../season.model'
 import { WeekSelectorComponent } from './week-selector.component'
 
 @Component({

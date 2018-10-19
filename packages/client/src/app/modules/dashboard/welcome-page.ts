@@ -18,6 +18,7 @@
  */
 
 import { Component, OnDestroy, OnInit } from '@angular/core'
+import { SeasonWeek } from '@cabasvert/data'
 import { NavController } from '@ionic/angular'
 import { Observable, Subscription } from 'rxjs'
 
@@ -27,7 +28,6 @@ import { errors, ignoreErrors } from '../../utils/observables'
 import { ContractKind } from '../contracts/contract.model'
 import { BasketSectionTotals } from '../distributions/distribution.model'
 import { DistributionService } from '../distributions/distribution.service'
-import { SeasonWeek } from '../seasons/season.model'
 import { SeasonService } from '../seasons/season.service'
 
 @Component({

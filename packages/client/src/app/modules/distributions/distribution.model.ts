@@ -17,12 +17,11 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { switchMap } from 'rxjs/operators'
+import { SeasonWeek } from '@cabasvert/data'
 
 import { DatabaseService } from '../../toolkit/providers/database-service'
 
 import { Member } from '../members/member.model'
-import { SeasonWeek } from '../seasons/season.model'
 
 export class Distribution {
   private _doc: any

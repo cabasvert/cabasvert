@@ -18,14 +18,14 @@
  */
 
 import { Injectable, NgZone, OnDestroy } from '@angular/core'
-import { Observable, Subscription, timer } from 'rxjs'
+import { Season, SeasonWeek } from '@cabasvert/data'
+
+import '@cabasvert/data/dist/utils/dates'
+import { Observable, of, Subscription, timer } from 'rxjs'
 import { distinctUntilChanged, map, publishReplay, refCount, switchMap } from 'rxjs/operators'
 
 import { DatabaseService } from '../../toolkit/providers/database-service'
-
-import '../../utils/dates'
 import { observeInsideAngular } from '../../utils/observables'
-import { Season, SeasonWeek } from './season.model'
 
 @Injectable()
 export class SeasonService implements OnDestroy {
@@ -38,7 +38,7 @@ export class SeasonService implements OnDestroy {
       refCount(),
     )
 
-  private _seasonMapper = doc => new Season(this, doc)
+  private _seasonMapper = doc => new Season(doc)
   private _seasonIndexer = season => season.id
 
   public readonly allSeasons$: Observable<Season[]>
@@ -139,5 +139,35 @@ export class SeasonService implements OnDestroy {
 
   seasonNameById$(id: string): Observable<string> {
     return this.seasonById$(id).pipe(map(s => s.name))
+  }
+
+  previousSeasonOf$(season: Season): Observable<Season | null> {
+    return this.seasonForDate$(season.startDate.addDays(-1))
+  }
+
+  nextSeasonOf$(season: Season): Observable<Season | null> {
+    return this.seasonForDate$(season.endDate.addDays(+1))
+  }
+
+  previousWeekOf$(week: SeasonWeek): Observable<SeasonWeek | null> {
+    let previousWeek = week.previousWeek
+    if (previousWeek) {
+      return of(previousWeek)
+    } else {
+      return this.previousSeasonOf$(week.season).pipe(
+        map(s => s ? s.seasonWeekByNumber(s.weekCount) : null),
+      )
+    }
+  }
+
+  nextWeekOf$(week: SeasonWeek): Observable<SeasonWeek | null> {
+    let nextWeek = week.nextWeek
+    if (nextWeek) {
+      return of(nextWeek)
+    } else {
+      return this.nextSeasonOf$(week.season).pipe(
+        map(s => s ? s.seasonWeekByNumber(1) : null),
+      )
+    }
   }
 }

@@ -19,6 +19,7 @@
 
 import { injectable } from 'inversify'
 import * as UIDGenerator from 'uid-generator'
+import { Season, SeasonDocument } from '@cabasvert/data'
 import { loadNames } from '../../models/names'
 
 @injectable()
@@ -29,19 +30,19 @@ export class DatabaseGenerator {
 
     let today = new Date()
 
-    let seasons = generateSeasons(today)
+    let seasonData = generateSeasons(today)
+    let seasons = seasonData.map(sd => new Season(sd))
 
     let memberCount = generateInt(120, 100)
 
     let thisSeasonIndex = seasons.findIndex(
-      s => distributionDate(s.startWeek, s.distributionDay).addDays(-6) <= today
-        && today < distributionDate(s.endWeek, s.distributionDay).addDays(+1),
+      s => s.startDate.addDays(-6) <= today
+        && today < s.endDate.addDays(+1),
     )
     let thisSeason = seasons[thisSeasonIndex]
-    let thisWeeks = computeWeeks(thisSeason)
-    let thisSeasonWeek = thisWeeks.find(
-      w => w.date.addDays(-6) <= today && today < w.date.addDays(+1),
-    ).seasonWeek
+    let thisWeeks = thisSeason.seasonWeeks()
+    let thisWeek = thisWeeks.find(w => w.startDate <= today && today < w.endDate)
+    let thisSeasonWeek = thisWeek.seasonWeek
 
     let memberInfo = generateArray(() => {
       let maxSeasonIndex = seasons.length - 1
@@ -90,14 +91,14 @@ export class DatabaseGenerator {
     let contracts = generateContracts(memberInfo, seasons, thisSeasonIndex, validators)
     let distributions = []
 
-    return [].concat(seasons, members, ...contracts, distributions)
+    return [].concat(seasonData, members, ...contracts, distributions)
   }
 }
 
 const CONTRACT_KINDS = ['legumes', 'oeufs']
 
 function generateSeasons(today: Date) {
-  let seasons = []
+  let seasons: SeasonDocument[] = []
 
   let currentYear = today.getFullYear()
 
@@ -139,34 +140,7 @@ const dayStringToISODay = {
   'sunday': 6,
 }
 
-function distributionDate(week: [number, number], distributionDay) {
-  return Date.fromISOWeek(week).setISODay(dayStringToISODay[distributionDay])
-}
-
-function computeWeeks(season) {
-  let weeks = []
-
-  let date = distributionDate(season.startWeek, season.distributionDay)
-  let weekCount = season.weekCount
-  let ignoredWeeks = season.ignoredWeeks || []
-
-  let otherWeek = false
-  for (let seasonWeek = 1; seasonWeek <= weekCount;) {
-    let calendarWeek = date.getISOWeek()
-
-    let ignored = ignoredWeeks.some((w) => calendarWeek.toString() === w.toString())
-
-    if (!ignored) {
-      weeks.push({ calendarWeek, seasonWeek, date, otherWeek })
-      seasonWeek++
-    }
-
-    date = date.addDays(7)
-  }
-  return weeks
-}
-
-function generateMembers(memberInfo, seasons, names, thisSeasonIndex, thisSeasonWeek) {
+function generateMembers(memberInfo, seasons: Season[], names, thisSeasonIndex, thisSeasonWeek) {
   return memberInfo
     .map(info => {
       let member = generateMember(names)
@@ -179,7 +153,7 @@ function generateMembers(memberInfo, seasons, names, thisSeasonIndex, thisSeason
         range(0, info.trialBasketCount - 1)
           .map(i => info.firstTrialWeek + i * (info.everyWeek ? 1 : 2))
           .map(w => ({
-            season: season._id,
+            season: season.id,
             week: w,
             paid: !(seasonIndex === thisSeasonIndex && w >= thisSeasonWeek),
             sections: info.sections,
@@ -189,7 +163,7 @@ function generateMembers(memberInfo, seasons, names, thisSeasonIndex, thisSeason
     })
 }
 
-function generateContracts(memberInfo, seasons, thisSeasonIndex, validators) {
+function generateContracts(memberInfo, seasons: Season[], thisSeasonIndex, validators) {
   return memberInfo
     .map(info => {
       if (info.firstContractWeek === -1) return []
@@ -203,10 +177,10 @@ function generateContracts(memberInfo, seasons, thisSeasonIndex, validators) {
           let firstWeek = seasonIndex === firstSeasonIndex && startsAtNextSeason ? 1 : info.firstContractWeek
           let wish = seasonIndex > thisSeasonIndex && generateBoolean(x => Math.sqrt(x))
           return {
-            _id: `contract:${season._id.replace('season:', '')}-${info.memberId.replace('member:', '')}`,
+            _id: `contract:${season.id.replace('season:', '')}-${info.memberId.replace('member:', '')}`,
             type: 'contract',
             sver: 'v1',
-            season: season._id,
+            season: season.id,
             member: info.memberId,
             sections: info.sections.map(s => ({
               kind: s.kind,

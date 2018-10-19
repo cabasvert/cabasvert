@@ -18,14 +18,14 @@
  */
 
 import { Injectable, OnDestroy } from '@angular/core'
+import { SeasonWeek } from '@cabasvert/data'
+import '@cabasvert/data/dist/utils/dates'
 import { Observable, Subscription } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 import { DatabaseService } from '../../toolkit/providers/database-service'
 import { UidService } from '../../toolkit/providers/uid-service'
-import '../../utils/dates'
 import { objectAssignNoNulls } from '../../utils/objects'
-import { SeasonWeek } from '../seasons/season.model'
 import { Member, TrialBasket } from './member.model'
 
 @Injectable()

@@ -16,3 +16,147 @@
  * You should have received a copy of the GNU General Public License
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+import { dayStringToISODay, SeasonDocument } from './data'
+
+export class Season {
+
+  private _calendarToSeasonWeeks: Map<string, SeasonWeek> = new Map()
+  private _seasonWeeks: Map<number, SeasonWeek> = new Map()
+
+  constructor(private seasonData: SeasonDocument) {
+    try {
+      this.computeWeeks()
+    } catch (error) {
+      console.log(error)
+      console.log(this.seasonData)
+      this._seasonWeeks.forEach(
+        (w, i) => console.log(`${i} - ${w.calendarWeek}, ${w.distributionDate}`),
+      )
+    }
+  }
+
+  private computeWeeks() {
+    let distributionDay = dayStringToISODay[this.seasonData.distributionDay]
+    let date = Date.fromISOWeek(this.seasonData.startWeek).setISODay(distributionDay)
+
+    let weekCount = this.seasonData.weekCount
+    let ignoredWeeks = this.seasonData.ignoredWeeks || []
+    let doubleWeeks = this.seasonData.doubleWeeks || []
+
+    let calendarWeek
+    let otherWeek = false
+    for (let seasonWeek = 1; seasonWeek <= weekCount;) {
+      calendarWeek = date.getISOWeek()
+
+      let ignored = ignoredWeeks.some((w) => calendarWeek.toString() === w.toString())
+      let double = doubleWeeks.some((w) => calendarWeek.toString() === w.toString())
+
+      if (!ignored) {
+        let week = new SeasonWeek(this, calendarWeek, seasonWeek, date, double, otherWeek)
+        this._calendarToSeasonWeeks.set(calendarWeek.toString(), week)
+        this._seasonWeeks.set(seasonWeek, week)
+        seasonWeek++
+        if (!double) otherWeek = !otherWeek
+      }
+
+      date = date.addDays(7)
+    }
+
+    if (calendarWeek.toString() !== this.seasonData.endWeek.toString())
+      throw new Error('Error computing season weeks')
+  }
+
+  get id() {
+    return this.seasonData._id
+  }
+
+  get name() {
+    return this.seasonData.name
+  }
+
+  get weekCount() {
+    return this.seasonData.weekCount
+  }
+
+  get startDate() {
+    return this.seasonWeekByNumber(1).startDate
+  }
+
+  get endDate() {
+    return this.seasonWeekByNumber(this.weekCount).endDate
+  }
+
+  calendarToSeasonWeek(calendarWeek: [number, number]): SeasonWeek {
+    return this._calendarToSeasonWeeks.get(calendarWeek.toString())
+  }
+
+  seasonWeekByNumber(seasonWeek: number): SeasonWeek {
+    return this._seasonWeeks.get(seasonWeek)
+  }
+
+  contains(date: Date) {
+    return this.startDate <= date && date < this.endDate
+  }
+
+  seasonWeeks(): SeasonWeek[] {
+    let weeks = []
+    for (let weekNumber = 1; weekNumber <= this.weekCount; weekNumber++) {
+      let seasonWeek = this.seasonWeekByNumber(weekNumber)
+      weeks.push(seasonWeek)
+    }
+    return weeks
+  }
+
+  seasonWeek(date: Date): SeasonWeek | null {
+    let distributionDay = dayStringToISODay[this.seasonData.distributionDay]
+    let thisDay = date.getISODay()
+    if (distributionDay < thisDay) date = date.addDays(7 - thisDay + distributionDay)
+
+    while (this.contains(date)) {
+      let seasonWeek = this.calendarToSeasonWeek(date.getISOWeek())
+      if (seasonWeek != null) return seasonWeek
+      date = date.addDays(7)
+    }
+    return null
+  }
+}
+
+export class SeasonWeek {
+
+  calendarWeek: [number, number]
+  seasonWeek: number
+  distributionDate: Date = new Date()
+  doubleDistribution: boolean
+  otherWeek: boolean
+
+  constructor(public season: Season,
+              calendarWeek: [number, number], seasonWeek: number, date: Date,
+              double: boolean, otherWeek: boolean) {
+    this.calendarWeek = calendarWeek
+    this.seasonWeek = seasonWeek
+    this.distributionDate = date
+    this.doubleDistribution = double
+    this.otherWeek = otherWeek
+  }
+
+  get startDate() {
+    return this.distributionDate.addDays(-6)
+  }
+
+  get endDate() {
+    return this.distributionDate.addDays(+1)
+  }
+
+  get previousWeek() {
+    return this.seasonWeek > 1 ?
+      this.season.seasonWeekByNumber(this.seasonWeek - 1) :
+      null
+  }
+
+  get nextWeek() {
+    return this.seasonWeek < this.season.weekCount ?
+      this.season.seasonWeekByNumber(this.seasonWeek + 1) :
+      null
+  }
+}

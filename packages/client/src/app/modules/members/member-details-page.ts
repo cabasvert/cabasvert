@@ -19,29 +19,21 @@
 
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
+import { Season, SeasonWeek } from '@cabasvert/data'
 import { Plugins } from '@capacitor/core'
 import { NavController, Platform } from '@ionic/angular'
 import { TranslateService } from '@ngx-translate/core'
 import { Observable, of, Subscription } from 'rxjs'
-import {
-  filter,
-  map,
-  publishReplay,
-  refCount,
-  switchMap,
-  take,
-  withLatestFrom,
-} from 'rxjs/operators'
+import { filter, map, publishReplay, refCount, switchMap, take, withLatestFrom } from 'rxjs/operators'
 
 import { AuthService, Roles, User } from '../../toolkit/providers/auth-service'
 import { Navigation } from '../../toolkit/providers/navigation'
 import { copyAdd, copyRemove, copyWith } from '../../utils/arrays'
-import { debugObservable, observeInsideAngular } from '../../utils/observables'
+import { observeInsideAngular } from '../../utils/observables'
 import { Contract, ContractKind, ContractSection } from '../contracts/contract.model'
 import { ContractService } from '../contracts/contract.service'
 import { ContractsEditPage } from '../contracts/contracts-edit-page'
 import { TrialBasketEditPage } from '../contracts/trial-basket-edit-page'
-import { Season, SeasonWeek } from '../seasons/season.model'
 import { SeasonService } from '../seasons/season.service'
 
 import { Member, Person, TrialBasket } from './member.model'

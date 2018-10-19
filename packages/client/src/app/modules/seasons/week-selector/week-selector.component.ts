@@ -18,9 +18,9 @@
  */
 
 import { Component, Input, OnDestroy, OnInit } from '@angular/core'
+import { Season, SeasonWeek } from '@cabasvert/data'
 import { merge, Observable, Subject, Subscription } from 'rxjs'
 import { map, publishReplay, refCount } from 'rxjs/operators'
-import { Season, SeasonWeek } from '../season.model'
 import { SeasonService } from '../season.service'
 
 interface WeekInfo {

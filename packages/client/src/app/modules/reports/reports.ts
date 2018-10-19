@@ -18,6 +18,7 @@
  */
 
 import { formatDate } from '@angular/common'
+import { Season } from '@cabasvert/data'
 import { combineLatest, Observable, of, zip } from 'rxjs'
 import { map, switchMap } from 'rxjs/operators'
 
@@ -27,7 +28,6 @@ import { Contract, ContractFormulas, ContractKind } from '../contracts/contract.
 import { ContractService } from '../contracts/contract.service'
 import { DistributionService } from '../distributions/distribution.service'
 import { Member } from '../members/member.model'
-import { Season } from '../seasons/season.model'
 
 import { Report, ReportHelper, ReportTable } from './report.model'
 

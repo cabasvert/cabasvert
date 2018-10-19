@@ -19,20 +19,11 @@
 
 import { AfterViewInit, Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
+import { SeasonWeek } from '@cabasvert/data'
 
 import { Content, ModalController, NavController } from '@ionic/angular'
 import { combineLatest, merge, Observable, of, Subject, Subscription } from 'rxjs'
-import {
-  map,
-  mapTo,
-  mergeScan,
-  publishReplay,
-  refCount,
-  startWith,
-  switchAll,
-  switchMap,
-  withLatestFrom,
-} from 'rxjs/operators'
+import { map, mapTo, mergeScan, publishReplay, refCount, startWith, switchAll, switchMap, withLatestFrom } from 'rxjs/operators'
 import { IndexedScroller } from '../../toolkit/components/indexed-scroller'
 import { ItemExpanding } from '../../toolkit/components/item-expanding'
 import { SlidingPanes } from '../../toolkit/components/sliding-panes'
@@ -44,7 +35,6 @@ import { ContractKind } from '../contracts/contract.model'
 import { ContractService } from '../contracts/contract.service'
 import { Member } from '../members/member.model'
 import { MemberService } from '../members/member.service'
-import { SeasonWeek } from '../seasons/season.model'
 import { SeasonService } from '../seasons/season.service'
 
 import { Basket, Distribution } from './distribution.model'
@@ -140,9 +130,9 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
         if (pn === 0) {
           return initialWeek$
         } else if (pn < 0) {
-          return w.previousWeek$()
+          return this.seasonService.previousWeekOf$(w)
         } else {
-          return w.nextWeek$()
+          return this.seasonService.nextWeekOf$(w)
         }
       }, null),
       publishReplay(1),
@@ -256,7 +246,7 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
     this.previousDisablement$ = combineLatest(
       navigationDisablement$,
       this.week$.pipe(
-        switchMap(w => w.previousWeek$().pipe(startWith(null))),
+        switchMap(w => this.seasonService.previousWeekOf$(w).pipe(startWith(null))),
         map(w => w == null),
       ),
     ).pipe(
@@ -266,7 +256,7 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
     this.nextDisablement$ = combineLatest(
       navigationDisablement$,
       this.week$.pipe(
-        switchMap(w => w.nextWeek$().pipe(startWith(null))),
+        switchMap(w => this.seasonService.nextWeekOf$(w).pipe(startWith(null))),
         map(w => w == null),
       ),
     ).pipe(

@@ -18,13 +18,13 @@
  */
 
 import { Injectable, OnDestroy } from '@angular/core'
-import { combineLatest, Observable, Subscription, zip } from 'rxjs'
-import { map, publishReplay, refCount, switchMap } from 'rxjs/operators'
+import { Season } from '@cabasvert/data'
+import { combineLatest, Observable, Subscription } from 'rxjs'
+import { map, publishReplay, refCount } from 'rxjs/operators'
 
 import { DatabaseService } from '../../toolkit/providers/database-service'
 
 import { Member } from '../members/member.model'
-import { Season } from '../seasons/season.model'
 import { Contract, ContractFormulas, ContractKind, ContractSection } from './contract.model'
 
 @Injectable()

@@ -18,12 +18,12 @@
  */
 
 import { Component, OnInit } from '@angular/core'
+import { Season } from '@cabasvert/data'
 import { Observable } from 'rxjs'
 import { publishReplay, refCount } from 'rxjs/operators'
 import { DynamicChildControlComponent } from '../../../toolkit/dynamic-form/components/dynamic-child-control.component'
 import { ComponentConfig } from '../../../toolkit/dynamic-form/models/form-config.interface'
 import { Forms } from '../../utils/forms'
-import { Season } from '../season.model'
 import { WeekSelectConfig } from './dynamic-week-select'
 
 @Component({

@@ -20,6 +20,7 @@
 import { formatDate } from '@angular/common'
 import { Component, Inject, LOCALE_ID, OnDestroy } from '@angular/core'
 import { Validators } from '@angular/forms'
+import { Season } from '@cabasvert/data'
 
 import { ModalController, NavParams } from '@ionic/angular'
 import { switchMap } from 'rxjs/operators'
@@ -29,7 +30,6 @@ import { objectAssignNoNulls } from '../../utils/objects'
 import { filterNotNull } from '../../utils/observables'
 import { TrialBasket } from '../members/member.model'
 import { MemberService } from '../members/member.service'
-import { Season } from '../seasons/season.model'
 import { SeasonService } from '../seasons/season.service'
 import { weekSelect } from '../seasons/week-selector/dynamic-week-select'
 
