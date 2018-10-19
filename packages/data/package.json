@@ -15,6 +15,7 @@
     "clean": "rm -rf dist/ && rm -rf .nyc_output/ && rm -rf coverage/ && rm -rf logs/",
     "compile": "tsc",
     "copy-packages": "(cd src && cp **/package.json --parents ../dist)",
+    "pretest": "npm-run-all compile",
     "test": "nyc -r lcov -e .ts -x \"**/*.spec.ts\" node scripts/run-tests.js \"src/**/*.spec.ts\"",
     "prebuild": "npm-run-all lint license-check",
     "build": "npm-run-all compile",
