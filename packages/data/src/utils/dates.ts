@@ -35,8 +35,6 @@ interface Date {
   subtract(other: Date): number
 
   getISOWeek(): [number, number]
-
-  isBefore(other: Date): boolean
 }
 
 // noinspection JSUnusedGlobalSymbols
@@ -81,10 +79,6 @@ Date.prototype.getISOWeek = function () {
   let weekNo = Math.ceil((((d.getTime() - yearStart.getTime()) / MILLISECONDS_IN_A_DAY) + 1) / 7)
   // Return array of year and week number
   return [d.getFullYear(), weekNo]
-}
-
-Date.prototype.isBefore = function (other) {
-  return this < other
 }
 
 Date.today = function () {

@@ -17,6 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import '../../utils/dates'
 import { dayStringToISODay, SeasonDocument } from './data'
 
 export class Season {
@@ -25,15 +26,7 @@ export class Season {
   private _seasonWeeks: Map<number, SeasonWeek> = new Map()
 
   constructor(private seasonData: SeasonDocument) {
-    try {
-      this.computeWeeks()
-    } catch (error) {
-      console.log(error)
-      console.log(this.seasonData)
-      this._seasonWeeks.forEach(
-        (w, i) => console.log(`${i} - ${w.calendarWeek}, ${w.distributionDate}`),
-      )
-    }
+    this.computeWeeks()
   }
 
   private computeWeeks() {
@@ -62,9 +55,6 @@ export class Season {
 
       date = date.addDays(7)
     }
-
-    if (calendarWeek.toString() !== this.seasonData.endWeek.toString())
-      throw new Error('Error computing season weeks')
   }
 
   get id() {
@@ -73,6 +63,10 @@ export class Season {
 
   get name() {
     return this.seasonData.name
+  }
+
+  get distributionDay() {
+    return this.seasonData.distributionDay
   }
 
   get weekCount() {
@@ -108,7 +102,7 @@ export class Season {
     return weeks
   }
 
-  seasonWeek(date: Date): SeasonWeek | null {
+  seasonWeek(date: Date): SeasonWeek | undefined {
     let distributionDay = dayStringToISODay[this.seasonData.distributionDay]
     let thisDay = date.getISODay()
     if (distributionDay < thisDay) date = date.addDays(7 - thisDay + distributionDay)
@@ -118,26 +112,18 @@ export class Season {
       if (seasonWeek != null) return seasonWeek
       date = date.addDays(7)
     }
-    return null
+    return undefined
   }
 }
 
 export class SeasonWeek {
 
-  calendarWeek: [number, number]
-  seasonWeek: number
-  distributionDate: Date = new Date()
-  doubleDistribution: boolean
-  otherWeek: boolean
-
   constructor(public season: Season,
-              calendarWeek: [number, number], seasonWeek: number, date: Date,
-              double: boolean, otherWeek: boolean) {
-    this.calendarWeek = calendarWeek
-    this.seasonWeek = seasonWeek
-    this.distributionDate = date
-    this.doubleDistribution = double
-    this.otherWeek = otherWeek
+              public readonly calendarWeek: [number, number],
+              public readonly seasonWeek: number,
+              public readonly distributionDate: Date,
+              public readonly doubleDistribution: boolean,
+              public readonly otherWeek: boolean) {
   }
 
   get startDate() {
@@ -148,15 +134,15 @@ export class SeasonWeek {
     return this.distributionDate.addDays(+1)
   }
 
-  get previousWeek() {
+  get previousWeek(): SeasonWeek | undefined {
     return this.seasonWeek > 1 ?
       this.season.seasonWeekByNumber(this.seasonWeek - 1) :
-      null
+      undefined
   }
 
-  get nextWeek() {
+  get nextWeek(): SeasonWeek | undefined {
     return this.seasonWeek < this.season.weekCount ?
       this.season.seasonWeekByNumber(this.seasonWeek + 1) :
-      null
+      undefined
   }
 }

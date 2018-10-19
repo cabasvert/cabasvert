@@ -17,9 +17,11 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { Season, SeasonDocument } from '@cabasvert/data'
+
+import '@cabasvert/data/dist/utils/dates'
 import { injectable } from 'inversify'
 import * as UIDGenerator from 'uid-generator'
-import { Season, SeasonDocument } from '@cabasvert/data'
 import { loadNames } from '../../models/names'
 
 @injectable()
