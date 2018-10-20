@@ -4,10 +4,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "lib": [
-      "es2015",
       "es6",
-      "es7",
-      "es2018",
       "dom"
     ],
     "experimentalDecorators": true,
@@ -16,18 +13,7 @@
     "declaration": true,
     "sourceMap": true,
     "outDir": "dist",
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "node_modules/*"
-      ]
-    }
+    "baseUrl": "./"
   },
-  "compileOnSave": true,
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "src/**/*.spec.ts"
-  ]
+  "compileOnSave": true
 }

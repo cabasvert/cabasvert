@@ -13,12 +13,13 @@
   ],
   "scripts": {
     "clean": "rm -rf dist/ && rm -rf .nyc_output/ && rm -rf coverage/ && rm -rf logs/",
-    "compile": "tsc",
+    "compile": "tsc --build src/tsconfig.build.json",
+    "compile-test": "tsc --build src/tsconfig.test.json",
     "copy-packages": "(cd src && cp **/package.json --parents ../dist)",
-    "pretest": "npm-run-all compile",
+    "pretest": "npm-run-all compile-test",
     "test": "nyc node scripts/run-tests.js \"src/**/*.spec.ts\"",
-    "prebuild": "npm-run-all lint license-check",
-    "build": "npm-run-all compile",
+    "prebuild": "npm-run-all lint license-check test",
+    "build": "npm-run-all clean compile",
     "lint": "tslint --project 'tslint.json' 'src/**/*.ts'",
     "license-check": "node ../../scripts/license-check.js"
   },

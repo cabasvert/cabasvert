@@ -16,15 +16,7 @@
     "declaration": true,
     "sourceMap": true,
     "outDir": "dist",
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "node_modules/*"
-      ]
-    }
+    "baseUrl": "./"
   },
-  "compileOnSave": true,
-  "include": [
-    "src/**/*"
-  ]
+  "compileOnSave": true
 }
