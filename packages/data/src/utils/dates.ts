@@ -48,25 +48,25 @@ interface DateConstructor {
 const MILLISECONDS_IN_A_MINUTE = 1000 * 60
 const MILLISECONDS_IN_A_DAY = MILLISECONDS_IN_A_MINUTE * 60 * 24
 
-Date.prototype.getISODay = function () {
+Date.prototype.getISODay = function (): number {
   return (this.getDay() || 7) - 1
 }
 
-Date.prototype.setISODay = function (day) {
+Date.prototype.setISODay = function (day: number): Date {
   return this.addDays(-this.getISODay() + day)
 }
 
-Date.prototype.addDays = function (days) {
+Date.prototype.addDays = function (days: number): Date {
   let date = new Date(this.valueOf())
   date.setDate(date.getDate() + days)
   return date
 }
 
-Date.prototype.subtract = function (other) {
+Date.prototype.subtract = function (other: Date): number {
   return Math.round((this.getTime() - other.getTime()) / MILLISECONDS_IN_A_DAY)
 }
 
-Date.prototype.getISOWeek = function () {
+Date.prototype.getISOWeek = function (): [number, number] {
   // Copy date so don't modify original
   let d = new Date(+this)
   d.setHours(0, 0, 0, 0)
@@ -81,12 +81,12 @@ Date.prototype.getISOWeek = function () {
   return [d.getFullYear(), weekNo]
 }
 
-Date.today = function () {
+Date.today = function (): Date {
   let date = new Date()
   return new Date(date.getFullYear(), date.getMonth(), date.getDate())
 }
 
-Date.fromISOWeek = function (week) {
+Date.fromISOWeek = function (week): Date {
   let year = week[0]
   let weekNumber = week[1]
 
