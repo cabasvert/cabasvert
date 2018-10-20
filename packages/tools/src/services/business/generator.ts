@@ -19,7 +19,6 @@
 
 import { Season, SeasonDocument } from '@cabasvert/data'
 
-import '@cabasvert/data/dist/utils/dates'
 import { injectable } from 'inversify'
 import * as UIDGenerator from 'uid-generator'
 import { loadNames } from '../../models/names'

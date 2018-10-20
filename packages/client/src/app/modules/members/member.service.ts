@@ -19,7 +19,6 @@
 
 import { Injectable, OnDestroy } from '@angular/core'
 import { SeasonWeek } from '@cabasvert/data'
-import '@cabasvert/data/dist/utils/dates'
 import { Observable, Subscription } from 'rxjs'
 import { map } from 'rxjs/operators'
 

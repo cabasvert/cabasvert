@@ -19,7 +19,6 @@
 
 import { Injectable, NgZone, OnDestroy } from '@angular/core'
 import { SeasonWeek } from '@cabasvert/data'
-import '@cabasvert/data/dist/utils/dates'
 import { combineLatest, Observable, of, Subscription } from 'rxjs'
 import { map, publishReplay, refCount, switchMap } from 'rxjs/operators'
 
