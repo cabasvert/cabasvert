@@ -55,15 +55,14 @@ export class DatabaseService {
   async status(): Promise<{ ok: boolean, error?: any }> {
     let user = this.config.database.auth
     try {
-      try {
-        await this.db.logIn(user.username, user.password)
-        let session = await this.db.getSession()
-        return { ok: session.ok && session.userCtx.name != null }
-      } finally {
-        this.db.logOut()
-      }
+      await this.db.logIn(user.username, user.password)
+      let session = await this.db.getSession()
+      await this.db.logOut()
+
+      return { ok: session.ok && session.userCtx.name != null }
     } catch (error) {
-      return { ok: false, error: error }
+      let serializableError = JSON.parse(JSON.stringify(error))
+      return { ok: false, error: serializableError }
     }
   }
 

@@ -47,10 +47,13 @@ class DatabaseServiceMock extends DatabaseService {
 
   private _users: { [id: string]: UserWithPassword }
   private failing: boolean
+  private getUserFailing: boolean
 
   reset() {
     this._users = {}
     this._users[fakeUserId] = {
+      _id: 'org.couchdb.user:fakeUserId',
+      type: 'user',
       name: fakeUserId,
       roles: [],
       metadata: {
@@ -60,6 +63,7 @@ class DatabaseServiceMock extends DatabaseService {
       password: 'password',
     }
     this.failing = false
+    this.getUserFailing = false
   }
 
   async initialize() {
@@ -74,7 +78,7 @@ class DatabaseServiceMock extends DatabaseService {
   }
 
   async getUser(userId: string): Promise<UserWithPassword> {
-    if (this.failing) throw new Error('Database failed')
+    if (this.failing || this.getUserFailing) throw new Error('Database failed')
 
     return this._users[userId]
   }
@@ -95,6 +99,10 @@ class DatabaseServiceMock extends DatabaseService {
 
   setFailing(failing: boolean) {
     this.failing = failing
+  }
+
+  setGetUserFailing(failing: boolean) {
+    this.getUserFailing = failing
   }
 }
 
@@ -307,6 +315,15 @@ describe('UserController', () => {
   }
 
   it('rejects requests for unknown users', async () => {
+    await request(server)
+      .get('/api/user/request-password-reset/' + wrongUserId)
+      .expect(400)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect({ code: 'UNKNOWN_USER', message: 'Unknown user' })
+  })
+
+  it('rejects requests when database get user fails', async () => {
+    databaseServiceMock.setGetUserFailing(true)
     await request(server)
       .get('/api/user/request-password-reset/' + wrongUserId)
       .expect(400)

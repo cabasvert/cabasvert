@@ -26,9 +26,9 @@ import * as PouchFind from 'pouchdb-find'
 import * as PouchSecurity from 'pouchdb-security-helper'
 
 import * as winston from 'winston'
+import { testConfiguration } from '../config.test'
 
 import { DatabaseService } from './database.service'
-import { testConfiguration } from '../config.test'
 
 PouchDB
   .plugin(PouchHttp)
@@ -42,7 +42,8 @@ describe('DatabaseService', () => {
 
   let serverUser = configuration.database.auth
 
-  let databaseService
+  let nullLogger: winston.Logger
+  let databaseService: DatabaseService
   let database
 
   beforeAll(async () => {
@@ -53,7 +54,7 @@ describe('DatabaseService', () => {
 
   beforeEach(async () => {
 
-    let nullLogger = winston.createLogger({
+    nullLogger = winston.createLogger({
       transports: [new winston.transports.Console({ silent: true })],
     })
     databaseService = new DatabaseService(configuration, nullLogger)
@@ -143,9 +144,9 @@ describe('DatabaseService', () => {
 
       expect(user).toEqual(jasmine.objectContaining({
         _id: 'org.couchdb.user:john.doe@example.com',
+        type: 'user',
         name: 'john.doe@example.com',
         roles: [],
-        type: 'user',
         metadata: { name: 'John Doe', email: 'john.doe@example.com' },
       }))
     } finally {
@@ -160,7 +161,8 @@ describe('DatabaseService', () => {
       expect(
         await databaseService.updateUser('john.doe@example.com', {
           metadata: {
-            newMetadata: 'metadata',
+            name: 'metadata',
+            email: 'email',
           },
         }),
       ).toEqual(jasmine.objectContaining({ ok: true }))
@@ -169,7 +171,8 @@ describe('DatabaseService', () => {
 
       expect(user).toEqual(jasmine.objectContaining({
         metadata: {
-          newMetadata: 'metadata',
+          name: 'metadata',
+          email: 'email',
         },
       }))
     } finally {
@@ -193,5 +196,45 @@ describe('DatabaseService', () => {
     ).toEqual({ ok: true, name: 'john.doe@example.com', roles: [] })
 
     await database.logOut()
+  })
+
+  it('reports OK status', async () => {
+    expect(await databaseService.status()).toEqual({ ok: true })
+  })
+
+  it('reports KO status if server user does not exist', async () => {
+    let failConfiguration = testConfiguration()
+    failConfiguration.database.auth = { username: 'fakeadmin', password: 'fakepassword' }
+    databaseService = new DatabaseService(failConfiguration, nullLogger)
+
+    expect(await databaseService.status()).toEqual({
+      ok: false,
+      error: {
+        error: 'unauthorized',
+        reason: 'Name or password is incorrect.',
+        name: 'unauthorized',
+        status: 401,
+        message: 'Name or password is incorrect.',
+      },
+    })
+  })
+
+  it('reports KO status if database is offline', async () => {
+    let failConfiguration = testConfiguration()
+    failConfiguration.database.url = 'http://erroneous'
+    databaseService = new DatabaseService(failConfiguration, nullLogger)
+
+    expect(await databaseService.status()).toEqual({
+      ok: false,
+      error: {
+        errno: 'ENOTFOUND',
+        code: 'ENOTFOUND',
+        syscall: 'getaddrinfo',
+        hostname: 'erroneous',
+        host: 'erroneous',
+        port: 80,
+        status: 500,
+      },
+    })
   })
 })

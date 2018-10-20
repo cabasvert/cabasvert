@@ -18,6 +18,8 @@
  */
 
 export interface User {
+  _id: string
+  type: string
   name: string
   roles: string[]
   metadata: UserMetadata

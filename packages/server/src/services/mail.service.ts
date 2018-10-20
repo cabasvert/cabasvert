@@ -19,8 +19,8 @@
 
 import { inject, injectable } from 'inversify'
 
-import { createTransport } from 'nodemailer'
-import * as Mail from 'nodemailer/lib/mailer'
+import * as nodemailer from 'nodemailer'
+
 import { Logger } from 'winston'
 
 import { Configuration } from '../config'
@@ -34,6 +34,7 @@ export class MailService {
   }
 
   async status(): Promise<{ ok: boolean, error?: any }> {
+    /* istanbul ignore if */
     if (this.config.mail.mailToConsole) {
       return { ok: true, error: 'mailToConsole is set' }
     }
@@ -41,16 +42,17 @@ export class MailService {
     let smtpTransport = this.createTransport()
 
     try {
-      await smtpTransport.verify()
-      return { ok: true }
+      let ok = await smtpTransport.verify()
+      return { ok }
     } catch (error) {
-      return { ok: false, error: error }
+      return { ok: false, error }
     } finally {
       smtpTransport.close()
     }
   }
 
-  async sendMail(mail: Mail.Options) {
+  async sendMail(mail: nodemailer.SendMailOptions) {
+    /* istanbul ignore if */
     if (this.config.mail.mailToConsole) {
       this.logger.info('The following mail is wrote to console instead of being sent because mailToConsole is set.')
       this.logger.info(`\nFrom: ${mail.from}\nTo: ${mail.to}\nSubject: ${mail.subject}\n${mail.text}`)
@@ -69,7 +71,8 @@ export class MailService {
     }
   }
 
-  private createTransport() {
+  private createTransport(): nodemailer.Transporter {
+    const { createTransport } = require('nodemailer')
     return createTransport(this.config.mail.smtpConnection)
   }
 }

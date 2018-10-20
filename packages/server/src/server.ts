@@ -35,7 +35,7 @@ import './controllers/status.controller'
 import { DatabaseService } from './services/database.service'
 import { Services } from './types'
 
-export async function initializeServer(containerPromise: Promise<Container>) {
+export async function initializeServer(containerPromise: Promise<Container>): Promise<http.Server> {
 
   let container = await containerPromise
 

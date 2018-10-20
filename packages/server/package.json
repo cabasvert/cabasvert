@@ -64,9 +64,11 @@
   "devDependencies": {
     "@cabasvert/tools": "^0.1.1-beta.1",
     "@types/jasmine": "^2.8.9",
+    "@types/mockery": "^1.4.29",
     "jasmine": "^3.2.0",
     "jasmine-spec-reporter": "^4.2.1",
     "listr": "^0.14.2",
+    "mockery": "^2.1.0",
     "node-cleanup": "^2.1.2",
     "nodemon": "^1.14.3",
     "nyc": "^13.1.0",
