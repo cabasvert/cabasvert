@@ -4,9 +4,6 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "lib": [
-      "es2015",
-      "es6",
-      "es7",
       "es2018",
       "dom"
     ],
@@ -15,14 +12,11 @@
     ],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "removeComments": false,
+    "declaration": true,
     "sourceMap": true,
     "outDir": "dist",
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "node_modules/*"
-      ]
-    }
+    "baseUrl": "./"
   },
   "compileOnSave": true,
   "include": [

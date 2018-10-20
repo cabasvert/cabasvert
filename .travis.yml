@@ -29,6 +29,9 @@ before_script:
 after_script:
   #  - greenkeeper-lockfile-upload
 
+after_success:
+  - nyc report --reporter=text-lcov | coveralls
+
 script: yarn run $COMMAND
 
 env:

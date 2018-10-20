@@ -30,15 +30,20 @@ module.exports = function (config) {
       require('karma-spec-reporter'),
       require('karma-jasmine-html-reporter'),
       require('karma-coverage-istanbul-reporter'),
-      require('@angular-devkit/build-angular/plugins/karma')
+      require('@angular-devkit/build-angular/plugins/karma'),
     ],
     client: {
-      clearContext: false // leave Jasmine Spec Runner output visible in browser
+      clearContext: false, // leave Jasmine Spec Runner output visible in browser
     },
     coverageIstanbulReporter: {
-      dir: require('path').join(__dirname, 'coverage'),
-      reports: ['html', 'lcovonly'],
-      fixWebpackSourcePaths: true
+      dir: require('path').join(__dirname, '..', 'coverage'),
+      reports: ['html', 'lcovonly', 'json'],
+      'report-config': {
+        json: {
+          file: '../../../.nyc_output/client.json',
+        },
+      },
+      fixWebpackSourcePaths: true,
     },
     reporters: ['kjhtml', 'spec'],
     port: 9876,
@@ -49,9 +54,9 @@ module.exports = function (config) {
     customLaunchers: {
       ChromeHeadlessNoSandbox: {
         base: 'ChromeHeadless',
-        flags: ['--no-sandbox']
-      }
+        flags: ['--no-sandbox'],
+      },
     },
-    singleRun: false
+    singleRun: false,
   });
 };
