@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Configuration } from '../src/config'
+import { Configuration } from './config'
 
 export function testConfiguration(): Configuration {
 

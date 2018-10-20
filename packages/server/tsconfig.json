@@ -12,6 +12,8 @@
     ],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "removeComments": false,
+    "declaration": true,
     "sourceMap": true,
     "outDir": "dist",
     "baseUrl": ".",
@@ -24,5 +26,8 @@
   "compileOnSave": true,
   "include": [
     "src/**/*"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts"
   ]
 }

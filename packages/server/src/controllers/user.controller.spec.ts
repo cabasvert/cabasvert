@@ -25,8 +25,8 @@ import 'reflect-metadata'
 import * as winston from 'winston'
 import { Logger } from 'winston'
 
-import { Configuration } from '../../src/config'
-import '../../src/controllers/user.controller'
+import { Configuration } from '../config'
+import './user.controller'
 import { User, UserMetadata } from '../../src/models/user.model'
 import { initializeServer } from '../../src/server'
 import { DatabaseService } from '../../src/services/database.service'
@@ -34,7 +34,7 @@ import { MailService } from '../../src/services/mail.service'
 import { TokenService } from '../../src/services/token.service'
 import { Services } from '../../src/types'
 
-import { testConfiguration } from '../config'
+import { testConfiguration } from '../config.test'
 
 const request = require('supertest')
 

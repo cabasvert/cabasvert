@@ -27,8 +27,8 @@ import * as PouchSecurity from 'pouchdb-security-helper'
 
 import * as winston from 'winston'
 
-import { DatabaseService } from '../../src/services/database.service'
-import { testConfiguration } from '../config'
+import { DatabaseService } from './database.service'
+import { testConfiguration } from '../config.test'
 
 PouchDB
   .plugin(PouchHttp)

@@ -20,7 +20,7 @@
 import 'jasmine'
 import 'reflect-metadata'
 
-import '../../src/controllers/user.controller'
+import '../controllers/user.controller'
 import { TokenService } from '../../src/services/token.service'
 
 describe('TokenService', () => {
