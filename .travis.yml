@@ -30,7 +30,8 @@ after_script:
   #  - greenkeeper-lockfile-upload
 
 after_success:
-  - nyc report --reporter=text-lcov | coveralls
+  - nyc report --reporter=text-lcov > coverage.lcov
+  - npx codecov
 
 script: yarn run $COMMAND
 
