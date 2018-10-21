@@ -30,6 +30,7 @@ after_script:
   #  - greenkeeper-lockfile-upload
 
 after_success:
+  - DATABASE=couchdb:latest yarn run coverage
   - nyc report --reporter=text-lcov > coverage.lcov
   - npx codecov
 
