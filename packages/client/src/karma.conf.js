@@ -37,7 +37,7 @@ module.exports = function (config) {
     },
     coverageIstanbulReporter: {
       dir: require('path').join(__dirname, '..', 'coverage'),
-      reports: ['html', 'lcovonly', 'json'],
+      reports: ['html', 'json'],
       'report-config': {
         json: {
           file: '../../../.nyc_output/client.json',
