@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*
  * This file is part of CabasVert.
  *
@@ -19,7 +20,9 @@
 
 const { runWithDatabase } = require('../../../scripts/run-database');
 
-require('ts-node').register();
+if (!require.extensions['.ts']) {
+  require('ts-node').register();
+}
 
 const Jasmine = require('jasmine');
 const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
@@ -70,7 +73,12 @@ function runTests(databaseHost) {
       }
     });
 
-    jasmine.execute(process.argv.slice(2));
+    try {
+      jasmine.execute(process.argv.slice(2));
+    } catch (error) {
+      console.error('\n', error, '\n');
+      reject(error);
+    }
   });
 }
 

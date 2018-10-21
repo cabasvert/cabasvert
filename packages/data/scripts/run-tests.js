@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*
  * This file is part of CabasVert.
  *
@@ -17,7 +18,9 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require('ts-node').register();
+if (!require.extensions['.ts']) {
+  require('ts-node').register();
+}
 
 const Jasmine = require('jasmine');
 const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
@@ -61,7 +64,12 @@ function runTests() {
       }
     });
 
-    jasmine.execute(process.argv.slice(2));
+    try {
+      jasmine.execute(process.argv.slice(2));
+    } catch (error) {
+      console.error('\n', error, '\n');
+      reject(error);
+    }
   });
 }
 

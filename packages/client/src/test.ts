@@ -23,6 +23,10 @@ import { getTestBed } from '@angular/core/testing'
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing'
 import 'zone.js/dist/zone-testing'
 
+// This is a hack to have the coverage span over all files
+// It may not include lazy loaded modules – add them here
+import './app/app.module'
+
 declare const require: any
 
 // First, initialize the Angular testing environment.

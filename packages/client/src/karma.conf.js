@@ -44,6 +44,7 @@ module.exports = function (config) {
         },
       },
       fixWebpackSourcePaths: true,
+      skipFilesWithNoCoverage: false,
     },
     reporters: ['kjhtml', 'spec'],
     port: 9876,

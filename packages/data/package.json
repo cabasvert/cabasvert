@@ -17,7 +17,9 @@
     "compile-test": "tsc --build src/tsconfig.test.json",
     "copy-packages": "(cd src && cp **/package.json --parents ../dist)",
     "pretest": "npm-run-all compile-test",
-    "test": "node scripts/run-tests.js \"src/**/*.spec.ts\"",
+    "test": "scripts/run-tests.js \"src/**/*.spec.ts\"",
+    "coverage": "nyc npm-run-all test",
+    "postcoverage": "cp coverage/coverage-final.json ../../.nyc_output/data.json",
     "prebuild": "npm-run-all lint license-check test",
     "build": "npm-run-all clean compile",
     "lint": "tslint --project 'tslint.json' 'src/**/*.ts'",
@@ -30,5 +32,26 @@
     "ts-node": "^7.0.1",
     "tslint": "^5.8.0",
     "typescript": "^3.1.3"
+  },
+  "nyc": {
+    "check-coverage": false,
+    "extension": [
+      ".ts"
+    ],
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "**/*.d.ts",
+      "**/*.spec.ts",
+      "**/*.test.ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "all": true,
+    "reporter": [
+      "json"
+    ]
   }
 }

@@ -9,10 +9,10 @@
     "clean:root": "rm -rf .nyc_output coverage",
     "compile": "lerna run compile --stream",
     "build": "lerna run build --stream",
+    "pretest": "npm-run-all compile",
     "test": "lerna run test --stream",
-    "coverage": "npm-run-all coverage:*",
-    "coverage:all": "nyc lerna run --ignore @cabasvert/client test --stream",
-    "coverage:client": "lerna run --scope @cabasvert/client coverage --stream",
+    "precoverage": "npm-run-all compile",
+    "coverage": "mkdir -p .nyc_output && lerna run coverage --stream",
     "postcoverage": "nyc report --reporter=html --reporter=text-summary",
     "start-client": "npm-run-all start --prefix packages/client",
     "start-server": "npm-run-all start --prefix packages/server",
@@ -43,20 +43,5 @@
     "tslint": "~5.11.0",
     "typescript": "^3.1.3",
     "yarn": "^1.10.1"
-  },
-  "nyc": {
-    "check-coverage": false,
-    "extension": [
-      ".ts"
-    ],
-    "include": [
-      "packages/*/src/**/*.ts"
-    ],
-    "exclude": [
-      "**/*.spec.ts",
-      "**/*.test.ts"
-    ],
-    "all": true,
-    "reporter": []
   }
 }
