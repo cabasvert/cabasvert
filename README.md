@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/cabasvert/cabasvert.svg?branch=master)](https://travis-ci.org/cabasvert/cabasvert)
 [![Greenkeeper badge](https://badges.greenkeeper.io/cabasvert/cabasvert.svg)](https://greenkeeper.io/)
+[![codecov](https://codecov.io/gh/cabasvert/cabasvert/branch/master/graph/badge.svg)](https://codecov.io/gh/cabasvert/cabasvert)
 
 <table>
   <tr>
