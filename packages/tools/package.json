@@ -8,9 +8,10 @@
   },
   "main": "dist/index.js",
   "bin": {
-    "cvt": "dist/cli.js"
+    "cvt": "cli.js"
   },
   "files": [
+    "cli.js",
     "dist",
     "assets",
     "config.json"

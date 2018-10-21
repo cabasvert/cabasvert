@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /*
  * This file is part of CabasVert.
  *

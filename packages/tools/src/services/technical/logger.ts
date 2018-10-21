@@ -44,9 +44,7 @@ export let logger: winston.Logger = winston.createLogger({
       handleExceptions: true,
       format: format.combine(
         format.colorize(),
-        format.timestamp(),
-        format.align(),
-        format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+        format.printf(info => `${info.level}: ${info.message}`)
       ),
     }),
   ],

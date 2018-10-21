@@ -27,8 +27,6 @@ import { CommandRegistry } from './command'
 import { Configuration, HOME_DIRECTORY, parseJsonFile } from './config'
 import { Services } from './types'
 
-import './utils/dates'
-
 export class CabasVertTools {
 
   private container: Container
