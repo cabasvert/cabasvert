@@ -128,7 +128,7 @@
       "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
     "transformIgnorePatterns": [
-      "node_modules/(?!|@angular|@capacitor|@ionic-native|@ionic|ionic-angular|@ngrx)"
+      "node_modules/(?!@capacitor|@ionic|@ngrx)"
     ],
     "collectCoverageFrom": [
       "**/*.ts",
