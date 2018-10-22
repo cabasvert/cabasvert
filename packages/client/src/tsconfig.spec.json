@@ -5,9 +5,12 @@
     "baseUrl": "./",
     "module": "commonjs",
     "types": [
-      "jasmine",
+      "jest",
+      "jquery",
+      "jsdom",
       "node"
-    ]
+    ],
+    "allowJs": true
   },
   "files": [
     "test.ts"

@@ -28,15 +28,11 @@ async function runWithDatabase(options, promiseFactory) {
   await ready();
 
   try {
-    try {
-      // Run the inner job
-      await promiseFactory(host);
-    } finally {
-      // Destroy the database host
-      if (destroy) await destroy();
-    }
-  } catch (exitCode) {
-    process.exit(exitCode);
+    // Run the inner job
+    await promiseFactory(host);
+  } finally {
+    // Destroy the database host
+    if (destroy) await destroy();
   }
 }
 

@@ -17,8 +17,6 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'jasmine'
-
 import './dates'
 
 describe('Date', () => {

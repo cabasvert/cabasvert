@@ -19,13 +19,16 @@
  */
 
 const { runWithDatabase } = require('../../../scripts/run-database');
+const { run } = require('../../../scripts/run-utils');
 
-if (!require.extensions['.ts']) {
-  require('ts-node').register();
+async function runArgCommand(databaseHost) {
+  await run(process.argv[2], process.argv.slice(3), {
+    stdio: 'inherit',
+    env: {
+      'DATABASE_HOST': databaseHost,
+    },
+  });
 }
-
-const Jasmine = require('jasmine');
-const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
 
 async function main() {
   try {
@@ -33,53 +36,16 @@ async function main() {
     await runWithDatabase({
       databaseName: process.env.DATABASE,
       databaseHost: process.env.DATABASE_HOST,
-    }, runTests);
+    }, runArgCommand);
 
   } catch (err) {
-    console.error('\n', err, '\n');
-    process.exit(1);
-  }
-}
-
-function runTests(databaseHost) {
-
-  global['__testConfig__'] = {
-    databaseHost,
-  };
-
-  return new Promise((resolve, reject) => {
-    const jasmine = new Jasmine();
-
-    jasmine.loadConfig({
-      stopSpecOnExpectationFailure: false,
-      random: false,
-    });
-
-    jasmine.env.clearReporters();
-    jasmine.addReporter(new SpecReporter({
-      spec: {
-        displayPending: true,
-      },
-      summary: {
-        displayStacktrace: 'all',
-      },
-    }));
-
-    jasmine.onComplete((passed) => {
-      if (passed) {
-        resolve();
-      } else {
-        reject(1);
-      }
-    });
-
-    try {
-      jasmine.execute(process.argv.slice(2));
-    } catch (error) {
-      console.error('\n', error, '\n');
-      reject(error);
+    if (err.code) {
+      process.exit(err.code);
+    } else {
+      console.error('\n', err, '\n');
+      process.exit(1);
     }
-  });
+  }
 }
 
 main();

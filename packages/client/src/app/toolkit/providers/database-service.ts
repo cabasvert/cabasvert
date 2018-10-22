@@ -20,18 +20,7 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core'
 import PouchDB from 'pouchdb-core'
 
-import {
-  BehaviorSubject,
-  combineLatest,
-  defer,
-  EMPTY,
-  from,
-  Observable,
-  of,
-  Subject,
-  Subscription,
-  throwError,
-} from 'rxjs'
+import { BehaviorSubject, combineLatest, defer, EMPTY, from, Observable, of, Subscription, throwError } from 'rxjs'
 import {
   delay,
   distinctUntilChanged,
@@ -49,12 +38,7 @@ import {
 import { environment } from '../../../environments/environment'
 import { ConfigurationService } from '../../config/configuration.service'
 
-import {
-  debugObservable,
-  filterNotNull,
-  observeOutsideAngular,
-  previous,
-} from '../../utils/observables'
+import { filterNotNull, observeOutsideAngular, previous } from '../../utils/observables'
 import { SyncState } from '../components/sync-state-listener'
 import { AppBridge } from './app-bridge'
 import { AuthService } from './auth-service'

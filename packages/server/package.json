@@ -22,8 +22,8 @@
     "start": "node scripts/run-server.js",
     "start:watch": "node scripts/run-server.js --watch",
     "pretest": "npm-run-all compile-test",
-    "test": "scripts/run-tests.js \"src/**/*.spec.ts\"",
-    "coverage": "nyc scripts/run-tests.js \"src/**/*.spec.ts\"",
+    "test": "scripts/run-with-database.js jest --runInBand",
+    "coverage": "scripts/run-with-database.js jest --runInBand --coverage",
     "postcoverage": "cp coverage/coverage-final.json ../../.nyc_output/server.json",
     "prebuild": "DATABASE=couchdb npm-run-all lint license-check test",
     "build": "npm-run-all clean compile pack",
@@ -64,10 +64,10 @@
   },
   "devDependencies": {
     "@cabasvert/tools": "^0.1.1-beta.1",
-    "@types/jasmine": "^2.8.9",
+    "@types/jest": "^23.3.7",
     "@types/mockery": "^1.4.29",
-    "jasmine": "^3.2.0",
-    "jasmine-spec-reporter": "^4.2.1",
+    "jest": "^23.6.0",
+    "jest-preset-typescript": "^1.2.0",
     "listr": "^0.14.2",
     "mockery": "^2.1.0",
     "node-cleanup": "^2.1.2",
@@ -75,30 +75,10 @@
     "pouchdb-security-helper": "^1.1.1",
     "request": "^2.83.0",
     "supertest": "^3.0.0",
+    "ts-jest": "^23.10.4",
     "ts-node": "^7.0.1",
     "tslint": "^5.8.0",
     "typescript": "^3.1.3"
-  },
-  "nyc": {
-    "check-coverage": false,
-    "extension": [
-      ".ts"
-    ],
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "**/*.d.ts",
-      "**/*.spec.ts",
-      "**/*.test.ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "all": true,
-    "reporter": [
-      "json"
-    ]
   },
   "// greenkeeper": [
     "// pouchdb is pinned because of pouchdb/pouchdb#7391 and pouchdb/pouchdb#7495"
@@ -111,6 +91,25 @@
       "pouchdb-core",
       "pouchdb-find",
       "pouchdb-security-helper"
+    ]
+  },
+  "jest": {
+    "preset": "jest-preset-typescript",
+    "collectCoverageFrom": [
+      "**/*.ts",
+      "!**/*.d.ts",
+      "!**/src/*",
+      "!**/src/**/*.module.ts",
+      "!**/src/shared/**/index.ts",
+      "!**/app/main.ts",
+      "!**/app/dev-landing-page/**",
+      "!**/assets/**",
+      "!**/src/environments/environment.*"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "html",
+      "json"
     ]
   }
 }

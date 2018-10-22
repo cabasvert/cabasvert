@@ -36,13 +36,6 @@ import { SyncState, SyncStateListener } from '../components/sync-state-listener'
 import { LogService } from './log-service'
 import { Logger } from './logger'
 
-PouchDB
-  .plugin(PouchHttp)
-  .plugin(PouchIdb)
-  .plugin(PouchAuth)
-  .plugin(PouchFind)
-  .plugin(PouchSync)
-
 @Injectable()
 export class DatabaseHelper {
 
@@ -60,6 +53,13 @@ export class DatabaseHelper {
   }
 
   initialize() {
+    PouchDB
+      .plugin(PouchHttp)
+      .plugin(PouchIdb)
+      .plugin(PouchAuth)
+      .plugin(PouchFind)
+      .plugin(PouchSync)
+
     window['PouchDB'] = PouchDB
 
     if (this.config.base.debugPouch) {

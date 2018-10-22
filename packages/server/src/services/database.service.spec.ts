@@ -17,16 +17,15 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'jasmine'
-
 import * as PouchHttp from 'pouchdb-adapter-http'
 import * as PouchAuth from 'pouchdb-authentication'
 import * as PouchDB from 'pouchdb-core'
 import * as PouchFind from 'pouchdb-find'
 import * as PouchSecurity from 'pouchdb-security-helper'
+import 'reflect-metadata'
 
 import * as winston from 'winston'
-import { testConfiguration } from '../config.test'
+import { testConfiguration } from '../config-test'
 
 import { DatabaseService } from './database.service'
 
@@ -142,13 +141,13 @@ describe('DatabaseService', () => {
 
       let user = await databaseService.getUser('john.doe@example.com')
 
-      expect(user).toEqual(jasmine.objectContaining({
+      expect(user).toMatchObject({
         _id: 'org.couchdb.user:john.doe@example.com',
         type: 'user',
         name: 'john.doe@example.com',
         roles: [],
         metadata: { name: 'John Doe', email: 'john.doe@example.com' },
-      }))
+      })
     } finally {
       await databaseService.logOut()
     }

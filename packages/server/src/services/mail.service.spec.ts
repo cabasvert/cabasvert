@@ -17,48 +17,37 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'jasmine'
-import { createTransport } from 'nodemailer'
+import * as nodemailer from 'nodemailer'
+import 'reflect-metadata'
 import * as winston from 'winston'
-
-import * as mockery from 'mockery'
+import { testConfiguration } from '../config-test'
 
 import { MailService } from './mail.service'
-import { testConfiguration } from '../config.test'
+
+jest.mock('nodemailer')
 
 describe('MailService', () => {
 
   let configuration = testConfiguration()
   let nullLogger: winston.Logger
 
-  let nodemailer
-  let transport
+  let transport: any
 
   let mailService: MailService
 
-  beforeAll(() => {
-    mockery.enable({ warnOnUnregistered: false })
-  })
-
   beforeEach(async () => {
-    nodemailer = jasmine.createSpyObj(['createTransport'])
-    transport = jasmine.createSpyObj(['close', 'sendMail', 'verify'])
-    nodemailer.createTransport.withArgs(configuration.mail.smtpConnection).and.returnValue(transport)
+    transport = {
+      close: jest.fn(),
+      sendMail: jest.fn(),
+      verify: jest.fn(),
+    };
 
-    mockery.registerMock('nodemailer', nodemailer)
+    (nodemailer.createTransport as any).mockReturnValue(transport)
 
     nullLogger = winston.createLogger({
       transports: [new winston.transports.Console({ silent: true })],
     })
     mailService = new MailService(configuration, nullLogger)
-  })
-
-  afterEach(() => {
-    mockery.deregisterAll()
-  })
-
-  afterAll(() => {
-    mockery.disable()
   })
 
   it('sends mail', async () => {
@@ -69,13 +58,13 @@ describe('MailService', () => {
       text: 'Test text',
     }
 
-    transport.sendMail.withArgs(mail).and.returnValue(Promise.resolve())
+    transport.sendMail.mockReturnValue(Promise.resolve())
 
     await mailService.sendMail(mail)
 
-    expect(nodemailer.createTransport).toHaveBeenCalled()
-    expect(transport.sendMail).toHaveBeenCalled()
-    expect(transport.close).toHaveBeenCalled()
+    expect(nodemailer.createTransport).toBeCalledWith(configuration.mail.smtpConnection)
+    expect(transport.sendMail).toBeCalledWith(mail)
+    expect(transport.close).toBeCalled()
   })
 
   it('closes transport if sending mail fails', async () => {
@@ -86,7 +75,7 @@ describe('MailService', () => {
       text: 'Test text',
     }
 
-    transport.sendMail.withArgs(mail).and.returnValue(Promise.reject(new Error('error')))
+    transport.sendMail.mockReturnValue(Promise.reject(new Error('error')))
 
     let errorCaught
     try {
@@ -95,35 +84,35 @@ describe('MailService', () => {
       errorCaught = error
     }
 
-    expect(errorCaught).toEqual(jasmine.objectContaining({
+    expect(errorCaught).toMatchObject({
       name: 'Error',
       message: 'error',
-    }))
-    expect(nodemailer.createTransport).toHaveBeenCalled()
-    expect(transport.sendMail).toHaveBeenCalled()
-    expect(transport.close).toHaveBeenCalled()
+    })
+    expect(nodemailer.createTransport).toBeCalledWith(configuration.mail.smtpConnection)
+    expect(transport.sendMail).toBeCalledWith(mail)
+    expect(transport.close).toBeCalled()
   })
 
   it('reports OK status', async () => {
-    transport.verify.withArgs().and.returnValue(Promise.resolve(true))
+    transport.verify.mockResolvedValue(true)
 
     expect(await mailService.status()).toEqual({ ok: true })
-    expect(nodemailer.createTransport).toHaveBeenCalled()
-    expect(transport.verify).toHaveBeenCalled()
-    expect(transport.close).toHaveBeenCalled()
+    expect(nodemailer.createTransport).toBeCalledWith(configuration.mail.smtpConnection)
+    expect(transport.verify).toBeCalled()
+    expect(transport.close).toBeCalled()
   })
 
   it('reports KO status if verify reports problem', async () => {
-    transport.verify.withArgs().and.returnValue(Promise.resolve(false))
+    transport.verify.mockResolvedValue(false)
 
     expect(await mailService.status()).toEqual({ ok: false })
-    expect(nodemailer.createTransport).toHaveBeenCalled()
-    expect(transport.verify).toHaveBeenCalled()
-    expect(transport.close).toHaveBeenCalled()
+    expect(nodemailer.createTransport).toBeCalledWith(configuration.mail.smtpConnection)
+    expect(transport.verify).toBeCalled()
+    expect(transport.close).toBeCalled()
   })
 
   it('reports KO status if verify fails', async () => {
-    transport.verify.withArgs().and.returnValue(Promise.reject(new Error('error')))
+    transport.verify.mockRejectedValue(new Error('error'))
 
     expect(await mailService.status()).toEqual({
       ok: false,
@@ -132,8 +121,8 @@ describe('MailService', () => {
         message: 'error',
       }),
     })
-    expect(nodemailer.createTransport).toHaveBeenCalled()
-    expect(transport.verify).toHaveBeenCalled()
-    expect(transport.close).toHaveBeenCalled()
+    expect(nodemailer.createTransport).toBeCalledWith(configuration.mail.smtpConnection)
+    expect(transport.verify).toBeCalled()
+    expect(transport.close).toBeCalled()
   })
 })

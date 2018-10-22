@@ -19,14 +19,11 @@
 
 import * as http from 'http'
 import { Container } from 'inversify'
-import 'jasmine'
 import * as Mail from 'nodemailer/lib/mailer'
 import 'reflect-metadata'
 import * as winston from 'winston'
 import { Logger } from 'winston'
 
-import { Configuration } from '../config'
-import './user.controller'
 import { User, UserMetadata } from '../../src/models/user.model'
 import { initializeServer } from '../../src/server'
 import { DatabaseService } from '../../src/services/database.service'
@@ -34,7 +31,10 @@ import { MailService } from '../../src/services/mail.service'
 import { TokenService } from '../../src/services/token.service'
 import { Services } from '../../src/types'
 
-import { testConfiguration } from '../config.test'
+import { Configuration } from '../config'
+
+import { testConfiguration } from '../config-test'
+import './user.controller'
 
 const request = require('supertest')
 

@@ -17,8 +17,8 @@
     "compile-test": "tsc --build src/tsconfig.test.json",
     "copy-packages": "(cd src && cp **/package.json --parents ../dist)",
     "pretest": "npm-run-all compile-test",
-    "test": "scripts/run-tests.js \"src/**/*.spec.ts\"",
-    "coverage": "nyc npm-run-all test",
+    "test": "jest",
+    "coverage": "jest --coverage",
     "postcoverage": "cp coverage/coverage-final.json ../../.nyc_output/data.json",
     "prebuild": "npm-run-all lint license-check test",
     "build": "npm-run-all clean compile",
@@ -26,31 +26,30 @@
     "license-check": "node ../../scripts/license-check.js"
   },
   "devDependencies": {
-    "@types/jasmine": "^2.8.9",
-    "jasmine": "^3.2.0",
-    "jasmine-spec-reporter": "^4.2.1",
+    "@types/jest": "^23.3.7",
+    "jest": "^23.6.0",
+    "jest-preset-typescript": "^1.2.0",
+    "ts-jest": "^23.10.4",
     "ts-node": "^7.0.1",
     "tslint": "^5.8.0",
     "typescript": "^3.1.3"
   },
-  "nyc": {
-    "check-coverage": false,
-    "extension": [
-      ".ts"
+  "jest": {
+    "preset": "jest-preset-typescript",
+    "collectCoverageFrom": [
+      "**/*.ts",
+      "!**/*.d.ts",
+      "!**/src/*",
+      "!**/src/**/*.module.ts",
+      "!**/src/shared/**/index.ts",
+      "!**/app/main.ts",
+      "!**/app/dev-landing-page/**",
+      "!**/assets/**",
+      "!**/src/environments/environment.*"
     ],
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "**/*.d.ts",
-      "**/*.spec.ts",
-      "**/*.test.ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "all": true,
-    "reporter": [
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "html",
       "json"
     ]
   }

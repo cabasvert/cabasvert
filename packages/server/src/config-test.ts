@@ -21,7 +21,7 @@ import { Configuration } from './config'
 
 export function testConfiguration(): Configuration {
 
-  const { databaseHost } = global['__testConfig__']
+  const { DATABASE_HOST: databaseHost } = process.env
 
   return {
     'port': 8080,

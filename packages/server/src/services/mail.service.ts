@@ -18,9 +18,7 @@
  */
 
 import { inject, injectable } from 'inversify'
-
-import * as nodemailer from 'nodemailer'
-
+import { createTransport, SendMailOptions, Transporter } from 'nodemailer'
 import { Logger } from 'winston'
 
 import { Configuration } from '../config'
@@ -51,7 +49,7 @@ export class MailService {
     }
   }
 
-  async sendMail(mail: nodemailer.SendMailOptions) {
+  async sendMail(mail: SendMailOptions) {
     /* istanbul ignore if */
     if (this.config.mail.mailToConsole) {
       this.logger.info('The following mail is wrote to console instead of being sent because mailToConsole is set.')
@@ -71,8 +69,7 @@ export class MailService {
     }
   }
 
-  private createTransport(): nodemailer.Transporter {
-    const { createTransport } = require('nodemailer')
+  private createTransport(): Transporter {
     return createTransport(this.config.mail.smtpConnection)
   }
 }

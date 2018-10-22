@@ -17,8 +17,6 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'jasmine'
-
 import { dayStringToISODay } from './data'
 import { Season } from './model'
 

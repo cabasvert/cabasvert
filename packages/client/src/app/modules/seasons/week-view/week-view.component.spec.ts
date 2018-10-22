@@ -27,7 +27,9 @@ describe('WeekViewComponent', () => {
   let seasonService
 
   beforeEach(async(() => {
-    seasonService = jasmine.createSpyObj('SeasonService', ['seasonById$'])
+    seasonService = {
+      seasonById$: jest.fn(),
+    }
 
     TestBed.configureTestingModule({
         declarations: [WeekViewComponent],
@@ -54,11 +56,13 @@ describe('WeekViewComponent', () => {
     let seasonId = 'season:2018S'
     let weekNumber = 7
 
-    let season = jasmine.createSpyObj('Season', ['seasonWeekByNumber'])
-    seasonService.seasonById$.withArgs(seasonId).and.returnValue(of(season))
+    let season = {
+      seasonWeekByNumber: jest.fn(),
+    }
+    seasonService.seasonById$.mockReturnValue(of(season))
 
     let week = { distributionDate: new Date(2018, 3, 1), seasonWeek: 7 }
-    season.seasonWeekByNumber.withArgs(weekNumber).and.returnValue(week)
+    season.seasonWeekByNumber.mockReturnValue(week)
 
     component.seasonId = seasonId
     component.weekNumber = weekNumber
@@ -66,7 +70,8 @@ describe('WeekViewComponent', () => {
     component.ngOnChanges()
     fixture.detectChanges()
 
-    expect(seasonService.seasonById$).toHaveBeenCalled()
+    expect(seasonService.seasonById$).toBeCalledWith(seasonId)
+    expect(season.seasonWeekByNumber).toBeCalledWith(weekNumber)
 
     expect(season.seasonWeekByNumber).toHaveBeenCalled()
 
