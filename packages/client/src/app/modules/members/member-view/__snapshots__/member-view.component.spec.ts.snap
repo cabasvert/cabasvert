@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MemberViewComponent should display the member with 1 person 1`] = `
+<member-view
+  member={[Function Object]}
+>
+  <h3>
+    <span
+      text-uppercase=""
+    >
+      Villevalois
+    </span>
+     Didier 
+  </h3>
+</member-view>
+`;
+
+exports[`MemberViewComponent should display the member with 3 person 1`] = `
+<member-view
+  member={[Function Object]}
+>
+  <h3>
+    <span
+      text-uppercase=""
+    >
+      Smith
+    </span>
+     John 
+  </h3><p>
+    
+    <span>
+      <span
+        text-uppercase=""
+      >
+        Doe
+      </span>
+       Jane,  
+    </span>
+    <span>
+      <span
+        text-uppercase=""
+      >
+        Smith
+      </span>
+       Lee 
+    </span>
+  </p>
+</member-view>
+`;

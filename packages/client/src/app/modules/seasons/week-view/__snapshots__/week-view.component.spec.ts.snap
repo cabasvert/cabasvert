@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WeekViewComponent should display the week 1`] = `
+<app-week-view
+  seasonId={[Function String]}
+  seasonService={[Function Object]}
+  seasonWeek$={[Function Observable]}
+  weekNumber={[Function Number]}
+>
+   4/1/18 (7)
+  
+</app-week-view>
+`;

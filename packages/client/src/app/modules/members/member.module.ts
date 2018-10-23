@@ -32,7 +32,7 @@ import { ContractModule } from '../contracts/contract.module'
 
 import { MemberDetailsPage } from './member-details-page'
 import { MemberResolver } from './member-resolver'
-import { MemberView } from './member-view'
+import { MemberView } from './member-view/member-view'
 import { MemberService } from './member.service'
 import { MembersPage } from './members-page'
 import { PersonEditFormComponent } from './person-edit-form.component'

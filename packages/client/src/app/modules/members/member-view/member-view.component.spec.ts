@@ -19,32 +19,27 @@
 
 import { async, ComponentFixture, TestBed } from '@angular/core/testing'
 import { of } from 'rxjs'
+import { Member } from '../member.model'
 import { SeasonService } from '../season.service'
+import { MemberView } from './member-view'
 
 import { WeekViewComponent } from './week-view.component'
 
-describe('WeekViewComponent', () => {
-  let seasonService
+describe('MemberViewComponent', () => {
 
   beforeEach(async(() => {
-    seasonService = {
-      seasonById$: jest.fn(),
-    }
-
     TestBed.configureTestingModule({
-        declarations: [WeekViewComponent],
-        providers: [
-          { provide: SeasonService, useValue: seasonService },
-        ],
+        declarations: [MemberView],
+        providers: [],
       })
       .compileComponents()
   }))
 
-  let component: WeekViewComponent
-  let fixture: ComponentFixture<WeekViewComponent>
+  let component: MemberView
+  let fixture: ComponentFixture<MemberView>
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(WeekViewComponent)
+    fixture = TestBed.createComponent(MemberView)
     component = fixture.componentInstance
   })
 
@@ -52,26 +47,46 @@ describe('WeekViewComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  it('should display the week', () => {
-    let seasonId = 'season:2018S'
-    let weekNumber = 7
-
-    let season = {
-      seasonWeekByNumber: jest.fn(),
+  it('should display the member with 1 person', () => {
+    let member: Member = {
+      _id: 'test-member',
+      persons: [
+        {
+          firstname: 'Didier',
+          lastname: 'Villevalois',
+        }
+      ],
     }
-    seasonService.seasonById$.mockReturnValue(of(season))
 
-    let week = { distributionDate: new Date(2018, 3, 1), seasonWeek: 7 }
-    season.seasonWeekByNumber.mockReturnValue(week)
+    component.member = member
 
-    component.seasonId = seasonId
-    component.weekNumber = weekNumber
-
-    component.ngOnChanges()
     fixture.detectChanges()
 
-    expect(seasonService.seasonById$).toHaveBeenCalledWith(seasonId)
-    expect(season.seasonWeekByNumber).toHaveBeenCalledWith(weekNumber)
+    expect(fixture).toMatchSnapshot()
+  })
+
+  it('should display the member with 3 person', () => {
+    let member: Member = {
+      _id: 'test-member',
+      persons: [
+        {
+          firstname: 'John',
+          lastname: 'Smith',
+        },
+        {
+          firstname: 'Jane',
+          lastname: 'Doe',
+        },
+        {
+          firstname: 'Lee',
+          lastname: 'Smith',
+        }
+      ],
+    }
+
+    component.member = member
+
+    fixture.detectChanges()
 
     expect(fixture).toMatchSnapshot()
   })
