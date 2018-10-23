@@ -67,61 +67,60 @@ export class DatabaseService {
   }
 
   async logIn() {
-    let user = this.config.database.auth
-    await this.db.logIn(user.username, user.password)
-      .then(() => {
-        return this.db.getSession()
-          .then(res => {
-            this.logger.info(`Successfully logged user '${user.username}' in.`)
-            this.logger.debug(`Session: ${JSON.stringify(res)}`)
-          })
-      })
-      .catch((error: any) => {
-        this.logger.error(`Failed to log user '${user.username}' in: ${JSON.stringify(error)}`)
-      })
+    let { username, password } = this.config.database.auth
+
+    try {
+      await this.db.logIn(username, password)
+      const res = await this.db.getSession()
+
+      this.logger.info(`Successfully logged user '${username}' in.`)
+      this.logger.debug(`Session: ${JSON.stringify(res)}`)
+    } catch (error) {
+      this.logger.error(`Failed to log user '${username}' in: ${JSON.stringify(error)}`)
+      throw error
+    }
   }
 
   async logOut() {
-    await this.db.logOut()
-      .catch((error: any) => {
-        this.logger.error(`Failed to log out: ${JSON.stringify(error)}`)
-      })
+    try {
+      await this.db.logOut()
+    } catch (error) /* istanbul ignore next */ {
+      this.logger.error(`Failed to log out: ${JSON.stringify(error)}`)
+    }
   }
 
-  getUser(userId: string): Promise<User> {
-    // Can't work yet (cf apache/couchdb#535 fixed in apache/couchdb#627)
-    // return this.findUserByEmail(userId)
+  async getUser(userId: string): Promise<User> {
+    let user = await this.findUserByEmail(userId)
 
     // Resort to a get as our username are emails...
-    return this.db.getUser(userId)
+    return user ? user : await this.db.getUser(userId)
   }
 
-  updateUser(userId: string, data: { metadata: UserMetadata }): Promise<any> {
-    return this.db.putUser(userId, { metadata: data })
-  }
-
-  changePassword(userId: string, password: string): Promise<boolean> {
-    return this.db.changePassword(userId, password)
-      .then(res => res.ok)
-  }
-
-  // Can't work yet (cf apache/couchdb#535 fixed in apache/couchdb#627)
-  /* istanbul ignore next */
-  private findUserByEmail(email: string) {
+  private async findUserByEmail(email: string) {
     let query = {
       selector: {
         type: 'user',
-        metadata: {
-          email: email,
-        },
+        metadata: { email: email },
       },
-      limit: 1,
     }
 
-    return this.db.find(query)
-      .then(result => {
-        if (!result.docs || result.docs.length === 0) return null
-        return result.docs[0]
-      })
+    try {
+      const result = await this.db.find(query)
+      if (!result.docs || result.docs.length !== 1) return null
+      return result.docs[0]
+    } catch (error) /* istanbul ignore next */ {
+      // This is only for CouchDB pre-2.2
+      return null
+    }
+  }
+
+  async updateUser(userId: string, data: { metadata: UserMetadata }): Promise<any> {
+    const { ok } = await this.db.putUser(userId, { metadata: data })
+    return ok
+  }
+
+  async changePassword(userId: string, password: string): Promise<boolean> {
+    const { ok } = await this.db.changePassword(userId, password)
+    return ok
   }
 }

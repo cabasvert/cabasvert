@@ -77,8 +77,12 @@ export class UserController {
       this.logger.debug(`Sent email to '${metadata.email}' for '${userId}' to confirm password reset`)
 
       // Store hash in database along to userId and expiryDate
-      metadata[PASSWORD_RESET_TOKEN_KEY] = { hash, expiryDate }
-      await this.userDatabase.updateUser(userId, { metadata })
+      await this.userDatabase.updateUser(userId, {
+        metadata: {
+          ...metadata,
+          [PASSWORD_RESET_TOKEN_KEY]: { hash, expiryDate },
+        },
+      })
       this.logger.debug(`Updated user '${userId}' to store password reset token`)
 
       res.json({ ok: true })
@@ -166,10 +170,10 @@ export class UserController {
   }
 
   private async clearPasswordResetToken(userId: any, doc: User) {
-    let metadata: UserMetadata = doc.metadata
+    let metadata: UserMetadata = { ...doc.metadata }
     /* istanbul ignore else */
     if (metadata) {
-      delete metadata['password-reset-token']
+      delete metadata[PASSWORD_RESET_TOKEN_KEY]
       await this.userDatabase.updateUser(userId, { metadata })
       this.logger.debug(`Updated user '${userId}' to clear password reset token`)
     }

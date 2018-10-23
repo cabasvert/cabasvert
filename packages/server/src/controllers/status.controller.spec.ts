@@ -21,59 +21,13 @@ import * as http from 'http'
 import { Container } from 'inversify'
 import 'reflect-metadata'
 import * as winston from 'winston'
-import { Logger } from 'winston'
-
-import { initializeServer } from '../../src/server'
-import { DatabaseService } from '../../src/services/database.service'
-import { MailService } from '../../src/services/mail.service'
-import { TokenService } from '../../src/services/token.service'
-import { Services } from '../../src/types'
-
-import { Configuration } from '../config'
 
 import { testConfiguration } from '../config-test'
+import { initializeServer } from '../server'
+import { Services } from '../types'
 import './user.controller'
 
 const request = require('supertest')
-
-class DatabaseServiceMock extends DatabaseService {
-
-  private error: any
-
-  reset() {
-    this.error = null
-  }
-
-  async status(): Promise<{ ok: boolean, error?: any}> {
-    if (this.error) return { ok: false, error: this.error }
-    else return { ok: true }
-  }
-
-  setFailing(error: any) {
-    this.error = error
-  }
-}
-
-class TokenServiceMock extends TokenService {
-}
-
-class MailServiceMock extends MailService {
-
-  private error: any
-
-  reset() {
-    this.error = null
-  }
-
-  async status(): Promise<{ ok: boolean, error?: any }> {
-    if (this.error) return { ok: false, error: this.error }
-    else return { ok: true }
-  }
-
-  setFailing(error: any) {
-    this.error = error
-  }
-}
 
 describe('StatusController', () => {
 
@@ -82,24 +36,27 @@ describe('StatusController', () => {
   let nullLogger = winston.createLogger({
     transports: [new winston.transports.Console({ silent: true })],
   })
-  let databaseServiceMock = new DatabaseServiceMock(configuration, nullLogger)
-  let tokenServiceMock = new TokenServiceMock()
-  let mailServiceMock = new MailServiceMock(configuration, nullLogger)
+
+  let databaseServiceMock = {
+    initialize: jest.fn().mockResolvedValue(null),
+    status: jest.fn().mockResolvedValue({ ok: true }),
+  }
+
+  let mailServiceMock = {
+    status: jest.fn().mockResolvedValue({ ok: true }),
+  }
 
   let server: http.Server
 
   beforeEach(async () => {
-    databaseServiceMock.reset()
-    mailServiceMock.reset()
-
     // load everything needed to the Container
     let container = new Container()
 
-    container.bind<Configuration>(Services.Config).toConstantValue(configuration)
-    container.bind<Logger>(Services.Logger).toConstantValue(nullLogger)
-    container.bind<DatabaseService>(Services.Database).toConstantValue(databaseServiceMock)
-    container.bind<MailService>(Services.Mail).toConstantValue(mailServiceMock)
-    container.bind<TokenService>(Services.Token).toConstantValue(tokenServiceMock)
+    container.bind(Services.Config).toConstantValue({})
+    container.bind(Services.Logger).toConstantValue(nullLogger)
+    container.bind(Services.Database).toConstantValue(databaseServiceMock)
+    container.bind(Services.Mail).toConstantValue(mailServiceMock)
+    container.bind(Services.Token).toConstantValue({})
 
     server = await initializeServer(Promise.resolve(container))
   })
@@ -117,7 +74,7 @@ describe('StatusController', () => {
   })
 
   it('correctly reports error for database problems', async () => {
-    databaseServiceMock.setFailing('error')
+    databaseServiceMock.status.mockResolvedValueOnce({ ok: false, error: 'error' })
 
     await request(server)
       .get('/api/status/check')
@@ -127,7 +84,7 @@ describe('StatusController', () => {
   })
 
   it('correctly reports error for mail problems', async () => {
-    mailServiceMock.setFailing('error')
+    mailServiceMock.status.mockResolvedValueOnce({ ok: false, error: 'error' })
 
     await request(server)
       .get('/api/status/check')

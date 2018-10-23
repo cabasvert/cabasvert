@@ -22,8 +22,8 @@ import * as PouchAuth from 'pouchdb-authentication'
 import * as PouchDB from 'pouchdb-core'
 import * as PouchFind from 'pouchdb-find'
 import * as PouchSecurity from 'pouchdb-security-helper'
-import 'reflect-metadata'
 
+import 'reflect-metadata'
 import * as winston from 'winston'
 import { testConfiguration } from '../config-test'
 
@@ -121,10 +121,10 @@ describe('DatabaseService', () => {
     try {
 
       await databaseService.initialize()
-        .then(() => Promise.reject(new Error('Should not have initialized properly')))
-        .catch(() => {
-        })
 
+      expect(false).toBe(true)
+    } catch (error) {
+      expect(error).toBeDefined()
     } finally {
 
       await database.logIn('admin', 'password')
@@ -153,6 +153,19 @@ describe('DatabaseService', () => {
     }
   })
 
+  it('errors if user is not found', async () => {
+    try {
+      await databaseService.logIn()
+
+      await databaseService.getUser('jane.smith@me.com')
+
+    } catch (error) {
+      expect(error).toBeDefined()
+    } finally {
+      await databaseService.logOut()
+    }
+  })
+
   it('can update users\' metadata', async () => {
     try {
       await databaseService.logIn()
@@ -161,18 +174,17 @@ describe('DatabaseService', () => {
         await databaseService.updateUser('john.doe@example.com', {
           metadata: {
             name: 'metadata',
-            email: 'email',
+            email: 'john.doe@example.com',
           },
         }),
-      ).toEqual(jasmine.objectContaining({ ok: true }))
+      ).toEqual(true)
 
       let user = await databaseService.getUser('john.doe@example.com')
 
       expect(user).toEqual(jasmine.objectContaining({
-        metadata: {
+        metadata: jasmine.objectContaining({
           name: 'metadata',
-          email: 'email',
-        },
+        }),
       }))
     } finally {
       await databaseService.logOut()

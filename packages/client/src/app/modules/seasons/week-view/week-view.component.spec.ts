@@ -70,8 +70,8 @@ describe('WeekViewComponent', () => {
     component.ngOnChanges()
     fixture.detectChanges()
 
-    expect(seasonService.seasonById$).toBeCalledWith(seasonId)
-    expect(season.seasonWeekByNumber).toBeCalledWith(weekNumber)
+    expect(seasonService.seasonById$).toHaveBeenCalledWith(seasonId)
+    expect(season.seasonWeekByNumber).toHaveBeenCalledWith(weekNumber)
 
     expect(season.seasonWeekByNumber).toHaveBeenCalled()
 

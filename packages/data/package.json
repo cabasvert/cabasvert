@@ -18,6 +18,7 @@
     "copy-packages": "(cd src && cp **/package.json --parents ../dist)",
     "pretest": "npm-run-all compile-test",
     "test": "jest",
+    "test:watch": "jest --watch",
     "coverage": "jest --coverage",
     "postcoverage": "cp coverage/coverage-final.json ../../.nyc_output/data.json",
     "prebuild": "npm-run-all lint license-check test",

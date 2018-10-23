@@ -19,151 +19,95 @@
 
 import * as http from 'http'
 import { Container } from 'inversify'
-import * as Mail from 'nodemailer/lib/mailer'
 import 'reflect-metadata'
+import * as request from 'supertest'
 import * as winston from 'winston'
-import { Logger } from 'winston'
-
-import { User, UserMetadata } from '../../src/models/user.model'
-import { initializeServer } from '../../src/server'
-import { DatabaseService } from '../../src/services/database.service'
-import { MailService } from '../../src/services/mail.service'
-import { TokenService } from '../../src/services/token.service'
-import { Services } from '../../src/types'
-
-import { Configuration } from '../config'
 
 import { testConfiguration } from '../config-test'
+import { User } from '../models/user.model'
+import { initializeServer } from '../server'
+import { Services } from '../types'
 import './user.controller'
-
-const request = require('supertest')
 
 type UserWithPassword = User & { password?: string }
 
+interface TokenData {
+  hash: string,
+  expiryDate: string
+}
+
 const fakeUserId = 'john.doe@example.com'
 const wrongUserId = 'jane.smith@example.com'
-
-class DatabaseServiceMock extends DatabaseService {
-
-  private _users: { [id: string]: UserWithPassword }
-  private failing: boolean
-  private getUserFailing: boolean
-
-  reset() {
-    this._users = {}
-    this._users[fakeUserId] = {
-      _id: 'org.couchdb.user:fakeUserId',
-      type: 'user',
-      name: fakeUserId,
-      roles: [],
-      metadata: {
-        name: 'John Doe',
-        email: fakeUserId,
-      },
-      password: 'password',
-    }
-    this.failing = false
-    this.getUserFailing = false
-  }
-
-  async initialize() {
-    if (this.failing) throw new Error('Database failed')
-  }
-
-  async logIn() {
-    if (this.failing) throw new Error('Database failed')
-  }
-
-  async logOut() {
-  }
-
-  async getUser(userId: string): Promise<UserWithPassword> {
-    if (this.failing || this.getUserFailing) throw new Error('Database failed')
-
-    return this._users[userId]
-  }
-
-  async updateUser(userId: string, data: { metadata: UserMetadata }): Promise<any> {
-    if (this.failing) throw new Error('Database failed')
-
-    this._users[userId].metadata = data.metadata
-    return { ok: true }
-  }
-
-  async changePassword(userId: string, password: string): Promise<boolean> {
-    if (this.failing) throw new Error('Database failed')
-
-    this._users[userId].password = password
-    return true
-  }
-
-  setFailing(failing: boolean) {
-    this.failing = failing
-  }
-
-  setGetUserFailing(failing: boolean) {
-    this.getUserFailing = failing
-  }
+const fakeMetadata = { metadata: { name: 'John Doe', email: fakeUserId } }
+const fakeUser = {
+  _id: 'org.couchdb.user:' + fakeUserId,
+  type: 'user',
+  name: fakeUserId,
+  roles: [],
+  ...fakeMetadata,
+  password: 'password',
 }
 
-class TokenServiceMock extends TokenService {
-
-  async generateToken(): Promise<{ token: string, hash: string }> {
-    return { token: 'fake-token', hash: 'fake-hash' }
-  }
-
-  async hashToken(token: string): Promise<string> {
-    return token === 'fake-token' ? 'fake-hash' : 'some-other-hash'
-  }
+function fakeUserWithToken(tokenData: TokenData) {
+  return { ...fakeUser, ...fakeMetadataWithToken(tokenData) }
 }
 
-class MailServiceMock extends MailService {
-
-  public sentMail: Mail.Options
-  private failing: boolean
-
-  reset() {
-    this.sentMail = null
-    this.failing = false
-  }
-
-  async sendMail(mail: Mail.Options) {
-    if (this.failing) throw new Error('Email sending failed')
-
-    this.sentMail = mail
-    return {}
-  }
-
-  setFailing(failing: boolean) {
-    this.failing = failing
-  }
+function fakeMetadataWithToken(tokenData: TokenData) {
+  return { metadata: { ...fakeMetadata.metadata, 'password-reset-token': tokenData } }
 }
 
 describe('UserController', () => {
 
   let configuration = testConfiguration()
+  let baseUrl = configuration.clientApplication.url
 
   let nullLogger = winston.createLogger({
     transports: [new winston.transports.Console({ silent: true })],
   })
-  let databaseServiceMock = new DatabaseServiceMock(configuration, nullLogger)
-  let tokenServiceMock = new TokenServiceMock()
-  let mailServiceMock = new MailServiceMock(configuration, nullLogger)
+
+  let databaseServiceMock = {
+    initialize: jest.fn(),
+    logIn: jest.fn(),
+    logOut: jest.fn(),
+    getUser: jest.fn(),
+    updateUser: jest.fn(),
+    changePassword: jest.fn(),
+  }
+
+  let tokenServiceMock = {
+    generateToken: jest.fn(),
+    hashToken: jest.fn(),
+  }
+
+  let mailServiceMock = {
+    sendMail: jest.fn(),
+  }
 
   let server: http.Server
 
   beforeEach(async () => {
-    databaseServiceMock.reset()
-    mailServiceMock.reset()
+    jest.resetAllMocks()
+
+    databaseServiceMock.initialize.mockResolvedValue(null)
+    databaseServiceMock.logIn.mockResolvedValue(null)
+    databaseServiceMock.logOut.mockResolvedValue(null)
+    databaseServiceMock.getUser.mockImplementation(() => fakeUser)
+    databaseServiceMock.updateUser.mockResolvedValue(true)
+    databaseServiceMock.changePassword.mockResolvedValue(true)
+
+    tokenServiceMock.generateToken.mockResolvedValue({ token: 'fake-token', hash: 'fake-hash' })
+    tokenServiceMock.hashToken.mockResolvedValue('fake-hash')
+
+    mailServiceMock.sendMail.mockResolvedValue(null)
 
     // load everything needed to the Container
     let container = new Container()
 
-    container.bind<Configuration>(Services.Config).toConstantValue(configuration)
-    container.bind<Logger>(Services.Logger).toConstantValue(nullLogger)
-    container.bind<DatabaseService>(Services.Database).toConstantValue(databaseServiceMock)
-    container.bind<MailService>(Services.Mail).toConstantValue(mailServiceMock)
-    container.bind<TokenService>(Services.Token).toConstantValue(tokenServiceMock)
+    container.bind(Services.Config).toConstantValue(configuration)
+    container.bind(Services.Logger).toConstantValue(nullLogger)
+    container.bind(Services.Database).toConstantValue(databaseServiceMock)
+    container.bind(Services.Mail).toConstantValue(mailServiceMock)
+    container.bind(Services.Token).toConstantValue(tokenServiceMock)
 
     server = await initializeServer(Promise.resolve(container))
   })
@@ -172,132 +116,243 @@ describe('UserController', () => {
     server.close()
   })
 
-  it('correctly resets password', async () => {
-    await request(server)
-      .get('/api/user/request-password-reset/' + fakeUserId)
-      .expect(200)
-      .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ ok: true })
+  it('correctly handle valid reset request', async () => {
+    await sendRequest(fakeUserId)
 
-    expect(mailServiceMock.sentMail.to).toContain(fakeUserId)
-    let baseUrl = configuration.clientApplication.url
-    expect(mailServiceMock.sentMail.text).toContain(
-      `${baseUrl}/reset-password/${fakeUserId}/fake-token`)
+    expect(databaseServiceMock.getUser).toHaveBeenCalledTimes(1)
+    expect(mailServiceMock.sendMail).toHaveBeenCalledTimes(1)
+    expect(databaseServiceMock.updateUser).toHaveBeenCalledTimes(1)
+    expect(databaseServiceMock.changePassword).toHaveBeenCalledTimes(0)
 
-    let user = await databaseServiceMock.getUser(fakeUserId)
-    let prt = user.metadata['password-reset-token']
-    expect(prt).not.toBeNull()
-    expect(prt.hash).toEqual('fake-hash')
+    expect(mailServiceMock.sendMail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: expect.stringContaining(fakeUserId),
+        text: expect.stringContaining(`${baseUrl}/reset-password/${fakeUserId}/fake-token`),
+      }),
+    )
 
-    await request(server)
-      .post('/api/user/confirm-password-reset')
-      .send({
-        'username': fakeUserId,
-        'token': 'fake-token',
-        'new-password': 'newPassword',
-      })
-      .expect(200)
-      .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ ok: true })
-
-    user = await databaseServiceMock.getUser(fakeUserId)
-    expect(user.password).toBe('newPassword')
+    expect(databaseServiceMock.updateUser).toHaveBeenCalledWith(fakeUserId,
+      expect.objectContaining({
+        metadata: expect.objectContaining({
+          'password-reset-token': expect.objectContaining({
+            hash: 'fake-hash',
+          }),
+        }),
+      }))
   })
 
-  it('does not store token if mail sending failed', async () => {
-    mailServiceMock.setFailing(true)
+  it('rejects requests for unknown users', async () => {
+    databaseServiceMock.getUser.mockResolvedValueOnce(null)
 
-    await request(server)
-      .get('/api/user/request-password-reset/' + fakeUserId)
-      .expect(500)
-      .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ code: 'PROCESSING_ERROR', message: 'Email sending failed' })
+    await sendRequestBadRequest(wrongUserId, { code: 'UNKNOWN_USER', message: 'Unknown user' })
 
-    let user = await databaseServiceMock.getUser(fakeUserId)
-    let prt = user.metadata['password-reset-token']
-    expect(prt).toBeUndefined()
+    expect(databaseServiceMock.getUser).toHaveBeenCalledTimes(1)
+    expect(mailServiceMock.sendMail).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.updateUser).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.changePassword).toHaveBeenCalledTimes(0)
+  })
+
+  it('rejects requests when database get user fails', async () => {
+    databaseServiceMock.getUser.mockRejectedValueOnce(new Error('Database failed'))
+
+    await sendRequestBadRequest(wrongUserId, { code: 'UNKNOWN_USER', message: 'Unknown user' })
+
+    expect(databaseServiceMock.getUser).toHaveBeenCalledTimes(1)
+    expect(mailServiceMock.sendMail).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.updateUser).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.changePassword).toHaveBeenCalledTimes(0)
+  })
+
+  it('errors requests if mail sending fails', async () => {
+    mailServiceMock.sendMail.mockRejectedValueOnce(new Error('Email sending failed'))
+
+    await sendRequestError(fakeUserId, { code: 'PROCESSING_ERROR', message: 'Email sending failed' })
+
+    expect(databaseServiceMock.getUser).toHaveBeenCalledTimes(1)
+    expect(mailServiceMock.sendMail).toHaveBeenCalledTimes(1)
+    expect(databaseServiceMock.updateUser).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.changePassword).toHaveBeenCalledTimes(0)
+  })
+
+  it('errors requests if database fails', async () => {
+    databaseServiceMock.logIn.mockRejectedValueOnce(new Error('Database failed'))
+
+    await sendRequestError(fakeUserId, { code: 'PROCESSING_ERROR', message: 'Database failed' })
+
+    expect(databaseServiceMock.getUser).toHaveBeenCalledTimes(0)
+    expect(mailServiceMock.sendMail).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.updateUser).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.changePassword).toHaveBeenCalledTimes(0)
+  })
+
+  it('correctly handle valid reset confirmation', async () => {
+    databaseServiceMock.getUser.mockResolvedValueOnce(
+      fakeUserWithToken({
+        hash: 'fake-hash',
+        expiryDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString(),
+      }),
+    )
+
+    await sendConfirm(
+      { username: fakeUserId, token: 'fake-token', 'new-password': 'newPassword' },
+    )
+
+    expect(databaseServiceMock.getUser).toHaveBeenCalledTimes(1)
+    expect(databaseServiceMock.changePassword).toHaveBeenCalledTimes(1)
+    expect(databaseServiceMock.updateUser).toHaveBeenCalledTimes(1)
+
+    expect(databaseServiceMock.changePassword).toHaveBeenCalledWith(fakeUserId, 'newPassword')
   })
 
   it('rejects confirmations with invalid token', async () => {
-    await testRequestConfirmFailure(
-      fakeUserId,
-      {
-        'username': fakeUserId,
-        'token': 'invalid-token',
-        'new-password': 'newPassword',
-      },
-      { code: 'INVALID_TOKEN', message: 'Token is invalid' },
-      true,
+    databaseServiceMock.getUser.mockResolvedValueOnce(
+      fakeUserWithToken({
+        hash: 'fake-hash',
+        expiryDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString(),
+      }),
     )
+    tokenServiceMock.hashToken.mockResolvedValueOnce('some-other-hash')
+
+    await sendConfirmBadRequest(
+      { username: fakeUserId, token: 'invalid-token', 'new-password': 'newPassword' },
+      { code: 'INVALID_TOKEN', message: 'Token is invalid' },
+    )
+
+    expect(databaseServiceMock.getUser).toHaveBeenCalledTimes(1)
+    expect(databaseServiceMock.changePassword).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.updateUser).toHaveBeenCalledTimes(1)
+
+    expect(databaseServiceMock.updateUser).toHaveBeenCalledWith(fakeUserId, fakeMetadata)
   })
 
   it('rejects confirmations with expired token', async () => {
-    await testRequestConfirmFailure(
-      fakeUserId,
-      {
-        'username': fakeUserId,
-        'token': 'invalid-token',
-        'new-password': 'newPassword',
-      },
-      { code: 'EXPIRED_TOKEN', message: 'Token has expired' },
-      true,
-      async () => {
-        // Tamper with token's expiry date !
-        let user = await databaseServiceMock.getUser(fakeUserId)
-        user.metadata['password-reset-token'].expiryDate = new Date().toISOString()
-        await databaseServiceMock.updateUser(fakeUserId, user)
-      },
+    databaseServiceMock.getUser.mockResolvedValueOnce(
+      fakeUserWithToken({
+        hash: 'fake-hash',
+        expiryDate: new Date().toISOString(),
+      }),
     )
+
+    await sendConfirmBadRequest(
+      { username: fakeUserId, token: 'invalid-token', 'new-password': 'newPassword' },
+      { code: 'EXPIRED_TOKEN', message: 'Token has expired' },
+    )
+
+    expect(databaseServiceMock.getUser).toHaveBeenCalledTimes(1)
+    expect(databaseServiceMock.changePassword).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.updateUser).toHaveBeenCalledTimes(1)
+
+    expect(databaseServiceMock.updateUser).toHaveBeenCalledWith(fakeUserId, fakeMetadata)
   })
 
   it('rejects confirmations with missing username data', async () => {
-    await testRequestConfirmFailure(
-      fakeUserId,
-      {
-        'token': 'invalid-token',
-        'new-password': 'newPassword',
-      },
+    await sendConfirmBadRequest(
+      { token: 'invalid-token', 'new-password': 'newPassword' },
       { code: 'MISSING_DATA', message: 'Missing data for password reset' },
     )
+
+    expect(databaseServiceMock.getUser).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.changePassword).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.updateUser).toHaveBeenCalledTimes(0)
   })
 
   it('rejects confirmations with missing token data', async () => {
-    await testRequestConfirmFailure(
-      fakeUserId,
-      {
-        'username': fakeUserId,
-        'new-password': 'newPassword',
-      },
+    await sendConfirmBadRequest(
+      { 'username': fakeUserId, 'new-password': 'newPassword' },
       { code: 'MISSING_DATA', message: 'Missing data for password reset' },
     )
+
+    expect(databaseServiceMock.getUser).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.changePassword).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.updateUser).toHaveBeenCalledTimes(0)
   })
 
   it('rejects confirmations with missing new-password data', async () => {
-    await testRequestConfirmFailure(
-      fakeUserId,
-      {
-        'username': fakeUserId,
-        'token': 'invalid-token',
-      },
+    await sendConfirmBadRequest(
+      { username: fakeUserId, token: 'fake-token' },
       { code: 'MISSING_DATA', message: 'Missing data for password reset' },
     )
+
+    expect(databaseServiceMock.getUser).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.changePassword).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.updateUser).toHaveBeenCalledTimes(0)
   })
 
-  let noop: () => Promise<void> = async () => {
-  }
+  it('rejects confirmations for unknown users', async () => {
+    databaseServiceMock.getUser.mockResolvedValueOnce(null)
 
-  async function testRequestConfirmFailure(userId: string,
-                                           confirmData: any,
-                                           error: { code: string, message: string },
-                                           testTokenHasBeenCleared: boolean = false,
-                                           beforeConfirm: () => Promise<void> = noop) {
+    await sendConfirmBadRequest(
+      { username: wrongUserId, token: 'fake-token', 'new-password': 'newPassword' },
+      { code: 'UNKNOWN_USER', message: 'Unknown user' },
+    )
+
+    expect(databaseServiceMock.getUser).toHaveBeenCalledTimes(1)
+    expect(databaseServiceMock.changePassword).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.updateUser).toHaveBeenCalledTimes(0)
+  })
+
+  it('rejects confirmations without prior request', async () => {
+    await sendConfirmBadRequest(
+      { username: fakeUserId, token: 'fake-token', 'new-password': 'newPassword' },
+      { code: 'NO_PASSWORD_RESET_REQUEST', message: 'No password reset request done' },
+    )
+
+    expect(databaseServiceMock.getUser).toHaveBeenCalledTimes(1)
+    expect(databaseServiceMock.changePassword).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.updateUser).toHaveBeenCalledTimes(0)
+  })
+
+  it('errors confirmations if database fails', async () => {
+    databaseServiceMock.logIn.mockRejectedValueOnce(new Error('Database failed'))
+
+    await sendConfirmError(
+      { username: fakeUserId, token: 'fake-token', 'new-password': 'newPassword' },
+      { code: 'PROCESSING_ERROR', message: 'Database failed' },
+    )
+
+    expect(databaseServiceMock.getUser).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.changePassword).toHaveBeenCalledTimes(0)
+    expect(databaseServiceMock.updateUser).toHaveBeenCalledTimes(0)
+  })
+
+  async function sendRequest(userId: string) {
     await request(server)
       .get('/api/user/request-password-reset/' + userId)
       .expect(200)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect({ ok: true })
+  }
 
-    await beforeConfirm()
+  async function sendRequestBadRequest(userId: string,
+                                       error: { code: string, message: string }) {
+    await request(server)
+      .get('/api/user/request-password-reset/' + userId)
+      .expect(400)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(error)
+  }
+
+  async function sendRequestError(userId: string,
+                                  error: { code: string, message: string }) {
+    await request(server)
+      .get('/api/user/request-password-reset/' + userId)
+      .expect(500)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(error)
+  }
+
+  async function sendConfirm(confirmData: any) {
+
+    await request(server)
+      .post('/api/user/confirm-password-reset')
+      .send(confirmData)
+      .expect(200)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect({ ok: true })
+  }
+
+  async function sendConfirmBadRequest(confirmData: any,
+                                       error: { code: string, message: string }) {
 
     await request(server)
       .post('/api/user/confirm-password-reset')
@@ -305,80 +360,15 @@ describe('UserController', () => {
       .expect(400)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(error)
-
-    let user = await databaseServiceMock.getUser(userId)
-    expect(user.password).toBe('password')
-    if (testTokenHasBeenCleared) {
-      let prt = user.metadata['password-reset-token']
-      expect(prt).toBeUndefined()
-    }
   }
 
-  it('rejects requests for unknown users', async () => {
-    await request(server)
-      .get('/api/user/request-password-reset/' + wrongUserId)
-      .expect(400)
-      .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ code: 'UNKNOWN_USER', message: 'Unknown user' })
-  })
-
-  it('rejects requests when database get user fails', async () => {
-    databaseServiceMock.setGetUserFailing(true)
-    await request(server)
-      .get('/api/user/request-password-reset/' + wrongUserId)
-      .expect(400)
-      .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ code: 'UNKNOWN_USER', message: 'Unknown user' })
-  })
-
-  it('rejects confirmations for unknown users', async () => {
+  async function sendConfirmError(confirmData: any,
+                                  error: { code: string, message: string }) {
     await request(server)
       .post('/api/user/confirm-password-reset')
-      .send({
-        'username': wrongUserId,
-        'token': 'fake-token',
-        'new-password': 'newPassword',
-      })
-      .expect(400)
-      .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ code: 'UNKNOWN_USER', message: 'Unknown user' })
-  })
-
-  it('rejects confirmations without prior request', async () => {
-    await request(server)
-      .post('/api/user/confirm-password-reset')
-      .send({
-        'username': fakeUserId,
-        'token': 'fake-token',
-        'new-password': 'newPassword',
-      })
-      .expect(400)
-      .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ code: 'NO_PASSWORD_RESET_REQUEST', message: 'No password reset request done' })
-  })
-
-  it('errors requests if database fails', async () => {
-    databaseServiceMock.setFailing(true)
-
-    await request(server)
-      .get('/api/user/request-password-reset/' + fakeUserId)
+      .send(confirmData)
       .expect(500)
       .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ code: 'PROCESSING_ERROR', message: 'Database failed' })
-  })
-
-  it('errors confirmations if database fails', async () => {
-    databaseServiceMock.setFailing(true)
-
-    await request(server)
-      .post('/api/user/confirm-password-reset')
-      .send({
-        'username': fakeUserId,
-        'token': 'fake-token',
-        'new-password': 'newPassword',
-      })
-      .expect(500)
-      .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect({ code: 'PROCESSING_ERROR', message: 'Database failed' })
-  })
+      .expect(error)
+  }
 })
