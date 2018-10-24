@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.2-beta.5](https://github.com/cabasvert/cabasvert/compare/@cabasvert/server@0.2.2-beta.4...@cabasvert/server@0.2.2-beta.5) (2018-10-24)
+
+**Note:** Version bump only for package @cabasvert/server
+
+
+
+
+
 ## [0.2.2-beta.4](https://github.com/cabasvert/cabasvert/compare/@cabasvert/server@0.2.2-beta.3...@cabasvert/server@0.2.2-beta.4) (2018-10-14)
 
 **Note:** Version bump only for package @cabasvert/server

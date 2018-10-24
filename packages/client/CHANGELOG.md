@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-beta.16](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.15...@cabasvert/client@0.3.0-beta.16) (2018-10-24)
+
+
+### Bug Fixes
+
+* **client:** add 'alternating 1 and 2' contract formula ([cc0e5bb](https://github.com/cabasvert/cabasvert/commit/cc0e5bb))
+* **client:** version number color ([9c7c6a7](https://github.com/cabasvert/cabasvert/commit/9c7c6a7))
+
+
+
+
+
 # [0.3.0-beta.15](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.14...@cabasvert/client@0.3.0-beta.15) (2018-10-14)
 
 
