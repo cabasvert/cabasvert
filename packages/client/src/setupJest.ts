@@ -19,3 +19,36 @@
 
 import 'jest-preset-angular'
 import './jestGlobalMocks'
+
+// A utility to configure the Angular TestBed
+
+import { TestBed, async, TestModuleMetadata } from '@angular/core/testing'
+
+const resetTestingModule = TestBed.resetTestingModule
+
+declare global {
+  let setupTestBed: (metadata: TestModuleMetadata) => void
+}
+
+global.setupTestBed = (moduleDef: TestModuleMetadata) => {
+
+  beforeAll(async(async () => {
+    resetTestingModule()
+
+    // prevent Angular from resetting testing module
+    TestBed.resetTestingModule = () => TestBed
+
+    const compilerConfig = { preserveWhitespaces: false } as any
+    TestBed.configureCompiler(compilerConfig).configureTestingModule(moduleDef)
+
+    await TestBed.compileComponents()
+  }))
+
+  afterAll(() => {
+    resetTestingModule()
+
+    // reinstate resetTestingModule method
+    TestBed.resetTestingModule = resetTestingModule
+  })
+
+}

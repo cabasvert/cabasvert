@@ -17,8 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing'
-import { of } from 'rxjs'
+import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { Member } from '../member.model'
 import { SeasonService } from '../season.service'
 import { MemberView } from './member-view'
@@ -27,13 +26,9 @@ import { WeekViewComponent } from './week-view.component'
 
 describe('MemberViewComponent', () => {
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-        declarations: [MemberView],
-        providers: [],
-      })
-      .compileComponents()
-  }))
+  setupTestBed({
+    declarations: [MemberView],
+  })
 
   let component: MemberView
   let fixture: ComponentFixture<MemberView>

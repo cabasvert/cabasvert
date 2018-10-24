@@ -11,6 +11,8 @@
     "prepare": "node scripts/set-versions.js",
     "prestart": "npm-run-all prepare",
     "start": "ng serve",
+    "start:debug": "ng run app:serve:debug",
+    "start:prod": "ng run app:serve:production",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --verbose --maxWorkers=$(nproc)",

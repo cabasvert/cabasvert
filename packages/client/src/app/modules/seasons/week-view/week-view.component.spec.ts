@@ -17,28 +17,24 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing'
+import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { of } from 'rxjs'
 import { SeasonService } from '../season.service'
 
 import { WeekViewComponent } from './week-view.component'
 
 describe('WeekViewComponent', () => {
-  let seasonService
 
-  beforeEach(async(() => {
-    seasonService = {
-      seasonById$: jest.fn(),
-    }
+  let seasonService = {
+    seasonById$: jest.fn(),
+  }
 
-    TestBed.configureTestingModule({
-        declarations: [WeekViewComponent],
-        providers: [
-          { provide: SeasonService, useValue: seasonService },
-        ],
-      })
-      .compileComponents()
-  }))
+  setupTestBed({
+    declarations: [WeekViewComponent],
+    providers: [
+      { provide: SeasonService, useValue: seasonService },
+    ],
+  })
 
   let component: WeekViewComponent
   let fixture: ComponentFixture<WeekViewComponent>
