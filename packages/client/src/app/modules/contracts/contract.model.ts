@@ -126,6 +126,12 @@ export class ContractFormulas {
       'CONTRACT.FORMULA_ALTERNATING_2_AND_1',
     ),
     new ContractFormula(
+      '12',
+      [1, 2],
+      1.5,
+      'CONTRACT.FORMULA_ALTERNATING_1_AND_2',
+    ),
+    new ContractFormula(
       '11',
       1,
       null,
