@@ -59,14 +59,14 @@ You will find additional information in the `README.md` files of the
 
 ### Make a release
 
-1. Run one of the following, and validate new version choices.
+Run one of the following, and validate new version choices.
 
 ```bash
-yarn run release-alpha
+yarn run release:alpha
 # or
-yarn run release-beta
+yarn run release:beta
 # or
-yarn run release-rc
+yarn run release:rc
 # or
 yarn run release
 ```
@@ -75,15 +75,7 @@ This will run a check phase (lint, license-check, test) and build all the artifa
 If everything goes on well, version bumps will be computed depending on the commits since the last release.
 Changelogs will be generated and commit along some new version tags.
 
-The new commit and tags are not automatically pushed to the repository.
-
-2. Check the commits
-
-Check the generated changelogs and then push.
-
-```bash
-git push --follow-tags
-```
+The new commit and tags are automatically pushed to the repository.
 
 ### Publish a release
 
