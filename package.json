@@ -11,6 +11,7 @@
     "build": "lerna run build --stream",
     "pretest": "npm-run-all compile",
     "test": "lerna run test --stream",
+    "test:ci": "lerna run test:ci --stream --concurrency=1",
     "precoverage": "npm-run-all compile",
     "coverage": "mkdir -p .nyc_output && lerna run coverage --stream",
     "postcoverage": "nyc report --reporter=html --reporter=text-summary",

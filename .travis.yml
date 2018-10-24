@@ -30,7 +30,7 @@ after_script:
   #  - greenkeeper-lockfile-upload
 
 after_success:
-  - DATABASE=couchdb:latest yarn run coverage
+  - DATABASE=couchdb:latest yarn run coverage:ci
   - nyc report --reporter=text-lcov > coverage.lcov
   - npx codecov
 
@@ -40,7 +40,7 @@ env:
   global:
 
   matrix:
-  - DATABASE=couchdb:latest COMMAND=test
+  - DATABASE=couchdb:latest COMMAND=test:ci
 
 branches:
   only:

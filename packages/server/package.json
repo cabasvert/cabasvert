@@ -24,7 +24,9 @@
     "pretest": "npm-run-all compile-test",
     "test": "scripts/run-with-database.js jest --runInBand",
     "test:watch": "scripts/run-with-database.js jest --runInBand --watch",
+    "test:ci": "scripts/run-with-database.js jest --runInBand --verbose",
     "coverage": "scripts/run-with-database.js jest --runInBand --coverage",
+    "coverage:ci": "scripts/run-with-database.js jest --runInBand --coverage --verbose",
     "postcoverage": "cp coverage/coverage-final.json ../../.nyc_output/server.json",
     "prebuild": "DATABASE=couchdb npm-run-all lint license-check test",
     "build": "npm-run-all clean compile pack",
@@ -110,6 +112,7 @@
     "coverageReporters": [
       "html",
       "json"
-    ]
+    ],
+    "testEnvironment": "node"
   }
 }
