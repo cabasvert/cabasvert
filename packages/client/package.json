@@ -45,7 +45,7 @@
     "@ionic/angular": "^4.0.0-beta.13",
     "@ionic/core": "^4.0.0-beta.13",
     "@ngx-translate/core": "^10.0.2",
-    "@ngx-translate/http-loader": "^3.0.1",
+    "@ngx-translate/http-loader": "^4.0.0",
     "@types/pouchdb-core": "^6.4.2",
     "@types/pouchdb-find": "^6.3.3",
     "@types/pouchdb-replication": "^6.4.0",
