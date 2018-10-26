@@ -82,6 +82,9 @@
   },
   "PROFILE": {
     "TITLE": "Profil",
+    "SETTINGS": "Préférences",
+    "DARK_THEME": "Thème sombre",
+    "SECURITY": "Sécurité",
     "CHANGE_PASSWORD": "Changer de mot de passe",
     "OLD_PASSWORD": "Ancien mot de passe",
     "NEW_PASSWORD": "Nouveau mot de passe",

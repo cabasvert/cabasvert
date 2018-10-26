@@ -31,11 +31,11 @@
 
   <ion-list>
     <ion-list-header>
-      <ion-label>Settings</ion-label>
+      <ion-label>{{ 'PROFILE.SETTINGS' | translate }}</ion-label>
     </ion-list-header>
 
     <ion-item>
-      <ion-label>Dark theme</ion-label>
+      <ion-label>{{ 'PROFILE.DARK_THEME' | translate }}</ion-label>
       <ion-toggle [checked]="isDarkTheme$ | async"
                   (ionChange)="toggleDarkTheme($event)">
       </ion-toggle>
@@ -44,7 +44,7 @@
 
   <ion-list>
     <ion-list-header>
-      <ion-label>Security</ion-label>
+      <ion-label>{{ 'PROFILE.SECURITY' | translate }}</ion-label>
     </ion-list-header>
 
     <ion-item>
