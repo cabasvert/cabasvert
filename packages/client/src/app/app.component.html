@@ -45,23 +45,26 @@
 
         <ion-content>
           <ion-list>
-            <div *ngFor="let g of pageGroups">
+            <ng-container *ngFor="let g of pageGroups">
               <ion-item-group
-                *ngIf="!g.acceptedRoles || user.hasAnyRoleIn(g.acceptedRoles)">
+                *ngIf="!g.acceptedRoles || user.hasAnyRoleIn(g.acceptedRoles)"
+                lines="none" class="menu-group">
 
                 <ion-item-divider *ngIf="g.title">
                   <ion-label>{{ g.title | translate }}</ion-label>
                 </ion-item-divider>
 
-                <div *ngFor="let p of g.pages">
+                <ng-container *ngFor="let p of g.pages">
                   <ion-item *ngIf="!p.acceptedRoles || user.hasAnyRoleIn(p.acceptedRoles)"
-                            [button]="true" (click)="navigateToPage(p)">
+                            lines="none" class="menu-destination"
+                            [button]="true" (click)="navigateToPage(p)"
+                            [class.selected]="(currentUrl$ | async).startsWith('/' + p.path)">
                     <ion-icon slot="start" [name]="p.icon"></ion-icon>
                     <ion-label>{{ p.title | translate }}</ion-label>
                   </ion-item>
-                </div>
+                </ng-container>
               </ion-item-group>
-            </div>
+            </ng-container>
           </ion-list>
         </ion-content>
 

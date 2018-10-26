@@ -17,29 +17,25 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, HostBinding, Inject, LOCALE_ID, OnInit, QueryList, ViewChildren } from '@angular/core'
-import { ActivatedRoute, Router, Scroll } from '@angular/router'
+import { Location } from '@angular/common'
+import { Component, Inject, LOCALE_ID, OnInit, QueryList, ViewChildren } from '@angular/core'
+import { NavigationEnd, Router, Scroll } from '@angular/router'
 import { SwUpdate } from '@angular/service-worker'
 import { Plugins, StatusBarStyle } from '@capacitor/core'
-import {
-  IonRouterOutlet,
-  MenuController,
-  NavController,
-  Platform,
-  ToastController,
-} from '@ionic/angular'
-import { BackButtonEvent, setupConfig } from '@ionic/core'
+import { IonRouterOutlet, MenuController, NavController, Platform, ToastController } from '@ionic/angular'
+import { BackButtonEvent } from '@ionic/core'
 import { TranslateService } from '@ngx-translate/core'
 import { interval, Observable } from 'rxjs'
-import { filter, take } from 'rxjs/operators'
+import { filter, map, publishReplay, refCount, startWith, take } from 'rxjs/operators'
 import { environment } from '../environments/environment'
 import { APP_VERSION } from '../version'
 
 import { PageGroup, PAGES } from './menu-page.interface'
-import { Theme, ThemeManagerService } from './toolkit/providers/theme-manager.service'
 import { AuthService, User } from './toolkit/providers/auth-service'
 import { LogService } from './toolkit/providers/log-service'
 import { Logger } from './toolkit/providers/logger'
+import { Theme, ThemeManagerService } from './toolkit/providers/theme-manager.service'
+import { debugObservable, filterNotNull } from './utils/observables'
 
 const { SplashScreen, StatusBar } = Plugins
 
@@ -78,12 +74,14 @@ export class AppComponent implements OnInit {
               private navCtrl: NavController,
               private menuCtrl: MenuController,
               private router: Router,
-              private route: ActivatedRoute,
+              private location: Location,
               @Inject(LOCALE_ID) private locale: string,
               private themeManager: ThemeManagerService) {
 
     this.initializeApp()
   }
+
+  private currentUrl$: Observable<any>
 
   private async initializeApp() {
 
@@ -121,6 +119,15 @@ export class AppComponent implements OnInit {
         SplashScreen.hide()
       }
     })
+
+    this.currentUrl$ = this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd),
+      map(e => (e as NavigationEnd).urlAfterRedirects),
+      filterNotNull(),
+      startWith(this.location.path()),
+      publishReplay(1),
+      refCount(),
+    )
 
     // Override Ionic's default behavior
     if (this.platform.is('hybrid') ||

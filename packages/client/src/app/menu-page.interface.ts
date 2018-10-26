@@ -41,32 +41,27 @@ export const PAGES = [
         path: 'dashboard',
       },
       {
-        title: 'SIDEMENU.PROFILE', icon: 'person',
-        path: 'profile',
-      },
-    ],
-  },
-  {
-    title: 'SIDEMENU.DISTRIBUTION',
-    acceptedRoles: [Roles.DISTRIBUTOR],
-    pages: [
-      {
         title: 'SIDEMENU.CHECK_DISTRIBUTION', icon: 'checkmark',
+        acceptedRoles: [Roles.DISTRIBUTOR],
         path: 'distribution',
       },
-    ],
-  },
-  {
-    title: 'SIDEMENU.ADMINISTRATION',
-    acceptedRoles: [Roles.ADMINISTRATOR],
-    pages: [
       {
         title: 'SIDEMENU.ADHERENTS', icon: 'people',
+        acceptedRoles: [Roles.ADMINISTRATOR],
         path: 'members',
       },
       {
         title: 'SIDEMENU.REPORTS', icon: 'pie',
+        acceptedRoles: [Roles.ADMINISTRATOR],
         path: 'reports',
+      },
+    ],
+  },
+  {
+    pages: [
+      {
+        title: 'SIDEMENU.PROFILE', icon: 'person',
+        path: 'profile',
       },
     ],
   },

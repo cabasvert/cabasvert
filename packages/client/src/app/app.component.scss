@@ -17,6 +17,36 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+ion-menu {
+  --border: 1px solid var(--ion-item-border-color);
+}
+
+.menu-group {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-top: 1px solid var(--ion-item-border-color);
+}
+
+.menu-destination {
+  margin: 8px;
+  border-radius: 5px;
+  --border-radius: 5px !important;
+  --border-width: 0 !important;
+  --padding-start: 8px;
+
+  ion-icon {
+    margin-right: 15px;
+  }
+}
+
+.selected {
+  background-color: rgba(17, 128, 26, 0.30);
+}
+
+ion-footer::before {
+  background: none;
+}
+
 .version-number {
   margin: 5px;
   font-size: xx-small;
