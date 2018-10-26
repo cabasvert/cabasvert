@@ -19,11 +19,6 @@
 
 ion-item[small] {
   min-height: 32px !important;
-  border-top: groove .5px var(--ion-color-dark-tint);
-}
-
-ion-item[small]:last-of-type {
-  border-bottom: groove .5px var(--ion-color-dark-tint);
 }
 
 ion-item[small] .item-inner {

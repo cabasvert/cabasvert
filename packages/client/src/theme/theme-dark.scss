@@ -68,23 +68,23 @@ $text-color-value: #ffffff;
   --ion-text-color-step-1000: #{mix($background-color-value, $text-color-value, 100%)};
 
   --ion-color-light: #222;
-  --ion-color-light-rgb: 34,34,34;
+  --ion-color-light-rgb: 34, 34, 34;
   --ion-color-light-contrast: #fff;
-  --ion-color-light-contrast-rgb: 255,255,255;
+  --ion-color-light-contrast-rgb: 255, 255, 255;
   --ion-color-light-shade: #383838;
   --ion-color-light-tint: #1e1e1e;
 
   --ion-color-medium: #989aa2;
-  --ion-color-medium-rgb: 152,154,162;
+  --ion-color-medium-rgb: 152, 154, 162;
   --ion-color-medium-contrast: #000;
-  --ion-color-medium-contrast-rgb: 0,0,0;
+  --ion-color-medium-contrast-rgb: 0, 0, 0;
   --ion-color-medium-shade: #a2a4ab;
   --ion-color-medium-tint: #86888f;
 
   --ion-color-dark: #f4f4f4;
-  --ion-color-dark-rgb: 244,244,244;
+  --ion-color-dark-rgb: 244, 244, 244;
   --ion-color-dark-contrast: #000;
-  --ion-color-dark-contrast-rgb: 0,0,0;
+  --ion-color-dark-contrast-rgb: 0, 0, 0;
   --ion-color-dark-shade: #f5f5f5;
   --ion-color-dark-tint: #d7d7d7;
 
@@ -125,4 +125,12 @@ $text-color-value: #ffffff;
   --ion-item-border-color-rgb: #{color-to-rgb-list($item-border-color)};
 
   //--ion-placeholder-text-color            Text color of the item placeholder
+
+  // Cards
+
+  .sc-ion-card-md-h {
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .24),
+      0 3px 1px -2px rgba(0, 0, 0, .4),
+      0 1px 5px 0 rgba(0, 0, 0, .22);
+  }
 }
