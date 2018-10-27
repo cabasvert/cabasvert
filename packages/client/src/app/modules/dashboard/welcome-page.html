@@ -20,7 +20,7 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-menu-button data-testid="menu-button"></ion-menu-button>
     </ion-buttons>
 
     <ion-title>{{ 'DASHBOARD.TITLE' | translate }}</ion-title>
@@ -31,7 +31,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="cards-bg">
+<ion-content class="cards-bg" data-testid="dashboard">
   <pre *ngIf="error$ | async as error" style="font-size: xx-small;">{{ error }}</pre>
 
   <ion-card (click)="openDistributionPage()">

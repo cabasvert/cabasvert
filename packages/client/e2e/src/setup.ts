@@ -17,23 +17,4 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { launch } from 'puppeteer'
-import { baseUrl, sel } from './utils'
-
-describe('App', () => {
-  let browser
-
-  beforeAll(async () => {
-    browser = await launch()
-  })
-
-  afterAll(() => {
-    browser.close()
-  })
-
-  it('should start', async () => {
-    let page = await browser.newPage()
-    await page.goto(`${baseUrl}/`)
-    await page.waitForSelector(sel('app'))
-  })
-})
+jest.setTimeout(10000)

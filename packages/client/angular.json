@@ -50,6 +50,22 @@
                 }
               ]
             },
+            "test": {
+              "assets": [
+                "src/manifest.json",
+                {
+                  "glob": "**/*",
+                  "input": "src/assets",
+                  "output": "assets"
+                },
+                {
+                  "glob": "**/*.svg",
+                  "input": "node_modules/@ionic/angular/dist/ionic/svg",
+                  "output": "./svg"
+                },
+                "src/config.dev.json"
+              ]
+            },
             "debug": {
               "assets": [
                 "src/manifest.json",
@@ -124,6 +140,9 @@
           "configurations": {
             "development": {
               "browserTarget": "app:build:development"
+            },
+            "test": {
+              "browserTarget": "app:build:test"
             },
             "debug": {
               "browserTarget": "app:build:debug",

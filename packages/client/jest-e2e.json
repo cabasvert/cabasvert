@@ -3,7 +3,7 @@
   "globalSetup": "jest-environment-puppeteer/setup",
   "globalTeardown": "jest-environment-puppeteer/teardown",
   "testEnvironment": "jest-environment-puppeteer",
-  "setupTestFrameworkScriptFile": "expect-puppeteer",
+  "setupTestFrameworkScriptFile": "<rootDir>/e2e/src/setup.ts",
   "moduleNameMapper": {
     "^@ionic/core/loader": "<rootDir>/node_modules/@ionic/core/dist/esm/es5/ionic.define.js",
     "^@ionic/core/dist/ionic/svg": "<rootDir>/scripts/svg-override.js"
@@ -16,7 +16,7 @@
     "node_modules/(?!@capacitor|@ionic|@ngrx)"
   ],
   "roots": [
-    "<rootDir>/e2e/"
+    "<rootDir>/e2e/src"
   ],
   "collectCoverageFrom": [
     "**/*.ts",

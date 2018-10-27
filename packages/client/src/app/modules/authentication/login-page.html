@@ -32,7 +32,7 @@
     </ion-row>
     <ion-row class="login-box" justify-content-center>
       <ion-col size-lg="6" size-md="8" size-sm="12">
-        <form [formGroup]="form" (ngSubmit)="login()">
+        <form [formGroup]="form" (ngSubmit)="login()" data-testid="login-form">
 
           <ion-row>
             <ion-col>
@@ -42,7 +42,8 @@
                   <ion-label color="primary" position="stacked">
                     {{ 'LOGIN.USERNAME' | translate }}
                   </ion-label>
-                  <ion-input type="email" formControlName="username" autocomplete="on">
+                  <ion-input type="email" formControlName="username" autocomplete="on"
+                             data-testid="email-input">
                   </ion-input>
                 </ion-item>
 
@@ -50,7 +51,8 @@
                   <ion-label color="primary" position="stacked">
                     {{ 'LOGIN.PASSWORD' | translate }}
                   </ion-label>
-                  <ion-input type="password" formControlName="password" autocomplete="on">
+                  <ion-input type="password" formControlName="password" autocomplete="on"
+                             data-testid="password-input">
                   </ion-input>
                 </ion-item>
 
@@ -65,7 +67,8 @@
 
           <ion-row>
             <ion-col class="signup-col">
-              <ion-button class="submit-btn" expand="full" type="submit" [disabled]="!form.valid">
+              <ion-button class="submit-btn" expand="full" type="submit" [disabled]="!form.valid"
+                          data-testid="login-button">
                 {{ 'LOGIN.LOGIN' | translate }}
               </ion-button>
               <ion-button expand="block" fill="clear" (click)="forgotPassword()">
