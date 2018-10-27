@@ -17,14 +17,22 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { browser, by, element } from 'protractor'
+import { launch } from 'puppeteer'
 
-export class AppPage {
-  navigateTo() {
-    return browser.get('/')
-  }
+describe('App', () => {
+  let browser
 
-  getParagraphText() {
-    return element(by.deepCss('app-root ion-content')).getText()
-  }
-}
+  beforeAll(async () => {
+    browser = await launch()
+  })
+
+  afterAll(() => {
+    browser.close()
+  })
+
+  it('should start', async () => {
+    let page = await browser.newPage()
+    await page.goto('http://localhost:8100/')
+    await page.waitForSelector('[data-testid="app"]')
+  })
+})
