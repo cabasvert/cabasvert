@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*
  * This file is part of CabasVert.
  *
@@ -18,8 +19,7 @@
  */
 
 const nodeCleanup = require('node-cleanup');
-const { runDatabase } = require('../../../scripts/run-database');
-const { run, runDaemon, sleep } = require('../../../scripts/run-utils');
+const { run, runDaemon, setupExitHandler, sleep } = require('../../../scripts/run-utils');
 
 async function main() {
   let { watch } = parseArgs();
@@ -36,40 +36,6 @@ async function main() {
 
   try {
 
-    // Launch database
-    const { ready: dbReady, destroy: dbDestroy, host: dbHost, oneShot } = await runDatabase({
-      databaseName: process.env.DATABASE,
-      databaseHost: process.env.DATABASE_HOST,
-    });
-    if (dbDestroy) cleanupHandlers.push(dbDestroy);
-
-    // Wait for database to be ready
-    await dbReady();
-
-    let authEnv;
-
-    // Setup database
-    if (oneShot) {
-
-      authEnv = { 'DATABASE_USERNAME': 'username', 'DATABASE_PASSWORD': 'password' };
-      const authParams = ['--username=username', '--password=password'];
-
-      await run('cvt', [
-        `--host=${dbHost}`, ...authParams,
-        'setup',
-      ], { stdio: 'inherit' });
-
-      await run('cvt', [
-        `--host=${dbHost}`, ...authParams, '--db-name=_users',
-        'backup', 'restore', './data/sample-users.json',
-      ], { stdio: 'inherit' });
-
-      await run('cvt', [
-        `--host=${dbHost}`, ...authParams, '--db-name=test',
-        'backup', 'restore', './data/sample-data.json',
-      ], { stdio: 'inherit' });
-    }
-
     // Launch tsc
     if (watch) {
       cleanupHandlers.push(
@@ -82,11 +48,7 @@ async function main() {
 
     // Launch server
     try {
-      const env = {
-        'DATABASE_HOST': dbHost,
-        ...(authEnv || {}),
-      };
-      await (watch ? runWatchServer : runServer)(env);
+      await (watch ? runWatchServer : runServer)();
     } catch (err) {
       // Ignore server's SIGINT
       if (err.code !== 2 && err.code !== 128 + 2 && err.signal !== 'SIGINT') {
@@ -102,26 +64,12 @@ async function main() {
   }
 }
 
-async function runServer(env) {
-  return run('node', ['dist/cli'], { stdio: 'inherit', env });
+async function runServer() {
+  return run('node', ['dist/cli'], { stdio: 'inherit' });
 }
 
-async function runWatchServer(env) {
-  return run('nodemon', ['--inspect', 'dist/cli', '--watch', 'dist'], { stdio: 'inherit', env });
-}
-
-function setupExitHandler(cleanup) {
-  nodeCleanup((exitCode, signal) => {
-    if (signal === 'SIGINT') {
-      return false;
-    } else if (signal) {
-      cleanup().then(() => {
-        process.kill(process.pid, signal);
-      });
-      nodeCleanup.uninstall();
-      return false;
-    }
-  });
+async function runWatchServer() {
+  return run('nodemon', ['--inspect', 'dist/cli', '--watch', 'dist'], { stdio: 'inherit' });
 }
 
 function usage() {
@@ -148,4 +96,5 @@ function parseArgs() {
   return { watch: watch === '--watch' };
 }
 
+// noinspection JSIgnoredPromiseFromCall
 main();

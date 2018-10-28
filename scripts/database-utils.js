@@ -21,21 +21,6 @@ const fs = require('fs-extra');
 const http = require('http');
 const { docker, run, runDaemon } = require('./run-utils');
 
-async function runWithDatabase(options, promiseFactory) {
-
-  const { ready, destroy, host } = await runDatabase(options);
-
-  await ready();
-
-  try {
-    // Run the inner job
-    await promiseFactory(host);
-  } finally {
-    // Destroy the database host
-    if (destroy) await destroy();
-  }
-}
-
 async function runDatabase({ databaseName, databaseHost }) {
 
   const tmp = databaseName == null ? null : databaseName.split(':');
@@ -94,7 +79,7 @@ function selectDatabase(database, databaseHost) {
         cleanupHandler: async () => {
           await fs.unlink('log.txt');
           await fs.unlink(configFile);
-        }
+        },
       }),
       host: 'http://localhost:3000',
       oneShot: true,
@@ -124,5 +109,4 @@ function waitForDatabase(url) {
 
 module.exports = {
   runDatabase,
-  runWithDatabase
 };

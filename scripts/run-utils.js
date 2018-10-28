@@ -18,6 +18,7 @@
  */
 
 const execa = require('execa');
+const nodeCleanup = require('node-cleanup');
 
 function docker(image, ports) {
   const name = image.replace('/', '-').replace(':', '-') + '-' + Date.now();
@@ -26,7 +27,7 @@ function docker(image, ports) {
     'run',
     ...ports.reduce((acc, port) => [...acc, '-p', port], []),
     '--name', name,
-    '-d', image
+    '-d', image,
   ];
 
   return run('docker', args).then(function () {
@@ -56,6 +57,20 @@ function runDaemon(bin, args, opts) {
   });
 }
 
+function setupExitHandler(cleanup) {
+  nodeCleanup((exitCode, signal) => {
+    if (signal === 'SIGINT') {
+      return false;
+    } else if (signal) {
+      cleanup().then(() => {
+        process.kill(process.pid, signal);
+      });
+      nodeCleanup.uninstall();
+      return false;
+    }
+  });
+}
+
 function sleep(timeout) {
   return new Promise(resolve => setTimeout(resolve, timeout));
 }
@@ -64,5 +79,6 @@ module.exports = {
   docker,
   run,
   runDaemon,
+  setupExitHandler,
   sleep,
 };

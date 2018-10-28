@@ -21,8 +21,6 @@ import { Configuration } from './config'
 
 export function testConfiguration(): Configuration {
 
-  const { DATABASE_HOST: databaseHost } = process.env
-
   return {
     'port': 8080,
     'clientApplication': {
@@ -32,10 +30,10 @@ export function testConfiguration(): Configuration {
       'url': 'http://localhost:8080',
     },
     'database': {
-      'url': databaseHost,
+      'url': process.env.DATABASE_HOST || 'http://localhost:5984',
       'auth': {
-        'username': 'server-username',
-        'password': 'server-password',
+        'username': process.env.DATABASE_USERNAME || 'server-username',
+        'password': process.env.DATABASE_PASSWORD || 'server-password',
       },
     },
     mail: {
