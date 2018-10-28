@@ -28,6 +28,7 @@
     "coverage": "../../scripts/run-with-database.js jest --runInBand --coverage",
     "coverage:ci": "../../scripts/run-with-database.js jest --runInBand --coverage --verbose",
     "postcoverage": "cp coverage/coverage-final.json ../../.nyc_output/server.json",
+    "postcoverage:ci": "cp coverage/coverage-final.json ../../.nyc_output/server.json",
     "prebuild": "DATABASE=couchdb npm-run-all lint license-check test",
     "build": "npm-run-all clean compile pack",
     "pack": "yarn pack && mkdir artifacts ; mv cabasvert-server-*.tgz artifacts/",
@@ -96,6 +97,9 @@
   },
   "jest": {
     "preset": "jest-preset-typescript",
+    "roots": [
+      "<rootDir>/src/"
+    ],
     "collectCoverageFrom": [
       "**/*.ts",
       "!**/*.d.ts",

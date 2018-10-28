@@ -23,6 +23,7 @@
     "coverage": "jest --coverage",
     "coverage:ci": "jest --coverage --verbose --maxWorkers=$(nproc)",
     "postcoverage": "cp coverage/coverage-final.json ../../.nyc_output/data.json",
+    "postcoverage:ci": "cp coverage/coverage-final.json ../../.nyc_output/data.json",
     "prebuild": "npm-run-all lint license-check test",
     "build": "npm-run-all clean compile",
     "lint": "tslint --project 'tslint.json' 'src/**/*.ts'",
@@ -39,6 +40,9 @@
   },
   "jest": {
     "preset": "jest-preset-typescript",
+    "roots": [
+      "<rootDir>/src/"
+    ],
     "collectCoverageFrom": [
       "**/*.ts",
       "!**/*.d.ts",

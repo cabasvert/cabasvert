@@ -20,6 +20,7 @@
     "coverage": "jest --coverage",
     "coverage:ci": "jest --coverage --verbose --maxWorkers=$(nproc)",
     "postcoverage": "cp coverage/coverage-final.json ../../.nyc_output/client.json",
+    "postcoverage:ci": "cp coverage/coverage-final.json ../../.nyc_output/client.json",
     "e2e": "jest --config=jest-e2e.json",
     "prebuild": "npm-run-all prepare lint license-check test",
     "build": "node scripts/build.js",

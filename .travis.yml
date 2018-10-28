@@ -29,18 +29,21 @@ before_script:
 after_script:
   #  - greenkeeper-lockfile-upload
 
-after_success:
-  - DATABASE=couchdb:latest yarn run coverage:ci
-  - nyc report --reporter=text-lcov > coverage.lcov
-  - npx codecov
-
-script: yarn run $COMMAND
+script:
+  - lerna run --stream --scope="@cabasvert/$SCOPE" $COMMAND:ci
 
 env:
   global:
 
   matrix:
-  - DATABASE=couchdb:latest COMMAND=test:ci
+    # Test @cabasvert/data
+    - COMMAND=test SCOPE=data
+    # Test @cabasvert/server
+    - DATABASE=couchdb:latest COMMAND=test SCOPE=server
+    # Test @cabasvert/client
+    - COMMAND=test SCOPE=client
+    # Coverage
+    - DATABASE=couchdb:latest COMMAND=coverage SCOPE="*"
 
 branches:
   only:
