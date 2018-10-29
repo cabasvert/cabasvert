@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/cabasvert/cabasvert.svg?branch=master)](https://travis-ci.org/cabasvert/cabasvert)
 [![Greenkeeper badge](https://badges.greenkeeper.io/cabasvert/cabasvert.svg)](https://greenkeeper.io/)
 [![codecov](https://codecov.io/gh/cabasvert/cabasvert/branch/master/graph/badge.svg)](https://codecov.io/gh/cabasvert/cabasvert)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fcabasvert%2Fcabasvert.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fcabasvert%2Fcabasvert?ref=badge_shield)
 
 <table>
   <tr>
@@ -21,6 +22,9 @@
     </td>
   </tr>
 </table>
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fcabasvert%2Fcabasvert.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fcabasvert%2Fcabasvert?ref=badge_large)
 
 ## Setup
 
