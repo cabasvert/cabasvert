@@ -27,8 +27,7 @@
     "test:ci": "../../scripts/run-with-database.js jest --runInBand --verbose",
     "coverage": "../../scripts/run-with-database.js jest --runInBand --coverage",
     "coverage:ci": "../../scripts/run-with-database.js jest --runInBand --coverage --verbose",
-    "postcoverage": "cp coverage/coverage-final.json ../../.nyc_output/server.json",
-    "postcoverage:ci": "cp coverage/coverage-final.json ../../.nyc_output/server.json",
+    "postcoverage:ci": "codecov -f coverage/lcov.info -F server",
     "prebuild": "DATABASE=couchdb npm-run-all lint license-check test",
     "build": "npm-run-all clean compile pack",
     "pack": "yarn pack && mkdir artifacts ; mv cabasvert-server-*.tgz artifacts/",
@@ -114,7 +113,8 @@
     "coverageDirectory": "coverage",
     "coverageReporters": [
       "html",
-      "json"
+      "json",
+      "lcovonly"
     ],
     "testEnvironment": "node"
   }
