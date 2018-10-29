@@ -46,11 +46,6 @@
       "**/*.ts",
       "!**/*.d.ts",
       "!**/src/*",
-      "!**/src/**/*.module.ts",
-      "!**/src/shared/**/index.ts",
-      "!**/app/main.ts",
-      "!**/app/dev-landing-page/**",
-      "!**/assets/**",
       "!**/src/environments/environment.*"
     ],
     "coverageDirectory": "coverage",

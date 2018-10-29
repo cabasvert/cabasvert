@@ -102,13 +102,7 @@
     "collectCoverageFrom": [
       "**/*.ts",
       "!**/*.d.ts",
-      "!**/src/*",
-      "!**/src/**/*.module.ts",
-      "!**/src/shared/**/index.ts",
-      "!**/app/main.ts",
-      "!**/app/dev-landing-page/**",
-      "!**/assets/**",
-      "!**/src/environments/environment.*"
+      "!**/src/config-test.ts"
     ],
     "coverageDirectory": "coverage",
     "coverageReporters": [
