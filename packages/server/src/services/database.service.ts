@@ -84,7 +84,7 @@ export class DatabaseService {
   async logOut() {
     try {
       await this.db.logOut()
-    } catch (error) /* istanbul ignore next */ {
+    } catch (error) {
       this.logger.error(`Failed to log out: ${JSON.stringify(error)}`)
     }
   }
@@ -114,7 +114,7 @@ export class DatabaseService {
     }
   }
 
-  async updateUser(userId: string, data: { metadata: UserMetadata }): Promise<any> {
+  async updateUser(userId: string, data: { metadata: UserMetadata }): Promise<boolean> {
     const { ok } = await this.db.putUser(userId, { metadata: data })
     return ok
   }

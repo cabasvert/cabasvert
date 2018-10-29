@@ -17,11 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as PouchHttp from 'pouchdb-adapter-http'
-import * as PouchAuth from 'pouchdb-authentication'
 import * as PouchDB from 'pouchdb-core'
-import * as PouchFind from 'pouchdb-find'
-import * as PouchSecurity from 'pouchdb-security-helper'
 
 import 'reflect-metadata'
 import * as winston from 'winston'
@@ -29,223 +25,177 @@ import { testConfiguration } from '../config-test'
 
 import { DatabaseService } from './database.service'
 
-PouchDB
-  .plugin(PouchHttp)
-  .plugin(PouchFind)
-  .plugin(PouchAuth)
-  .plugin(PouchSecurity)
+jest.mock('pouchdb-core', () => {
+  const mockDatabase = {
+    logIn: jest.fn(),
+    logOut: jest.fn(),
+    getSession: jest.fn(),
+    getUser: jest.fn(),
+    find: jest.fn(),
+    putUser: jest.fn(),
+    changePassword: jest.fn(),
+  }
+  const mockPouchDB: any = jest.fn(() => mockDatabase)
+  mockPouchDB.plugin = jest.fn(() => mockPouchDB)
+  return mockPouchDB
+})
 
 describe('DatabaseService', () => {
 
   let configuration = testConfiguration()
 
-  let serverUser = configuration.database.auth
+  let url = configuration.database.url
+  let auth = configuration.database.auth
 
   let nullLogger: winston.Logger
   let databaseService: DatabaseService
-  let database
 
-  beforeAll(async () => {
-    // Ensure database exists
-    database = new PouchDB(configuration.database.url + '/_users')
-    await database.info()
-  })
+  let mockPouchDB
+  let mockDatabase
+
+  const fakeUser = {
+    name: 'fake@mail.com',
+    metadata: {
+      email: 'fake@mail.com',
+    },
+  }
 
   beforeEach(async () => {
-
     nullLogger = winston.createLogger({
       transports: [new winston.transports.Console({ silent: true })],
     })
     databaseService = new DatabaseService(configuration, nullLogger)
 
-    // Create user database
-    database = new PouchDB(configuration.database.url + '/_users', { skip_setup: true })
+    mockPouchDB = (PouchDB as any)
+    expect(mockPouchDB).toHaveBeenCalledTimes(1)
+    expect(mockPouchDB).toHaveBeenCalledWith(url + '/_users', { skip_setup: true })
+    mockDatabase = mockPouchDB.mock.results[0].value
 
-    await database.signUpAdmin('admin', 'password')
-    await database.logIn('admin', 'password')
-
-    // Add server admin user
-    await database.signUp(serverUser.username, serverUser.password, {
-      roles: ['cabasvert:admin'],
-    })
-
-    try {
-      let security = database.security()
-      await security.fetch()
-      security.admins.roles.add('cabasvert:admin')
-      await security.save()
-    } catch (e) {
-    }
-
-    // Add a fake user to database
-    await database.signUp('john.doe@example.com', 'password', {
-      metadata: {
-        metadata: {
-          name: 'John Doe',
-          email: 'john.doe@example.com',
-        },
-      },
-    })
-
-    await database.logOut()
+    mockDatabase.logIn.mockResolvedValue(true)
+    mockDatabase.logOut.mockResolvedValue(true)
+    mockDatabase.getSession.mockResolvedValue({ ok: true, userCtx: { name: auth.username } })
+    mockDatabase.getUser.mockResolvedValue(fakeUser)
+    mockDatabase.find.mockResolvedValue({ docs: [fakeUser] })
+    mockDatabase.putUser.mockResolvedValue({ ok: true })
+    mockDatabase.changePassword.mockResolvedValue({ ok: true })
   })
 
   afterEach(async () => {
-    await database.logIn('admin', 'password')
-
-    try {
-      let security = database.security()
-      await security.fetch()
-      security.reset()
-      await security.save()
-    } catch (e) {
-    }
-
-    await database.deleteUser(serverUser.username)
-
-    await database.deleteUser('john.doe@example.com')
-
-    await database.deleteAdmin('admin')
-    await database.logOut()
+    jest.clearAllMocks()
   })
 
   it('initializes properly', async () => {
     await databaseService.initialize()
+
+    expect(mockDatabase.logIn).toHaveBeenCalled()
+    expect(mockDatabase.logOut).toHaveBeenCalled()
   })
 
-  it('can\'t initialize properly if server user does not exist', async () => {
-    await database.logIn('admin', 'password')
-    await database.deleteUser(serverUser.username)
-    await database.logOut()
+  it('can\'t initialize properly if login fails', async () => {
+    mockDatabase.logIn.mockRejectedValueOnce(new Error())
 
+    let caughtError
     try {
-
       await databaseService.initialize()
-
-      expect(false).toBe(true)
     } catch (error) {
-      expect(error).toBeDefined()
-    } finally {
-
-      await database.logIn('admin', 'password')
-      await database.signUp(serverUser.username, serverUser.password, {
-        roles: ['cabasvert:admin'],
-      })
-      await database.logOut()
+      caughtError = error
     }
+    expect(caughtError).toBeDefined()
+
+    expect(mockDatabase.logIn).toHaveBeenCalled()
+  })
+
+  it('initializes properly even if logout fails', async () => {
+    mockDatabase.logOut.mockRejectedValueOnce(new Error())
+
+    let caughtError
+    try {
+      await databaseService.initialize()
+    } catch (error) {
+      caughtError = error
+    }
+    expect(caughtError).toBeUndefined()
+
+    expect(mockDatabase.logIn).toHaveBeenCalled()
+    expect(mockDatabase.logOut).toHaveBeenCalled()
+  })
+
+  it('can retrieve users by their email', async () => {
+    let email = 'john.doe@example.com'
+    let user = await databaseService.getUser(email)
+
+    expect(user).toMatchObject(fakeUser)
+    expect(mockDatabase.find).toHaveBeenCalledWith({
+      selector: {
+        type: 'user',
+        metadata: { email: email },
+      },
+    })
+    expect(mockDatabase.getUser).toHaveBeenCalledTimes(0)
   })
 
   it('can retrieve users by their id', async () => {
-    try {
-      await databaseService.logIn()
+    mockDatabase.find.mockResolvedValueOnce({ docs: [] })
 
-      let user = await databaseService.getUser('john.doe@example.com')
+    let email = 'john.doe@example.com'
+    let user = await databaseService.getUser(email)
 
-      expect(user).toMatchObject({
-        _id: 'org.couchdb.user:john.doe@example.com',
+    expect(user).toMatchObject(fakeUser)
+    expect(mockDatabase.find).toHaveBeenCalledWith({
+      selector: {
         type: 'user',
-        name: 'john.doe@example.com',
-        roles: [],
-        metadata: { name: 'John Doe', email: 'john.doe@example.com' },
-      })
-    } finally {
-      await databaseService.logOut()
-    }
+        metadata: { email: email },
+      },
+    })
+    expect(mockDatabase.getUser).toHaveBeenCalledWith(email)
   })
 
-  it('errors if user is not found', async () => {
-    try {
-      await databaseService.logIn()
+  it('returns null if user is not found', async () => {
+    mockDatabase.find.mockResolvedValueOnce({ docs: [] })
+    mockDatabase.getUser.mockResolvedValueOnce(null)
 
-      await databaseService.getUser('jane.smith@me.com')
-
-    } catch (error) {
-      expect(error).toBeDefined()
-    } finally {
-      await databaseService.logOut()
-    }
+    expect(await databaseService.getUser('jane.smith@me.com')).toBeNull()
   })
 
-  it('can update users\' metadata', async () => {
-    try {
-      await databaseService.logIn()
-
-      expect(
-        await databaseService.updateUser('john.doe@example.com', {
-          metadata: {
-            name: 'metadata',
-            email: 'john.doe@example.com',
-          },
-        }),
-      ).toEqual(true)
-
-      let user = await databaseService.getUser('john.doe@example.com')
-
-      expect(user).toEqual(jasmine.objectContaining({
-        metadata: jasmine.objectContaining({
-          name: 'metadata',
-        }),
-      }))
-    } finally {
-      await databaseService.logOut()
-    }
-  })
-
-  it('can change users\' passwords', async () => {
-    try {
-      await databaseService.logIn()
-
-      expect(
-        await databaseService.changePassword('john.doe@example.com', 'newPassword'),
-      ).toEqual(true)
-    } finally {
-      await databaseService.logOut()
-    }
-
+  it('can update user metadata', async () => {
     expect(
-      await database.logIn('john.doe@example.com', 'newPassword'),
-    ).toEqual({ ok: true, name: 'john.doe@example.com', roles: [] })
+      await databaseService.updateUser('john.doe@example.com', {
+        metadata: {
+          name: 'metadata',
+          email: 'john.doe@example.com',
+        },
+      }),
+    ).toEqual(true)
 
-    await database.logOut()
+    expect(mockDatabase.putUser).toHaveBeenCalledWith('john.doe@example.com', {
+      metadata: {
+        metadata: {
+          name: 'metadata',
+          email: 'john.doe@example.com',
+        },
+      },
+    })
+  })
+
+  it('can change user password', async () => {
+    expect(
+      await databaseService.changePassword('john.doe@example.com', 'newPassword'),
+    ).toEqual(true)
+
+    expect(mockDatabase.changePassword).toHaveBeenCalledWith('john.doe@example.com', 'newPassword')
   })
 
   it('reports OK status', async () => {
     expect(await databaseService.status()).toEqual({ ok: true })
+
+    expect(mockDatabase.logIn).toHaveBeenCalled()
+    expect(mockDatabase.getSession).toHaveBeenCalled()
+    expect(mockDatabase.logOut).toHaveBeenCalled()
   })
 
-  it('reports KO status if server user does not exist', async () => {
-    let failConfiguration = testConfiguration()
-    failConfiguration.database.auth = { username: 'fakeadmin', password: 'fakepassword' }
-    databaseService = new DatabaseService(failConfiguration, nullLogger)
+  it('reports KO status if login fails', async () => {
+    mockDatabase.logIn.mockRejectedValueOnce('error')
 
-    expect(await databaseService.status()).toEqual({
-      ok: false,
-      error: {
-        error: 'unauthorized',
-        reason: 'Name or password is incorrect.',
-        name: 'unauthorized',
-        status: 401,
-        message: 'Name or password is incorrect.',
-      },
-    })
-  })
-
-  it('reports KO status if database is offline', async () => {
-    let failConfiguration = testConfiguration()
-    failConfiguration.database.url = 'http://erroneous'
-    databaseService = new DatabaseService(failConfiguration, nullLogger)
-
-    expect(await databaseService.status()).toEqual({
-      ok: false,
-      error: {
-        errno: 'ENOTFOUND',
-        code: 'ENOTFOUND',
-        syscall: 'getaddrinfo',
-        hostname: 'erroneous',
-        host: 'erroneous',
-        port: 80,
-        status: 500,
-      },
-    })
+    expect(await databaseService.status()).toEqual({ ok: false, error: 'error' })
   })
 })
