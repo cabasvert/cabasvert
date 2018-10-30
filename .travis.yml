@@ -30,20 +30,13 @@ after_script:
   #  - greenkeeper-lockfile-upload
 
 script:
-  - lerna run --stream --scope="@cabasvert/$SCOPE" $COMMAND:ci
+  - yarn run $COMMAND
 
 env:
   global:
 
   matrix:
-    # Test @cabasvert/data
-    - COMMAND=test SCOPE=data
-    # Test @cabasvert/server
-    - DATABASE=couchdb:latest COMMAND=test SCOPE=server
-    # Test @cabasvert/client
-    - COMMAND=test SCOPE=client
-    # Coverage
-    - DATABASE=couchdb:latest COMMAND=coverage SCOPE="*"
+    - COMMAND=test:ci
 
 branches:
   only:

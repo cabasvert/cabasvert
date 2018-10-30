@@ -24,11 +24,8 @@
     "pretest": "npm-run-all compile-test",
     "test": "jest --runInBand",
     "test:watch": "jest --runInBand --watch",
-    "test:ci": "jest --runInBand --verbose",
-    "coverage": "jest --runInBand --coverage",
-    "coverage:ci": "jest --runInBand --coverage --verbose",
-    "postcoverage:ci": "codecov -f coverage/lcov.info -F server",
-    "prebuild": "DATABASE=couchdb npm-run-all lint license-check test",
+    "test:coverage": "jest --runInBand --coverage",
+    "prebuild": "npm-run-all lint license-check test",
     "build": "npm-run-all clean compile pack",
     "pack": "yarn pack && mkdir artifacts ; mv cabasvert-server-*.tgz artifacts/",
     "lint": "tslint --project 'tslint.json' 'src/**/*.ts'",
@@ -106,9 +103,7 @@
     ],
     "coverageDirectory": "coverage",
     "coverageReporters": [
-      "html",
-      "json",
-      "lcovonly"
+      "html"
     ],
     "testEnvironment": "node"
   }

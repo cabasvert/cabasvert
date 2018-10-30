@@ -16,10 +16,7 @@
     "start:prod": "ng run app:serve:production",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:ci": "jest --verbose --maxWorkers=$(nproc)",
-    "coverage": "jest --coverage",
-    "coverage:ci": "jest --coverage --verbose --maxWorkers=$(nproc)",
-    "postcoverage:ci": "codecov -f coverage/lcov.info -F client",
+    "test:coverage": "jest --coverage",
     "e2e": "jest --config=jest-e2e.json",
     "prebuild": "npm-run-all prepare lint license-check test",
     "build": "node scripts/build.js",
@@ -145,13 +142,12 @@
     "collectCoverageFrom": [
       "**/*.ts",
       "!**/*.d.ts",
-      "!**/src/*"
+      "!**/src/*",
+      "!**/src/environments/environment.*"
     ],
     "coverageDirectory": "coverage",
     "coverageReporters": [
-      "html",
-      "json",
-      "lcovonly"
+      "html"
     ]
   }
 }

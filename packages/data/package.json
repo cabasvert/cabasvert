@@ -19,10 +19,7 @@
     "pretest": "npm-run-all compile-test",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:ci": "jest --verbose --maxWorkers=$(nproc)",
-    "coverage": "jest --coverage",
-    "coverage:ci": "jest --coverage --verbose --maxWorkers=$(nproc)",
-    "postcoverage:ci": "codecov -f coverage/lcov.info -F data",
+    "test:coverage": "jest --coverage",
     "prebuild": "npm-run-all lint license-check test",
     "build": "npm-run-all clean compile",
     "lint": "tslint --project 'tslint.json' 'src/**/*.ts'",
@@ -44,15 +41,11 @@
     ],
     "collectCoverageFrom": [
       "**/*.ts",
-      "!**/*.d.ts",
-      "!**/src/*",
-      "!**/src/environments/environment.*"
+      "!**/*.d.ts"
     ],
     "coverageDirectory": "coverage",
     "coverageReporters": [
-      "html",
-      "json",
-      "lcovonly"
+      "html"
     ]
   }
 }
