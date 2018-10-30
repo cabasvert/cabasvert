@@ -37,7 +37,7 @@ pullConfigFromEnv(configuration.database.auth, 'password', 'DATABASE_PASSWORD')
 pullConfigFromEnv(configuration.mail, 'mailToConsole', 'MAIL_TO_CONSOLE')
 
 let generateClientConfig = argv['generate-client-config']
-if (generateClientConfig !== null) {
+if (generateClientConfig) {
   writeClientConfiguration(configuration, generateClientConfig)
 }
 
