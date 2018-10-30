@@ -37,6 +37,7 @@ env:
 
   matrix:
     - COMMAND=test:ci
+    - COMMAND=e2e:ci
 
 branches:
   only:

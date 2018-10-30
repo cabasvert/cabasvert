@@ -19,6 +19,7 @@
 
 const execa = require('execa');
 const nodeCleanup = require('node-cleanup');
+const LineWrapper = require('stream-line-wrapper');
 
 function docker(image, ports) {
   const name = image.replace('/', '-').replace(':', '-') + '-' + Date.now();
@@ -39,15 +40,30 @@ function docker(image, ports) {
 }
 
 function run(bin, args, opts) {
-  console.log('$ ' + bin + (args ? ' ' + args.join(' ') : ''));
-  return execa(bin, args, opts);
+  const { prefix } = opts || {};
+
+  if (prefix) {
+    opts['stdio'] = ['ignore', 'pipe', 'pipe'];
+  }
+
+  console.log((prefix || '') + '$ ' + bin + (args ? ' ' + args.join(' ') : ''));
+  const childProcess = execa(bin, args, opts);
+
+  if (prefix) {
+    const wrapperOut = new LineWrapper({ prefix });
+    const wrapperErr = new LineWrapper({ prefix });
+
+    childProcess.stdout.pipe(wrapperOut).pipe(process.stdout);
+    childProcess.stderr.pipe(wrapperErr).pipe(process.stderr);
+  }
+
+  return childProcess;
 }
 
 function runDaemon(bin, args, opts) {
-  console.log('$ ' + bin + (args ? ' ' + args.join(' ') : ''));
-
   const { cleanupHandler } = opts || {};
-  const daemonProcess = execa(bin, args, opts);
+
+  const daemonProcess = run(bin, args, opts);
 
   return Promise.resolve().then(function () {
     return async () => {

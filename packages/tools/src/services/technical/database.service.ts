@@ -79,7 +79,7 @@ export class DatabaseService {
 
       const session = await db.getSession()
       if (session.ok && !!session.userCtx.name) {
-        this.logger.info(`Successfully logged user in '${user.username}' in.`)
+        this.logger.debug(`Successfully logged user in '${user.username}' in.`)
         return true
       }
 

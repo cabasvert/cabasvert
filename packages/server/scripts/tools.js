@@ -17,21 +17,24 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const path = require('path');
 const { run, runDaemon } = require('../../../scripts/run-utils');
 
-async function build() {
-  await run('tsc', ['--build', 'src/tsconfig.build.json']);
+const cwd = path.resolve(__dirname, '../');
+
+async function build({ prefix }) {
+  await run('tsc', ['--build', 'src/tsconfig.build.json'], { stdio: 'inherit', cwd, prefix });
 }
 
-async function start({ watch, prod, env }) {
+async function start({ watch, prod, env, prefix }) {
   let destroy;
 
   if (watch) {
-    destroy = await runDaemon('ts-node-dev', ['src/cli.ts'], { stdio: 'inherit' });
+    destroy = await runDaemon('ts-node-dev', ['src/cli.ts'], { stdio: 'inherit', cwd, prefix });
   } else {
-    await build();
+    await build({ prefix });
 
-    destroy = await runDaemon('node', ['dist/cli'], { stdio: 'inherit' });
+    destroy = await runDaemon('node', ['dist/cli'], { stdio: 'inherit', cwd, prefix });
   }
 
   return {

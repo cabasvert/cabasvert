@@ -35,16 +35,16 @@ async function main() {
       databaseHost: process.env.DATABASE_HOST,
     });
 
+    setupExitHandler(async function () {
+      if (destroy) await destroy();
+    });
+
     // Wait for the database to be ready
     await ready();
 
     // Install database fixtures
     const fixtures = process.env.FIXTURES;
     if (oneShot && fixtures) await setupFixtures(fixtures, host, auth);
-
-    setupExitHandler(async function () {
-      if (destroy) await destroy();
-    });
 
     try {
 

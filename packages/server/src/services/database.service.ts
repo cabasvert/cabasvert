@@ -74,7 +74,9 @@ export class DatabaseService {
       const res = await this.db.getSession()
 
       this.logger.info(`Successfully logged user '${username}' in.`)
-      this.logger.debug(`Session: ${JSON.stringify(res)}`)
+      if (!res.userCtx || res.userCtx.name !== username) {
+        this.logger.error(`getSession() reported invalid user ${res.userCtx && res.userCtx.name}`)
+      }
     } catch (error) {
       this.logger.error(`Failed to log user '${username}' in: ${JSON.stringify(error)}`)
       throw error
