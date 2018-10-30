@@ -43,26 +43,6 @@
                   "input": "node_modules/@ionic/angular/dist/ionic/svg",
                   "output": "./svg"
                 },
-                {
-                  "glob": "*.dev.json",
-                  "input": "src/",
-                  "output": "./"
-                }
-              ]
-            },
-            "test": {
-              "assets": [
-                "src/manifest.json",
-                {
-                  "glob": "**/*",
-                  "input": "src/assets",
-                  "output": "assets"
-                },
-                {
-                  "glob": "**/*.svg",
-                  "input": "node_modules/@ionic/angular/dist/ionic/svg",
-                  "output": "./svg"
-                },
                 "src/config.dev.json"
               ]
             },
@@ -79,11 +59,7 @@
                   "input": "node_modules/@ionic/angular/dist/ionic/svg",
                   "output": "./svg"
                 },
-                {
-                  "glob": "*.prod.json",
-                  "input": "src/",
-                  "output": "./"
-                }
+                "src/config.prod.json"
               ],
               "fileReplacements": [
                 {
@@ -105,11 +81,7 @@
                   "input": "node_modules/@ionic/angular/dist/ionic/svg",
                   "output": "./svg"
                 },
-                {
-                  "glob": "*.prod.json",
-                  "input": "src/",
-                  "output": "./"
-                }
+                "src/config.prod.json"
               ],
               "fileReplacements": [
                 {

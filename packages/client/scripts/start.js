@@ -18,23 +18,24 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const { build } = require('./tools');
+const { start } = require('./tools');
 const meow = require('meow');
+const { setupExitHandler } = require('../../../scripts/run-utils');
 
 const cli = meow(`
     Usage
-      $ start.js [all|browser|android]
+      $ start.js
  
     Options
-      --dev       Make a development build
-      --debug     Make a debug build
-      --prod      Make a production build
+      --watch, -w    Watch source files
+      --prod         Use production build
 `, {
   booleanDefault: undefined,
   flags: {
-    debug: {
+    watch: {
       type: 'boolean',
       default: false,
+      alias: 'w',
     },
     prod: {
       type: 'boolean',
@@ -43,8 +44,9 @@ const cli = meow(`
   },
 });
 
-build({
-  target: cli.input[0],
+let { destroy } = start({
   ...cli.flags,
   env: process.env,
 });
+
+setupExitHandler(destroy);
