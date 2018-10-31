@@ -107,19 +107,6 @@
       "pouchdb-replication"
     ]
   },
-  "license-check-config": {
-    "src": [
-      "src/**/*.js",
-      "src/**/*.ts",
-      "e2e/**/*.js",
-      "e2e/**/*.ts",
-      "!./node_modules/**/*"
-    ],
-    "path": "assets/header.txt",
-    "blocking": false,
-    "logInfo": false,
-    "logError": true
-  },
   "jest": {
     "preset": "jest-preset-angular",
     "setupTestFrameworkScriptFile": "<rootDir>/src/setupJest.ts",

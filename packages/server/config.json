@@ -17,8 +17,8 @@
     "email": "email@example.com",
     "mailToConsole": true,
     "smtpConnection": {
-      "host": "smtp.example.com",
-      "port": 587,
+      "host": "localhost",
+      "port": 2025,
       "secure": false,
       "auth": {
         "user": "email-username",
