@@ -20,7 +20,9 @@
 import { Component, OnInit } from '@angular/core'
 import { FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms'
 import { AlertController, LoadingController, ModalController, ToastController } from '@ionic/angular'
+import { TranslateService } from '@ngx-translate/core'
 import { Observable, of, Subject } from 'rxjs'
+import { ConfigurationService } from '../../config/configuration.service'
 import { AuthService } from '../../toolkit/providers/auth-service'
 import { Feedback } from '../authentication/login-page'
 
@@ -42,7 +44,8 @@ export class ChangePasswordPage implements OnInit {
               private alertCtrl: AlertController,
               private loadingCtrl: LoadingController,
               private toastCtrl: ToastController,
-              private formBuilder: FormBuilder) {
+              private formBuilder: FormBuilder,
+              private translate: TranslateService) {
 
     this.form = this.formBuilder.group({
       oldPassword: ['', Validators.required],
@@ -57,7 +60,7 @@ export class ChangePasswordPage implements OnInit {
   }
 
   async doChangePassword() {
-    await this.showLoading()
+    await this.showLoading(this.translate.instant('CHANGE_PASSWORD.CHANGING_PASSWORD'))
 
     try {
       const success = await this.auth.changePassword({
@@ -74,19 +77,17 @@ export class ChangePasswordPage implements OnInit {
         await this.dismissLoading()
 
         await this.modalCtrl.dismiss()
-        await this.showFeedback('Password changed successfully')
+        await this.showFeedback(this.translate.instant('CHANGE_PASSWORD.PASSWORD_CHANGED'))
       } else {
-        await this.showError('Access Denied.')
+        await this.showError(this.translate.instant('CHANGE_PASSWORD.CHANGE_PASSWORD_FAILED'))
       }
     } catch (error) {
       await this.showError(error)
     }
   }
 
-  async showLoading() {
-    const loading = await this.loadingCtrl.create({
-      message: 'Please wait...',
-    })
+  private async showLoading(message: string) {
+    const loading = await this.loadingCtrl.create({ message })
     await loading.present()
   }
 
@@ -132,7 +133,7 @@ export class ChangePasswordPage implements OnInit {
     const confirmedPassword = c.get('confirmedPassword')
 
     if (!newPassword.value || !confirmedPassword.value) {
-      return of(null)
+      return null
     }
 
     return newPassword.value === confirmedPassword.value ? null : { 'passwordsDoNotMatch': true }

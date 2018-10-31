@@ -70,7 +70,7 @@
     "CONFIRMED_PASSWORD": "Confirmer mot de passe",
     "RESET_PASSWORD": "Réinitialiser",
     "PASSWORDS_DO_NOT_MATCH": "Mots de passe différents",
-    "CHANGING_PASSWORD": "Réinitialisation...",
+    "CHANGING_PASSWORD": "Réinitialisation en cours...",
     "PASSWORD_CHANGED": "Mot de passe réinitialisé",
     "RESET_PASSWORD_FAILED": "Réinitialisation échouée",
     "ERROR_MISSING_DATA": "Données manquantes",
@@ -85,11 +85,19 @@
     "SETTINGS": "Préférences",
     "DARK_THEME": "Thème sombre",
     "SECURITY": "Sécurité",
-    "CHANGE_PASSWORD": "Changer de mot de passe",
+    "CHANGE_PASSWORD": "Changer de mot de passe"
+  },
+  "CHANGE_PASSWORD": {
+    "TITLE": "Changer mot de passe",
     "OLD_PASSWORD": "Ancien mot de passe",
     "NEW_PASSWORD": "Nouveau mot de passe",
     "CONFIRMED_PASSWORD": "Confirmer le nouveau mot de passe",
-    "STORE_PASSWORD": "Enregistrer le mot de passe"
+    "STORE_PASSWORD": "Enregistrer le mot de passe",
+    "CHANGE_PASSWORD": "Changer mot de passe",
+    "PASSWORDS_DO_NOT_MATCH": "Mots de passe différents",
+    "CHANGING_PASSWORD": "Changement en cours...",
+    "PASSWORD_CHANGED": "Mot de passe changé",
+    "CHANGE_PASSWORD_FAILED": "Changement échoué"
   },
   "MEMBER": {
     "PLURAL": "adhérents",

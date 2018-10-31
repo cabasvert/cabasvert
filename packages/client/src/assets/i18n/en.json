@@ -85,11 +85,19 @@
     "SETTINGS": "Settings",
     "DARK_THEME": "Dark theme",
     "SECURITY": "Security",
-    "CHANGE_PASSWORD": "Change password",
+    "CHANGE_PASSWORD": "Change password"
+  },
+  "CHANGE_PASSWORD": {
+    "TITLE": "Change password",
     "OLD_PASSWORD": "Old password",
     "NEW_PASSWORD": "New password",
     "CONFIRMED_PASSWORD": "Confirm new password",
-    "STORE_PASSWORD": "Store password"
+    "STORE_PASSWORD": "Store password",
+    "CHANGE_PASSWORD": "Change password",
+    "PASSWORDS_DO_NOT_MATCH": "Passwords don't match",
+    "CHANGING_PASSWORD": "Changing password...",
+    "PASSWORD_CHANGED": "Password changed successfully",
+    "CHANGE_PASSWORD_FAILED": "Change password failed"
   },
   "MEMBER": {
     "PLURAL": "members",
