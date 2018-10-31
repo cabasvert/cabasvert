@@ -9,7 +9,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "lint": "ng lint",
+    "lint": "tslint --project 'tslint.json' 'src/**/*.ts'",
     "license-check": "node ../../scripts/license-check.js"
   },
   "private": true,
