@@ -296,12 +296,12 @@
   dependencies:
     "@types/cordova" latest
 
-"@ionic/angular@^4.0.0-beta.13":
-  version "4.0.0-beta.13"
-  resolved "https://registry.yarnpkg.com/@ionic/angular/-/angular-4.0.0-beta.13.tgz#dfee30a9513c29df03e19025e4a04ac659e484a0"
-  integrity sha512-BfbHAL1JFZhIuefS64YIFQPqlKaRM5NV1NeG09eudzV8gRR3mH1k9eDYK9sw/+5o0Xe1WeMixtIzZp354CN3jQ==
+"@ionic/angular@^4.0.0-beta.15-0":
+  version "4.0.0-beta.15-0"
+  resolved "https://registry.yarnpkg.com/@ionic/angular/-/angular-4.0.0-beta.15-0.tgz#f65b02e63249f8306096d7e694ca91f34e9911e7"
+  integrity sha512-afvHeMsoNPwgD94Wd7qtpGJ5L6m9tFKYvqXxwEo8WwVO35v7PISW6b9+hAlL0pjXvaYDdTsm6j00+ddho/CSzg==
   dependencies:
-    "@ionic/core" "4.0.0-beta.13"
+    "@ionic/core" "4.0.0-beta.15-0"
 
 "@ionic/cli-framework@1.1.0":
   version "1.1.0"
@@ -347,10 +347,10 @@
     wrap-ansi "^4.0.0"
     write-file-atomic "^2.3.0"
 
-"@ionic/core@4.0.0-beta.13", "@ionic/core@^4.0.0-beta.13":
-  version "4.0.0-beta.13"
-  resolved "https://registry.yarnpkg.com/@ionic/core/-/core-4.0.0-beta.13.tgz#e9f90324b82f6864bdabcca995d94e08573e0cf3"
-  integrity sha512-Zl4HSiN4xJhlS5aRN9OtIajhJ8+LlN+Ucgm03Nqzsb42ungbdrE/1zC3os4YUmW5c9SfX43CsPxPDIWQzOY2EA==
+"@ionic/core@4.0.0-beta.15-0", "@ionic/core@^4.0.0-beta.15-0":
+  version "4.0.0-beta.15-0"
+  resolved "https://registry.yarnpkg.com/@ionic/core/-/core-4.0.0-beta.15-0.tgz#f0f231f1da8573eebd92ca4e4183f19517f9ef03"
+  integrity sha512-ccIZ6ztWM7WVpXNPSRWpOTcupEWdYIw9ZZYA9CRebGDE98s3YuNCQ0h62yFHONYLXzdZqL01Z6Ewd8MQ6OG6IA==
   dependencies:
     "@types/node" "10.11.0"
     ionicons "4.4.6"
@@ -425,17 +425,17 @@
     tree-kill "1.2.0"
     webpack-sources "1.2.0"
 
-"@ngx-translate/core@^10.0.2":
-  version "10.0.2"
-  resolved "https://registry.yarnpkg.com/@ngx-translate/core/-/core-10.0.2.tgz#5eeb78f47845b476a1e892fb2fb153dbbaf72850"
-  integrity sha512-7nM3DrJaqKswwtJlbu2kuKNl+hE8Isr18sKsKvGGpSxQk+G0gO0reDlx2PhUNus7TJTkA1C59vU/JoN8hIvZ4g==
+"@ngx-translate/core@^11.0.0":
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/@ngx-translate/core/-/core-11.0.0.tgz#700675ee276a9f567760218b8e43e276479ebdce"
+  integrity sha512-wCeHhDqrkt1h8gApyzxEQcDLGJ/LcihNMmk0BPT3BMn/4R+pDoBEG2ZyjcYpj1Wt36zBCXONTSzBD9vPclfWzQ==
   dependencies:
     tslib "^1.9.0"
 
-"@ngx-translate/http-loader@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@ngx-translate/http-loader/-/http-loader-3.0.1.tgz#20b0f98bc6c25321129d3e3302ab3cc489c0a42a"
-  integrity sha1-ILD5i8bCUyESnT4zAqs8xInApCo=
+"@ngx-translate/http-loader@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@ngx-translate/http-loader/-/http-loader-4.0.0.tgz#8a555248ad4b7d513460fcec9da25b0447962f1d"
+  integrity sha512-x8LumqydWD7eX9yQTAVeoCM9gFUIGVTUjZqbxdAUavAA3qVnk9wCQux7iHLPXpydl8vyQmLoPQR+fFU+DUDOMA==
   dependencies:
     tslib "^1.9.0"
 
@@ -2884,7 +2884,7 @@ expect@^23.6.0:
     jest-message-util "^23.4.0"
     jest-regex-util "^23.3.0"
 
-express@^4.16.2:
+express@^4.16.2, express@^4.16.4:
   version "4.16.4"
   resolved "https://registry.yarnpkg.com/express/-/express-4.16.4.tgz#fddef61926109e24c515ea97fd2f1bdbf62df12e"
   integrity sha512-j12Uuyb4FMrd/qQAm6uCHAkPtO8FDTRJZBDd5D2KOL2eLaz1yUNdUB/NOIyq0iU4q4cFarsUCrnFDPBcnksuOg==

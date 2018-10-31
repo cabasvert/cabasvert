@@ -52,8 +52,8 @@ ion-toolbar.filter-toggles {
     --padding-end: .7em;
 
     &[fill='solid'] {
-      margin-left: 1px;
-      margin-right: 1px;
+      margin-left: 2px;
+      margin-right: 2px;
     }
   }
 }
@@ -61,6 +61,10 @@ ion-toolbar.filter-toggles {
 ion-content ion-list {
   // Make the list above bottom with margin 10px + 56px (fab-button) + 10px
   margin-bottom: 2 * 10px + 56px;
+}
+
+.list-md:not(.list-inset):not(.list-md-lines-none) .item:last-child {
+  --border-width: 0 !important;
 }
 
 .item.item-divider {

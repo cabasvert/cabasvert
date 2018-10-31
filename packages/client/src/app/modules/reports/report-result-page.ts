@@ -33,7 +33,7 @@ import { ReportService } from './report.service'
 })
 export class ReportResultPage implements OnInit {
 
-  reportTitle: string
+  title$: Observable<string>
 
   tables$: Observable<ReportTable[]>
 
@@ -46,6 +46,9 @@ export class ReportResultPage implements OnInit {
   ngOnInit() {
     let reportName$ = this.route.paramMap.pipe(
       map(params => params.get('name')),
+    )
+    this.title$ = reportName$.pipe(
+      map(report => this.reportsGenerator.reportByName(report).title)
     )
     this.tables$ = reportName$.pipe(
       switchMap(report => this.reportsGenerator.generate$(report)),

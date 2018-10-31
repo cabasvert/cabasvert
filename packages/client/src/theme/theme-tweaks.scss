@@ -72,6 +72,11 @@ ion-toolbar.toolbar-thinner {
   --min-height: 42px;
 }
 
+ion-toolbar ion-segment.sc-ion-segment-md-h {
+  --color: #{var(--ion-toolbar-color)};
+  --color-checked: #{var(--ion-toolbar-color-actived)};
+}
+
 // Large popover
 
 .large-popover .popover-content {

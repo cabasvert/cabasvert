@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 @import "~@ionic/core/dist/collection/themes/ionic.functions.color";
 
 $background-color-value: #2c2c2c;
@@ -96,27 +95,26 @@ $text-color-value: #ffffff;
   //--ion-border-color                      Border color
   //--ion-box-shadow-color                  Box shadow color
 
-  //--ion-tabbar-background-color           Background color of the tabbar
-  //--ion-tabbar-background-color-focused   Background color of the focused tabbar
-  //--ion-tabbar-border-color               Border color of the tabbar
-  //--ion-tabbar-text-color                 Text color of the tabbar
-  //--ion-tabbar-text-color-active          Text color of the active tab
+  //--ion-tab-bar-background                Background color of the tabbar
+  //--ion-tab-bar-background-focused        Background color of the focused tabbar
+  //--ion-tab-bar-border-color              Border color of the tabbar
+  //--ion-tab-bar-color                     Text color of the tabbar
+  //--ion-tab-bar-color-actived             Text color of the active tab
 
-  //--ion-toolbar-background-color          Background color of the toolbar
+  //--ion-toolbar-background                Background color of the toolbar
   //--ion-toolbar-border-color              Border color of the toolbar
-  //--ion-toolbar-color-inactive            Color of the toolbar
-  //--ion-toolbar-color-active              Color of the active toolbar
-  //--ion-toolbar-text-color                Text color of the toolbar
+  //--ion-toolbar-color                     Text color of the toolbar
+  //--ion-toolbar-color-actived             Color of the active toolbar
 
-  --ion-toolbar-background-color: #3f3f3f;
+  --ion-toolbar-background: #3f3f3f;
   --ion-toolbar-border-color: #4c4c4c;
-  --ion-toolbar-color-active: #ccc;
-  --ion-toolbar-text-color: #cccccc;
+  --ion-toolbar-color: #cccccc;
+  --ion-toolbar-color-actived: #ccc;
 
-  //--ion-item-background-color             Background color of the item
-  //--ion-item-background-color-active      Background color of the active item
+  //--ion-item-background                   Background color of the item
+  //--ion-item-background-actived           Background color of the active item
   //--ion-item-border-color                 Border color of the item
-  //--ion-item-text-color                   Text color of the item
+  //--ion-item-color                        Text color of the item
 
   --ion-item-background-color-active: #{var(--ion-background-color-step-200)};
 
@@ -124,13 +122,17 @@ $text-color-value: #ffffff;
   --ion-item-border-color: #{$item-border-color};
   --ion-item-border-color-rgb: #{color-to-rgb-list($item-border-color)};
 
-  //--ion-placeholder-text-color            Text color of the item placeholder
+  //--ion-placeholder-color                 Text color of the item placeholder
 
   // Cards
 
   .sc-ion-card-md-h {
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .24),
-      0 3px 1px -2px rgba(0, 0, 0, .4),
-      0 1px 5px 0 rgba(0, 0, 0, .22);
+    0 3px 1px -2px rgba(0, 0, 0, .4),
+    0 1px 5px 0 rgba(0, 0, 0, .22);
+  }
+
+  .header-md:after {
+    opacity: 0.4;
   }
 }

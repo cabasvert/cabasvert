@@ -25,7 +25,7 @@
       </ion-button>
     </ion-buttons>
 
-    <ion-title>{{ 'REPORTS.TITLE' | translate }}</ion-title>
+    <ion-title>{{ title$ | async | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -63,13 +63,13 @@
   </div>
 
   <ng-template #noTables>
-    <ion-list>
-      <ion-item text-center>
+    <ion-row fixed style="margin-top: 50%;">
+      <ion-col text-center>
         <ion-label>
           <ion-spinner icon="dots"></ion-spinner>
         </ion-label>
-      </ion-item>
-    </ion-list>
+      </ion-col>
+    </ion-row>
   </ng-template>
 
 </ion-content>

@@ -40,7 +40,7 @@ ion-menu {
 }
 
 .selected {
-  background-color: rgba(17, 128, 26, 0.30);
+  --background: rgba(17, 128, 26, 0.30);
 }
 
 ion-footer::before {

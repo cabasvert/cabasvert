@@ -79,7 +79,7 @@
           <ion-item-expanding #item
                               *ngFor="let basket of distributedBaskets$ | async; trackBy: basketDistributionDate">
 
-            <ion-item>
+            <ion-item lines="none">
               <ion-note *ngIf="distribution.getBasketDistributionDate(basket) as date"
                         item-start class="distribution-date">
                 {{ date | date: 'shortTime' }}
@@ -160,7 +160,7 @@
 
             <ion-item-expanding #item *ngFor="let basket of group.values; trackBy: basketMemberId">
 
-              <ion-item>
+              <ion-item lines="none">
                 <ion-label>
                   <member-view [member]="basket.member"></member-view>
                 </ion-label>
@@ -229,7 +229,7 @@
           <ion-item-expanding #item
                               *ngFor="let basket of delayedBaskets$ | async; trackBy: basketMemberId">
 
-            <ion-item>
+            <ion-item lines="none">
               <ion-label>
                 <member-view [member]="basket.member"></member-view>
               </ion-label>
@@ -291,11 +291,11 @@
 </ion-content>
 
 <ng-template #noDistribution>
-  <ion-list>
-    <ion-item text-center>
+  <ion-row fixed style="margin-top: 50%;">
+    <ion-col text-center>
       <ion-label>
         <ion-spinner icon="dots"></ion-spinner>
       </ion-label>
-    </ion-item>
-  </ion-list>
+    </ion-col>
+  </ion-row>
 </ng-template>

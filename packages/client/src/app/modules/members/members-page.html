@@ -85,7 +85,7 @@
 
       <ion-item *ngFor="let member of group.values; trackBy: memberId"
                 id="member-{{ member._id }}"
-                [button]="true" style="min-height: 54px;"
+                [button]="true" style="min-height: 54px;" lines="none"
                 (click)="goToMember(member)">
         <ion-avatar slot="start">
           <div class="letter-avatar">
@@ -104,13 +104,13 @@
     </ng-container>
   </ion-list>
   <ng-template #noMembers>
-    <ion-list>
-      <ion-item text-center>
+    <ion-row fixed style="margin-top: 50%;">
+      <ion-col text-center>
         <ion-label>
           <ion-spinner icon="dots"></ion-spinner>
         </ion-label>
-      </ion-item>
-    </ion-list>
+      </ion-col>
+    </ion-row>
   </ng-template>
 
   <ion-fab class="add-member" slot="fixed" vertical="bottom" horizontal="end"
