@@ -17,6 +17,4 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'expect-puppeteer'
-
-jest.setTimeout(10000)
+export const baseUrl = process.env.CLIENT_HOST || 'http://localhost:8100'

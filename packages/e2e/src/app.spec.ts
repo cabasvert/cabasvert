@@ -18,7 +18,8 @@
  */
 
 import { launch } from 'puppeteer'
-import { baseUrl, sel } from './utils'
+import { baseUrl } from './config'
+import { sel } from './utils/puppeteer'
 
 describe('App', () => {
   let browser

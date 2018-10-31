@@ -128,6 +128,7 @@ export class LoginPage implements OnInit {
             this.handleRequestPasswordReset(data)
             return false
           },
+          cssClass: 'send-button',
         },
       ],
     })

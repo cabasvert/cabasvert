@@ -146,7 +146,7 @@ export class ResetPasswordPage implements OnInit {
     const toast = await this.toastCtrl.create({
       message,
       cssClass: error ? 'error-toast' : 'success-toast',
-      duration: 5000,
+      duration: 3000,
     })
     await toast.present()
     if (oldFeedback) {

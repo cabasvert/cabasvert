@@ -19,7 +19,7 @@
 
 import { Component, OnInit } from '@angular/core'
 import { FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms'
-import { AlertController, LoadingController, ModalController } from '@ionic/angular'
+import { AlertController, LoadingController, ModalController, ToastController } from '@ionic/angular'
 import { Observable, of, Subject } from 'rxjs'
 import { AuthService } from '../../toolkit/providers/auth-service'
 import { Feedback } from '../authentication/login-page'
@@ -41,6 +41,7 @@ export class ChangePasswordPage implements OnInit {
               private modalCtrl: ModalController,
               private alertCtrl: AlertController,
               private loadingCtrl: LoadingController,
+              private toastCtrl: ToastController,
               private formBuilder: FormBuilder) {
 
     this.form = this.formBuilder.group({
@@ -73,6 +74,7 @@ export class ChangePasswordPage implements OnInit {
         await this.dismissLoading()
 
         await this.modalCtrl.dismiss()
+        await this.showFeedback('Password changed successfully')
       } else {
         await this.showError('Access Denied.')
       }
@@ -134,5 +136,25 @@ export class ChangePasswordPage implements OnInit {
     }
 
     return newPassword.value === confirmedPassword.value ? null : { 'passwordsDoNotMatch': true }
+  }
+
+  private feedbackVisible = false
+
+  private async showFeedback(message: string, error: boolean = false) {
+    let oldFeedback = this.feedbackVisible ? await this.toastCtrl.getTop() : null
+
+    const toast = await this.toastCtrl.create({
+      message,
+      cssClass: error ? 'error-toast' : 'success-toast',
+      duration: 5000,
+    })
+    await toast.present()
+    if (oldFeedback) {
+      await oldFeedback.dismiss()
+    }
+    this.feedbackVisible = true
+
+    await toast.onDidDismiss()
+    this.feedbackVisible = false
   }
 }

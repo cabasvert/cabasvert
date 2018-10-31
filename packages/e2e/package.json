@@ -17,8 +17,10 @@
   },
   "devDependencies": {
     "@types/jest": "^23.3.5",
+    "@types/mailparser": "^2.0.2",
     "@types/node": "^10.12.0",
     "@types/puppeteer": "^1.9.0",
+    "@types/smtp-server": "^3.3.4",
     "expect-puppeteer": "^3.4.0",
     "jest": "^23.6.0",
     "jest-environment-puppeteer": "^3.4.0",

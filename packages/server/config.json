@@ -15,7 +15,7 @@
   },
   "mail": {
     "email": "email@example.com",
-    "mailToConsole": true,
+    "mailToConsole": false,
     "smtpConnection": {
       "host": "localhost",
       "port": 2025,
@@ -24,7 +24,7 @@
         "user": "email-username",
         "pass": "email-password"
       },
-      "requireTLS": true
+      "requireTLS": false
     }
   }
 }

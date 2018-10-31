@@ -87,12 +87,12 @@ async function setupFixtures(fixtures, host, auth) {
 
   await run('cvt', [
     `--host=${host}`, ...authParams, '--db-name=_users',
-    'backup', 'restore', `./fixtures/${fixtures}-users.json`,
+    'backup', 'restore', `./${fixtures}-users.json`,
   ], { stdio: 'inherit' });
 
   await run('cvt', [
     `--host=${host}`, ...authParams, '--db-name=test',
-    'backup', 'restore', `./fixtures/${fixtures}-data.json`,
+    'backup', 'restore', `./${fixtures}-data.json`,
   ], { stdio: 'inherit' });
 }
 

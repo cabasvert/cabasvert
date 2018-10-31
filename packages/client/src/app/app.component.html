@@ -59,7 +59,8 @@
                   <ion-item *ngIf="!p.acceptedRoles || user.hasAnyRoleIn(p.acceptedRoles)"
                             lines="none" class="menu-destination"
                             [button]="true" (click)="navigateToPage(p)"
-                            [class.selected]="(currentUrl$ | async).startsWith('/' + p.path)">
+                            [class.selected]="(currentUrl$ | async).startsWith('/' + p.path)"
+                            [attr.data-testid]="'menu-' + p.path">
                     <ion-icon slot="start" [name]="p.icon"></ion-icon>
                     <ion-label>{{ p.title | translate }}</ion-label>
                   </ion-item>
