@@ -125,6 +125,8 @@ export class AppComponent implements OnInit {
       map(e => (e as NavigationEnd).urlAfterRedirects),
       filterNotNull(),
       startWith(this.location.path()),
+      // FIXME This is fragile
+      map(path => path === '' ? '/dashboard' : path),
       publishReplay(1),
       refCount(),
     )
