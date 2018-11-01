@@ -48,7 +48,7 @@
   </ion-row>
   <ion-row *ngIf="nullAllowed" class="unset-button">
     <ion-col size="12">
-      <ion-button size="small" expand="full" fill="clear"
+      <ion-button size="small" expand="block" fill="clear"
                   (click)="weekChange$.next(null)" [disabled]="!(selectedWeek$ | async)">
         <ion-label>{{ 'SEASONS.UNSET_WEEK' | translate }}</ion-label>
         <ion-icon name="close"></ion-icon>

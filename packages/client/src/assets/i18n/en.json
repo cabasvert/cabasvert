@@ -85,7 +85,8 @@
     "SETTINGS": "Settings",
     "DARK_THEME": "Dark theme",
     "SECURITY": "Security",
-    "CHANGE_PASSWORD": "Change password"
+    "PASSWORD": "Password",
+    "CHANGE_PASSWORD": "Change"
   },
   "CHANGE_PASSWORD": {
     "TITLE": "Change password",

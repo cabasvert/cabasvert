@@ -48,16 +48,11 @@
     </ion-list-header>
 
     <ion-item>
-      <ion-grid fixed>
-        <ion-row justify-content-center>
-          <ion-col size-lg="6" size-md="8" size-sm="12">
-            <ion-button expand="full" (click)="changePassword()"
-                        data-testid="change-password-button">
-              {{ 'PROFILE.CHANGE_PASSWORD' | translate }}
-            </ion-button>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+      <ion-label>{{ 'PROFILE.PASSWORD' | translate }}</ion-label>
+      <ion-button slot="end" fill="outline" (click)="changePassword()"
+                  data-testid="change-password-button">
+        {{ 'PROFILE.CHANGE_PASSWORD' | translate }}
+      </ion-button>
     </ion-item>
   </ion-list>
 
