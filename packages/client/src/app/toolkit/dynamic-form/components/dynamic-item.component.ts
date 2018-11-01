@@ -22,7 +22,7 @@ import { Component, Input } from '@angular/core'
 @Component({
   selector: 'dynamic-item',
   template: `
-    <ion-item [formGroup]="formGroup">
+    <ion-item [formGroup]="formGroup" lines="none">
       <ion-label color="primary">{{ label | translate }}</ion-label>
 
       <ng-content></ng-content>

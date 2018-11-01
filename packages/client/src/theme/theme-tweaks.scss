@@ -19,11 +19,9 @@
 
 // Fixes for lists with inset margin
 
-.list-md.list-inset ion-item:first-child {
-  --border-width: 0 0 1px 0 !important;
-}
-
 .list-md.list-inset ion-item {
+  --border-width: 0 0 1px 0 !important;
+  --border-color: #{var(--ion-background-color-step-50)};
   --padding-start: 0;
   --padding-end: 0;
 }
