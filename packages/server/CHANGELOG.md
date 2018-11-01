@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.2-beta.6](https://github.com/cabasvert/cabasvert/compare/@cabasvert/server@0.2.2-beta.5...@cabasvert/server@0.2.2-beta.6) (2018-11-01)
+
+
+### Bug Fixes
+
+* **server:** generate client config only if needed ([d4308b1](https://github.com/cabasvert/cabasvert/commit/d4308b1))
+
+
+
+
+
 ## [0.2.2-beta.5](https://github.com/cabasvert/cabasvert/compare/@cabasvert/server@0.2.2-beta.4...@cabasvert/server@0.2.2-beta.5) (2018-10-24)
 
 **Note:** Version bump only for package @cabasvert/server

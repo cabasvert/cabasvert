@@ -1,6 +1,6 @@
 {
   "name": "@cabasvert/e2e",
-  "version": "0.1.0-beta.0",
+  "version": "0.1.0-beta.1",
   "author": "Cabas Vert",
   "description": "Cabas Vert: A vegetable basket manager app",
   "license": "GPL-3.0",
@@ -13,8 +13,6 @@
     "license-check": "node ../../scripts/license-check.js"
   },
   "private": true,
-  "dependencies": {
-  },
   "devDependencies": {
     "@types/jest": "^23.3.5",
     "@types/mailparser": "^2.0.2",

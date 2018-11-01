@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-beta.17](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.16...@cabasvert/client@0.3.0-beta.17) (2018-11-01)
+
+
+### Bug Fixes
+
+* **client:** remove item line in menu header ([28dabbd](https://github.com/cabasvert/cabasvert/commit/28dabbd))
+* **client:** show menu selection for '/' ([4c28554](https://github.com/cabasvert/cabasvert/commit/4c28554))
+* **client:** translate all text in change password ([42b1770](https://github.com/cabasvert/cabasvert/commit/42b1770))
+* **dashboard:** rework UI ([b3bf1e1](https://github.com/cabasvert/cabasvert/commit/b3bf1e1))
+* **i18n:** translate profile ([9aca231](https://github.com/cabasvert/cabasvert/commit/9aca231))
+* **l&f:** bump Ionic and fix styles ([18fab50](https://github.com/cabasvert/cabasvert/commit/18fab50))
+
+
+### Features
+
+* **dashboard:** further improve design ([618d19f](https://github.com/cabasvert/cabasvert/commit/618d19f))
+* **sidemenu:** enhance design ([0c436b3](https://github.com/cabasvert/cabasvert/commit/0c436b3))
+
+
+
+
+
 # [0.3.0-beta.16](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.15...@cabasvert/client@0.3.0-beta.16) (2018-10-24)
 
 
