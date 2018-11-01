@@ -97,12 +97,12 @@ async function createArtifactsDir() {
 async function packBrowserBuild(version) {
   const archiveFilename = 'cabasvert-client-browser-' + version + '.tar.gz';
   const archiveFile = path.join(artifactsDir, archiveFilename);
-  await execa('tar', ['cvzf', archiveFile, '--exclude=config.prod.json', 'www'], { cwd });
+  await run('tar', ['cvzf', archiveFile, '--exclude=config.prod.json', 'www'], { cwd });
 }
 
 async function buildApk(assembly) {
   const capitalizedAssembly = assembly.charAt(0).toUpperCase() + assembly.substr(1);
-  await execa('./gradlew', [`assemble${capitalizedAssembly}`], { cwd: `${cwd}/android` });
+  await run('./gradlew', [`assemble${capitalizedAssembly}`], { cwd: `${cwd}/android` });
 
   const buildOutputsDir = path.join(cwd, 'android', 'app', 'build', 'outputs');
   return path.join(buildOutputsDir, 'apk', assembly, `app-${assembly}.apk`);

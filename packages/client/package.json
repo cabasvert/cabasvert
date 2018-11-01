@@ -15,7 +15,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "e2e": "jest --config=jest-e2e.json",
-    "prebuild": "npm-run-all prepare lint license-check test",
+    "prebuild": "npm-run-all lint license-check test",
     "build": "scripts/build.js all --prod",
     "build-browser-release": "scripts/build.js browser --prod",
     "build-android-debug": "scripts/build.js android --debug",
