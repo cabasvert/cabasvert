@@ -23,6 +23,8 @@ import PouchHttp from 'pouchdb-adapter-http'
 import PouchIdb from 'pouchdb-adapter-idb'
 import PouchAuth from 'pouchdb-authentication'
 import PouchDB from 'pouchdb-core'
+import PouchDebug from 'pouchdb-debug'
+import { fetch } from 'pouchdb-fetch'
 import PouchFind from 'pouchdb-find'
 import PouchSync from 'pouchdb-replication'
 
@@ -52,6 +54,8 @@ export class DatabaseHelper {
               private config: ConfigurationService) {
   }
 
+  private fetchOpts: any
+
   initialize() {
     PouchDB
       .plugin(PouchHttp)
@@ -63,15 +67,25 @@ export class DatabaseHelper {
     window['PouchDB'] = PouchDB
 
     if (this.config.base.debugPouch) {
+      PouchDB.plugin(PouchDebug as any)
       PouchDB.debug.enable('*')
-    } else {
-      PouchDB.debug.disable()
+    }
+
+    this.fetchOpts = {
+      fetch: function (url, opts) {
+        opts.credentials = 'include'
+        return fetch(url, opts)
+      },
+      skip_setup: true,
     }
   }
 
   newRemoteDatabase(dbName: string): Database {
     this.log.debug(`Creating remote database '${dbName}'`)
-    const pouchOpts = { skip_setup: true }
+    const pouchOpts = {
+      skip_setup: true,
+      ...this.fetchOpts,
+    }
     const pouchDB = new PouchDB(this.config.base.databaseUrl + '/' + dbName, pouchOpts)
     const maxLimit = this.config.base.remoteDBOnly ? Number.MAX_SAFE_INTEGER : null
     return new Database(pouchDB, this.log.subLogger('Remote'), maxLimit)
