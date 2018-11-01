@@ -54,11 +54,10 @@ export class DatabaseHelper {
               private config: ConfigurationService) {
   }
 
-  private fetchOpts: any
-
   initialize() {
     PouchDB
       .plugin(PouchHttp)
+      .plugin(PouchDebug)
       .plugin(PouchIdb)
       .plugin(PouchAuth)
       .plugin(PouchFind)
@@ -70,21 +69,16 @@ export class DatabaseHelper {
       PouchDB.plugin(PouchDebug as any)
       PouchDB.debug.enable('*')
     }
-
-    this.fetchOpts = {
-      fetch: function (url, opts) {
-        opts.credentials = 'include'
-        return fetch(url, opts)
-      },
-      skip_setup: true,
-    }
   }
 
   newRemoteDatabase(dbName: string): Database {
     this.log.debug(`Creating remote database '${dbName}'`)
     const pouchOpts = {
       skip_setup: true,
-      ...this.fetchOpts,
+      fetch: function (url, opts) {
+        opts.credentials = 'include'
+        return fetch(url, opts)
+      },
     }
     const pouchDB = new PouchDB(this.config.base.databaseUrl + '/' + dbName, pouchOpts)
     const maxLimit = this.config.base.remoteDBOnly ? Number.MAX_SAFE_INTEGER : null
@@ -152,12 +146,13 @@ export class Database {
   }
 
   public destroy(options?: any) {
-    this.close()
-    return this.db.destroy(options).catch((e) => {
-      if (!e) {
-        return Promise.resolve()
-      }
-      return Promise.reject(new PouchError(e, 'destroy'))
+    return this.close().then(() => {
+      this.db.destroy(options).catch((e) => {
+        if (!e) {
+          return Promise.resolve()
+        }
+        return Promise.reject(new PouchError(e, 'destroy'))
+      })
     })
   }
 

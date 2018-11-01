@@ -430,6 +430,13 @@
   resolved "https://registry.yarnpkg.com/@types/jest/-/jest-23.3.9.tgz#c16b55186ee73ae65e001fbee69d392c51337ad1"
   integrity sha512-wNMwXSUcwyYajtbayfPp55tSayuDVU6PfY5gzvRSj80UvxdXEJOVPnUVajaOp7NgXLm+1e2ZDLULmpsU9vDvQw==
 
+"@types/node-fetch@*":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.1.2.tgz#8c5da14d70321e4c4ecd5db668e3f93cf6c7399f"
+  integrity sha512-XroxUzLpKuL+CVkQqXlffRkEPi4Gh3Oui/mWyS7ztKiyqVxiU+h3imCW5I2NQmde5jK+3q++36/Q96cyRWsweg==
+  dependencies:
+    "@types/node" "*"
+
 "@types/node@*", "@types/node@^10.12.0":
   version "10.12.1"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.1.tgz#da61b64a2930a80fa708e57c45cd5441eb379d5b"
@@ -440,12 +447,21 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.11.0.tgz#ddd0d67a3b6c3810dd1a59e36675fa82de5e19ae"
   integrity sha512-R4Dvw6KjSYn/SpvjRchBOwXr14vVVcFXCtnM3f0aLvlJS8a599rrcEoihcP2/+Z/f75E5GNPd4aWM7j1yei9og==
 
-"@types/pouchdb-core@*", "@types/pouchdb-core@^6.4.3":
+"@types/pouchdb-core@*":
   version "6.4.3"
   resolved "https://registry.yarnpkg.com/@types/pouchdb-core/-/pouchdb-core-6.4.3.tgz#554f2b6b48c826eaa03483457ff477898b4a9588"
   integrity sha512-eANDgm0at7QOea8JdzkeVI9Ba/TZ34wRMU+ukvVvPUqxLQSeiU4LprKPn6wOmk4GU6Yqze2oYn4YF6rnI2jAng==
   dependencies:
     "@types/debug" "*"
+    "@types/pouchdb-find" "*"
+
+"@types/pouchdb-core@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@types/pouchdb-core/-/pouchdb-core-7.0.0.tgz#3f424f98ee910b7649db5bbc89f3f846b589f853"
+  integrity sha512-Y6WvwyYPSspAXe3pOoVRDlgTp1VysOHjb5tQwHceFMmcKl9v9WQTrYuXi1FIUajm0F+riaKEuFyYQrAQMrpycQ==
+  dependencies:
+    "@types/debug" "*"
+    "@types/node-fetch" "*"
     "@types/pouchdb-find" "*"
 
 "@types/pouchdb-find@*", "@types/pouchdb-find@^6.3.3":

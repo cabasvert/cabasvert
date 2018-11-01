@@ -45,7 +45,7 @@
     "@ionic/core": "^4.0.0-beta.15-0",
     "@ngx-translate/core": "^11.0.0",
     "@ngx-translate/http-loader": "^4.0.0",
-    "@types/pouchdb-core": "^6.4.3",
+    "@types/pouchdb-core": "^7.0.0",
     "@types/pouchdb-find": "^6.3.3",
     "@types/pouchdb-replication": "^6.4.0",
     "cordova-plugin-secure-storage": "^2.6.8",
