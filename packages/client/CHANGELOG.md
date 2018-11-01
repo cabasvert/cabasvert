@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-beta.18](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.17...@cabasvert/client@0.3.0-beta.18) (2018-11-01)
+
+
+### Bug Fixes
+
+* **client:** focus searchbar in members page ([03245e9](https://github.com/cabasvert/cabasvert/commit/03245e9))
+* **client:** make all buttons have round corners ([16873d2](https://github.com/cabasvert/cabasvert/commit/16873d2))
+* **client:** more styling ([ee32821](https://github.com/cabasvert/cabasvert/commit/ee32821))
+* **client:** note popup behaves ([1288731](https://github.com/cabasvert/cabasvert/commit/1288731))
+
+
+
+
+
 # [0.3.0-beta.17](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.16...@cabasvert/client@0.3.0-beta.17) (2018-11-01)
 
 
