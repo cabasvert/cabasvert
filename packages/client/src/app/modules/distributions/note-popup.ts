@@ -37,7 +37,7 @@ import { ModalController, NavParams } from '@ionic/angular'
         </ion-title>
 
         <ion-buttons slot="primary">
-          <ion-button icon-only (click)="submit.click()" [disabled]="!form.valid">
+          <ion-button icon-only (click)="save()" [disabled]="!canSave()">
             {{ 'DIALOGS.SAVE' | translate }}
           </ion-button>
         </ion-buttons>
@@ -45,9 +45,7 @@ import { ModalController, NavParams } from '@ionic/angular'
     </ion-header>
 
     <ion-content>
-      <form [formGroup]="form" novalidate (ngSubmit)="save()">
-        <input #submit type="submit" value="Submit" style="display:none"/>
-
+      <form [formGroup]="form">
         <ion-textarea formControlName="content" elastic></ion-textarea>
       </form>
     </ion-content>
@@ -57,26 +55,40 @@ export class NotePopup implements OnInit {
 
   form: FormGroup
 
+  private previousValue
+
   constructor(private params: NavParams,
               private modalController: ModalController,
               private formBuilder: FormBuilder) {
 
     this.form = this.formBuilder.group({
-      content: this.formBuilder.control(['']),
+      content: this.formBuilder.control(null),
     })
   }
 
   ngOnInit() {
     if (this.params.data) {
-      this.form.patchValue(this.params.data)
+      this.previousValue = this.params.data.note
+      this.form.patchValue(this.params.data.note)
     }
   }
 
+  canSave() {
+    let value = this.valueOrUndefined(this.form.value)
+    return value !== this.previousValue
+      && (!value || !this.previousValue || value.content !== this.previousValue.content)
+  }
+
   async save() {
-    await this.modalController.dismiss(this.form.value)
+    let data = this.valueOrUndefined(this.form.value)
+    await this.modalController.dismiss(data, 'save')
   }
 
   async dismiss() {
-    await this.modalController.dismiss()
+    await this.modalController.dismiss(null, 'cancel')
+  }
+
+  valueOrUndefined(value: any) {
+    return !value || value.content === null || value.content === '' ? undefined : value
   }
 }

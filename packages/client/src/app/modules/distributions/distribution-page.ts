@@ -344,22 +344,23 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
 
   async setNote(basket: Basket, item: ItemExpanding) {
 
-    let note = this.distribution.getNoteFromBasket(basket)
+    const note = this.distribution.getNoteFromBasket(basket)
 
-    let modal = await this.modalCtrl.create({ component: NotePopup, componentProps: note })
-
-    modal.onDidDismiss().then(newNote => {
-      if (!newNote.data) {
-        return
-      }
-      if (newNote.data.content === '' && !note) {
-        return
-      }
-      this.distribution.pushNoteToBasket(basket, newNote.data)
-    })
+    const modal = await this.modalCtrl.create({ component: NotePopup, componentProps: { note } })
 
     await modal.present()
     item.close()
+
+    const result = await modal.onDidDismiss()
+    if (result.role !== 'save') {
+      return
+    }
+
+    const newNote = result.data
+    if (!newNote && !note) {
+      return
+    }
+    this.distribution.pushNoteToBasket(basket, newNote)
   }
 
   range(value: number) {
