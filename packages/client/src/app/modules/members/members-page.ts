@@ -38,7 +38,7 @@ import {
 } from 'rxjs/operators'
 
 import { IndexedScroller } from '../../toolkit/components/indexed-scroller'
-import { Navigation } from '../../toolkit/providers/navigation'
+import { Dialogs } from '../../toolkit/dialogs/dialogs.service'
 import { contains, Group, groupBy } from '../../utils/arrays'
 import { observeInsideAngular, observeOutsideAngular } from '../../utils/observables'
 import { timeout } from '../../utils/promises'
@@ -56,13 +56,12 @@ const ALPHA_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
   selector: 'page-members',
   templateUrl: './members-page.html',
   styleUrls: ['./members-page.scss'],
-  providers: [Navigation],
 })
 export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private navCtrl: NavController,
               private route: ActivatedRoute,
-              private nav: Navigation,
+              private dialogs: Dialogs,
               private members: MemberService,
               private seasons: SeasonService,
               private contracts: ContractService,
@@ -285,7 +284,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async createAndGoToMember() {
-    this.nav.showEditDialog$({
+    this.dialogs.showEditDialog$({
       component: PersonEditForm,
       title: 'MEMBER.CREATION_TITLE',
       discardTitle: 'MEMBER.DISCARD_CREATION_TITLE',

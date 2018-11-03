@@ -27,7 +27,7 @@ import { Observable, Subscription } from 'rxjs'
 import { filter, map, publishReplay, refCount, switchMap, take, withLatestFrom } from 'rxjs/operators'
 
 import { AuthService, Roles, User } from '../../toolkit/providers/auth-service'
-import { Navigation } from '../../toolkit/providers/navigation'
+import { Dialogs } from '../../toolkit/dialogs/dialogs.service'
 import { copyAdd, copyRemove, copyWith } from '../../utils/arrays'
 import { observeInsideAngular } from '../../utils/observables'
 import { Contract, ContractKind, ContractSection } from '../contracts/contract.model'
@@ -46,7 +46,6 @@ const { App } = Plugins
   selector: 'page-member-detail',
   templateUrl: './member-details-page.html',
   styleUrls: ['./member-details-page.scss'],
-  providers: [Navigation],
 })
 export class MemberDetailsPage implements OnInit, OnDestroy {
 
@@ -65,7 +64,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
               private navCtrl: NavController,
               private route: ActivatedRoute,
               private translateService: TranslateService,
-              private nav: Navigation,
+              private dialogs: Dialogs,
               private authService: AuthService,
               private seasonService: SeasonService,
               private memberService: MemberService,
@@ -122,7 +121,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   }
 
   createPerson() {
-    this.nav.showEditDialog$({
+    this.dialogs.showEditDialog$({
       component: PersonEditForm,
       title: 'PERSON.CREATION_TITLE',
       discardTitle: 'PERSON.DISCARD_CREATION_TITLE',
@@ -139,7 +138,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   }
 
   editPerson(person: Person, index: number) {
-    this.nav.showEditDialog$({
+    this.dialogs.showEditDialog$({
       component: PersonEditForm,
       title: 'PERSON.EDITION_TITLE',
       discardTitle: 'PERSON.DISCARD_EDITION_TITLE',
@@ -156,7 +155,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   }
 
   deletePerson(person: Person, index: number) {
-    this.nav.showAlert$({
+    this.dialogs.showAlert$({
       header: this.translateService.instant('DIALOGS.CONFIRM_DELETION'),
       message: this.translateService.instant('PERSON.CONFIRM_DELETE_TEXT'),
       buttons: [
@@ -181,7 +180,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         this.trialBaskets$.pipe(map(tbs => tbs.first())),
         this.inferNewContract,
       ),
-      switchMap(contract => this.nav.showEditDialog$({
+      switchMap(contract => this.dialogs.showEditDialog$({
         component: ContractsEditForm,
         title: 'CONTRACT.CREATION_TITLE',
         discardTitle: 'CONTRACT.DISCARD_CREATION_TITLE',
@@ -258,7 +257,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   }
 
   editContract(contract: Contract, index: number) {
-    this.nav.showEditDialog$({
+    this.dialogs.showEditDialog$({
       component: ContractsEditForm,
       title: 'CONTRACT.EDITION_TITLE',
       discardTitle: 'CONTRACT.DISCARD_EDITION_TITLE',
@@ -273,7 +272,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   }
 
   deleteContract(contract: Contract, index: number) {
-    this.nav.showAlert$({
+    this.dialogs.showAlert$({
         header: this.translateService.instant('DIALOGS.CONFIRM_DELETION'),
         message: this.translateService.instant('CONTRACT.CONFIRM_DELETE_TEXT'),
         buttons: [
@@ -294,7 +293,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         this.trialBaskets$.pipe(map(tbs => tbs.first())),
         this.inferNewTrialBasket,
       ),
-      switchMap(trialBasket => this.nav.showEditDialog$({
+      switchMap(trialBasket => this.dialogs.showEditDialog$({
         component: TrialBasketEditForm,
         title: 'TRIAL_BASKET.CREATION_TITLE',
         discardTitle: 'TRIAL_BASKET.DISCARD_CREATION_TITLE',
@@ -338,7 +337,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   }
 
   editTrialBasket(trialBasket: TrialBasket, index: number) {
-    this.nav.showEditDialog$({
+    this.dialogs.showEditDialog$({
       component: TrialBasketEditForm,
       title: 'TRIAL_BASKET.EDITION_TITLE',
       discardTitle: 'TRIAL_BASKET.DISCARD_EDITION_TITLE',
@@ -355,7 +354,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   }
 
   deleteTrialBasket(trialBasket: TrialBasket, index: number) {
-    this.nav.showAlert$({
+    this.dialogs.showAlert$({
         header: this.translateService.instant('DIALOGS.CONFIRM_DELETION'),
         message: this.translateService.instant('TRIAL_BASKET.CONFIRM_DELETE_TEXT'),
         buttons: [

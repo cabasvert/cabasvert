@@ -21,7 +21,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core'
 import { Observable, Subscription } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { AuthService, User } from '../../toolkit/providers/auth-service'
-import { Navigation } from '../../toolkit/providers/navigation'
+import { Dialogs } from '../../toolkit/dialogs/dialogs.service'
 import { ThemeManagerService } from '../../toolkit/providers/theme-manager.service'
 import { ContractsEditForm } from '../contracts/contracts-edit-page'
 import { ChangePasswordPage } from './change-password-page'
@@ -29,7 +29,6 @@ import { ChangePasswordPage } from './change-password-page'
 @Component({
   selector: 'page-profile',
   templateUrl: './profile-page.html',
-  providers: [Navigation],
 })
 export class ProfilePage implements OnInit, OnDestroy {
 
@@ -39,7 +38,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   isDarkTheme$: Observable<boolean>
 
   constructor(private authService: AuthService,
-              private navigator: Navigation,
+              private dialogs: Dialogs,
               private themeManager: ThemeManagerService) {
   }
 
@@ -56,7 +55,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   public changePassword() {
-    this.navigator.showModal$({ component: ChangePasswordPage, componentProps: {} }).subscribe()
+    this.dialogs.showModal$({ component: ChangePasswordPage, componentProps: {} }).subscribe()
   }
 
   toggleDarkTheme($event) {

@@ -18,19 +18,18 @@
  */
 
 import { Injectable } from '@angular/core'
-import { AlertController, ModalController, NavController } from '@ionic/angular'
-import { AlertOptions, ModalOptions, NavOptions, OverlayEventDetail } from '@ionic/core'
+import { AlertController, ModalController } from '@ionic/angular'
+import { AlertOptions, ModalOptions, OverlayEventDetail } from '@ionic/core'
 import { defer, Observable } from 'rxjs'
 import { fromPromise } from 'rxjs/internal-compatibility'
 import { filter, map } from 'rxjs/operators'
-import { EditDialogComponent, EditFormOptions } from '../dialogs/edit-dialog.component'
+import { EditDialogComponent, EditFormOptions } from './edit-dialog.component'
 
 @Injectable()
-export class Navigation {
+export class Dialogs {
 
-  constructor(public navCtrl: NavController,
-              public modalCtrl: ModalController,
-              public alertCtrl: AlertController) {
+  constructor(private alertCtrl: AlertController,
+              private modalCtrl: ModalController) {
   }
 
   showAlert$(opts?: AlertOptions): Observable<any> {
@@ -87,6 +86,7 @@ export class Navigation {
     return await this.showModal({
       component: EditDialogComponent,
       componentProps: opts,
+      // TODO Remove when ionic-team/ionic#15848 is fixed
       backdropDismiss: false,
     })
   }

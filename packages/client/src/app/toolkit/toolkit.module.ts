@@ -44,7 +44,7 @@ import { AuthService } from './providers/auth-service'
 import { DatabaseHelper } from './providers/database-helper'
 import { DatabaseService } from './providers/database-service'
 import { LogService } from './providers/log-service'
-import { Navigation } from './providers/navigation'
+import { Dialogs } from './dialogs/dialogs.service'
 import { ThemeManagerService } from './providers/theme-manager.service'
 import { UidService } from './providers/uid-service'
 
@@ -107,7 +107,7 @@ export class ToolkitModule {
       providers: [
         LogService,
         AppBridge,
-        Navigation,
+        Dialogs,
         DatabaseHelper,
         AuthService,
         AuthGuard,

@@ -79,7 +79,8 @@ export class EditDialogComponent implements OnInit {
     return this.editFormInstance.dirty && this.editFormInstance.valid
   }
 
-  async cancel() {
+  async discard() {
+    // TODO Move to ionWillDismiss handler when ionic-team/ionic#15848 is fixed
     if (this.editFormInstance.dirty) {
       const confirmationAlert = await this.alertCtrl.create({
         header: this.translate.instant(this.editFormOptions.discardTitle),
@@ -99,7 +100,7 @@ export class EditDialogComponent implements OnInit {
       const { role } = await confirmationAlert.onDidDismiss()
       if (role !== 'discard') return
     }
-    await this.modalCtrl.dismiss(null, 'cancel')
+    await this.modalCtrl.dismiss(null, 'discard')
   }
 
   async save() {

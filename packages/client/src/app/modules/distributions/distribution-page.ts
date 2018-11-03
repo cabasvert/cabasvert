@@ -27,7 +27,6 @@ import { map, mapTo, mergeScan, publishReplay, refCount, startWith, switchAll, s
 import { IndexedScroller } from '../../toolkit/components/indexed-scroller'
 import { ItemExpanding } from '../../toolkit/components/item-expanding'
 import { SlidingPanes } from '../../toolkit/components/sliding-panes'
-import { Navigation } from '../../toolkit/providers/navigation'
 import { contains, Group, groupBy } from '../../utils/arrays'
 import { observeInsideAngular } from '../../utils/observables'
 
@@ -48,14 +47,12 @@ const ALPHA_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
   selector: 'page-distribution',
   templateUrl: 'distribution-page.html',
   styleUrls: ['distribution-page.scss'],
-  providers: [Navigation],
 })
 export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private router: Router,
               private navCtrl: NavController,
               private route: ActivatedRoute,
-              private nav: Navigation,
               private modalCtrl: ModalController,
               private memberService: MemberService,
               private seasonService: SeasonService,
