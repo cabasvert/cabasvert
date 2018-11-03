@@ -19,7 +19,9 @@
 
 import { Component, ComponentFactoryResolver, OnInit, Type, ViewChild } from '@angular/core'
 
-import { ModalController, NavParams } from '@ionic/angular'
+import { AlertController, ModalController, NavParams } from '@ionic/angular'
+import { TranslateService } from '@ngx-translate/core'
+import { Navigation } from '../providers/navigation'
 import { EditFormHostDirective } from './edit-form-host.directive'
 import { EditFormComponent } from './edit-form.interface'
 import { Person } from './member.model'
@@ -28,6 +30,9 @@ import { MemberService } from './member.service'
 export interface EditFormOptions {
   component: Type<any>
   data: any
+  title: string
+  discardTitle: string
+  discardText: string
 }
 
 @Component({
@@ -37,24 +42,28 @@ export interface EditFormOptions {
 export class EditDialogComponent implements OnInit {
 
   title: string
+
+  private editFormOptions: EditFormOptions
+
   @ViewChild(EditFormHostDirective) host: EditFormHostDirective
   editFormInstance: EditFormComponent
 
-  constructor(public navParams: NavParams,
-              public modalController: ModalController,
+  constructor(private navParams: NavParams,
+              private modalCtrl: ModalController,
+              private alertCtrl: AlertController,
+              private translate: TranslateService,
               private componentFactoryResolver: ComponentFactoryResolver) {
-
   }
 
   ngOnInit() {
-    let editFormOptions: EditFormOptions = <EditFormOptions> this.navParams.data
+    this.editFormOptions = <EditFormOptions> this.navParams.data
 
-    if (editFormOptions) {
-      this.loadFormComponent(editFormOptions)
+    if (this.editFormOptions) {
+      this.loadFormComponent(this.editFormOptions)
     }
   }
 
-  loadFormComponent(editFormOptions: any) {
+  loadFormComponent(editFormOptions: EditFormOptions) {
     let componentFactory = this.componentFactoryResolver.resolveComponentFactory(editFormOptions.component)
 
     let viewContainerRef = this.host.viewContainerRef
@@ -64,18 +73,37 @@ export class EditDialogComponent implements OnInit {
     this.editFormInstance = <EditFormComponent> componentRef.instance
     this.editFormInstance.data = editFormOptions.data
 
-    this.title = this.editFormInstance.title
+    this.title = this.editFormOptions.title
   }
 
-  get isFormValid() {
-    return this.editFormInstance.valid
+  get canSave() {
+    return this.editFormInstance.dirty && this.editFormInstance.valid
   }
 
   async cancel() {
-    await this.modalController.dismiss(null, 'cancel')
+    if (this.editFormInstance.dirty) {
+      const confirmationAlert = await this.alertCtrl.create({
+        header: this.translate.instant(this.editFormOptions.discardTitle),
+        message: this.translate.instant(this.editFormOptions.discardText),
+        buttons: [
+          {
+            text: this.translate.instant('DIALOGS.CANCEL'),
+            role: 'cancel',
+          },
+          {
+            text: this.translate.instant('DIALOGS.DISCARD'),
+            role: 'discard',
+          },
+        ],
+      })
+      await confirmationAlert.present()
+      const { role } = await confirmationAlert.onDidDismiss()
+      if (role !== 'discard') return
+    }
+    await this.modalCtrl.dismiss(null, 'cancel')
   }
 
   async save() {
-    await this.modalController.dismiss(this.editFormInstance.data, 'save')
+    await this.modalCtrl.dismiss(this.editFormInstance.data, 'save')
   }
 }

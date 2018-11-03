@@ -177,6 +177,10 @@ export class DynamicControl {
     return this.control.valid
   }
 
+  get dirty() {
+    return this.control.dirty
+  }
+
   get valid$() {
     return this.control.valueChanges.pipe(
       map(() => this.control.valid),

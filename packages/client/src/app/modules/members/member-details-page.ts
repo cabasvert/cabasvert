@@ -23,7 +23,7 @@ import { Season, SeasonWeek } from '@cabasvert/data'
 import { Plugins } from '@capacitor/core'
 import { NavController, Platform } from '@ionic/angular'
 import { TranslateService } from '@ngx-translate/core'
-import { Observable, of, Subscription } from 'rxjs'
+import { Observable, Subscription } from 'rxjs'
 import { filter, map, publishReplay, refCount, switchMap, take, withLatestFrom } from 'rxjs/operators'
 
 import { AuthService, Roles, User } from '../../toolkit/providers/auth-service'
@@ -32,13 +32,13 @@ import { copyAdd, copyRemove, copyWith } from '../../utils/arrays'
 import { observeInsideAngular } from '../../utils/observables'
 import { Contract, ContractKind, ContractSection } from '../contracts/contract.model'
 import { ContractService } from '../contracts/contract.service'
-import { ContractsEditPage } from '../contracts/contracts-edit-page'
-import { TrialBasketEditPage } from '../contracts/trial-basket-edit-page'
+import { ContractsEditForm } from '../contracts/contracts-edit-form.component'
+import { TrialBasketEditForm } from '../contracts/trial-basket-edit-form.component'
 import { SeasonService } from '../seasons/season.service'
 
 import { Member, Person, TrialBasket } from './member.model'
 import { MemberService } from './member.service'
-import { PersonEditFormComponent } from './person-edit-form.component'
+import { PersonEditForm } from './person-edit-form.component'
 
 const { App } = Plugins
 
@@ -123,9 +123,11 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
 
   createPerson() {
     this.nav.showEditDialog$({
-      component: PersonEditFormComponent,
+      component: PersonEditForm,
+      title: 'PERSON.CREATION_TITLE',
+      discardTitle: 'PERSON.DISCARD_CREATION_TITLE',
+      discardText: 'PERSON.DISCARD_CREATION_TEXT',
       data: {
-        title: 'PERSON.CREATION_TITLE',
         person: {},
       },
     }).pipe(
@@ -138,9 +140,11 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
 
   editPerson(person: Person, index: number) {
     this.nav.showEditDialog$({
-      component: PersonEditFormComponent,
+      component: PersonEditForm,
+      title: 'PERSON.EDITION_TITLE',
+      discardTitle: 'PERSON.DISCARD_EDITION_TITLE',
+      discardText: 'PERSON.DISCARD_EDITION_TEXT',
       data: {
-        title: 'PERSON.EDITION_TITLE',
         person: person,
       },
     }).pipe(
@@ -175,17 +179,14 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         this.member$,
         this.contracts$.pipe(map(cs => cs.first())),
         this.trialBaskets$.pipe(map(tbs => tbs.first())),
-
-        (currentSeason, latestSeason, member, latestContract, latestTrial) => ({
-          title: 'CONTRACT.CREATION_TITLE',
-          contract: this.inferNewContract(
-            currentSeason, latestSeason, member, latestContract, latestTrial,
-          ),
-        }),
+        this.inferNewContract,
       ),
-      switchMap(data => this.nav.showModal$({
-        component: ContractsEditPage,
-        componentProps: data,
+      switchMap(contract => this.nav.showEditDialog$({
+        component: ContractsEditForm,
+        title: 'CONTRACT.CREATION_TITLE',
+        discardTitle: 'CONTRACT.DISCARD_CREATION_TITLE',
+        discardText: 'CONTRACT.DISCARD_CREATION_TEXT',
+        data: { contract },
       })),
       filter(r => r.role === 'save'),
       map(r => r.data),
@@ -257,11 +258,12 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   }
 
   editContract(contract: Contract, index: number) {
-    this.nav.showModal$({
-      component: ContractsEditPage, componentProps: {
-        title: 'CONTRACT.EDITION_TITLE',
-        contract: contract,
-      },
+    this.nav.showEditDialog$({
+      component: ContractsEditForm,
+      title: 'CONTRACT.EDITION_TITLE',
+      discardTitle: 'CONTRACT.DISCARD_EDITION_TITLE',
+      discardText: 'CONTRACT.DISCARD_EDITION_TEXT',
+      data: { contract },
     }).pipe(
       filter(r => r.role === 'save'),
       map(r => r.data),
@@ -290,15 +292,14 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
       take(1),
       withLatestFrom(
         this.trialBaskets$.pipe(map(tbs => tbs.first())),
-
-        (currentWeek, latestTrial) => ({
-          title: 'TRIAL_BASKET.CREATION_TITLE',
-          trialBasket: this.inferNewTrialBasket(currentWeek, latestTrial),
-        }),
+        this.inferNewTrialBasket,
       ),
-      switchMap(data => this.nav.showModal$({
-        component: TrialBasketEditPage,
-        componentProps: data,
+      switchMap(trialBasket => this.nav.showEditDialog$({
+        component: TrialBasketEditForm,
+        title: 'TRIAL_BASKET.CREATION_TITLE',
+        discardTitle: 'TRIAL_BASKET.DISCARD_CREATION_TITLE',
+        discardText: 'TRIAL_BASKET.DISCARD_CREATION_TEXT',
+        data: { trialBasket },
       })),
       filter(r => r.role === 'save'),
       map(r => r.data),
@@ -337,15 +338,13 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   }
 
   editTrialBasket(trialBasket: TrialBasket, index: number) {
-    of(trialBasket).pipe(
-      map(basket => ({
-        title: 'TRIAL_BASKET.TITLE',
-        trialBasket: basket,
-      })),
-      switchMap(data => this.nav.showModal$({
-        component: TrialBasketEditPage,
-        componentProps: data,
-      })),
+    this.nav.showEditDialog$({
+      component: TrialBasketEditForm,
+      title: 'TRIAL_BASKET.EDITION_TITLE',
+      discardTitle: 'TRIAL_BASKET.DISCARD_EDITION_TITLE',
+      discardText: 'TRIAL_BASKET.DISCARD_EDITION_TEXT',
+      data: { trialBasket },
+    }).pipe(
       filter(r => r.role === 'save'),
       map(r => r.data),
       withLatestFrom(this.member$,

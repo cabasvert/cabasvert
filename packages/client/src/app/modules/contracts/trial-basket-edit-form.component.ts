@@ -17,13 +17,13 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { formatDate } from '@angular/common'
-import { Component, Inject, LOCALE_ID, OnDestroy } from '@angular/core'
+import { Component, Inject, LOCALE_ID } from '@angular/core'
 import { Validators } from '@angular/forms'
 import { Season } from '@cabasvert/data'
 
 import { ModalController, NavParams } from '@ionic/angular'
 import { switchMap } from 'rxjs/operators'
+import { EditFormComponent } from '../../toolkit/dialogs/edit-form.interface'
 import { DynamicFormService, DynamicGroup } from '../../toolkit/dynamic-form/dynamic-form.service'
 import * as forms from '../../toolkit/dynamic-form/models/form-config.interface'
 import { objectAssignNoNulls } from '../../utils/objects'
@@ -36,10 +36,10 @@ import { weekSelect } from '../seasons/week-selector/dynamic-week-select'
 import { ContractKind } from './contract.model'
 
 @Component({
-  selector: 'page-edit-trial-basket',
-  templateUrl: 'trial-basket-edit-page.html',
+  selector: 'trial-basket-edit-form',
+  templateUrl: 'trial-basket-edit-form.component.html',
 })
-export class TrialBasketEditPage implements OnDestroy {
+export class TrialBasketEditForm implements EditFormComponent {
 
   config = forms.form({
     controls: [
@@ -91,7 +91,6 @@ export class TrialBasketEditPage implements OnDestroy {
 
   form: DynamicGroup
 
-  title: string
   trialBasket: TrialBasket
 
   constructor(private navParams: NavParams,
@@ -102,30 +101,23 @@ export class TrialBasketEditPage implements OnDestroy {
               @Inject(LOCALE_ID) private locale: string) {
 
     this.form = this.dynamicFormService.createForm(this.config)
-
-    if (this.navParams.data) {
-      this.title = this.navParams.data.title
-      this.trialBasket = this.navParams.data.trialBasket
-
-      this.form.patchValue(this.trialBasket)
-    }
   }
 
-  ngOnDestroy() {
-    this.form.destroy()
+  set data(data: any) {
+    this.trialBasket = data.trialBasket
+
+    this.form.patchValue(this.trialBasket)
   }
 
-  private formatWeek(week) {
-    return formatDate(week.distributionDate, 'shortDate', this.locale) +
-      ' (' + week.seasonWeek + ')'
+  get data() {
+    return objectAssignNoNulls({}, this.trialBasket, this.form.value)
   }
 
-  async cancel() {
-    await this.modalController.dismiss(null, 'cancel')
+  get valid() {
+    return this.form.valid
   }
 
-  async save() {
-    let data = objectAssignNoNulls({}, this.trialBasket, this.form.value)
-    await this.modalController.dismiss(data, 'save')
+  get dirty() {
+    return this.form.dirty
   }
 }

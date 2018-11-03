@@ -17,7 +17,6 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { formatDate } from '@angular/common'
 import { Component, Inject, LOCALE_ID } from '@angular/core'
 import { Validators } from '@angular/forms'
 import { Season } from '@cabasvert/data'
@@ -25,6 +24,7 @@ import { Season } from '@cabasvert/data'
 import { ModalController, NavParams } from '@ionic/angular'
 import { TranslateService } from '@ngx-translate/core'
 import { map, switchMap } from 'rxjs/operators'
+import { EditFormComponent } from '../../toolkit/dialogs/edit-form.interface'
 import { DynamicFormService, DynamicGroup } from '../../toolkit/dynamic-form/dynamic-form.service'
 import * as forms from '../../toolkit/dynamic-form/models/form-config.interface'
 import { objectAssignNoNulls } from '../../utils/objects'
@@ -34,10 +34,10 @@ import { weekSelect } from '../seasons/week-selector/dynamic-week-select'
 import { Contract, ContractFormulas, ContractKind } from './contract.model'
 
 @Component({
-  selector: 'page-edit-contracts',
-  templateUrl: './contracts-edit-page.html',
+  selector: 'contracts-edit-form',
+  templateUrl: './contracts-edit-form.component.html',
 })
-export class ContractsEditPage {
+export class ContractsEditForm implements EditFormComponent {
 
   config = forms.form({
     controls: [
@@ -173,7 +173,6 @@ export class ContractsEditPage {
 
   form: DynamicGroup
 
-  title: string
   contract: Contract
 
   constructor(private navParams: NavParams,
@@ -184,37 +183,34 @@ export class ContractsEditPage {
               private translateService: TranslateService) {
 
     this.form = this.dynamicFormService.createForm(this.config)
+  }
 
-    if (this.navParams.data) {
-      this.title = this.navParams.data.title
-      this.contract = this.clone(this.navParams.data.contract)
+  set data(data: any) {
+    this.contract = this.clone(data.contract)
 
-      // Compute formula index in formulas list
-      this.formulasToForm(this.contract)
+    // Compute formula index in formulas list
+    this.formulasToForm(this.contract)
 
-      this.form.patchValue(this.contract)
-    }
+    this.form.patchValue(this.contract)
+  }
+
+  get data() {
+    // Recompute formula
+    this.formulasFromForm(this.form.value)
+
+    return objectAssignNoNulls({}, this.contract, this.form.value)
+  }
+
+  get valid() {
+    return this.form.valid
+  }
+
+  get dirty() {
+    return this.form.dirty
   }
 
   private clone(contract) {
     return JSON.parse(JSON.stringify(contract))
-  }
-
-  private formatWeek(week) {
-    return formatDate(week.distributionDate, 'shortDate', this.locale) +
-      ' (' + week.seasonWeek + ')'
-  }
-
-  async cancel() {
-    await this.modalController.dismiss(null, 'cancel')
-  }
-
-  async save() {
-    // Recompute formula
-    this.formulasFromForm(this.form.value)
-
-    let data = objectAssignNoNulls({}, this.contract, this.form.value)
-    await this.modalController.dismiss(data, 'save')
   }
 
   formulasToForm(contracts) {

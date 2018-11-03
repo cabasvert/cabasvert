@@ -26,9 +26,9 @@ import { DynamicFormModule } from '../../toolkit/dynamic-form/dynamic-form.modul
 import { SeasonModule } from '../seasons/season.module'
 import { ContractService } from './contract.service'
 
-import { ContractsEditPage } from './contracts-edit-page'
+import { ContractsEditForm } from './contracts-edit-form.component'
 import { ContractsView } from './contracts-view'
-import { TrialBasketEditPage } from './trial-basket-edit-page'
+import { TrialBasketEditForm } from './trial-basket-edit-form.component'
 import { TrialBasketView } from './trial-basket-view'
 
 @NgModule({
@@ -42,19 +42,19 @@ import { TrialBasketView } from './trial-basket-view'
   ],
   declarations: [
     ContractsView,
-    ContractsEditPage,
+    ContractsEditForm,
     TrialBasketView,
-    TrialBasketEditPage,
+    TrialBasketEditForm,
   ],
   entryComponents: [
-    ContractsEditPage,
-    TrialBasketEditPage,
+    ContractsEditForm,
+    TrialBasketEditForm,
   ],
   exports: [
     ContractsView,
-    ContractsEditPage,
+    ContractsEditForm,
     TrialBasketView,
-    TrialBasketEditPage,
+    TrialBasketEditForm,
   ],
   providers: [
     ContractService,

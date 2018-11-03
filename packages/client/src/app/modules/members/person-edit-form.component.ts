@@ -34,7 +34,7 @@ import { MemberService } from './member.service'
   selector: 'person-edit-form',
   templateUrl: 'person-edit-form.component.html',
 })
-export class PersonEditFormComponent implements EditFormComponent {
+export class PersonEditForm implements EditFormComponent {
 
   config = forms.form({
     controls: [
@@ -73,7 +73,6 @@ export class PersonEditFormComponent implements EditFormComponent {
 
   form: DynamicGroup
 
-  title: string
   person: Person
 
   private isNewPerson: boolean
@@ -87,7 +86,6 @@ export class PersonEditFormComponent implements EditFormComponent {
   }
 
   set data(data: any) {
-    this.title = data.title
     this.person = data.person
     this.isNewPerson = data.isNewPerson
 
@@ -100,6 +98,10 @@ export class PersonEditFormComponent implements EditFormComponent {
 
   get valid() {
     return this.form.valid
+  }
+
+  get dirty() {
+    return this.form.dirty
   }
 
   get personDoesNotAlreadyExist(): AsyncValidatorFn {

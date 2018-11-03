@@ -35,7 +35,7 @@ import { MemberResolver } from './member-resolver'
 import { MemberView } from './member-view/member-view'
 import { MemberService } from './member.service'
 import { MembersPage } from './members-page'
-import { PersonEditFormComponent } from './person-edit-form.component'
+import { PersonEditForm } from './person-edit-form.component'
 
 let routes: Routes = [
   {
@@ -70,12 +70,12 @@ let routes: Routes = [
     MembersPage,
     MemberDetailsPage,
     MemberView,
-    PersonEditFormComponent,
+    PersonEditForm,
   ],
   entryComponents: [
     MembersPage,
     MemberDetailsPage,
-    PersonEditFormComponent,
+    PersonEditForm,
   ],
   exports: [
     MemberView,

@@ -47,7 +47,7 @@ import { ContractService } from '../contracts/contract.service'
 import { SeasonService } from '../seasons/season.service'
 import { Member } from './member.model'
 import { MemberService } from './member.service'
-import { PersonEditFormComponent } from './person-edit-form.component'
+import { PersonEditForm } from './person-edit-form.component'
 
 const STAR_CHAR = '★'
 const ALPHA_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -286,9 +286,11 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
 
   async createAndGoToMember() {
     this.nav.showEditDialog$({
-      component: PersonEditFormComponent,
+      component: PersonEditForm,
+      title: 'MEMBER.CREATION_TITLE',
+      discardTitle: 'MEMBER.DISCARD_CREATION_TITLE',
+      discardText: 'MEMBER.DISCARD_CREATION_TEXT',
       data: {
-        title: 'MEMBER.CREATION_TITLE',
         person: {},
       },
     }).pipe(

@@ -23,7 +23,7 @@ import { map } from 'rxjs/operators'
 import { AuthService, User } from '../../toolkit/providers/auth-service'
 import { Navigation } from '../../toolkit/providers/navigation'
 import { ThemeManagerService } from '../../toolkit/providers/theme-manager.service'
-import { ContractsEditPage } from '../contracts/contracts-edit-page'
+import { ContractsEditForm } from '../contracts/contracts-edit-page'
 import { ChangePasswordPage } from './change-password-page'
 
 @Component({

@@ -18,7 +18,7 @@
  */
 
 export interface EditFormComponent {
-  title: string
   data: any
   valid: boolean
+  dirty: boolean
 }

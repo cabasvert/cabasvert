@@ -17,27 +17,4 @@
   along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<ion-header>
-  <ion-toolbar hideBackButton>
-    <ion-buttons slot="start">
-      <ion-button icon-only (click)="cancel()">
-        <ion-icon name="arrow-back"></ion-icon>
-        {{ 'DIALOGS.CANCEL' | translate }}
-      </ion-button>
-    </ion-buttons>
-
-    <ion-title>
-      {{ title | translate }}
-    </ion-title>
-
-    <ion-buttons slot="primary">
-      <ion-button icon-only (click)="save()" [disabled]="!form.valid">
-        {{ 'DIALOGS.SAVE' | translate }}
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-  <dynamic-form [config]="config" [form]="form"></dynamic-form>
-</ion-content>
+<dynamic-form [config]="config" [form]="form"></dynamic-form>
