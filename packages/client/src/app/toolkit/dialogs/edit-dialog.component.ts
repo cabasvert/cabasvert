@@ -21,7 +21,6 @@ import { Component, ComponentFactoryResolver, OnInit, Type, ViewChild } from '@a
 
 import { AlertController, ModalController, NavParams } from '@ionic/angular'
 import { TranslateService } from '@ngx-translate/core'
-import { Navigation } from '../providers/navigation'
 import { EditFormHostDirective } from './edit-form-host.directive'
 import { EditFormComponent } from './edit-form.interface'
 import { Person } from './member.model'

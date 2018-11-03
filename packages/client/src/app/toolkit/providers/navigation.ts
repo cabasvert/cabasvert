@@ -19,8 +19,9 @@
 
 import { Injectable } from '@angular/core'
 import { AlertController, ModalController, NavController } from '@ionic/angular'
-import { AlertOptions, ModalOptions, NavOptions } from '@ionic/core'
-import { Observable } from 'rxjs'
+import { AlertOptions, ModalOptions, NavOptions, OverlayEventDetail } from '@ionic/core'
+import { defer, Observable } from 'rxjs'
+import { fromPromise } from 'rxjs/internal-compatibility'
 import { filter, map } from 'rxjs/operators'
 import { EditDialogComponent, EditFormOptions } from '../dialogs/edit-dialog.component'
 
@@ -63,41 +64,30 @@ export class Navigation {
     })
   }
 
-  showModal$(opts ?: ModalOptions): Observable<any> {
-    return new Observable(observer => {
-      this.modalCtrl.create(opts)
-        .then(modal => {
-          modal.onDidDismiss().then(r => {
-            observer.next(r)
-            observer.complete()
-          })
-          return modal.present()
-        })
-        .catch(e => observer.error(e))
-    })
+  showModal$(opts?: ModalOptions): Observable<OverlayEventDetail<any>> {
+    return defer(() => fromPromise(this.showModal(opts)))
   }
 
-  async showModal(opts ?: ModalOptions): Promise<any> {
+  async showModal(opts?: ModalOptions): Promise<OverlayEventDetail<any>> {
     const modal = await this.modalCtrl.create(opts)
     await modal.present()
     return await modal.onDidDismiss()
   }
 
-  showEditDialog$(opts ?: EditFormOptions): Observable<any> {
-    return this.showModal$({
-      component: EditDialogComponent,
-      componentProps: opts,
-    }).pipe(
-      filter(r => r.role === 'save'),
-      map(r => r.data),
+  showEditDialog$(opts?: EditFormOptions): Observable<any> {
+    return defer(() =>
+      fromPromise(this.showEditDialog(opts)).pipe(
+        filter(r => r.role === 'save'),
+        map(r => r.data),
+      ),
     )
   }
 
-  async showEditDialog(opts ?: EditFormOptions): Promise<any> {
-    const result = await this.showModal({
+  async showEditDialog(opts?: EditFormOptions): Promise<OverlayEventDetail<any>> {
+    return await this.showModal({
       component: EditDialogComponent,
       componentProps: opts,
+      backdropDismiss: false,
     })
-    return result.role === 'save' ? result.data : null
   }
 }

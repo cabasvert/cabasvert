@@ -75,6 +75,12 @@ ion-toolbar ion-segment.sc-ion-segment-md-h {
   --color-checked: #{var(--ion-toolbar-color-actived)};
 }
 
+// Round corner modals
+
+ion-modal .modal-wrapper {
+  border-radius: 4px;
+}
+
 // Large popover
 
 .large-popover .popover-content {
