@@ -21,8 +21,6 @@ import { Injectable } from '@angular/core'
 import { SecureStorage, SecureStorageObject } from '@ionic-native/secure-storage/ngx'
 import { Platform } from '@ionic/angular'
 import { BehaviorSubject, Observable, Subject } from 'rxjs'
-
-import { environment } from '../../../environments/environment'
 import { ConfigurationService } from '../../config/configuration.service'
 import { AppBridge } from './app-bridge'
 
@@ -146,8 +144,7 @@ export class AuthService {
   public async tryLoadCredentials(): Promise<Credentials> {
     let storage = await this._passwordStorage
     if (!storage) {
-      if (environment.loadDevCredentials) return await this.config.tryLoadDevCredentials()
-      else return null
+      return null
     }
 
     await this.platform.ready()

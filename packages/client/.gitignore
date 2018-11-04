@@ -37,7 +37,6 @@ UserInterfaceState.xcuserstate
 
 src/version.ts
 src/config.prod.json
-src/credentials.dev.json
 
 android/version.properties
 android/keystore.properties

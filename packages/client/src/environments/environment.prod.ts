@@ -21,7 +21,6 @@ import { LogLevel } from '../app/toolkit/providers/log.model'
 
 export const environment = {
   production: true,
-  loadDevCredentials: false,
   enableRouteTracing: false,
   testHardwareBackButton: false,
   localeOverride: null,

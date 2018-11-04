@@ -25,7 +25,6 @@ import { LogLevel } from '../app/toolkit/providers/log.model'  // Included with 
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 export const environment = {
   production: false,
-  loadDevCredentials: true,
   enableRouteTracing: false,
   testHardwareBackButton: true,
   localeOverride: 'fr-FR',

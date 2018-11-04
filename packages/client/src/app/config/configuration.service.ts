@@ -62,19 +62,6 @@ export class ConfigurationService {
     this._logger.groupEnd()
   }
 
-  async tryLoadDevCredentials() {
-    if (environment.production) return null
-
-    this._logger.info('Loading development credentials...')
-
-    return await this.http.get<Configuration>(`credentials.dev.json`)
-      .pipe(
-        take(1),
-        catchError(() => of(null)),
-      )
-      .toPromise()
-  }
-
   private merge(target, source) {
     for (let i in source) {
       if (source.hasOwnProperty(i)) {
