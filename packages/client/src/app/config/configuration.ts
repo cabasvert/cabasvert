@@ -50,6 +50,7 @@ export function defaultConfiguration() {
     },
     log: {
       'App': defaultLogLevel,
+      'Locale': defaultLogLevel,
       'Database': defaultLogLevel,
       'Database|Remote': defaultLogLevel,
       'Database|Local': defaultLogLevel,

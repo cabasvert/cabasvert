@@ -18,7 +18,7 @@
  */
 
 import { Location } from '@angular/common'
-import { Component, Inject, LOCALE_ID, OnInit, QueryList, ViewChildren } from '@angular/core'
+import { Component, OnInit, QueryList, ViewChildren } from '@angular/core'
 import { NavigationEnd, Router, Scroll } from '@angular/router'
 import { SwUpdate } from '@angular/service-worker'
 import { Plugins, StatusBarStyle } from '@capacitor/core'
@@ -32,10 +32,11 @@ import { APP_VERSION } from '../version'
 
 import { PageGroup, PAGES } from './menu-page.interface'
 import { AuthService, User } from './toolkit/providers/auth-service'
+import { LocaleManagerService } from './toolkit/providers/locale-manager.service'
 import { LogService } from './toolkit/providers/log-service'
 import { Logger } from './toolkit/providers/logger'
 import { Theme, ThemeManagerService } from './toolkit/providers/theme-manager.service'
-import { debugObservable, filterNotNull } from './utils/observables'
+import { filterNotNull } from './utils/observables'
 
 const { SplashScreen, StatusBar } = Plugins
 
@@ -75,7 +76,7 @@ export class AppComponent implements OnInit {
               private menuCtrl: MenuController,
               private router: Router,
               private location: Location,
-              @Inject(LOCALE_ID) private locale: string,
+              private localeManager: LocaleManagerService,
               private themeManager: ThemeManagerService) {
 
     this.initializeApp()
@@ -85,9 +86,9 @@ export class AppComponent implements OnInit {
 
   private async initializeApp() {
 
-    this.theme$ = this.themeManager.theme$
+    this.localeManager.initialize()
 
-    this.initTranslation()
+    this.theme$ = this.themeManager.theme$
 
     if (this.swUpdate.isEnabled) {
       // Show the update toast if an update is available
@@ -138,17 +139,6 @@ export class AppComponent implements OnInit {
         (ev as BackButtonEvent).detail.register(50, () => this.goBack())
       })
     }
-  }
-
-  initTranslation() {
-    let userLang = this.locale.split('-')[0]
-
-    this.translate.setDefaultLang('fr')
-    this.translate.use(userLang)
-
-    this.translate.get('language', null).subscribe(localizedValue =>
-      this.log.info(`Selected language: ${localizedValue}`),
-    )
   }
 
   ngOnInit() {

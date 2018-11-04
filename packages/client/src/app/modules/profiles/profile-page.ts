@@ -20,8 +20,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { Observable, Subscription } from 'rxjs'
 import { map } from 'rxjs/operators'
+import { locales } from '../../locales'
 import { AuthService, User } from '../../toolkit/providers/auth-service'
 import { Dialogs } from '../../toolkit/dialogs/dialogs.service'
+import { LocaleManagerService } from '../../toolkit/providers/locale-manager.service'
 import { ThemeManagerService } from '../../toolkit/providers/theme-manager.service'
 import { ContractsEditForm } from '../contracts/contracts-edit-page'
 import { ChangePasswordPage } from './change-password-page'
@@ -35,15 +37,21 @@ export class ProfilePage implements OnInit, OnDestroy {
   user: User
   private subscription: Subscription
 
+  locales = [{ label: 'Auto', value: 'auto' }, ...locales]
+  locale$: Observable<string>
+
   isDarkTheme$: Observable<boolean>
 
   constructor(private authService: AuthService,
               private dialogs: Dialogs,
+              private localeManager: LocaleManagerService,
               private themeManager: ThemeManagerService) {
   }
 
   ngOnInit() {
     this.subscription = this.authService.loggedInUser$.subscribe(user => this.user = user)
+
+    this.locale$ = this.localeManager.locale$
 
     this.isDarkTheme$ = this.themeManager.theme$.pipe(
       map(theme => theme === 'dark'),
@@ -54,11 +62,15 @@ export class ProfilePage implements OnInit, OnDestroy {
     this.subscription.unsubscribe()
   }
 
-  public changePassword() {
-    this.dialogs.showModal$({ component: ChangePasswordPage, componentProps: {} }).subscribe()
+  changeLocale(locale) {
+    this.localeManager.locale = locale.value
   }
 
   toggleDarkTheme($event) {
     this.themeManager.theme = $event.detail.checked ? 'dark' : 'light'
+  }
+
+  changePassword() {
+    this.dialogs.showModal$({ component: ChangePasswordPage, componentProps: {} }).subscribe()
   }
 }

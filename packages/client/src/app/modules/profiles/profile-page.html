@@ -35,6 +35,17 @@
     </ion-list-header>
 
     <ion-item>
+      <ion-label>{{ 'PROFILE.LANGUAGE' | translate }}</ion-label>
+      <ion-select [value]="locale$ | async"
+                  interface="popover"
+                  (ionChange)="changeLocale($event.detail)">
+        <ion-select-option *ngFor="let locale of locales" [value]="locale.value">
+          {{ locale.label }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
       <ion-label>{{ 'PROFILE.DARK_THEME' | translate }}</ion-label>
       <ion-toggle [checked]="isDarkTheme$ | async"
                   (ionChange)="toggleDarkTheme($event)">

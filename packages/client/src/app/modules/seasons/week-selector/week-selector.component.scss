@@ -21,13 +21,13 @@
   --ion-grid-padding: 0;
 }
 
-ion-row:not(:first-of-type) {
+ion-row {
   ion-col {
     border-top: 1px solid var(--ion-color-light-tint);
   }
 }
 
-ion-row:not(:last-of-type) {
+ion-row {
   ion-col {
     border-bottom: 1px solid var(--ion-color-light-tint);
   }

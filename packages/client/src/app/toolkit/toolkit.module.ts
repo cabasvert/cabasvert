@@ -31,11 +31,13 @@ import { ScrollToTop } from './components/scroll-to-top.component'
 import { SlidingPane } from './components/sliding-pane'
 import { SlidingPanes } from './components/sliding-panes'
 import { SyncStateIndicator } from './components/sync-state-indicator'
+import { Dialogs } from './dialogs/dialogs.service'
 import { EditDialogComponent } from './dialogs/edit-dialog.component'
 import { EditFormHostDirective } from './dialogs/edit-form-host.directive'
 import { ElasticDirective } from './directives/elastic'
 import { ScrollToTopDirective } from './directives/scroll-to-top'
 import { ShowOnMediaDirective } from './directives/show-on-media'
+import { DatePipeProxy } from './pipes/date.pipe'
 import { SafeUrlPipe } from './pipes/safe-url.pipe'
 import { AppBridge } from './providers/app-bridge'
 import { AuthGuard } from './providers/auth-guard'
@@ -43,8 +45,8 @@ import { AuthGuard } from './providers/auth-guard'
 import { AuthService } from './providers/auth-service'
 import { DatabaseHelper } from './providers/database-helper'
 import { DatabaseService } from './providers/database-service'
+import { LocaleManagerService } from './providers/locale-manager.service'
 import { LogService } from './providers/log-service'
-import { Dialogs } from './dialogs/dialogs.service'
 import { ThemeManagerService } from './providers/theme-manager.service'
 import { UidService } from './providers/uid-service'
 
@@ -75,6 +77,7 @@ import { UidService } from './providers/uid-service'
     EditFormHostDirective,
 
     // Pipes
+    DatePipeProxy,
     SafeUrlPipe,
   ],
   entryComponents: [
@@ -96,6 +99,7 @@ import { UidService } from './providers/uid-service'
     ShowOnMediaDirective,
 
     // Pipes
+    DatePipeProxy,
     SafeUrlPipe,
   ],
 })
@@ -113,6 +117,7 @@ export class ToolkitModule {
         AuthGuard,
         DatabaseService,
         UidService,
+        LocaleManagerService,
         ThemeManagerService,
       ],
     }

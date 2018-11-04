@@ -23,6 +23,7 @@ import { ReactiveFormsModule } from '@angular/forms'
 import { IonicModule } from '@ionic/angular'
 import { TranslateModule } from '@ngx-translate/core'
 import { DynamicFormModule } from '../../toolkit/dynamic-form/dynamic-form.module'
+import { ToolkitModule } from '../../toolkit/toolkit.module'
 
 import { SeasonService } from './season.service'
 import { DynamicWeekSelectComponent } from './week-selector/dynamic-week-select.component'
@@ -37,6 +38,7 @@ import { WeekViewComponent } from './week-view/week-view.component'
     TranslateModule,
     ReactiveFormsModule,
     DynamicFormModule,
+    ToolkitModule,
   ],
   declarations: [
     WeekSelectorComponent,

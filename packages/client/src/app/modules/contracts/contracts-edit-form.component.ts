@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Inject, LOCALE_ID } from '@angular/core'
+import { Component } from '@angular/core'
 import { Validators } from '@angular/forms'
 import { Season } from '@cabasvert/data'
 
@@ -179,7 +179,6 @@ export class ContractsEditForm implements EditFormComponent {
               private modalController: ModalController,
               private dynamicFormService: DynamicFormService,
               private seasonService: SeasonService,
-              @Inject(LOCALE_ID) private locale: string,
               private translateService: TranslateService) {
 
     this.form = this.dynamicFormService.createForm(this.config)

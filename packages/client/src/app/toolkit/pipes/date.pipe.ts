@@ -17,25 +17,27 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { registerLocaleData } from '@angular/common'
+import { DatePipe } from '@angular/common'
+import { Pipe, PipeTransform } from '@angular/core'
+import { TranslateService } from 'ng2-translate'
+import { LocaleManagerService } from '../providers/locale-manager.service'
 
-import localeEnGb from '@angular/common/locales/en-GB'
-import localeEnGb_Extra from '@angular/common/locales/extra/en-GB'
-import localeFr_Extra from '@angular/common/locales/extra/fr'
-import localeFr from '@angular/common/locales/fr'
+@Pipe({
+  name: 'date',
+})
+export class DatePipeProxy implements PipeTransform {
 
-export function registerLocales() {
-  registerLocaleData(localeFr, localeFr_Extra)
-  registerLocaleData(localeEnGb, localeEnGb_Extra)
+  private readonly delegate: DatePipe
+
+  constructor(private localeManager: LocaleManagerService) {
+    this.delegate = new DatePipe(this.localeManager.effectiveLocale)
+
+    this.localeManager.locale$.subscribe(() => {
+      this.delegate['locale'] = this.localeManager.effectiveLocale
+    })
+  }
+
+  public transform(value: any, pattern: string = 'mediumDate'): any {
+    return this.delegate.transform(value, pattern)
+  }
 }
-
-export const locales = [
-  {
-    label: 'English',
-    value: 'en-GB',
-  },
-  {
-    label: 'Français',
-    value: 'fr-FR',
-  },
-]

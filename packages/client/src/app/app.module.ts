@@ -18,7 +18,7 @@
  */
 
 import { HttpClient, HttpClientModule } from '@angular/common/http'
-import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core'
+import { APP_INITIALIZER, NgModule } from '@angular/core'
 import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser'
 import { RouteReuseStrategy } from '@angular/router'
 import { ServiceWorkerModule } from '@angular/service-worker'
@@ -35,7 +35,7 @@ import { AppComponent } from './app.component'
 
 import { ConfigurationModule } from './config/configuration.module'
 import { ConfigurationService } from './config/configuration.service'
-import { inferLocale, registerLocales } from './locales'
+import { registerLocales } from './locales'
 import { AuthenticationModule } from './modules/authentication/authentication.module'
 
 import { ContractModule } from './modules/contracts/contract.module'
@@ -90,8 +90,6 @@ registerLocales()
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
   ],
   providers: [
-    { provide: LOCALE_ID, useValue: inferLocale() },
-
     // Ionic Native
     SecureStorage,
 
