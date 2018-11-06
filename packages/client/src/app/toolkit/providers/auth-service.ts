@@ -127,7 +127,7 @@ export class AuthService {
 
   private async setupPasswordStorage() {
     const safeSecureStorage =
-      (this.platform.is('capacitor') && (this.platform.is('android') || this.platform.is('ios')))
+      (this.platform.is('capacitor') && this.platform.is('android'))
 
     if (!safeSecureStorage) return null
 
