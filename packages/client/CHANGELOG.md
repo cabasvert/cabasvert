@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-beta.19](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.18...@cabasvert/client@0.3.0-beta.19) (2018-11-06)
+
+
+### Bug Fixes
+
+* **client:** disable secure storage on ios ([6e457e7](https://github.com/cabasvert/cabasvert/commit/6e457e7))
+* **client:** enhance change password dialog ([02f8249](https://github.com/cabasvert/cabasvert/commit/02f8249))
+* **client:** enhance person/contracts/trials creation/edition dialogs ([ccde9be](https://github.com/cabasvert/cabasvert/commit/ccde9be))
+* **client:** use Capacitor plugins only for 'hybrid' platform ([a61e06a](https://github.com/cabasvert/cabasvert/commit/a61e06a))
+* **client:** use dialogs output object for contracts/trial baskets ([47e4b13](https://github.com/cabasvert/cabasvert/commit/47e4b13))
+
+
+### Features
+
+* **client:** add a language selector in profile page ([a3ee44f](https://github.com/cabasvert/cabasvert/commit/a3ee44f))
+* **client:** add initial ios support ([152aa5c](https://github.com/cabasvert/cabasvert/commit/152aa5c))
+
+
+
+
+
 # [0.3.0-beta.18](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.17...@cabasvert/client@0.3.0-beta.18) (2018-11-01)
 
 
