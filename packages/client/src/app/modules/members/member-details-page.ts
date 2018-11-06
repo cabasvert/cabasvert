@@ -187,8 +187,6 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         discardText: 'CONTRACT.DISCARD_CREATION_TEXT',
         data: { contract },
       })),
-      filter(r => r.role === 'save'),
-      map(r => r.data),
       map(c => {
         const seasonId = c.season.substring('season:'.length)
         const memberId = c.member.substring('member:'.length)
@@ -264,8 +262,6 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
       discardText: 'CONTRACT.DISCARD_EDITION_TEXT',
       data: { contract },
     }).pipe(
-      filter(r => r.role === 'save'),
-      map(r => r.data),
       map(c => Object.assign({}, contract, c)),
       switchMap(c => this.contractService.putContracts$(c)),
     ).subscribe()
@@ -300,8 +296,6 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         discardText: 'TRIAL_BASKET.DISCARD_CREATION_TEXT',
         data: { trialBasket },
       })),
-      filter(r => r.role === 'save'),
-      map(r => r.data),
       withLatestFrom(this.member$,
         (tb, m) => Object.assign({}, m, { trialBaskets: copyAdd(m.trialBaskets || [], tb) }),
       ),
@@ -344,8 +338,6 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
       discardText: 'TRIAL_BASKET.DISCARD_EDITION_TEXT',
       data: { trialBasket },
     }).pipe(
-      filter(r => r.role === 'save'),
-      map(r => r.data),
       withLatestFrom(this.member$,
         (tb, m) => Object.assign({}, m, { trialBaskets: copyWith(m.trialBaskets, index, tb) }),
       ),
