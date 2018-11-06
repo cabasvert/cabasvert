@@ -36,7 +36,7 @@ import { LocaleManagerService } from './toolkit/providers/locale-manager.service
 import { LogService } from './toolkit/providers/log-service'
 import { Logger } from './toolkit/providers/logger'
 import { Theme, ThemeManagerService } from './toolkit/providers/theme-manager.service'
-import { filterNotNull } from './utils/observables'
+import {debugObservable, filterNotNull} from './utils/observables'
 
 const { SplashScreen, StatusBar } = Plugins
 
@@ -100,7 +100,7 @@ export class AppComponent implements OnInit {
       interval(6 * 60 * 60 * 1000).subscribe(() => this.swUpdate.checkForUpdate())
     }
 
-    if (this.platform.is('android') || this.platform.is('ios')) {
+    if (this.platform.is('hybrid') && (this.platform.is('android') || this.platform.is('ios'))) {
       await StatusBar.setStyle({ style: StatusBarStyle.Dark })
       await StatusBar.setBackgroundColor({ color: '#126019' })
     }
@@ -110,16 +110,16 @@ export class AppComponent implements OnInit {
     } catch (error) {
     }
 
-    // Wait for the initial navigation to succeed before hiding the splash screen
-    this.router.events.pipe(
-      filter(e => e instanceof Scroll),
-      take(1),
-    ).subscribe(() => {
-      if (this.platform.is('android') || this.platform.is('ios')) {
-        this.log.debug('Hiding splash screen')
-        SplashScreen.hide()
-      }
-    })
+    if (this.platform.is('hybrid') && (this.platform.is('android') || this.platform.is('ios'))) {
+      // Wait for the initial navigation to succeed before hiding the splash screen
+      this.router.events.pipe(
+        filter(e => e instanceof Scroll),
+        take(1),
+      ).subscribe(() => {
+          this.log.debug('Hiding splash screen')
+          SplashScreen.hide()
+      })
+    }
 
     this.currentUrl$ = this.router.events.pipe(
       filter(e => e instanceof NavigationEnd),
