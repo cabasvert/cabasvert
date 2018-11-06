@@ -29,6 +29,7 @@ import { MemberService } from './member.service'
 export interface EditFormOptions {
   component: Type<any>
   data: any
+  isNewData: boolean
   title: string
   discardTitle: string
   discardText: string
@@ -76,7 +77,7 @@ export class EditDialogComponent implements OnInit {
   }
 
   get canSave() {
-    return this.editFormInstance.dirty && this.editFormInstance.valid
+    return (this.editFormOptions.isNewData || this.editFormInstance.dirty) && this.editFormInstance.valid
   }
 
   async discard() {

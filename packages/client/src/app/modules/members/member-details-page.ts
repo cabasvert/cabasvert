@@ -129,6 +129,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
       data: {
         person: {},
       },
+      isNewData: true,
     }).pipe(
       withLatestFrom(this.member$,
         (p, m) => Object.assign({}, m, { persons: copyAdd(m.persons, p) }),
@@ -146,6 +147,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
       data: {
         person: person,
       },
+      isNewData: false,
     }).pipe(
       withLatestFrom(this.member$,
         (p, m) => Object.assign({}, m, { persons: copyWith(m.persons, index, p) }),
@@ -186,6 +188,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         discardTitle: 'CONTRACT.DISCARD_CREATION_TITLE',
         discardText: 'CONTRACT.DISCARD_CREATION_TEXT',
         data: { contract },
+        isNewData: true,
       })),
       map(c => {
         const seasonId = c.season.substring('season:'.length)
@@ -261,6 +264,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
       discardTitle: 'CONTRACT.DISCARD_EDITION_TITLE',
       discardText: 'CONTRACT.DISCARD_EDITION_TEXT',
       data: { contract },
+      isNewData: false,
     }).pipe(
       map(c => Object.assign({}, contract, c)),
       switchMap(c => this.contractService.putContracts$(c)),
@@ -295,6 +299,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
         discardTitle: 'TRIAL_BASKET.DISCARD_CREATION_TITLE',
         discardText: 'TRIAL_BASKET.DISCARD_CREATION_TEXT',
         data: { trialBasket },
+        isNewData: true,
       })),
       withLatestFrom(this.member$,
         (tb, m) => Object.assign({}, m, { trialBaskets: copyAdd(m.trialBaskets || [], tb) }),
@@ -337,6 +342,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
       discardTitle: 'TRIAL_BASKET.DISCARD_EDITION_TITLE',
       discardText: 'TRIAL_BASKET.DISCARD_EDITION_TEXT',
       data: { trialBasket },
+      isNewData: false,
     }).pipe(
       withLatestFrom(this.member$,
         (tb, m) => Object.assign({}, m, { trialBaskets: copyWith(m.trialBaskets, index, tb) }),

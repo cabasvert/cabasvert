@@ -292,6 +292,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
       data: {
         person: {},
       },
+      isNewData: true,
     }).pipe(
       map(p => ({
         _id: undefined,
