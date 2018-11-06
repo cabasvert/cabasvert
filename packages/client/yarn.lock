@@ -229,6 +229,11 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
+"@cabasvert/data@^0.1.0-beta.3":
+  version "0.1.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@cabasvert/data/-/data-0.1.0-beta.3.tgz#0e13a1ce8a126e262d7e75be03c413a3d37ddc4f"
+  integrity sha512-kZ8MJ34Gar0jP7ItEDAr+nmVTvYHM8ksgIgzLceLWQmHNxJFnApgn0wGiZvRO6VlhadwA1H2XKozZy9dB8Gihg==
+
 "@capacitor/android@^1.0.0-beta.8":
   version "1.0.0-beta.8"
   resolved "https://registry.yarnpkg.com/@capacitor/android/-/android-1.0.0-beta.8.tgz#6dadf9db1156ee101a797d9478463d9f3717a961"
@@ -263,6 +268,11 @@
   dependencies:
     tslib "^1.9.0"
 
+"@capacitor/ios@^1.0.0-beta.8":
+  version "1.0.0-beta.8"
+  resolved "https://registry.yarnpkg.com/@capacitor/ios/-/ios-1.0.0-beta.8.tgz#d224fc4337e36fb83fd014d9161c2fad0b8b4a16"
+  integrity sha512-TEgURCWgjBiOsZY4hAysW/kRegg98VYKodtDrZ6mqJsNP3+X1j50CVgB1CA0O9J47IutFHfEHaSkpWNZ100OJA==
+
 "@ionic-native/core@^5.0.0-beta.21":
   version "5.0.0-beta.21"
   resolved "https://registry.yarnpkg.com/@ionic-native/core/-/core-5.0.0-beta.21.tgz#45f8a3cc0803ae321566f320e42381697ab4271c"
@@ -286,12 +296,12 @@
     tslib "^1.9.0"
     typescript "^3.1.5"
 
-"@ionic/angular@^4.0.0-beta.15-0":
-  version "4.0.0-beta.15-0"
-  resolved "https://registry.yarnpkg.com/@ionic/angular/-/angular-4.0.0-beta.15-0.tgz#f65b02e63249f8306096d7e694ca91f34e9911e7"
-  integrity sha512-afvHeMsoNPwgD94Wd7qtpGJ5L6m9tFKYvqXxwEo8WwVO35v7PISW6b9+hAlL0pjXvaYDdTsm6j00+ddho/CSzg==
+"@ionic/angular@^4.0.0-beta.15":
+  version "4.0.0-beta.15"
+  resolved "https://registry.yarnpkg.com/@ionic/angular/-/angular-4.0.0-beta.15.tgz#2fb48b49bb23031c3b5590f63f89f6731ca9613b"
+  integrity sha512-JO0ZiCg6b3d5sATiH/L0zjLT9yruGVNodlfJAoxJBcSffcFSCtjHlN+07NB0y4fna2Xk+XlYMEybqNsKj9h3ag==
   dependencies:
-    "@ionic/core" "4.0.0-beta.15-0"
+    "@ionic/core" "4.0.0-beta.15"
 
 "@ionic/cli-framework@1.2.0":
   version "1.2.0"
@@ -315,10 +325,10 @@
     wrap-ansi "^4.0.0"
     write-file-atomic "^2.3.0"
 
-"@ionic/core@4.0.0-beta.15-0", "@ionic/core@^4.0.0-beta.15-0":
-  version "4.0.0-beta.15-0"
-  resolved "https://registry.yarnpkg.com/@ionic/core/-/core-4.0.0-beta.15-0.tgz#f0f231f1da8573eebd92ca4e4183f19517f9ef03"
-  integrity sha512-ccIZ6ztWM7WVpXNPSRWpOTcupEWdYIw9ZZYA9CRebGDE98s3YuNCQ0h62yFHONYLXzdZqL01Z6Ewd8MQ6OG6IA==
+"@ionic/core@4.0.0-beta.15", "@ionic/core@^4.0.0-beta.15":
+  version "4.0.0-beta.15"
+  resolved "https://registry.yarnpkg.com/@ionic/core/-/core-4.0.0-beta.15.tgz#c54f94a5481d0ee61dd7e08991dad61a135730a4"
+  integrity sha512-cVB4sGv8pYvftAuy++6YXtoH1CIfP7iJu/VUs5oD23PRXa62QBphpPBcxhCllc3wgLVr+PNjwSBaU9+ejLM+mQ==
   dependencies:
     "@types/node" "10.11.0"
     ionicons "4.4.6"

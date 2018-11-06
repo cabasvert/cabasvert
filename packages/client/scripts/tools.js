@@ -61,8 +61,6 @@ async function doBuild(target, env, noPack, prefix) {
 
   const { version } = utils.readPackageJson(cwd);
 
-  const tasks = [];
-
   await run('rm', ['-rf', `www`, `artifacts`], { cwd, prefix });
 
   await run('scripts/set-versions.js', [], { cwd, prefix });
@@ -76,13 +74,19 @@ async function doBuild(target, env, noPack, prefix) {
       await packBrowserBuild(version);
     }
 
-    if (target === 'android' || target === 'all') {
+    if (target === 'android' || target === 'ios' || target === 'all') {
       await run('npx', ['cap', 'sync'], { cwd, prefix });
+    }
 
+    if (target === 'android' || target === 'all') {
       const assembly = { 'debug': 'debug', 'production': 'release' }[env];
       await createArtifactsDir();
       let artifactFile = await buildApk(assembly);
       await copyApk(assembly, version, artifactFile);
+    }
+
+    if (target === 'ios' || target === 'all') {
+      // TODO xcodebuild -scheme App build
     }
   }
 }
