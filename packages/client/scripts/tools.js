@@ -20,6 +20,7 @@
 const path = require('path');
 const fs = require('fs-extra');
 const execa = require('execa');
+const commandExists = require('command-exists');
 const Listr = require('listr');
 const utils = require('./../../../scripts/utils');
 const { run, runDaemon } = require('../../../scripts/run-utils');
@@ -74,18 +75,20 @@ async function doBuild(target, env, noPack, prefix) {
       await packBrowserBuild(version);
     }
 
-    if (target === 'android' || target === 'ios' || target === 'all') {
-      await run('npx', ['cap', 'sync'], { cwd, prefix });
-    }
+    const canBuildIos = await commandExists('pod').catch(() => false);
 
     if (target === 'android' || target === 'all') {
+      await run('npx', ['cap', 'sync', 'android'], { cwd, prefix });
+
       const assembly = { 'debug': 'debug', 'production': 'release' }[env];
       await createArtifactsDir();
       let artifactFile = await buildApk(assembly);
       await copyApk(assembly, version, artifactFile);
     }
 
-    if (target === 'ios' || target === 'all') {
+    if (target === 'ios' || (target === 'all' && canBuildIos)) {
+      await run('npx', ['cap', 'sync', 'ios'], { cwd, prefix });
+
       // TODO xcodebuild -scheme App build
     }
   }
