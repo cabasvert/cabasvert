@@ -45,6 +45,10 @@ describe('Date', () => {
   })
 
   it('should give valid today date', async () => {
-    expect(Date.today().toLocaleTimeString('fr')).toEqual('00:00:00')
+    let today = Date.today()
+    expect(today.getHours()).toEqual(0)
+    expect(today.getMinutes()).toEqual(0)
+    expect(today.getSeconds()).toEqual(0)
+    expect(today.getMilliseconds()).toEqual(0)
   })
 })
