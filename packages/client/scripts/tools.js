@@ -75,9 +75,10 @@ async function doBuild(target, env, noPack, prefix) {
       await packBrowserBuild(version);
     }
 
+    const canBuildAndroid = !!env['ANDROID_HOME'];
     const canBuildIos = await commandExists('pod').catch(() => false);
 
-    if (target === 'android' || target === 'all') {
+    if (target === 'android' || (target === 'all' && canBuildAndroid)) {
       await run('npx', ['cap', 'sync', 'android'], { cwd, prefix });
 
       const assembly = { 'debug': 'debug', 'production': 'release' }[env];
