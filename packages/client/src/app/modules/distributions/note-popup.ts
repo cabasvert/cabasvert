@@ -22,34 +22,7 @@ import { FormBuilder, FormGroup } from '@angular/forms'
 import { ModalController, NavParams } from '@ionic/angular'
 
 @Component({
-  template: `
-    <ion-header>
-      <ion-toolbar hideBackButton>
-        <ion-buttons slot="start">
-          <ion-button icon-only (click)="dismiss()">
-            <ion-icon name="arrow-back"></ion-icon>
-            {{ 'DIALOGS.CANCEL' | translate }}
-          </ion-button>
-        </ion-buttons>
-
-        <ion-title>
-          {{ 'NOTES.EDIT_NOTES' | translate }}
-        </ion-title>
-
-        <ion-buttons slot="primary">
-          <ion-button icon-only (click)="save()" [disabled]="!canSave()">
-            {{ 'DIALOGS.SAVE' | translate }}
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-
-    <ion-content>
-      <form [formGroup]="form">
-        <ion-textarea formControlName="content" elastic></ion-textarea>
-      </form>
-    </ion-content>
-  `,
+  templateUrl: 'note-popup.html',
 })
 export class NotePopup implements OnInit {
 
@@ -67,7 +40,7 @@ export class NotePopup implements OnInit {
   }
 
   ngOnInit() {
-    if (this.params.data) {
+    if (this.params.data && this.params.data.note) {
       this.previousValue = this.params.data.note
       this.form.patchValue(this.params.data.note)
     }

@@ -28,8 +28,7 @@ import { SyncState, SyncStatus } from './sync-state-listener'
 @Component({
   selector: 'sync-state',
   template: `
-    <ion-button icon-only
-                [disabled]="isAlive$ | async"
+    <ion-button [disabled]="isAlive$ | async"
                 (click)="forceReset$.next()">
       <ion-icon name="{{ icon$ | async }}"></ion-icon>
     </ion-button>

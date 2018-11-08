@@ -20,17 +20,17 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="discard()">
+      <ion-button (click)="dismiss()">
         <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
 
     <ion-title>
-      {{ title | translate }}
+      {{ 'NOTES.EDIT_NOTES' | translate }}
     </ion-title>
 
     <ion-buttons slot="primary">
-      <ion-button (click)="save()" [disabled]="!canSave">
+      <ion-button (click)="save()" [disabled]="!canSave()">
         {{ 'DIALOGS.SAVE' | translate }}
       </ion-button>
     </ion-buttons>
@@ -38,5 +38,7 @@
 </ion-header>
 
 <ion-content>
-  <ng-container edit-form-host></ng-container>
+  <form [formGroup]="form">
+    <ion-textarea formControlName="content" elastic></ion-textarea>
+  </form>
 </ion-content>
