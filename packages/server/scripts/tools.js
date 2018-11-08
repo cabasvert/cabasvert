@@ -26,7 +26,8 @@ async function build({ prefix }) {
   await run('tsc', ['--build', 'src/tsconfig.build.json'], { stdio: 'inherit', cwd, prefix });
 }
 
-async function start({ watch, prod, env, prefix }) {
+async function start({ flags, env, prefix }) {
+  const { watch } = flags || {};
   let destroy;
 
   if (watch) {

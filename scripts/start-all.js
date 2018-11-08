@@ -24,12 +24,12 @@ const { start: startServer } = require('../packages/server/scripts/tools');
 const { start: startClient } = require('../packages/client/scripts/tools');
 
 async function main() {
-  let { serverDestroy } = await startServer({
+  let { destroy: serverDestroy } = await startServer({
     env: process.env,
     prefix: chalk.cyanBright('server: '),
   });
 
-  let { clientDestroy } = await startClient({
+  let { destroy: clientDestroy } = await startClient({
     env: process.env,
     prefix: chalk.magentaBright('client: '),
   });

@@ -40,7 +40,7 @@ const cli = meow(`
 });
 
 let { destroy } = start({
-  ...cli.flags,
+  flags: cli.flags,
   env: process.env,
 });
 

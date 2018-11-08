@@ -19,7 +19,6 @@
   "scripts": {
     "clean": "rm -rf dist .nyc_output coverage logs",
     "compile": "tsc",
-    "prebuild": "npm-run-all lint license-check",
     "build": "npm-run-all compile",
     "lint": "tslint --project 'tslint.json' 'src/**/*.ts'",
     "license-check": "node ../../scripts/license-check.js"

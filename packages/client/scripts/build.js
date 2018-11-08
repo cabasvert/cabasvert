@@ -26,7 +26,6 @@ const cli = meow(`
       $ start.js [all|browser|android]
  
     Options
-      --dev       Make a development build
       --debug     Make a debug build
       --prod      Make a production build
 `, {
@@ -45,6 +44,6 @@ const cli = meow(`
 
 build({
   target: cli.input[0],
-  ...cli.flags,
+  flags: cli.flags,
   env: process.env,
 });

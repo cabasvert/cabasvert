@@ -28,7 +28,9 @@ const { run, runDaemon } = require('../../../scripts/run-utils');
 const cwd = path.resolve(__dirname, '../');
 const artifactsDir = `${cwd}/artifacts`;
 
-async function start({ watch, prod, env, prefix }) {
+async function start({ flags, env, prefix }) {
+  const { watch, prod } = flags || {};
+
   if (watch && prod) {
     console.log('No prod build in watch mode. Omitting --prod.');
   }
@@ -38,12 +40,13 @@ async function start({ watch, prod, env, prefix }) {
       destroy: await runDaemon('ng', ['run', 'app:serve:development'], {
         stdio: 'inherit',
         cwd,
+        env,
         prefix,
       }),
       host: 'http://locahost:8100',
     };
   } else {
-    await build({ target: 'browser', prod, noPack: true, prefix });
+    await build({ target: 'browser', flags: { prod, noPack: true }, env, prefix });
 
     const port = prod ? 8200 : 8100;
     return {
@@ -53,12 +56,11 @@ async function start({ watch, prod, env, prefix }) {
   }
 }
 
-async function build({ target, dev, debug, prod, noPack, prefix }) {
-  const env = dev ? 'development' : debug ? 'debug' : prod ? 'production' : null;
-  await doBuild(target || 'browser', env || 'development', noPack, prefix);
-}
+async function build({ target, flags, env, prefix }) {
+  const { debug, prod, noPack } = flags || {};
 
-async function doBuild(target, env, noPack, prefix) {
+  target = target || 'browser';
+  const configuration = debug ? 'debug' : prod ? 'production' : 'development';
 
   const { version } = utils.readPackageJson(cwd);
 
@@ -66,9 +68,12 @@ async function doBuild(target, env, noPack, prefix) {
 
   await run('scripts/set-versions.js', [], { cwd, prefix });
 
-  await run('ng', ['build', '--progress=false', `--configuration=${env}`, 'app'], { cwd, prefix });
+  await run('ng',
+    ['build', '--progress=false', `--configuration=${configuration}`, 'app'],
+    { cwd, env, prefix },
+  );
 
-  if (env !== 'development' && !noPack) {
+  if (configuration !== 'development' && !noPack) {
 
     if (target === 'browser' || target === 'all') {
       await createArtifactsDir();
@@ -76,21 +81,32 @@ async function doBuild(target, env, noPack, prefix) {
     }
 
     const canBuildAndroid = !!env['ANDROID_HOME'];
-    const canBuildIos = await commandExists('pod').catch(() => false);
+    if (target === 'android' || target === 'all') {
+      if (canBuildAndroid) {
 
-    if (target === 'android' || (target === 'all' && canBuildAndroid)) {
-      await run('npx', ['cap', 'sync', 'android'], { cwd, prefix });
+        await run('npx', ['cap', 'sync', 'android'], { cwd, prefix });
 
-      const assembly = { 'debug': 'debug', 'production': 'release' }[env];
-      await createArtifactsDir();
-      let artifactFile = await buildApk(assembly);
-      await copyApk(assembly, version, artifactFile);
+        const assembly = { 'debug': 'debug', 'production': 'release' }[configuration];
+        await createArtifactsDir();
+        let artifactFile = await buildApk(assembly);
+        await copyApk(assembly, version, artifactFile);
+
+      } else {
+        console.warn('Can\'t build android target without Android SDK – Skipping');
+      }
     }
 
-    if (target === 'ios' || (target === 'all' && canBuildIos)) {
-      await run('npx', ['cap', 'sync', 'ios'], { cwd, prefix });
+    const canBuildIos = await commandExists('pod').catch(() => false);
+    if (target === 'ios' || target === 'all') {
+      if (canBuildIos) {
 
-      // TODO xcodebuild -scheme App build
+        await run('npx', ['cap', 'sync', 'ios'], { cwd, prefix });
+
+        // TODO xcodebuild -scheme App build
+
+      } else {
+        console.warn('Can\'t build ios target without `pod` – Skipping');
+      }
     }
   }
 }
