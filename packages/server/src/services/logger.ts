@@ -20,6 +20,7 @@
 import * as fs from 'fs'
 import { format } from 'winston'
 import * as winston from 'winston'
+import { Configuration } from '../config'
 
 const logDir = './logs/'
 const logFile = 'server.log.json'
@@ -29,7 +30,7 @@ if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir)
 }
 
-export let logger: winston.Logger = winston.createLogger({
+export let logger = (configuration: Configuration) => winston.createLogger({
   transports: [
     new winston.transports.File({
       level: 'info',
@@ -41,6 +42,7 @@ export let logger: winston.Logger = winston.createLogger({
     }),
     new winston.transports.Console({
       level: 'debug',
+      silent: configuration.log && configuration.log.silent,
       handleExceptions: true,
       format: format.combine(
         format.colorize(),

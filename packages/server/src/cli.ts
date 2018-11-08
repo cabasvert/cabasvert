@@ -27,23 +27,29 @@ process.on('unhandledRejection', (reason, p) => {
   // application specific logging, throwing an error, or other logic here
 })
 
-let argv = parseCli(process.argv.slice(2))
-let configPath = argv['config'] || 'config.json'
-let configuration = parseJsonFile<Configuration>(configPath)
+const argv = parseCli(process.argv.slice(2))
+
+const configPath = argv['config'] || 'config.json'
+const configuration = parseJsonFile<Configuration>(configPath)
 
 pullConfigFromEnv(configuration.database, 'url', 'DATABASE_HOST')
 pullConfigFromEnv(configuration.database.auth, 'username', 'DATABASE_USERNAME')
 pullConfigFromEnv(configuration.database.auth, 'password', 'DATABASE_PASSWORD')
 pullConfigFromEnv(configuration.mail, 'mailToConsole', 'MAIL_TO_CONSOLE')
 
-let generateClientConfig = argv['generate-client-config']
+configuration.log = {
+  ...(configuration.log || {}),
+  silent: argv['silent'],
+}
+
+const generateClientConfig = argv['generate-client-config']
 if (generateClientConfig) {
   writeClientConfiguration(configuration, generateClientConfig)
 }
 
-let server: Promise<http.Server> = startServer(configuration)
+const server: Promise<http.Server> = startServer(configuration)
 
 function pullConfigFromEnv(obj, key, envKey) {
-  let value = process.env[envKey]
+  const value = process.env[envKey]
   if (value) obj[key] = value
 }

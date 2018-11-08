@@ -45,6 +45,10 @@ export interface Configuration {
     mailToConsole?: boolean
     smtpConnection: SMTPTransport.Options
   }
+
+  log?: {
+    silent?: boolean
+  }
 }
 
 export function parseJsonFile<T>(path: string): T {

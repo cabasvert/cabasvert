@@ -31,7 +31,7 @@ import { Services } from './types'
 export async function initializeContainer(configuration: Configuration) {
   let container = new Container()
   container.bind<Configuration>(Services.Config).toConstantValue(configuration)
-  container.bind<Logger>(Services.Logger).toConstantValue(logger)
+  container.bind<Logger>(Services.Logger).toConstantValue(logger(configuration))
   container.bind<DatabaseService>(Services.Database).to(DatabaseService).inSingletonScope()
   container.bind<MailService>(Services.Mail).to(MailService).inSingletonScope()
   container.bind<TokenService>(Services.Token).to(TokenService).inSingletonScope()

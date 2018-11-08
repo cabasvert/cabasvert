@@ -27,15 +27,26 @@ async function build({ prefix }) {
 }
 
 async function start({ flags, env, prefix }) {
-  const { watch } = flags || {};
+  const { watch, silent } = flags || {};
   let destroy;
 
+  const args = [];
+  if (silent) {
+    args.push('--silent');
+  }
+
   if (watch) {
-    destroy = await runDaemon('ts-node-dev', ['src/cli.ts'], { stdio: 'inherit', cwd, prefix });
+    destroy = await runDaemon('ts-node-dev',
+        ['src/cli.ts', ...args],
+        { stdio: 'inherit', cwd, prefix },
+    );
   } else {
     await build({ prefix });
 
-    destroy = await runDaemon('node', ['dist/cli'], { stdio: 'inherit', cwd, prefix });
+    destroy = await runDaemon('node',
+        ['dist/cli', ...args],
+        { stdio: 'inherit', cwd, prefix },
+    );
   }
 
   return {

@@ -25,6 +25,7 @@ const { start: startClient } = require('../packages/client/scripts/tools');
 
 async function main() {
   let { destroy: serverDestroy } = await startServer({
+    flags: { silent: true },
     env: process.env,
     prefix: chalk.cyanBright('server: '),
   });
