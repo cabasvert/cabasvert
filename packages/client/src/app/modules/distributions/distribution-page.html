@@ -74,8 +74,7 @@
 
         <scroll-to-top></scroll-to-top>
 
-        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution"
-                  style="visibility: visible;">
+        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution">
           <ion-item-expanding #item
                               *ngFor="let basket of distributedBaskets$ | async; trackBy: basketDistributionDate">
 
@@ -151,8 +150,7 @@
 
         <scroll-to-top></scroll-to-top>
 
-        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution"
-                  style="visibility: visible;">
+        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution">
           <ng-container *ngFor="let group of remainingBaskets$ | async; trackBy: groupKey">
             <ion-item-divider id="divider-{{ group.key }}">
               <ion-label>{{ group.key }}</ion-label>
@@ -224,8 +222,7 @@
 
         <scroll-to-top></scroll-to-top>
 
-        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution"
-                  style="visibility: visible;">
+        <ion-list *ngIf="distribution$ | async as distribution; else noDistribution">
           <ion-item-expanding #item
                               *ngFor="let basket of delayedBaskets$ | async; trackBy: basketMemberId">
 
