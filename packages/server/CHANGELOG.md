@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.2-beta.8](https://github.com/cabasvert/cabasvert/compare/@cabasvert/server@0.2.2-beta.7...@cabasvert/server@0.2.2-beta.8) (2018-11-11)
+
+
+### Features
+
+* **server:** add --silent option to cli ([ac36c07](https://github.com/cabasvert/cabasvert/commit/ac36c07))
+
+
+
+
+
 ## [0.2.2-beta.7](https://github.com/cabasvert/cabasvert/compare/@cabasvert/server@0.2.2-beta.6...@cabasvert/server@0.2.2-beta.7) (2018-11-06)
 
 **Note:** Version bump only for package @cabasvert/server

@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-beta.20](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.19...@cabasvert/client@0.3.0-beta.20) (2018-11-11)
+
+
+### Bug Fixes
+
+* **client:** edit dialogs for new data can be saved not dirty ([8a14b7b](https://github.com/cabasvert/cabasvert/commit/8a14b7b))
+* **client:** handle undefined note ([51c92d5](https://github.com/cabasvert/cabasvert/commit/51c92d5))
+* **client:** remove loading visibility hack ([3b32f92](https://github.com/cabasvert/cabasvert/commit/3b32f92))
+
+
+
+
+
 # [0.3.0-beta.19](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.18...@cabasvert/client@0.3.0-beta.19) (2018-11-06)
 
 
