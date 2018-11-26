@@ -5,6 +5,12 @@
   "description": "Cabas Vert: A vegetable basket manager app",
   "license": "GPL-3.0",
   "homepage": "https://github.com/cabasvert",
+  "private": true,
+  "workspaces": {
+    "nohoist": [
+      "jest-preset-angular"
+    ]
+  },
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
@@ -12,7 +18,6 @@
     "lint": "tslint --project 'tslint.json' 'src/**/*.ts'",
     "license-check": "node ../../scripts/license-check.js"
   },
-  "private": true,
   "devDependencies": {
     "@types/jest": "^23.3.5",
     "@types/mailparser": "^2.0.2",
