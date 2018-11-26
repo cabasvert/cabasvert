@@ -1,9 +1,12 @@
 {
   "license": "GPL-3.0",
   "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
   "scripts": {
-    "postinstall": "npm-run-all bootstrap",
-    "bootstrap": "lerna bootstrap --no-hoist",
     "clean": "npm-run-all clean:*",
     "clean:packages": "lerna run clean --stream",
     "clean:root": "rm -rf .nyc_output coverage",
@@ -33,7 +36,7 @@
   },
   "devDependencies": {
     "@cabasvert/tools": "^0.1.1-beta.2",
-    "@octokit/rest": "^16.0.1",
+    "@octokit/rest": "^16.0.5",
     "add-cors-to-couchdb": "^0.0.6",
     "chalk": "^2.4.1",
     "codecov": "^3.1.0",
