@@ -13,6 +13,10 @@ node_js:
   - "10"
 
 before_install:
+  # Install recent Yarn for workspaces support
+  - curl -o- -L https://yarnpkg.com/install.sh | bash
+  - export PATH="$HOME/.yarn/bin:$PATH"
+  # Mute Yarn's progress
   - yarn config set no-progress
 
   # Use greenkeeper-lockfile >= 2.0 for monorepo support
