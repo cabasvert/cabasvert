@@ -14,7 +14,6 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
     "lint": "tslint --project 'tslint.json' 'src/**/*.ts'",
     "license-check": "node ../../scripts/license-check.js"
   },
@@ -41,26 +40,6 @@
     "globalSetup": "jest-environment-puppeteer/setup",
     "globalTeardown": "jest-environment-puppeteer/teardown",
     "testEnvironment": "jest-environment-puppeteer",
-    "setupTestFrameworkScriptFile": "<rootDir>/src/setup.ts",
-    "transform": {
-      "^.+\\.(ts|js|html)$": "<rootDir>/node_modules/jest-preset-angular/preprocessor.js",
-      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
-    },
-    "transformIgnorePatterns": [
-      "node_modules/(?!@capacitor|@ionic|@ngrx)"
-    ],
-    "roots": [
-      "<rootDir>/src"
-    ],
-    "collectCoverageFrom": [
-      "**/*.ts",
-      "!**/*.d.ts",
-      "!**/src/*"
-    ],
-    "coverageDirectory": "coverage",
-    "coverageReporters": [
-      "html",
-      "json"
-    ]
+    "setupTestFrameworkScriptFile": "<rootDir>/src/setup.ts"
   }
 }
