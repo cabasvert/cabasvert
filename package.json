@@ -62,9 +62,6 @@
       "packages/server",
       "packages/client"
     ],
-    "roots": [
-      "packages/*/src"
-    ],
     "collectCoverageFrom": [
       "**/*.ts",
       "!**/*.d.ts",
