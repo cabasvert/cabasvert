@@ -121,21 +121,18 @@
       "^@ionic/core/loader": "<rootDir>/../../node_modules/@ionic/core/dist/esm/es5/ionic.define.js",
       "^@ionic/core/dist/ionic/svg": "<rootDir>/scripts/svg-override.js"
     },
-    "transform": {
-      "^.+\\.(ts|js|html)$": "<rootDir>/node_modules/jest-preset-angular/preprocessor.js",
-      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
-    },
     "transformIgnorePatterns": [
       "node_modules/(?!@capacitor|@ionic|@ngrx)"
-    ],
-    "roots": [
-      "<rootDir>/src/"
     ],
     "collectCoverageFrom": [
       "**/*.ts",
       "!**/*.d.ts",
-      "!**/src/*",
-      "!**/src/environments/environment.*"
+      "!src/main.ts",
+      "!src/jestGlobalMocks.ts",
+      "!src/polyfills.ts",
+      "!src/setupJest.ts",
+      "!src/version.ts",
+      "!src/environments/*"
     ],
     "coverageDirectory": "coverage",
     "coverageReporters": [
