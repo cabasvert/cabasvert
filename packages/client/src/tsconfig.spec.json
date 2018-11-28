@@ -18,6 +18,7 @@
   "include": [
     "polyfills.ts",
     "**/*.spec.ts",
-    "**/*.d.ts"
+    "**/*.d.ts",
+    "setupJest.ts"
   ]
 }

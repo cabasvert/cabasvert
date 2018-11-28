@@ -35,9 +35,6 @@
   },
   "jest": {
     "preset": "jest-preset-typescript",
-    "roots": [
-      "<rootDir>/src/"
-    ],
     "collectCoverageFrom": [
       "**/*.ts",
       "!**/*.d.ts"
