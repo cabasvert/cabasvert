@@ -63,19 +63,21 @@ ion-content ion-list {
   margin-bottom: 2 * 10px + 56px;
 }
 
-.list-md:not(.list-inset):not(.list-md-lines-none) .item:last-child {
-  --border-width: 0 !important;
+ion-item-divider {
+  height: 40px;
 }
 
-.item.item-divider {
-  height: 31px;
-}
+ion-item {
+  --min-height: 56px;
+  cursor: pointer;
 
-.item.item-block {
-  height: 56px;
-
-  .input-wrapper .label {
+  ion-label {
     margin: 0;
+  }
+
+  // Make icons a little bigger
+  ion-icon {
+    font-size: 1.8rem;
   }
 }
 

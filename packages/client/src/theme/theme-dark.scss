@@ -138,4 +138,8 @@ $text-color-value: #ffffff;
   .header-md:after {
     opacity: 0.4;
   }
+
+  ion-checkbox {
+    --border-color: rgba(256,256,256,0.54);
+  }
 }
