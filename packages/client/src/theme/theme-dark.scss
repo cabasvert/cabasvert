@@ -24,6 +24,7 @@ $text-color-value: #ffffff;
 .theme-dark {
   --ion-background-color: #{$background-color-value};
   --ion-text-color: #{$text-color-value};
+  --ion-text-color-rgb: #{color-to-rgb-list($text-color-value)};
 
   --ion-background-color-step-50: #{mix($text-color-value, $background-color-value, 5%)};
   --ion-background-color-step-100: #{mix($text-color-value, $background-color-value, 10%)};
@@ -111,6 +112,7 @@ $text-color-value: #ffffff;
   --ion-toolbar-border-color: #4c4c4c;
   --ion-toolbar-color: #cccccc;
   --ion-toolbar-color-actived: #ccc;
+  --ion-toolbar-color-unchecked: #{mix($background-color-value, $text-color-value, 10%)};
 
   //--ion-item-background                   Background color of the item
   //--ion-item-background-actived           Background color of the active item

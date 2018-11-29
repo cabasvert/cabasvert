@@ -42,25 +42,31 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-  <ion-toolbar class="toolbar-thinner">
+  <ion-toolbar>
     <ion-segment [value]="filter" (ionChange)="filter = $event.target.value">
       <ion-segment-button value="distributed">
-        {{ 'DISTRIBUTION.DISTRIBUTED_PLURAL' | translate }}
-        <ion-badge item-right color="primary">
-          {{ distributedBasketsCount$ | async }}
-        </ion-badge>
+        <ion-label>
+          {{ 'DISTRIBUTION.DISTRIBUTED_PLURAL' | translate }}
+          <ion-badge item-right color="primary">
+            {{ distributedBasketsCount$ | async }}
+          </ion-badge>
+        </ion-label>
       </ion-segment-button>
       <ion-segment-button value="remaining">
-        {{ 'DISTRIBUTION.REMAINING_PLURAL' | translate }}
-        <ion-badge item-right color="danger">
-          {{ remainingBasketsCount$ | async }}
-        </ion-badge>
+        <ion-label>
+          {{ 'DISTRIBUTION.REMAINING_PLURAL' | translate }}
+          <ion-badge item-right color="danger">
+            {{ remainingBasketsCount$ | async }}
+          </ion-badge>
+        </ion-label>
       </ion-segment-button>
       <ion-segment-button value="toPrepare">
-        {{ 'DISTRIBUTION.TO_PREPARE_PLURAL' | translate }}
-        <ion-badge item-right color="warning">
-          {{ delayedBasketsCount$ | async }}
-        </ion-badge>
+        <ion-label>
+          {{ 'DISTRIBUTION.TO_PREPARE_PLURAL' | translate }}
+          <ion-badge item-right color="warning">
+            {{ delayedBasketsCount$ | async }}
+          </ion-badge>
+        </ion-label>
       </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
@@ -80,14 +86,10 @@
 
             <ion-item lines="none">
               <ion-note *ngIf="distribution.getBasketDistributionDate(basket) as date"
-                        item-start class="distribution-date">
+                        slot="start" class="distribution-date">
                 {{ date | date: 'shortTime' }}
               </ion-note>
               <ion-label>
-                <ng-template #noDate>
-                  <span item-start>–</span>
-                </ng-template>
-
                 <member-view [member]="basket.member"></member-view>
               </ion-label>
 

@@ -41,7 +41,7 @@
     </ion-searchbar>
   </ion-toolbar>
 
-  <ion-toolbar class="toolbar-thinner filter-toggles">
+  <ion-toolbar class="filter-toggles">
     <div *ngIf="filter$ | async as filter">
       <ng-container *ngIf="seasons$ | async as seasons">
         <ion-button *ngFor="let season of seasons"

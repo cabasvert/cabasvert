@@ -363,20 +363,20 @@
     tslib "^1.9.0"
     typescript "^3.1.5"
 
-"@ionic/angular@^4.0.0-beta.16":
-  version "4.0.0-beta.16"
-  resolved "https://registry.yarnpkg.com/@ionic/angular/-/angular-4.0.0-beta.16.tgz#a20fb34dfbf3df9b61d1c011e61174c8fb760ac9"
-  integrity sha512-JrU1r0+tRw9IMy3+4dr3ikPwZSkYryGzrj9k3izAT4ex24V5wQxO4HUgUe6mz4deWcAKGryNkbU0s+XfSDkceg==
+"@ionic/angular@^4.0.0-beta.17":
+  version "4.0.0-beta.17"
+  resolved "https://registry.yarnpkg.com/@ionic/angular/-/angular-4.0.0-beta.17.tgz#27e50c703d8e29c53120a5ce3f96afb3d1609b09"
+  integrity sha512-9pKIl9XZkzEte01ifIaOpGspgcDA3ZPrfyIv27o5z1Dch53D9NxeKqIlnzwpG6H6INzyVXrTaU+XVZO1IoSA8w==
   dependencies:
-    "@ionic/core" "4.0.0-beta.16"
+    "@ionic/core" "4.0.0-beta.17"
 
-"@ionic/core@4.0.0-beta.16", "@ionic/core@^4.0.0-beta.16":
-  version "4.0.0-beta.16"
-  resolved "https://registry.yarnpkg.com/@ionic/core/-/core-4.0.0-beta.16.tgz#f56079a196be61a01d2041538344825905660df8"
-  integrity sha512-dZxJV30uOchQKZWY51ejhayIhg/dZR1dYY6agrBB/sGAZhNEwWgc5tV6IbpQvzx3rSXb9kJi7lZRs/bM9ztoYw==
+"@ionic/core@4.0.0-beta.17", "@ionic/core@^4.0.0-beta.17":
+  version "4.0.0-beta.17"
+  resolved "https://registry.yarnpkg.com/@ionic/core/-/core-4.0.0-beta.17.tgz#a817ba7193dbae92c9e0a65df9481f9c9e767c50"
+  integrity sha512-8O45+35M/Kx2Rk/RILakLjiV6INyl8o4PodeFA4TJAHQyqA8cNrSg6HWQk44piM0jXNPiABSBaH9s/cQG9Lcsw==
   dependencies:
     "@types/node" "10.11.0"
-    ionicons "4.4.7"
+    ionicons "4.4.8"
 
 "@ionic/discover@^0.3.3":
   version "0.3.3"
@@ -5793,10 +5793,10 @@ invert-kv@^2.0.0:
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-2.0.0.tgz#7393f5afa59ec9ff5f67a27620d11c226e3eec02"
   integrity sha512-wPVv/y/QQ/Uiirj/vh3oP+1Ww+AWehmi1g5fFWGPF6IpCBCDVrhgHRMvrLfdYcwDh3QJbGXDW4JAuzxElLSqKA==
 
-ionicons@4.4.7:
-  version "4.4.7"
-  resolved "https://registry.yarnpkg.com/ionicons/-/ionicons-4.4.7.tgz#fb25537cf0ee27a1f3459ba9bde41b5adfff66ef"
-  integrity sha512-6DOSIWGJnMY7nP69Ov4WduUA/zInJ8bc4/Y/orj76hrL9AgtMozEb4MciZ7ocPxr97wc8J+1c5uHpNZSaWE8KQ==
+ionicons@4.4.8:
+  version "4.4.8"
+  resolved "https://registry.yarnpkg.com/ionicons/-/ionicons-4.4.8.tgz#68982aa789eba3b47949d857ae458d10988a43bb"
+  integrity sha512-S6pp6txWe5lQopg9Ql+w1gTA83jnVs/eXsCCC3b4tYteDPAmlfdqdFMyK+kq8xho428676+QZhIGbHE8pB2oGA==
 
 ip-regex@^2.1.0:
   version "2.1.0"
