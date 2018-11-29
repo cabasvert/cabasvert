@@ -22,6 +22,10 @@ ion-list {
   margin-bottom: 2 * 10px + 56px + 54px;
 }
 
+ion-item-divider {
+  height: 40px;
+}
+
 ion-item {
   --min-height: 56px;
   cursor: pointer;
