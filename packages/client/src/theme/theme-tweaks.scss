@@ -60,21 +60,6 @@ ion-item.item-interactive {
   }
 }
 
-// Thinner toolbar styles
-
-ion-toolbar.toolbar-thinner {
-  --padding-left: 0;
-  --padding-right: 0;
-  --padding-top: 0;
-  --padding-bottom: 0;
-  --min-height: 42px;
-}
-
-ion-toolbar ion-segment.sc-ion-segment-md-h {
-  --color: #{var(--ion-toolbar-color)};
-  --color-checked: #{var(--ion-toolbar-color-actived)};
-}
-
 // Round corner modals
 
 ion-modal .modal-wrapper {
