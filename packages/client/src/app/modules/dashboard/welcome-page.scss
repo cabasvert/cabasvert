@@ -17,26 +17,34 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+ion-item {
+  ion-label {
+    * {
+      line-height: normal;
+    }
+  }
+}
+
 ion-item[small] {
-  min-height: 32px !important;
-}
+  --min-height: 44px;
 
-ion-item[small] .item-inner {
-  margin-left: 0px !important;
-}
+  .item-inner {
+    margin-left: 0 !important;
+  }
 
-ion-item[small] ion-icon {
-  min-width: 32px !important;
-  margin-top: 3px !important;
-  margin-bottom: 3px !important;
-  margin-right: 3px !important;
-}
+  ion-icon {
+    min-width: 32px !important;
+    margin-top: 3px !important;
+    margin-bottom: 3px !important;
+    margin-right: 3px !important;
+  }
 
-ion-item[small] ion-label {
-  margin-top: 0px !important;
-  margin-bottom: 0px !important;
-}
+  ion-label {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
 
-ion-item[small] ion-label h3 {
-  margin-bottom: 0px !important;
+    h3 {
+      margin-bottom: 0 !important;
+    }
+  }
 }

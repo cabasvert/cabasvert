@@ -38,6 +38,10 @@ ion-toolbar.unfolding {
 
 ion-toolbar.filter-toggles {
 
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --min-height: 43px;
+
   div {
     display: flex;
     width: auto;

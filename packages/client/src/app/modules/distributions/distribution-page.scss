@@ -17,6 +17,20 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+ion-segment-button {
+  --padding-start: 0;
+  --padding-end: 0;
+  min-height: 42px;
+
+  ion-label {
+    font-size: 12px;
+    font-kerning: normal;
+    line-height: normal;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
 ion-list {
   // Make the list above bottom with margin 10px + 56px (fab-button) + 10px + 54px (expanded item actions)
   margin-bottom: 2 * 10px + 56px + 54px;
@@ -52,6 +66,7 @@ sliding-pane[name="remaining"] {
     ion-item {
       padding-right: 30px !important;
     }
+
     ion-item-actions {
       padding-right: 40px;
     }
