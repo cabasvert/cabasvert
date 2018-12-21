@@ -43,7 +43,7 @@
     "execa": "^1.0.0",
     "fs-extra": "^7.0.0",
     "jest": "^23.6.0",
-    "lerna": "^3.4.0",
+    "lerna": "^3.7.2",
     "license-check-and-add": "^2.3.6",
     "meow": "^5.0.0",
     "node-cleanup": "^2.1.2",
