@@ -18,7 +18,7 @@
  */
 
 import { AfterContentInit, Component, ElementRef, HostBinding, HostListener, Input, NgZone, OnDestroy, OnInit } from '@angular/core'
-import { Content } from '@ionic/angular'
+import { IonContent } from '@ionic/angular'
 
 import Hammer from 'hammerjs'
 import { combineLatest, Observable, Subject } from 'rxjs'
@@ -57,7 +57,7 @@ class Rect {
 })
 export class IndexedScroller implements OnInit, OnDestroy, AfterContentInit {
 
-  constructor(private content: Content,
+  constructor(private content: IonContent,
               private zone: NgZone,
               private elementRef: ElementRef) {
   }

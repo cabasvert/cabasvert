@@ -18,7 +18,7 @@
  */
 
 import { Component, ElementRef, HostBinding, NgZone, OnDestroy, OnInit } from '@angular/core'
-import { Content } from '@ionic/angular'
+import { IonContent } from '@ionic/angular'
 import { ScrollDetail } from '@ionic/core'
 import { defer, merge, Subscription, timer } from 'rxjs'
 import { filter, switchMap, switchMapTo } from 'rxjs/operators'
@@ -40,7 +40,7 @@ export class ScrollToTop implements OnInit, OnDestroy {
 
   private subscription: Subscription = new Subscription()
 
-  constructor(private content: Content,
+  constructor(private content: IonContent,
               private elementRef: ElementRef,
               private zone: NgZone) {
   }

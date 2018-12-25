@@ -20,7 +20,7 @@
 import { AfterViewInit, Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { Season } from '@cabasvert/data'
-import { Content, NavController } from '@ionic/angular'
+import { IonContent, NavController } from '@ionic/angular'
 import { combineLatest, Observable, of, Subject, Subscription } from 'rxjs'
 import {
   distinctUntilChanged,
@@ -84,7 +84,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
   alphabeticLabels: string[] = (STAR_CHAR + ALPHA_LETTERS).split('')
 
   @ViewChild(IndexedScroller) scroller: IndexedScroller
-  @ViewChild(Content) content: Content
+  @ViewChild(IonContent) content: IonContent
 
   subscription = new Subscription()
 

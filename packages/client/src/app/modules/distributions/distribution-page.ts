@@ -21,7 +21,7 @@ import { AfterViewInit, Component, NgZone, OnDestroy, OnInit, ViewChild } from '
 import { ActivatedRoute, Router } from '@angular/router'
 import { SeasonWeek } from '@cabasvert/data'
 
-import { Content, ModalController, NavController } from '@ionic/angular'
+import { IonContent, ModalController, NavController } from '@ionic/angular'
 import { combineLatest, merge, Observable, of, Subject, Subscription } from 'rxjs'
 import { map, mapTo, mergeScan, publishReplay, refCount, startWith, switchAll, switchMap, withLatestFrom } from 'rxjs/operators'
 import { IndexedScroller } from '../../toolkit/components/indexed-scroller'
@@ -91,7 +91,7 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(SlidingPanes) private panes: SlidingPanes
 
-  @ViewChild('secondPaneContent') secondPaneContent: Content
+  @ViewChild('secondPaneContent') secondPaneContent: IonContent
   @ViewChild('secondPaneScroller') secondPaneScroller: IndexedScroller
 
   private static firstLastnameLetter(member: Member) {
