@@ -18,7 +18,7 @@
  */
 
 import { AfterContentInit, Component, ContentChild, ElementRef, HostBinding, NgZone, OnDestroy } from '@angular/core'
-import { Content, Item, List } from '@ionic/angular'
+import { IonContent, IonItem, IonList } from '@ionic/angular'
 import { fromEvent, Observable, Subscription } from 'rxjs'
 import { observeInsideAngular } from '../../utils/observables'
 import { ItemActions } from './item-actions'
@@ -34,16 +34,16 @@ const ITEM_ACTIONS_HEIGHT = 54
 })
 export class ItemExpanding implements AfterContentInit, OnDestroy {
 
-  @ContentChild(Item) item: Item
+  @ContentChild(IonItem) item: IonItem
   @ContentChild(ItemActions) itemActions: ItemActions
 
   @HostBinding('class.expanded') private _expanded = false
   @HostBinding('class.item-wrapper') private readonly classItemWrapper = true
 
-  private static _perListExpandedItem: Map<List, ItemExpanding> = new Map()
+  private static _perListExpandedItem: Map<IonList, ItemExpanding> = new Map()
 
-  constructor(private list: List,
-              private content: Content,
+  constructor(private list: IonList,
+              private content: IonContent,
               private zone: NgZone,
               private elementRef: ElementRef) {
   }

@@ -18,14 +18,14 @@
  */
 
 import { AfterViewInit, Directive, HostBinding } from '@angular/core'
-import { Content } from '@ionic/angular'
+import { IonContent } from '@ionic/angular'
 
 @Directive({
   selector: '[elastic]',
 })
 export class ElasticDirective implements AfterViewInit {
 
-  constructor(private content: Content) {
+  constructor(private content: IonContent) {
   }
 
   @HostBinding('class.elastic-textarea') private readonly classElastic = true
