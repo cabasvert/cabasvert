@@ -26,46 +26,25 @@ $text-color-value: #ffffff;
   --ion-text-color: #{$text-color-value};
   --ion-text-color-rgb: #{color-to-rgb-list($text-color-value)};
 
-  --ion-background-color-step-50: #{mix($text-color-value, $background-color-value, 5%)};
-  --ion-background-color-step-100: #{mix($text-color-value, $background-color-value, 10%)};
-  --ion-background-color-step-150: #{mix($text-color-value, $background-color-value, 15%)};
-  --ion-background-color-step-200: #{mix($text-color-value, $background-color-value, 20%)};
-  --ion-background-color-step-250: #{mix($text-color-value, $background-color-value, 25%)};
-  --ion-background-color-step-300: #{mix($text-color-value, $background-color-value, 30%)};
-  --ion-background-color-step-350: #{mix($text-color-value, $background-color-value, 35%)};
-  --ion-background-color-step-400: #{mix($text-color-value, $background-color-value, 40%)};
-  --ion-background-color-step-450: #{mix($text-color-value, $background-color-value, 45%)};
-  --ion-background-color-step-500: #{mix($text-color-value, $background-color-value, 50%)};
-  --ion-background-color-step-550: #{mix($text-color-value, $background-color-value, 55%)};
-  --ion-background-color-step-600: #{mix($text-color-value, $background-color-value, 60%)};
-  --ion-background-color-step-650: #{mix($text-color-value, $background-color-value, 65%)};
-  --ion-background-color-step-700: #{mix($text-color-value, $background-color-value, 70%)};
-  --ion-background-color-step-750: #{mix($text-color-value, $background-color-value, 75%)};
-  --ion-background-color-step-800: #{mix($text-color-value, $background-color-value, 80%)};
-  --ion-background-color-step-850: #{mix($text-color-value, $background-color-value, 85%)};
-  --ion-background-color-step-900: #{mix($text-color-value, $background-color-value, 90%)};
-  --ion-background-color-step-950: #{mix($text-color-value, $background-color-value, 95%)};
-  --ion-background-color-step-1000: #{mix($text-color-value, $background-color-value, 100%)};
-  --ion-text-color-step-50: #{mix($background-color-value, $text-color-value, 5%)};
-  --ion-text-color-step-100: #{mix($background-color-value, $text-color-value, 10%)};
-  --ion-text-color-step-150: #{mix($background-color-value, $text-color-value, 15%)};
-  --ion-text-color-step-200: #{mix($background-color-value, $text-color-value, 20%)};
-  --ion-text-color-step-250: #{mix($background-color-value, $text-color-value, 25%)};
-  --ion-text-color-step-300: #{mix($background-color-value, $text-color-value, 30%)};
-  --ion-text-color-step-350: #{mix($background-color-value, $text-color-value, 35%)};
-  --ion-text-color-step-400: #{mix($background-color-value, $text-color-value, 40%)};
-  --ion-text-color-step-450: #{mix($background-color-value, $text-color-value, 45%)};
-  --ion-text-color-step-500: #{mix($background-color-value, $text-color-value, 50%)};
-  --ion-text-color-step-550: #{mix($background-color-value, $text-color-value, 55%)};
-  --ion-text-color-step-600: #{mix($background-color-value, $text-color-value, 60%)};
-  --ion-text-color-step-650: #{mix($background-color-value, $text-color-value, 65%)};
-  --ion-text-color-step-700: #{mix($background-color-value, $text-color-value, 70%)};
-  --ion-text-color-step-750: #{mix($background-color-value, $text-color-value, 75%)};
-  --ion-text-color-step-800: #{mix($background-color-value, $text-color-value, 80%)};
-  --ion-text-color-step-850: #{mix($background-color-value, $text-color-value, 85%)};
-  --ion-text-color-step-900: #{mix($background-color-value, $text-color-value, 90%)};
-  --ion-text-color-step-950: #{mix($background-color-value, $text-color-value, 95%)};
-  --ion-text-color-step-1000: #{mix($background-color-value, $text-color-value, 100%)};
+  --ion-color-step-50: #{mix($text-color-value, $background-color-value, 5%)};
+  --ion-color-step-100: #{mix($text-color-value, $background-color-value, 10%)};
+  --ion-color-step-150: #{mix($text-color-value, $background-color-value, 15%)};
+  --ion-color-step-200: #{mix($text-color-value, $background-color-value, 20%)};
+  --ion-color-step-250: #{mix($text-color-value, $background-color-value, 25%)};
+  --ion-color-step-300: #{mix($text-color-value, $background-color-value, 30%)};
+  --ion-color-step-350: #{mix($text-color-value, $background-color-value, 35%)};
+  --ion-color-step-400: #{mix($text-color-value, $background-color-value, 40%)};
+  --ion-color-step-450: #{mix($text-color-value, $background-color-value, 45%)};
+  --ion-color-step-500: #{mix($text-color-value, $background-color-value, 50%)};
+  --ion-color-step-550: #{mix($text-color-value, $background-color-value, 55%)};
+  --ion-color-step-600: #{mix($text-color-value, $background-color-value, 60%)};
+  --ion-color-step-650: #{mix($text-color-value, $background-color-value, 65%)};
+  --ion-color-step-700: #{mix($text-color-value, $background-color-value, 70%)};
+  --ion-color-step-750: #{mix($text-color-value, $background-color-value, 75%)};
+  --ion-color-step-800: #{mix($text-color-value, $background-color-value, 80%)};
+  --ion-color-step-850: #{mix($text-color-value, $background-color-value, 85%)};
+  --ion-color-step-900: #{mix($text-color-value, $background-color-value, 90%)};
+  --ion-color-step-950: #{mix($text-color-value, $background-color-value, 95%)};
 
   --ion-color-light: #222;
   --ion-color-light-rgb: 34, 34, 34;
@@ -91,7 +70,7 @@ $text-color-value: #ffffff;
   //--ion-backdrop-color                    Color the backdrop component
   //--ion-overlay-background-color          Background color of the overlays
 
-  --ion-backdrop-color: #{var(--ion-background-color-step-300)};
+  --ion-backdrop-color: #{var(--ion-color-step-300)};
   --ion-overlay-background-color: #{var(--ion-background-color)};
 
   //--ion-border-color                      Border color
@@ -119,7 +98,7 @@ $text-color-value: #ffffff;
   //--ion-item-border-color                 Border color of the item
   //--ion-item-color                        Text color of the item
 
-  --ion-item-background-color-active: #{var(--ion-background-color-step-200)};
+  --ion-item-background-color-active: #{var(--ion-color-step-200)};
 
   $item-border-color: mix($background-color-value, $text-color-value, 60%);
   --ion-item-border-color: #{$item-border-color};

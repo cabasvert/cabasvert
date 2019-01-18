@@ -41,5 +41,5 @@ dependencies {
 }
 
 // PLUGIN GRADLE EXTENSIONS START
-
+apply from: "cordova.variables.gradle"
 // PLUGIN GRADLE EXTENSIONS END

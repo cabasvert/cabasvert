@@ -1,5 +1,5 @@
 {
-  "$schema": "./node_modules/@angular-devkit/core/src/workspace/workspace-schema.json",
+  "$schema": "../../node_modules/@angular-devkit/core/src/workspace/workspace-schema.json",
   "version": 1,
   "defaultProject": "app",
   "projects": {
@@ -40,7 +40,7 @@
                 },
                 {
                   "glob": "**/*.svg",
-                  "input": "node_modules/@ionic/angular/dist/ionic/svg",
+                  "input": "../../node_modules/ionicons/dist/ionicons/svg",
                   "output": "./svg"
                 },
                 "src/config.dev.json"
@@ -56,7 +56,7 @@
                 },
                 {
                   "glob": "**/*.svg",
-                  "input": "node_modules/@ionic/angular/dist/ionic/svg",
+                  "input": "../../node_modules/ionicons/dist/ionicons/svg",
                   "output": "./svg"
                 },
                 "src/config.prod.json"
@@ -78,7 +78,7 @@
                 },
                 {
                   "glob": "**/*.svg",
-                  "input": "node_modules/@ionic/angular/dist/ionic/svg",
+                  "input": "../../node_modules/ionicons/dist/ionicons/svg",
                   "output": "./svg"
                 },
                 "src/config.prod.json"
