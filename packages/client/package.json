@@ -78,7 +78,7 @@
     "@angular/compiler": "^7.2.1",
     "@angular/compiler-cli": "^7.2.1",
     "@angular/language-service": "^7.2.1",
-    "@angular/pwa": "^0.12.2",
+    "@angular/pwa": "^0.13.0",
     "@ionic/angular-toolkit": "^1.2.2",
     "@types/jest": "^23.3.5",
     "@types/node": "^10.12.0",
