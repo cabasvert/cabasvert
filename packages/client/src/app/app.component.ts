@@ -182,7 +182,7 @@ export class AppComponent implements OnInit {
   private async goBack() {
     let canGoBack = this.routerOutlets.find(outlet => outlet && outlet.canGoBack())
     if (canGoBack) {
-      this.navCtrl.goBack()
+      this.navCtrl.back()
     } else {
       await this.navCtrl.navigateRoot('/dashboard')
     }

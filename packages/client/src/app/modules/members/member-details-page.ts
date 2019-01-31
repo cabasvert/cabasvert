@@ -105,7 +105,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   }
 
   dismiss() {
-    this.navCtrl.goBack()
+    this.navCtrl.back()
   }
 
   canContactPerson() {

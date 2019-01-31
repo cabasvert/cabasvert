@@ -56,6 +56,6 @@ export class ReportResultPage implements OnInit {
   }
 
   dismiss() {
-    this.navCtrl.goBack()
+    this.navCtrl.back()
   }
 }
