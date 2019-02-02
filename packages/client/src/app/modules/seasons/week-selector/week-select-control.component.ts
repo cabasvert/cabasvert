@@ -23,6 +23,7 @@ import { Season } from '@cabasvert/data'
 import { PopoverController } from '@ionic/angular'
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs'
 import { map } from 'rxjs/operators'
+import { mdRightEnterAnimation } from '../../../toolkit/utils/md.right-enter'
 import { WeekSelectorComponent } from './week-selector.component'
 
 @Component({
@@ -88,6 +89,7 @@ export class WeekSelectControl implements ControlValueAccessor, OnInit, OnDestro
   async showWeekSelector($event) {
     let popover = await this.popoverCtrl.create({
       event: $event,
+      enterAnimation: mdRightEnterAnimation,
       component: WeekSelectorComponent,
       componentProps: {
         season$: this.season$,
@@ -101,7 +103,7 @@ export class WeekSelectControl implements ControlValueAccessor, OnInit, OnDestro
         },
       },
       // FIXME Find a correct way to open the popover on the right
-      cssClass: ['large-popover', 'right-popover'],
+      cssClass: ['large-popover'],
     })
     await popover.present()
   }
