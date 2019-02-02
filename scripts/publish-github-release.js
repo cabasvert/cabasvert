@@ -53,33 +53,38 @@ async function publishGithub(pkg, version, tag, artifactsDir) {
     token: process.env.GH_TOKEN,
   });
 
+  let release = null;
   try {
-    await octokit.repos.getReleaseByTag({
+    release = await octokit.repos.getReleaseByTag({
       owner: owner,
       repo: repository,
       tag: tag,
     });
-
-    console.log(`GitHub release for ${tag} already exists – Skipping!`);
-    return;
   } catch (err) {
     // Release does not yet exist
   }
 
-  console.log(`Creating GitHub release for ${tag}`);
+  if (release) {
+    console.log(`GitHub release for ${tag} already exists – Skipping!`);
+    return;
+  }
 
-  // Create the GitHub release
-  const newRelease = await octokit.repos.createRelease({
-    owner: owner,
-    repo: repository,
-    target_commitish: 'master',
-    tag_name: tag,
-    name: `${pkg} ${version}`,
-    prerelease: isPreRelease(version),
-    body: lastChangelog(),
-  });
+  if (!release) {
+    console.log(`Creating GitHub release for ${tag}`);
 
-  let uploadUrl = newRelease.data.upload_url;
+    // Create the GitHub release
+    release = await octokit.repos.createRelease({
+      owner: owner,
+      repo: repository,
+      target_commitish: 'master',
+      tag_name: tag,
+      name: `${pkg} ${version}`,
+      prerelease: isPreRelease(version),
+      body: lastChangelog(),
+    });
+  }
+
+  let uploadUrl = release.data.upload_url;
 
   // Check if there are any artifacts to publish
   if (fs.existsSync(artifactsDir)) {
@@ -101,11 +106,13 @@ async function publishGithub(pkg, version, tag, artifactsDir) {
 
         const content = await fs.readFile(path.join(artifactsDir, file));
 
-        await octokit.repos.uploadAsset({
+        await octokit.repos.uploadReleaseAsset({
           url: uploadUrl,
           file: content,
-          contentType: contentType,
-          contentLength: content.byteLength,
+          headers: {
+            'content-length': content.byteLength,
+            'content-type': contentType,
+          },
           name: file,
         });
       }
