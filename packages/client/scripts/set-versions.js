@@ -83,7 +83,7 @@ function buildAndroidVersionCode(version) {
     var isRC = splitVersion[3] === 'rc';
     var build = splitVersion[4] ? parseInt(splitVersion[4], 10) : 0;
 
-    versionCode = (versionCode - 100) + build + (isBeta ? 40 : 0) + (isRC ? 20 : 0);
+    versionCode = (versionCode - 100) + build + (isBeta ? 40 : 0) + (isRC ? 80 : 0);
   }
 
   return versionCode
