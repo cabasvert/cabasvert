@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.1-rc.0](https://github.com/cabasvert/cabasvert/compare/@cabasvert/tools@0.1.1-beta.4...@cabasvert/tools@0.1.1-rc.0) (2019-02-02)
+
+
+### Bug Fixes
+
+* **server:** bump Winston ([297d325](https://github.com/cabasvert/cabasvert/commit/297d325))
+
+
+
+
+
 ## [0.1.1-beta.4](https://github.com/cabasvert/cabasvert/compare/@cabasvert/tools@0.1.1-beta.3...@cabasvert/tools@0.1.1-beta.4) (2018-11-11)
 
 **Note:** Version bump only for package @cabasvert/tools

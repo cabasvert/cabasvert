@@ -1,7 +1,7 @@
 {
   "name": "@cabasvert/server",
   "author": "Cabas Vert",
-  "version": "0.2.2-beta.8",
+  "version": "0.2.2-rc.0",
   "description": "The server app for Cabas Vert",
   "license": "GPL-3.0",
   "private": true,
@@ -61,7 +61,7 @@
     "winston": "^3.2.1"
   },
   "devDependencies": {
-    "@cabasvert/tools": "^0.1.1-beta.4",
+    "@cabasvert/tools": "^0.1.1-rc.0",
     "@types/jest": "^23.3.13",
     "@types/supertest": "^2.0.6",
     "jest": "^23.6.0",

@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-rc.0](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.20...@cabasvert/client@0.3.0-rc.0) (2019-02-02)
+
+
+### Bug Fixes
+
+* **client:** bump Ionic versions ([b6efb5e](https://github.com/cabasvert/cabasvert/commit/b6efb5e))
+* **client:** css problems after Ionic bump ([b327797](https://github.com/cabasvert/cabasvert/commit/b327797))
+* **client:** more css fixes ([6a932ff](https://github.com/cabasvert/cabasvert/commit/6a932ff))
+* **client:** update Ionic ([91c70b2](https://github.com/cabasvert/cabasvert/commit/91c70b2))
+* **client:** week selector popover animation made right ([a624ee8](https://github.com/cabasvert/cabasvert/commit/a624ee8))
+
+
+
+
+
 # [0.3.0-beta.20](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-beta.19...@cabasvert/client@0.3.0-beta.20) (2018-11-11)
 
 
