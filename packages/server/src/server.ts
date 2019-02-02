@@ -68,7 +68,7 @@ export async function initializeServer(containerPromise: Promise<Container>): Pr
     // configure morgan to use the app's logger for http request logging
     app.use(morgan('combined', {
       stream: {
-        write: logger.info,
+        write: (str) => logger.info(str),
       },
     }))
   })
