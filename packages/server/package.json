@@ -62,7 +62,7 @@
   },
   "devDependencies": {
     "@cabasvert/tools": "^0.1.1-rc.0",
-    "@types/jest": "^23.3.13",
+    "@types/jest": "^24.0.0",
     "@types/supertest": "^2.0.6",
     "jest": "^23.6.0",
     "jest-preset-typescript": "^1.2.0",
