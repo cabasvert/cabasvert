@@ -90,7 +90,7 @@
     "express": "^4.16.4",
     "fs-extra": "^7.0.0",
     "jest": "^23.6.0",
-    "jest-environment-puppeteer": "^3.9.0",
+    "jest-environment-puppeteer": "^4.0.0",
     "jest-preset-angular": "^6.0.2",
     "jest-transform-stub": "^1.0.0",
     "listr": "^0.14.2",
