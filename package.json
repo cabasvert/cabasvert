@@ -39,7 +39,7 @@
     "@octokit/rest": "^16.0.5",
     "add-cors-to-couchdb": "^0.0.6",
     "chalk": "^2.4.1",
-    "codecov": "^3.1.0",
+    "codecov": "3.1.0",
     "execa": "^1.0.0",
     "fs-extra": "^7.0.0",
     "jest": "^23.6.0",
