@@ -71,10 +71,7 @@
     "request": "^2.83.0",
     "supertest": "^3.0.0",
     "ts-jest": "^23.10.5",
-    "ts-node": "^8.0.2",
-    "ts-node-dev": "^1.0.0-pre.32",
-    "tslint": "^5.11.0",
-    "typescript": "~3.1.6"
+    "ts-node-dev": "^1.0.0-pre.32"
   },
   "// greenkeeper": [
     "// pouchdb is pinned because of pouchdb/pouchdb#7391 and pouchdb/pouchdb#7495"
