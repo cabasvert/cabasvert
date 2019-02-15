@@ -289,7 +289,7 @@ export class DatabaseService implements OnDestroy {
 
   public get$<T>(id: string): Observable<T> {
     return this.database$.pipe(
-      switchMap(db => db.get$(id)),
+      switchMap(db => db.get$<T>(id)),
       publishReplay(1),
       refCount(),
     )

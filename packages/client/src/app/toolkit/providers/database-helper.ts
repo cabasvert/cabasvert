@@ -216,6 +216,7 @@ export class Database {
       // despite that OPTIONS is indeed listed in the CORS configuration.
 
       this.log.error(`Logout [error] ${error}`)
+      return false
     })
   }
 
@@ -304,8 +305,8 @@ export class Database {
     }))
   }
 
-  public get(docId: string) {
-    return this.wrapErrors('get', this.db.get(docId))
+  public get<T>(docId: string) {
+    return this.wrapErrors('get', this.db.get<T>(docId))
   }
 
   public put(doc: any): Promise<PouchDB.Core.Response> {
@@ -323,7 +324,7 @@ export class Database {
     return this.wrapErrors('put', this.db.put(doc))
   }
 
-  private wrapErrors(methodName: string, promise) {
+  private wrapErrors<T>(methodName: string, promise: Promise<T>): Promise<T> {
     return promise.catch((e) => {
       return Promise.reject(e instanceof Error ? e : new PouchError(e, methodName))
     })
@@ -437,7 +438,7 @@ export class Database {
 
   public put$<T>(doc: T & { _id: string }): Observable<T> {
     return from(this.put(doc)).pipe(
-      switchMap(() => this.get(doc._id)),
+      switchMap(() => this.get<T>(doc._id)),
     )
   }
 
@@ -469,15 +470,15 @@ export class Database {
   }
 
   private dbChanges$(options?: {}): Observable<Change> {
-    return Observable.create(observer => {
+    return new Observable(observer => {
       const changes = this.changes(options)
         .on('change', change => {
-          observer.next(change)
+          observer.next(change as Change)
         })
         .on('complete', info => {
           if (info.results) {
             info.results.forEach(change => {
-              observer.next(change)
+              observer.next(change as Change)
             })
           }
           observer.complete()
