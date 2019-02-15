@@ -1458,7 +1458,7 @@
     "@types/pouchdb-node" "*"
     "@types/pouchdb-replication" "*"
 
-"@types/puppeteer@^1.11.2":
+"@types/puppeteer@^1.12.1":
   version "1.12.1"
   resolved "https://registry.yarnpkg.com/@types/puppeteer/-/puppeteer-1.12.1.tgz#f61f9e0da45e36cdbbeab3b088995a8a2cad47a4"
   integrity sha512-6qpe7XXM93iWh8quEP8Ay516Vmfc2r+ZAxFH3Mt6fx3vzmZz+4Q+hYxc9PxeEIXJhWLAAPYAgAiM/vLHEUwGpw==
@@ -4480,10 +4480,10 @@ expect-ct@0.1.1:
   resolved "https://registry.yarnpkg.com/expect-ct/-/expect-ct-0.1.1.tgz#de84476a2dbcb85000d5903737e9bc8a5ba7b897"
   integrity sha512-ngXzTfoRGG7fYens3/RMb6yYoVLvLMfmsSllP/mZPxNHgFq41TmPSLF/nLY7fwoclI2vElvAmILFWGUYqdjfCg==
 
-expect-puppeteer@^3.4.0:
-  version "3.5.1"
-  resolved "https://registry.yarnpkg.com/expect-puppeteer/-/expect-puppeteer-3.5.1.tgz#28a26be1357387390b55b49045ec533895172c5a"
-  integrity sha512-SB5JeJCXWSRcUK39fBJlCA6qnVt3BG1/M9vYZ+XYq8gY9jab9Jm4BztsrAwDTWca1L+O/7dRYrG2BPziRtjh+Q==
+expect-puppeteer@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/expect-puppeteer/-/expect-puppeteer-4.0.0.tgz#7dd140635e3f4f0fdf03eaa91ddbe683aa61b6b4"
+  integrity sha512-K7D6WRUWR0CtQLqf9ZMBQNkpbhQzxWkKEt9/PnVl+aWMF0xcdV7JW9AClxNprzXkrUq/ILws3H2u6dWcEEjRSQ==
 
 expect@^23.6.0:
   version "23.6.0"
@@ -5934,7 +5934,7 @@ inquirer@6.2.1:
     strip-ansi "^5.0.0"
     through "^2.3.6"
 
-inquirer@^6.2.0, inquirer@^6.2.1:
+inquirer@^6.2.0, inquirer@^6.2.2:
   version "6.2.2"
   resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-6.2.2.tgz#46941176f65c9eb20804627149b743a218f25406"
   integrity sha512-Z2rREiXA6cHRR9KBOarR3WuLlFzlIfAEIiB45ll5SSadMg7WqOh1MKEjjndfuH5ewXdixWCxqnVfGOQzPeiztA==
@@ -6754,16 +6754,16 @@ jest-config@^24.1.0:
     pretty-format "^24.0.0"
     realpath-native "^1.0.2"
 
-jest-dev-server@^3.9.0:
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/jest-dev-server/-/jest-dev-server-3.9.0.tgz#ee901248a5d183bf81dab86828ffedd0d97fbf2d"
-  integrity sha512-ByiTON3Aes60tlO8NojCcPeXCLuN8bpKbh87zbdttp2cQqZR4FoCv9y4IFeTbgHJIg5NJvIDCGmdu05YuHuAYw==
+jest-dev-server@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/jest-dev-server/-/jest-dev-server-4.0.0.tgz#4a9e784bdaa86c0debc5b99dbf438a7ff0ff415e"
+  integrity sha512-tq3fHPM8BDbu/71yIxgGgZW62s1Em6rLNDce0/ff/4No093OyjUEPM8yIUaoBt4pxwwRGkaS1EZB5PzCmRLGkg==
   dependencies:
-    chalk "^2.4.1"
+    chalk "^2.4.2"
     cwd "^0.10.0"
     find-process "^1.2.1"
-    inquirer "^6.2.1"
-    spawnd "^3.7.0"
+    inquirer "^6.2.2"
+    spawnd "^4.0.0"
     tree-kill "^1.2.1"
     wait-port "^0.2.2"
 
@@ -6853,14 +6853,14 @@ jest-environment-node@^24.0.0:
     jest-mock "^24.0.0"
     jest-util "^24.0.0"
 
-jest-environment-puppeteer@^3.9.0:
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/jest-environment-puppeteer/-/jest-environment-puppeteer-3.9.0.tgz#bb8d0943f7fb592944ce7ee640e92f1cc038d4f5"
-  integrity sha512-bQsSWSYcy6vW8DkkZCxaN2Aa+qL08ay2B895Zd2/aJ2aDMRfNN9SVlMD9KQ4jeYgehjkXt8vhvAHWuXZijFxiA==
+jest-environment-puppeteer@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/jest-environment-puppeteer/-/jest-environment-puppeteer-4.0.0.tgz#62f74adaaeb6ca7c658ba3c242c8aaf4000b1e1b"
+  integrity sha512-IdbfZW1TjT1lmdPlvlHi4S+CAHuGk63fzGUpQAUeadm77saSJISDMuYS5b7kZ6lXZtc4myu53TkMWDYhh60XOA==
   dependencies:
-    chalk "^2.4.1"
+    chalk "^2.4.2"
     cwd "^0.10.0"
-    jest-dev-server "^3.9.0"
+    jest-dev-server "^4.0.0"
     merge-deep "^3.0.2"
 
 jest-get-type@^22.1.0:
@@ -7196,10 +7196,10 @@ jest-snapshot@^24.1.0:
     pretty-format "^24.0.0"
     semver "^5.5.0"
 
-jest-transform-stub@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/jest-transform-stub/-/jest-transform-stub-1.0.0.tgz#e4e941454f31a8bbc4db96b31f46a08b294372b1"
-  integrity sha512-7eilMk4sxi2Fiy223I+BYTS5wJQEGEBqR3D8dy5A6RWmMTnmjipw2ImGDfXzEUBieebyrnitzkJfpNOJSFklLQ==
+jest-transform-stub@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/jest-transform-stub/-/jest-transform-stub-2.0.0.tgz#19018b0851f7568972147a5d60074b55f0225a7d"
+  integrity sha512-lspHaCRx/mBbnm3h4uMMS3R5aZzMwyNpNIJLXj4cEsV0mIUtS4IjYJLSoyjRCtnxb6RIGJ4NL2quZzfIeNhbkg==
 
 jest-util@^23.4.0:
   version "23.4.0"
@@ -10370,7 +10370,7 @@ punycode@^2.1.0, punycode@^2.1.1:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
 
-puppeteer@^1.11.0:
+puppeteer@^1.12.2:
   version "1.12.2"
   resolved "https://registry.yarnpkg.com/puppeteer/-/puppeteer-1.12.2.tgz#dbc36afc3ba2d7182b1a37523c0081a0e8507c9a"
   integrity sha512-xWSyCeD6EazGlfnQweMpM+Hs6X6PhUYhNTHKFj/axNZDq4OmrVERf70isBf7HsnFgB3zOC1+23/8+wCAZYg+Pg==
@@ -11602,10 +11602,10 @@ spawn-wrap@^1.4.2:
     signal-exit "^3.0.2"
     which "^1.3.0"
 
-spawnd@^3.7.0:
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/spawnd/-/spawnd-3.7.0.tgz#9807503ab408950771b93634e3f76115bcc8fe31"
-  integrity sha512-ENQEB/aHTBg9327fog7uzrjuRkJGZvlBjlY+9TZsu52ATme6NwE/bAVRoRP7+0jnFljK00rwbMbWszQ9bjxg2Q==
+spawnd@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/spawnd/-/spawnd-4.0.0.tgz#b27ee6e7ec55c6ec232c05a21418cf35a77e0409"
+  integrity sha512-ql3qhJnhAkvXpaqKBWOqou1rUTSQhFRaZkyOT+MTFB4xY3X+brgw6LTWV2wHuE9A6YPhrNe1cbg7S+jAYnbC0Q==
   dependencies:
     exit "^0.1.2"
     signal-exit "^3.0.2"
