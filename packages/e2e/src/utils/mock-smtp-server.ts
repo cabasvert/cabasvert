@@ -39,7 +39,7 @@ export class MockSMTPServer {
 
   public messages: ParsedMail[] = []
 
-  constructor(private config?: MockSMTPConfig = {}) {
+  constructor(private config: MockSMTPConfig = {}) {
     this.delegate = new SMTPServer({
       secure: config.secure !== undefined ? config.secure : false,
       hideSTARTTLS: config.hideSTARTTLS !== undefined ? config.hideSTARTTLS : true,
@@ -64,7 +64,7 @@ export class MockSMTPServer {
     this.messages = []
   }
 
-  public async waitForMessages(count: number, timeout?: number = 10000): Promise<ParsedMail[]> {
+  public async waitForMessages(count: number, timeout: number = 10000): Promise<ParsedMail[]> {
     await Promise.race([
       untilCondition(() => this.messages.length === count),
       untilTimeout(timeout),
@@ -80,7 +80,7 @@ export class MockSMTPServer {
 
 type OnAuthHandler = (auth: SMTPServerAuthentication,
                       session: SMTPServerSession,
-                      callback: (err: Error | null | undefined, response: SMTPServerAuthenticationResponse) => void) => void
+                      callback: (err: Error | null | undefined, response?: SMTPServerAuthenticationResponse) => void) => void
 type OnDataHandler = (stream: Readable, session: SMTPServerSession, callback: (err?: Error | null) => void) => void
 
 function handleAuth(authenticator: Authenticator): OnAuthHandler {
