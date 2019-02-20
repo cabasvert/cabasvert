@@ -44,29 +44,29 @@
   </ion-toolbar>
   <ion-toolbar>
     <ion-segment [value]="filter" (ionChange)="filter = $event.target.value">
-      <ion-segment-button value="distributed">
+      <ion-segment-button value="distributed" layout="icon-start">
         <ion-label>
           {{ 'DISTRIBUTION.DISTRIBUTED_PLURAL' | translate }}
-          <ion-badge item-right color="primary">
-            {{ distributedBasketsCount$ | async }}
-          </ion-badge>
         </ion-label>
+        <ion-badge color="primary">
+          {{ distributedBasketsCount$ | async }}
+        </ion-badge>
       </ion-segment-button>
-      <ion-segment-button value="remaining">
+      <ion-segment-button value="remaining" layout="icon-start">
         <ion-label>
           {{ 'DISTRIBUTION.REMAINING_PLURAL' | translate }}
-          <ion-badge item-right color="danger">
-            {{ remainingBasketsCount$ | async }}
-          </ion-badge>
         </ion-label>
+        <ion-badge color="danger">
+          {{ remainingBasketsCount$ | async }}
+        </ion-badge>
       </ion-segment-button>
-      <ion-segment-button value="toPrepare">
+      <ion-segment-button value="toPrepare" layout="icon-start">
         <ion-label>
           {{ 'DISTRIBUTION.TO_PREPARE_PLURAL' | translate }}
-          <ion-badge item-right color="warning">
-            {{ delayedBasketsCount$ | async }}
-          </ion-badge>
         </ion-label>
+        <ion-badge color="warning">
+          {{ delayedBasketsCount$ | async }}
+        </ion-badge>
       </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
