@@ -1,7 +1,7 @@
 {
   "name": "@cabasvert/tools",
   "author": "Cabas Vert",
-  "version": "0.1.1-rc.0",
+  "version": "0.1.1-rc.1",
   "description": "The admin and dev tools for Cabas Vert",
   "publishConfig": {
     "access": "public"
@@ -24,7 +24,7 @@
     "license-check": "node ../../scripts/license-check.js"
   },
   "dependencies": {
-    "@cabasvert/data": "^0.1.0-rc.0",
+    "@cabasvert/data": "^0.1.0-rc.1",
     "@types/crypto-js": "^3.1.38",
     "@types/mz": "^0.0.32",
     "@types/pouchdb": "^6.3.2",
@@ -43,8 +43,6 @@
     "reflect-metadata": "^0.1.10",
     "uid-generator": "^1.0.0",
     "winston": "^3.2.1"
-  },
-  "devDependencies": {
   },
   "// greenkeeper": [
     "// pouchdb is pinned because of pouchdb/pouchdb#7391 and pouchdb/pouchdb#7495"

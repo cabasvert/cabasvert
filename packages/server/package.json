@@ -1,7 +1,7 @@
 {
   "name": "@cabasvert/server",
   "author": "Cabas Vert",
-  "version": "0.2.2-rc.0",
+  "version": "0.2.2-rc.1",
   "description": "The server app for Cabas Vert",
   "license": "GPL-3.0",
   "private": true,
@@ -41,8 +41,8 @@
     "@types/pouchdb-core": "^7.0.2",
     "@types/pouchdb-find": "^6.3.4",
     "body-parser": "^1.18.2",
-    "cors": "^2.8.4",
     "connect-history-api-fallback": "^1.6.0",
+    "cors": "^2.8.4",
     "crypto-js": "^3.1.9-1",
     "express": "^4.16.2",
     "graceful-fs": "^4.1.11",
@@ -62,7 +62,7 @@
     "winston": "^3.2.1"
   },
   "devDependencies": {
-    "@cabasvert/tools": "^0.1.1-rc.0",
+    "@cabasvert/tools": "^0.1.1-rc.1",
     "@types/supertest": "^2.0.6",
     "pouchdb-security-helper": "^1.1.1",
     "request": "^2.83.0",

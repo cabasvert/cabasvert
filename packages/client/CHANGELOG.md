@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-rc.2](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-rc.1...@cabasvert/client@0.3.0-rc.2) (2019-02-20)
+
+
+### Bug Fixes
+
+* **client:** badge alignment in segments of distribution ([69d4c1e](https://github.com/cabasvert/cabasvert/commit/69d4c1e))
+* **client:** change scaleType configuration name ([06cb80b](https://github.com/cabasvert/cabasvert/commit/06cb80b))
+* **client:** change scaleType configuration name ([120168d](https://github.com/cabasvert/cabasvert/commit/120168d))
+* **client:** improve notes popup ([62649f0](https://github.com/cabasvert/cabasvert/commit/62649f0))
+* **client:** splash screen to be centered and croped ([693d85c](https://github.com/cabasvert/cabasvert/commit/693d85c))
+
+
+
+
+
 # [0.3.0-rc.1](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-rc.0...@cabasvert/client@0.3.0-rc.1) (2019-02-02)
 
 **Note:** Version bump only for package @cabasvert/client

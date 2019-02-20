@@ -1,7 +1,7 @@
 {
   "name": "@cabasvert/data",
   "author": "Cabas Vert",
-  "version": "0.1.0-rc.0",
+  "version": "0.1.0-rc.1",
   "description": "The data models for Cabas Vert",
   "publishConfig": {
     "access": "public"
@@ -23,8 +23,6 @@
     "build": "npm-run-all clean compile",
     "lint": "tslint --project 'tslint.json' 'src/**/*.ts'",
     "license-check": "node ../../scripts/license-check.js"
-  },
-  "devDependencies": {
   },
   "jest": {
     "preset": "jest-preset-typescript",

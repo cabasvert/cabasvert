@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.2-rc.1](https://github.com/cabasvert/cabasvert/compare/@cabasvert/server@0.2.2-rc.0...@cabasvert/server@0.2.2-rc.1) (2019-02-20)
+
+
+### Bug Fixes
+
+* **all:** add fallback on server to handle deep links ([4b261c0](https://github.com/cabasvert/cabasvert/commit/4b261c0))
+
+
+
+
+
 ## [0.2.2-rc.0](https://github.com/cabasvert/cabasvert/compare/@cabasvert/server@0.2.2-beta.8...@cabasvert/server@0.2.2-rc.0) (2019-02-02)
 
 

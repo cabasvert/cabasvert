@@ -1,6 +1,6 @@
 {
   "name": "@cabasvert/client",
-  "version": "0.3.0-rc.1",
+  "version": "0.3.0-rc.2",
   "author": "Cabas Vert",
   "description": "Cabas Vert: A vegetable basket manager app",
   "license": "GPL-3.0",
@@ -40,7 +40,7 @@
     "@angular/platform-browser-dynamic": "^7.2.3",
     "@angular/router": "^7.2.3",
     "@angular/service-worker": "^7.2.3",
-    "@cabasvert/data": "^0.1.0-rc.0",
+    "@cabasvert/data": "^0.1.0-rc.1",
     "@capacitor/android": "^1.0.0-beta.17",
     "@capacitor/cli": "^1.0.0-beta.17",
     "@capacitor/core": "^1.0.0-beta.17",

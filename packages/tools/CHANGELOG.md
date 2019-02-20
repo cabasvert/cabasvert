@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.1-rc.1](https://github.com/cabasvert/cabasvert/compare/@cabasvert/tools@0.1.1-rc.0...@cabasvert/tools@0.1.1-rc.1) (2019-02-20)
+
+**Note:** Version bump only for package @cabasvert/tools
+
+
+
+
+
 ## [0.1.1-rc.0](https://github.com/cabasvert/cabasvert/compare/@cabasvert/tools@0.1.1-beta.4...@cabasvert/tools@0.1.1-rc.0) (2019-02-02)
 
 
