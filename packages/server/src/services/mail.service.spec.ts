@@ -74,7 +74,8 @@ describe('MailService', () => {
       text: 'Test text',
     }
 
-    transport.sendMail.mockReturnValue(Promise.reject(new Error('error')))
+    let errorSent = new Error('error')
+    transport.sendMail.mockReturnValue(Promise.reject(errorSent))
 
     let errorCaught
     try {
@@ -83,10 +84,7 @@ describe('MailService', () => {
       errorCaught = error
     }
 
-    expect(errorCaught).toMatchObject({
-      name: 'Error',
-      message: 'error',
-    })
+    expect(errorCaught).toMatchObject(errorSent)
     expect(nodemailer.createTransport).toHaveBeenCalledWith(configuration.mail.smtpConnection)
     expect(transport.sendMail).toHaveBeenCalledWith(mail)
     expect(transport.close).toHaveBeenCalled()
