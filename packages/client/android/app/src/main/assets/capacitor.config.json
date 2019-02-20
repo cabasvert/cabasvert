@@ -6,7 +6,7 @@
   "plugins": {
     "SplashScreen": {
       "androidSplashResourceName": "animated_splash",
-      "scaleType": "CENTER_CROP",
+      "androidScaleType": "CENTER_CROP",
       "launchShowDuration": 10000
     }
   }
