@@ -19,7 +19,7 @@
 
 const path = require('path');
 const fs = require('fs-extra');
-const octokit = require('@octokit/rest')();
+const Octokit = require('@octokit/rest');
 const utils = require('./utils');
 
 const owner = 'cabasvert';
@@ -48,9 +48,8 @@ async function main() {
 }
 
 async function publishGithub(pkg, version, tag, artifactsDir) {
-  octokit.authenticate({
-    type: 'oauth',
-    token: process.env.GH_TOKEN,
+  let octokit = new Octokit({
+    auth: process.env.GH_TOKEN,
   });
 
   let release = null;
