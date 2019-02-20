@@ -1405,7 +1405,7 @@
     "@types/pouchdb-mapreduce" "*"
     "@types/pouchdb-replication" "*"
 
-"@types/pouchdb-core@*", "@types/pouchdb-core@^7.0.1":
+"@types/pouchdb-core@*", "@types/pouchdb-core@^7.0.2":
   version "7.0.2"
   resolved "https://registry.yarnpkg.com/@types/pouchdb-core/-/pouchdb-core-7.0.2.tgz#2b1846fd274720c65b298543dfa66d028650e527"
   integrity sha512-8Yv1nLwkJWVP3cGgoM1zr2HAlEpgdEr27hHBMmjbh4WiTxDXiajjveTEcso+sZHSHPQVt+9hBn7lIgmrXvMwzw==
@@ -1414,15 +1414,7 @@
     "@types/node-fetch" "*"
     "@types/pouchdb-find" "*"
 
-"@types/pouchdb-core@^6.4.2":
-  version "6.4.3"
-  resolved "https://registry.yarnpkg.com/@types/pouchdb-core/-/pouchdb-core-6.4.3.tgz#554f2b6b48c826eaa03483457ff477898b4a9588"
-  integrity sha512-eANDgm0at7QOea8JdzkeVI9Ba/TZ34wRMU+ukvVvPUqxLQSeiU4LprKPn6wOmk4GU6Yqze2oYn4YF6rnI2jAng==
-  dependencies:
-    "@types/debug" "*"
-    "@types/pouchdb-find" "*"
-
-"@types/pouchdb-find@*", "@types/pouchdb-find@^6.3.2", "@types/pouchdb-find@^6.3.3":
+"@types/pouchdb-find@*", "@types/pouchdb-find@^6.3.2", "@types/pouchdb-find@^6.3.4":
   version "6.3.4"
   resolved "https://registry.yarnpkg.com/@types/pouchdb-find/-/pouchdb-find-6.3.4.tgz#899256e9cc924ae6ab5414b5a978808f5b003919"
   integrity sha512-yT959pA3JgQns4Z9mlmuuUd6kEg7mSgRnF+XVN/EjFjuhZjKgR79+ia2R/UtUPKLtsm63IX6uHZFSPvkDhU/rA==
@@ -1455,7 +1447,7 @@
     "@types/pouchdb-mapreduce" "*"
     "@types/pouchdb-replication" "*"
 
-"@types/pouchdb-replication@*", "@types/pouchdb-replication@^6.4.0":
+"@types/pouchdb-replication@*", "@types/pouchdb-replication@^6.4.2":
   version "6.4.2"
   resolved "https://registry.yarnpkg.com/@types/pouchdb-replication/-/pouchdb-replication-6.4.2.tgz#e523764cdc9872f6493d5e039ce7bf54ee0a2888"
   integrity sha512-BbuwkCv6nu8RUVjymUvhSw/Oo+VOCWyUpio3ujOoxhVdef/JZ5AUjsotgKWHiG0OtkZ8O5oCbAx5uH1Zf6w9XA==
