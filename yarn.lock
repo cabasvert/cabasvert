@@ -8175,6 +8175,13 @@ netmask@^1.0.6:
   resolved "https://registry.yarnpkg.com/netmask/-/netmask-1.0.6.tgz#20297e89d86f6f6400f250d9f4f6b4c1945fcd35"
   integrity sha1-ICl+idhvb2QA8lDZ9Pa0wZRfzTU=
 
+ngx-autosize@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/ngx-autosize/-/ngx-autosize-1.4.1.tgz#da2e6adbec191cfe64191b406db2d1c3ec2a36dc"
+  integrity sha512-G/sWEbqquIZ4We4C01N2QQyHPjp9veg2seuMHWGQSxmyJBpWwcn00wkiHbETNkx3EhwtcImtn4mA6hCzz0Fn4w==
+  dependencies:
+    tslib "^1.9.0"
+
 nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"

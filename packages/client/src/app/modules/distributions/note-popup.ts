@@ -17,18 +17,21 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core'
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
 import { FormBuilder, FormGroup } from '@angular/forms'
-import { ModalController, NavParams } from '@ionic/angular'
+import { IonTextarea, ModalController, NavParams } from '@ionic/angular'
 
 @Component({
   templateUrl: 'note-popup.html',
 })
-export class NotePopup implements OnInit {
+export class NotePopup implements OnInit, AfterViewInit {
 
   form: FormGroup
 
   private previousValue
+
+  @ViewChild('noteInput')
+  private noteInput: IonTextarea
 
   constructor(private params: NavParams,
               private modalController: ModalController,
@@ -44,6 +47,11 @@ export class NotePopup implements OnInit {
       this.previousValue = this.params.data.note
       this.form.patchValue(this.params.data.note)
     }
+  }
+
+  ngAfterViewInit() {
+    console.log('Focus !')
+    this.noteInput.setFocus()
   }
 
   canSave() {

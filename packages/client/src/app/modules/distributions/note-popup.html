@@ -39,6 +39,8 @@
 
 <ion-content>
   <form [formGroup]="form">
-    <ion-textarea formControlName="content" elastic></ion-textarea>
+    <ion-textarea #noteInput formControlName="content" autosize autofocus="true"
+                  placeholder="{{ 'DISTRIBUTION.NOTE_POPUP_PLACEHOLDER' | translate }}">
+    </ion-textarea>
   </form>
 </ion-content>

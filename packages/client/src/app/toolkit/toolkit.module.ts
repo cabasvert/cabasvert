@@ -69,7 +69,6 @@ import { UidService } from './providers/uid-service'
     SyncStateIndicator,
 
     // Directives
-    ElasticDirective,
     ShowOnMediaDirective,
 
     // Dialogs stuff
@@ -95,7 +94,6 @@ import { UidService } from './providers/uid-service'
     SyncStateIndicator,
 
     // Directives
-    ElasticDirective,
     ShowOnMediaDirective,
 
     // Pipes

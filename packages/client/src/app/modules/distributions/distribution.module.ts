@@ -23,6 +23,7 @@ import { ReactiveFormsModule } from '@angular/forms'
 import { RouterModule, Routes } from '@angular/router'
 import { IonicModule } from '@ionic/angular'
 import { TranslateModule } from '@ngx-translate/core'
+import { AutosizeModule } from 'ngx-autosize'
 import { AuthGuard } from '../../toolkit/providers/auth-guard'
 import { Roles } from '../../toolkit/providers/auth-service'
 
@@ -60,6 +61,7 @@ let routes: Routes = [
     ToolkitModule,
     RouterModule.forChild(routes),
     MemberModule,
+    AutosizeModule,
   ],
   declarations: [
     DistributionPage,
