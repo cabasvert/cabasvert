@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-rc.3](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-rc.2...@cabasvert/client@0.3.0-rc.3) (2019-03-15)
+
+
+### Features
+
+* **all:** correctly implement deep-links redirects ([5c755f4](https://github.com/cabasvert/cabasvert/commit/5c755f4))
+* **client:** redirect after login ([31c2d30](https://github.com/cabasvert/cabasvert/commit/31c2d30))
+
+
+
+
+
 # [0.3.0-rc.2](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-rc.1...@cabasvert/client@0.3.0-rc.2) (2019-02-20)
 
 

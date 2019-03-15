@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.2-rc.2](https://github.com/cabasvert/cabasvert/compare/@cabasvert/server@0.2.2-rc.1...@cabasvert/server@0.2.2-rc.2) (2019-03-15)
+
+
+### Bug Fixes
+
+* **server:** remove url history fallback ([d7db915](https://github.com/cabasvert/cabasvert/commit/d7db915))
+
+
+### Features
+
+* **all:** correctly implement deep-links redirects ([5c755f4](https://github.com/cabasvert/cabasvert/commit/5c755f4))
+
+
+
+
+
 ## [0.2.2-rc.1](https://github.com/cabasvert/cabasvert/compare/@cabasvert/server@0.2.2-rc.0...@cabasvert/server@0.2.2-rc.1) (2019-02-20)
 
 

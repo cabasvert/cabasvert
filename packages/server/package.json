@@ -1,7 +1,7 @@
 {
   "name": "@cabasvert/server",
   "author": "Cabas Vert",
-  "version": "0.2.2-rc.1",
+  "version": "0.2.2-rc.2",
   "description": "The server app for Cabas Vert",
   "license": "GPL-3.0",
   "private": true,
