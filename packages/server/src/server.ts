@@ -22,7 +22,6 @@ import * as cors from 'cors'
 import * as express from 'express'
 import * as helmet from 'helmet'
 import * as http from 'http'
-import * as history from 'connect-history-api-fallback'
 
 import { Container } from 'inversify'
 import { InversifyExpressServer } from 'inversify-express-utils'
@@ -62,8 +61,6 @@ export async function initializeServer(containerPromise: Promise<Container>): Pr
 
     // set http security headers
     app.use(helmet())
-
-    app.use(history())
 
     // configure serving client as static files
     app.use(express.static('public'))
