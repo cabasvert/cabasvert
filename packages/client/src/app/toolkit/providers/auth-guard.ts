@@ -18,16 +18,7 @@
  */
 
 import { Injectable } from '@angular/core'
-import {
-  ActivatedRouteSnapshot,
-  CanActivate,
-  CanActivateChild,
-  CanLoad,
-  Route,
-  Router,
-  RouterStateSnapshot,
-} from '@angular/router'
-import { QueryParamsHandling } from '@angular/router/src/config'
+import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, CanLoad, Route, Router, RouterStateSnapshot } from '@angular/router'
 import { Observable, of } from 'rxjs'
 import { fromPromise } from 'rxjs/internal-compatibility'
 import { map, switchMap, take, tap } from 'rxjs/operators'
@@ -52,7 +43,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
               private router: Router) {
   }
 
-  private checkAuthorization(data: any | null, target: string): Observable<boolean> {
+  private checkAuthorization(data: any | null, target: string | null = null, path: string | null = null): Observable<boolean> {
     const roles = data && data.roles
     return this.authService.loggedInUser$.pipe(
       take(1),
@@ -71,29 +62,29 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
 
         return [authenticated, granted]
       }),
-      tap(([authenticated, granted]) => {
+      map(([authenticated, granted]) => {
         if (target && (target.startsWith('/reset-password/') || target === '/login')) {
           this.router.navigate([target])
-          return
+          return false
         }
 
-        if (!authenticated) this.router.navigate(['/login'], { queryParamsHandling: 'preserve' })
+        if (!authenticated) this.router.navigate(['/login'], target || path ? { queryParams: { target: target || path } } : {})
         else if (!granted) this.router.navigate(['/'])
         else if (target) this.router.navigate([target])
+        return granted && !target
       }),
-      map(([authenticated, granted]) => granted),
     )
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.checkAuthorization(route.data, route.queryParamMap.get('target'))
+    return this.checkAuthorization(route.data, route.queryParamMap.get('target'), '/' + route.url.join('/'))
   }
 
   canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.checkAuthorization(childRoute.data, childRoute.queryParamMap.get('target'))
+    return this.checkAuthorization(childRoute.data, childRoute.queryParamMap.get('target'), '/' + childRoute.url.join('/'))
   }
 
   canLoad(route: Route): Observable<boolean> {
-    return this.checkAuthorization(route.data, null)
+    return this.checkAuthorization(route.data)
   }
 }

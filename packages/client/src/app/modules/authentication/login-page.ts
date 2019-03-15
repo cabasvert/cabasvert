@@ -94,7 +94,8 @@ export class LoginPage implements OnInit {
         }
 
         await this.dismissLoading()
-        await this.navCtrl.navigateRoot(['/'])
+        let target = this.route.snapshot.queryParamMap.get('target')
+        await this.navCtrl.navigateRoot(['/'], target ? { queryParams: { target } } : {})
       } else {
         await this.dismissLoading()
         await this.showFeedback(this.translate.instant('LOGIN.ACCESS_DENIED'), true)
@@ -168,7 +169,7 @@ export class LoginPage implements OnInit {
       await this.dismissLoading()
       await this.showError(
         this.translate.instant('LOGIN.REQUEST_PASSWORD_FAILED'),
-        error.message
+        error.message,
       )
     }
   }
