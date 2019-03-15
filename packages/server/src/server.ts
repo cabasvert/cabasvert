@@ -62,23 +62,22 @@ export async function initializeServer(containerPromise: Promise<Container>): Pr
     // set http security headers
     app.use(helmet())
 
-    // configure serving client as static files
-    app.use(express.static('public'))
-
-    app.get('*', (req, res, next) => {
-      if (req.url.startsWith('/api')) return next()
-      res.redirect(config.clientApplication.url + '/?target=' + req.originalUrl)
-    })
-
     // configure morgan to use the app's logger for http request logging
     app.use(morgan('combined', {
       stream: {
         write: (str) => logger.info(str),
       },
     }))
+
+    // configure serving client as static files
+    app.use(express.static('public'))
   })
 
   let application = server.build()
+
+  application.get('*', (req, res, next) => {
+    res.redirect(config.clientApplication.url + '/?target=' + req.originalUrl)
+  })
 
   return new Promise<http.Server>((resolve) => {
     // start the server
