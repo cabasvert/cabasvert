@@ -41,7 +41,6 @@
     "@types/pouchdb-core": "^7.0.2",
     "@types/pouchdb-find": "^6.3.4",
     "body-parser": "^1.18.2",
-    "connect-history-api-fallback": "^1.6.0",
     "cors": "^2.8.4",
     "crypto-js": "^3.1.9-1",
     "express": "^4.16.2",

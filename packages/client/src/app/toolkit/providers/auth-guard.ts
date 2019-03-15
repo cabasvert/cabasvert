@@ -27,6 +27,7 @@ import {
   Router,
   RouterStateSnapshot,
 } from '@angular/router'
+import { QueryParamsHandling } from '@angular/router/src/config'
 import { Observable, of } from 'rxjs'
 import { fromPromise } from 'rxjs/internal-compatibility'
 import { map, switchMap, take, tap } from 'rxjs/operators'
@@ -51,7 +52,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
               private router: Router) {
   }
 
-  private checkAuthorization(data: any | null): Observable<boolean> {
+  private checkAuthorization(data: any | null, target: string): Observable<boolean> {
     const roles = data && data.roles
     return this.authService.loggedInUser$.pipe(
       take(1),
@@ -71,22 +72,28 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
         return [authenticated, granted]
       }),
       tap(([authenticated, granted]) => {
-        if (!authenticated) this.router.navigate(['/login'])
+        if (target && (target.startsWith('/reset-password/') || target === '/login')) {
+          this.router.navigate([target])
+          return
+        }
+
+        if (!authenticated) this.router.navigate(['/login'], { queryParamsHandling: 'preserve' })
         else if (!granted) this.router.navigate(['/'])
+        else if (target) this.router.navigate([target])
       }),
       map(([authenticated, granted]) => granted),
     )
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.checkAuthorization(route.data)
+    return this.checkAuthorization(route.data, route.queryParamMap.get('target'))
   }
 
   canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.checkAuthorization(childRoute.data)
+    return this.checkAuthorization(childRoute.data, childRoute.queryParamMap.get('target'))
   }
 
   canLoad(route: Route): Observable<boolean> {
-    return this.checkAuthorization(route.data)
+    return this.checkAuthorization(route.data, null)
   }
 }

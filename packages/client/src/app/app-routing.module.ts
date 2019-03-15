@@ -22,7 +22,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router'
 import { environment } from '../environments/environment'
 
 const routes: Routes = [
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 ]
 
 @NgModule({
