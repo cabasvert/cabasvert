@@ -75,9 +75,9 @@ export async function initializeServer(containerPromise: Promise<Container>): Pr
 
   let application = server.build()
 
-  application.get('*', (req, res, next) => {
-    res.redirect(config.clientApplication.url + '/?target=' + req.originalUrl)
-  })
+  // application.get('*', (req, res, next) => {
+  //   res.redirect(config.clientApplication.url + '/?target=' + req.originalUrl)
+  // })
 
   return new Promise<http.Server>((resolve) => {
     // start the server
