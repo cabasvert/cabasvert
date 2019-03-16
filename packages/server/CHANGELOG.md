@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.2-rc.4](https://github.com/cabasvert/cabasvert/compare/@cabasvert/server@0.2.2-rc.3...@cabasvert/server@0.2.2-rc.4) (2019-03-16)
+
+
+### Reverts
+
+* **server:** try without fallback route ([d6eaa76](https://github.com/cabasvert/cabasvert/commit/d6eaa76))
+
+
+
+
+
 ## [0.2.2-rc.3](https://github.com/cabasvert/cabasvert/compare/@cabasvert/server@0.2.2-rc.2...@cabasvert/server@0.2.2-rc.3) (2019-03-15)
 
 
