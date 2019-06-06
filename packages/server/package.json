@@ -57,7 +57,7 @@
     "pouchdb-core": "^6.4.3",
     "pouchdb-find": "^6.4.3",
     "reflect-metadata": "^0.1.10",
-    "uid-generator": "^1.0.0",
+    "uid-generator": "^2.0.0",
     "winston": "^3.2.1"
   },
   "devDependencies": {
