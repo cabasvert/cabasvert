@@ -83,7 +83,7 @@
     "@ionic/angular-toolkit": "^1.3.0",
     "codelyzer": "^4.5.0",
     "command-exists": "^1.2.8",
-    "execa": "^1.0.0",
+    "execa": "^2.0.1",
     "express": "^4.16.4",
     "fs-extra": "^7.0.0",
     "jest-preset-angular": "^6.0.2",
