@@ -50,7 +50,7 @@
     "inversify-express-utils": "^6.2.0",
     "minimist": "^1.2.0",
     "morgan": "^1.9.0",
-    "nodemailer": "^5.1.1",
+    "nodemailer": "^6.3.0",
     "pouchdb-adapter-http": "^6.4.3",
     "pouchdb-ajax": "^6.4.3",
     "pouchdb-authentication": "^1.1.3",
