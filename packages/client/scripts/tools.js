@@ -56,7 +56,7 @@ async function start({ flags, env, prefix }) {
   }
 }
 
-async function build({ target, flags, env, prefix }) {
+async function build({ target, flags, env, prefix, apk }) {
   const { debug, prod, noPack } = flags || {};
 
   target = target || 'browser';
@@ -87,9 +87,10 @@ async function build({ target, flags, env, prefix }) {
         await run('npx', ['cap', 'sync', 'android'], { cwd, prefix });
 
         const assembly = { 'debug': 'debug', 'production': 'release' }[configuration];
+	const format = (apk || false) ? 'apk' : 'bundle';
         await createArtifactsDir();
-        let artifactFile = await buildApk(assembly);
-        await copyApk(assembly, version, artifactFile);
+        let artifactFile = await buildAndroid(assembly, format);
+        await copyAndroid(assembly, version, format, artifactFile);
 
       } else {
         console.warn('Can\'t build android target without Android SDK – Skipping');
@@ -124,16 +125,21 @@ async function packBrowserBuild(version) {
   await run('tar', ['cvzf', archiveFile, '--exclude=config.prod.json', 'www'], { cwd });
 }
 
-async function buildApk(assembly) {
+async function buildAndroid(assembly, format) {
   const capitalizedAssembly = assembly.charAt(0).toUpperCase() + assembly.substr(1);
-  await run('./gradlew', [`assemble${capitalizedAssembly}`], { cwd: `${cwd}/android` });
+  const builder = format === 'bundle' ? 'bundle' : 'assemble';
+  const directory = format === 'bundle' ? 'bundle' : 'apk';
+  const suffix = format === 'bundle' ? '' : `-${assembly}`;
+  const extension = format === 'bundle' ? 'aab' : 'apk';
+  await run('./gradlew', [`bundle${capitalizedAssembly}`], { cwd: `${cwd}/android` });
 
   const buildOutputsDir = path.join(cwd, 'android', 'app', 'build', 'outputs');
-  return path.join(buildOutputsDir, 'apk', assembly, `app-${assembly}.apk`);
+  return path.join(buildOutputsDir, directory, assembly, `app${suffix}.${extension}`);
 }
 
-async function copyApk(assembly, version, artifactFile) {
-  const destination = path.join(artifactsDir, `cabasvert-client-${assembly}-${version}.apk`);
+async function copyAndroid(assembly, version, format, artifactFile) {
+  const extension = format === 'bundle' ? 'aab' : 'apk';
+  const destination = path.join(artifactsDir, `cabasvert-client-${assembly}-${version}.${extension}`);
   await fs.copyFile(artifactFile, destination);
 }
 

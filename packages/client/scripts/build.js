@@ -28,6 +28,7 @@ const cli = meow(`
     Options
       --debug     Make a debug build
       --prod      Make a production build
+      --apk       Use APK format
 `, {
   booleanDefault: undefined,
   flags: {
@@ -36,6 +37,10 @@ const cli = meow(`
       default: false,
     },
     prod: {
+      type: 'boolean',
+      default: false,
+    },
+    apk: {
       type: 'boolean',
       default: false,
     },
