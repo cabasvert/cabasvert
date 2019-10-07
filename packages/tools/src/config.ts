@@ -70,7 +70,7 @@ export function locationFromOptions(opts: { [p: string]: any }, config: Configur
       },
     }
   } else {
-    let locationName = opts['location'] || this.config.defaultLocation
+    let locationName = opts['location'] || config.defaultLocation
     return config.locations[locationName]
   }
 }

@@ -118,7 +118,11 @@ export class CabasVertTools {
           'local': {
             'name': 'local',
             'database': {
-              'url': 'http://localhost:5984',
+              'url': 'http://localhost:3000',
+              'auth': {
+                'username': 'username',
+                'password': 'password',
+              },
             },
           },
           'prod': {
