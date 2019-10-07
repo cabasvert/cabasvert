@@ -18,9 +18,9 @@
  */
 
 import { Injectable } from '@angular/core'
-import { AppState, NetworkStatus, Plugins } from '@capacitor/core'
+import { AppState, NetworkStatus, PluginListenerHandle, Plugins } from '@capacitor/core'
 import { Platform } from '@ionic/angular'
-import { fromEvent, merge, Observable, of } from 'rxjs'
+import { merge, Observable, of } from 'rxjs'
 import { fromPromise } from 'rxjs/internal-compatibility'
 import { map, publishReplay, refCount, tap } from 'rxjs/operators'
 import { LogService } from './log-service'
@@ -47,7 +47,7 @@ export class AppBridge {
               private platform: Platform) {
 
     this.appIsActive$ = this.isHybrid ?
-      fromEvent(App, 'appStateChange').pipe(
+      fromEvent<AppState>(App, 'appStateChange').pipe(
         map((state: AppState) => state.isActive),
         tap(active => this.logger.info(`Went to ${active ? 'foreground' : 'background'}`)),
         publishReplay(1),
@@ -83,4 +83,29 @@ export class AppBridge {
     return this.isHybrid ? Network.getStatus() :
       Promise.resolve<NetworkStatus>({ connected: true, connectionType: 'wifi' })
   }
+}
+
+function fromEvent<T>(target: CapacitorEventTarget<T>, eventName: string, options?: EventListenerOptions): Observable<T> {
+  return new Observable<T>(subscriber => {
+    function handler(e: T) {
+      if (arguments.length > 1) {
+        subscriber.next(Array.prototype.slice.call(arguments))
+      } else {
+        subscriber.next(e)
+      }
+    }
+
+    const handle = target.addListener(eventName, handler, options)
+    subscriber.add(() => handle.remove())
+  })
+}
+
+export interface CapacitorEventTarget<T> {
+  addListener(type: string, listener: (evt: T) => void, options?: boolean | EventListenerOptions): PluginListenerHandle
+}
+
+export interface EventListenerOptions {
+  capture?: boolean
+  passive?: boolean
+  once?: boolean
 }

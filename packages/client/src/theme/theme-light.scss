@@ -17,10 +17,12 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "~@ionic/core/dist/collection/themes/ionic.functions.color";
-
 $background-color-value: #ffffff;
 $text-color-value: #000000;
+
+@function color-to-rgb-list($color) {
+  @return #{red($color)},#{green($color)},#{blue($color)};
+}
 
 .theme-light {
   --ion-background-color: #{$background-color-value};

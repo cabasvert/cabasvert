@@ -16,10 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
-@import "~@ionic/core/dist/collection/themes/ionic.functions.color";
 
 $background-color-value: #2c2c2c;
 $text-color-value: #ffffff;
+
+@function color-to-rgb-list($color) {
+  @return #{red($color)},#{green($color)},#{blue($color)};
+}
 
 .theme-dark {
   --ion-background-color: #{$background-color-value};
