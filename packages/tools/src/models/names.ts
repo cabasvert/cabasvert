@@ -18,10 +18,13 @@
  */
 
 import { readFile } from 'mz/fs'
+import * as path from 'path'
+
+const appDir = path.dirname(require.main.filename)
 
 export async function loadNames() {
-  let firstnames = JSON.parse((await readFile('assets/firstnames.json')).toString())
-  let lastnames = JSON.parse((await readFile('assets/lastnames.json')).toString())
+  let firstnames = JSON.parse((await readFile(path.resolve(appDir, 'assets/firstnames.json'))).toString())
+  let lastnames = JSON.parse((await readFile(path.resolve(appDir, 'assets/lastnames.json'))).toString())
     .filter(name => name.length < 15)
   return { firstnames, lastnames }
 }
