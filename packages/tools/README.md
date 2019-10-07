@@ -18,6 +18,78 @@
   </tr>
 </table>
 
+## Commands
+
+Get help:
+```bash
+$ npx cvt --help
+Usage: cvt [OPTION]... COMMAND
+
+Commands:
+    backup save             Write a backup of database to file
+    backup restore <file>   Restores a backup of database from file
+    generate                Generates a randomized database
+    setup                   Setups database
+
+Common options:
+    -l, --location=NAME      Specify the server location
+    -H, --host=URL           Specify the database host
+    --username=...           Specify an admin username
+    --password=...           Specify an admin password
+    -d, --db-name=NAME       Specify the database name
+    -h, --help               Shows this help message
+
+Server locations:
+    You can have location shortcuts in a .cabasvertrc.json file in your
+    home directory. It has the following format:
+
+{
+  "defaultLocation": "local",
+  "locations": {
+    "local": {
+      "name": "local",
+      "database": {
+        "url": "http://localhost:3000",
+        "auth": {
+          "username": "username",
+          "password": "password"
+        }
+      }
+    },
+    "prod": {
+      "name": "prod",
+      "database": {
+        "url": "https://my-database.com",
+        "auth": {
+          "username": "my-username",
+          "password": "my-password"
+        }
+      }
+    }
+  }
+}
+```
+
+Create the database admin user:
+```bash
+npx cvt setup
+```
+
+Generate a `test` database:
+```bash
+npx cvt -d test generate
+```
+
+Make a backup of the `test` database:
+```bash
+npx cvt -d test backup save
+```
+
+Restore a backup of the `test` database:
+```bash
+npx cvt -d test backup restore backup-file.json
+```
+
 ## Build
 
 Execute:
