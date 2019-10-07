@@ -114,7 +114,7 @@ describe('User', () => {
 
     await page.click(sel('logout-button'))
     await page.waitForSelector(sel('login-form'))
-  })
+  }, 20000)
 
   it('can reset password', async () => {
     await mockSMTPServer.start()

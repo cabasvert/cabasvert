@@ -86,7 +86,7 @@
     "execa": "^1.0.0",
     "express": "^4.16.4",
     "fs-extra": "^7.0.0",
-    "jest-preset-angular": "^6.0.2",
+    "jest-preset-angular": "^7.1.1",
     "jest-transform-stub": "^2.0.0",
     "listr": "^0.14.2",
     "prettier": "^1.14.3"
