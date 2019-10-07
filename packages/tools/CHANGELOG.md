@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.1](https://github.com/cabasvert/cabasvert/compare/@cabasvert/tools@0.1.1-rc.1...@cabasvert/tools@0.1.1) (2019-10-07)
+
+
+### Bug Fixes
+
+* **tools:** correctly load .cabasvertrc.json ([dfb03a9](https://github.com/cabasvert/cabasvert/commit/dfb03a9))
+* **tools:** load asset files from app root directory ([37089f2](https://github.com/cabasvert/cabasvert/commit/37089f2))
+
+
+
+
+
 ## [0.1.1-rc.1](https://github.com/cabasvert/cabasvert/compare/@cabasvert/tools@0.1.1-rc.0...@cabasvert/tools@0.1.1-rc.1) (2019-02-20)
 
 **Note:** Version bump only for package @cabasvert/tools
