@@ -46,7 +46,7 @@
     "fs-extra": "^7.0.0",
     "jest": "^24.9.0",
     "jest-preset-typescript": "^1.2.0",
-    "lerna": "^3.8.0",
+    "lerna": "^3.18.5",
     "license-check-and-add": "^2.3.6",
     "meow": "^5.0.0",
     "node-cleanup": "^2.1.2",
