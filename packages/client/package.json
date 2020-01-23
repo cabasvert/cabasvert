@@ -48,7 +48,7 @@
     "@ionic-native/core": "^5.15.0",
     "@ionic-native/secure-storage": "^5.15.0",
     "@ionic/angular": "^4.10.0",
-    "@ionic/core": "^4.10.0",
+    "@ionic/core": "^4.11.9",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
     "@types/pouchdb-core": "^7.0.2",
