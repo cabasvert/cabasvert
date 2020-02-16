@@ -65,7 +65,7 @@
     "pouchdb-debug": "^7.2.1",
     "pouchdb-fetch": "^7.2.1",
     "pouchdb-find": "^7.2.1",
-    "pouchdb-replication": "^7.0.0",
+    "pouchdb-replication": "^7.2.1",
     "rxjs": "^6.5.3",
     "uid-generator": "^1.0.0",
     "zone.js": "^0.8.26"
