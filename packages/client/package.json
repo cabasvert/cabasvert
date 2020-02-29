@@ -46,7 +46,7 @@
     "@capacitor/core": "^1.2.1",
     "@capacitor/ios": "^1.2.1",
     "@ionic-native/core": "^5.15.0",
-    "@ionic-native/secure-storage": "^5.15.0",
+    "@ionic-native/secure-storage": "^5.22.0",
     "@ionic/angular": "^4.10.0",
     "@ionic/core": "^4.10.0",
     "@ngx-translate/core": "^11.0.1",
