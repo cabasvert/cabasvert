@@ -32,7 +32,7 @@
     "crypto-js": "^3.1.9-1",
     "graceful-fs": "^4.1.11",
     "inversify": "^5.0.1",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.4",
     "mz": "^2.7.0",
     "pouchdb-adapter-http": "^6.4.3",
     "pouchdb-ajax": "^6.4.3",
