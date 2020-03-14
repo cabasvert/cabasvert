@@ -36,6 +36,25 @@
 
   <div *ngIf="member$ | async as member">
 
+    <ng-container *ngIf="canEdit()">
+      <ion-card *ngIf="canBeDeleted$ | async">
+        <ion-card-header>
+          <ion-card-title>{{ 'MEMBER.DELETE_QUESTION' | translate }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          {{ 'MEMBER.DELETABLE_TEXT' | translate }}
+        </ion-card-content>
+        <ion-row no-padding>
+          <ion-col text-center>
+            <ion-button fill="clear" size="small" (click)="deleteMember()">
+              <ion-icon name="trash" slot="start"></ion-icon>
+              {{ 'DIALOGS.DELETE' | translate }}
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-card>
+    </ng-container>
+
     <ion-list>
       <ion-list-header>
         <ion-label>{{ 'PERSON.PLURAL_TITLE' | translate }}</ion-label>

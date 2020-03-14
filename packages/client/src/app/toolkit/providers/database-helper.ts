@@ -29,7 +29,7 @@ import PouchFind from 'pouchdb-find'
 import PouchSync from 'pouchdb-replication'
 
 import { combineLatest, EMPTY, from, merge, Observable, of } from 'rxjs'
-import { catchError, map, mapTo, mergeMap, publishReplay, refCount, startWith, switchMap } from 'rxjs/operators'
+import { catchError, map, mergeMap, publishReplay, refCount, startWith, switchMap } from 'rxjs/operators'
 
 import { ConfigurationService } from '../../config/configuration.service'
 
@@ -314,10 +314,11 @@ export class Database {
     return this._doPut(doc)
   }
 
-  public remove(doc: any): Promise<PouchDB.Core.Response> {
+  public async remove(doc: any): Promise<boolean> {
     this.log.info('Remove doc: ' + JSON.stringify({ _id: doc._id, _rev: doc._rev }))
     doc._deleted = true
-    return this._doPut(doc)
+    const response = await this._doPut(doc)
+    return response.ok
   }
 
   private _doPut(doc: any) {
@@ -442,10 +443,8 @@ export class Database {
     )
   }
 
-  public remove$<T>(doc: T & { _id: string }): Observable<void> {
-    return from(this.remove(doc)).pipe(
-      mapTo(null),
-    )
+  public remove$<T>(doc: T & { _id: string }): Observable<boolean> {
+    return from(this.remove(doc))
   }
 
   public get$<T>(id: string): Observable<T> {

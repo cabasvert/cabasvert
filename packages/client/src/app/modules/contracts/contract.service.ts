@@ -132,7 +132,7 @@ export class ContractService implements OnDestroy {
     return this.mainDatabase.put$(doc)
   }
 
-  removeContracts$(contracts: Contract): Observable<void> {
+  removeContracts$(contracts: Contract): Observable<boolean> {
     let doc = this.objectToDocument(contracts)
     return this.mainDatabase.remove$(doc)
   }

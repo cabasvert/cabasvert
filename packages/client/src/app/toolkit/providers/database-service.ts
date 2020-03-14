@@ -283,7 +283,7 @@ export class DatabaseService implements OnDestroy {
     return this.database$.pipe(switchMap(db => db.put$(doc)))
   }
 
-  public remove$<T>(doc: T & { _id: string }): Observable<void> {
+  public remove$<T>(doc: T & { _id: string }): Observable<boolean> {
     return this.database$.pipe(switchMap(db => db.remove$(doc)))
   }
 

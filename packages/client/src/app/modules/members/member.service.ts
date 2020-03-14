@@ -19,12 +19,14 @@
 
 import { Injectable, OnDestroy } from '@angular/core'
 import { SeasonWeek } from '@cabasvert/data'
-import { Observable, Subscription } from 'rxjs'
-import { map } from 'rxjs/operators'
+import { combineLatest, merge, Observable, Subscription } from 'rxjs'
+import { map, mergeAll, scan, switchMap } from 'rxjs/operators'
 
 import { DatabaseService } from '../../toolkit/providers/database-service'
 import { UidService } from '../../toolkit/providers/uid-service'
 import { objectAssignNoNulls } from '../../utils/objects'
+import { ContractService } from '../contracts/contract.service'
+import { SeasonService } from '../seasons/season.service'
 import { Member, TrialBasket } from './member.model'
 
 @Injectable()
@@ -36,6 +38,8 @@ export class MemberService implements OnDestroy {
   private _subscription = new Subscription()
 
   constructor(private mainDatabase: DatabaseService,
+              private contractService: ContractService,
+              private seasonService: SeasonService,
               private uidService: UidService) {
 
     this.createIndexes()
@@ -94,6 +98,25 @@ export class MemberService implements OnDestroy {
     }
 
     return this.mainDatabase.put$(member)
+  }
+
+  removeMember$(member: Member): Observable<boolean> {
+    const removeContracts$ = this.contractService.contractsByMember$(member).pipe(
+      mergeAll(),
+      switchMap(contract => this.contractService.removeContracts$(contract)),
+    )
+
+    const removeAll$ = merge(removeContracts$, this.mainDatabase.remove$(member))
+
+    return removeAll$.pipe(scan((allDone, done) => allDone && done))
+  }
+
+  memberHasRecentContracts(member: Member): Observable<boolean> {
+    const lastFourSeasons$ = this.seasonService.latestSeasons$(4)
+    let contracts$ = this.contractService.contractsByMember$(member)
+    return combineLatest([contracts$, lastFourSeasons$]).pipe(
+      map(([cs, ss]) => cs.reduce((hasRecentContracts, c) => hasRecentContracts || ss.some(s => s.id === c.season), false))
+    )
   }
 
   // TODO Move these methods to Member class when it becomes one

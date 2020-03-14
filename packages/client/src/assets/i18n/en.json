@@ -110,7 +110,10 @@
     "CREATION_TITLE": "New member",
     "DISCARD_CREATION_TITLE": "Discard creation?",
     "DISCARD_CREATION_TEXT": "This member will not be saved",
-    "SEARCH": "Search"
+    "SEARCH": "Search",
+    "DELETE_QUESTION": "Delete member ?",
+    "DELETABLE_TEXT": "This member can be deleted.",
+    "CONFIRM_DELETE_TEXT": "Are you sure you want to delete this member ?"
   },
   "CONTRACT": {
     "SINGULAR_TITLE": "Contract",

@@ -24,10 +24,10 @@ import { Plugins } from '@capacitor/core'
 import { NavController, Platform } from '@ionic/angular'
 import { TranslateService } from '@ngx-translate/core'
 import { Observable, Subscription } from 'rxjs'
-import { filter, map, publishReplay, refCount, switchMap, take, withLatestFrom } from 'rxjs/operators'
+import { map, publishReplay, refCount, switchMap, switchMapTo, take, withLatestFrom } from 'rxjs/operators'
+import { Dialogs } from '../../toolkit/dialogs/dialogs.service'
 
 import { AuthService, Roles, User } from '../../toolkit/providers/auth-service'
-import { Dialogs } from '../../toolkit/dialogs/dialogs.service'
 import { copyAdd, copyRemove, copyWith } from '../../utils/arrays'
 import { observeInsideAngular } from '../../utils/observables'
 import { Contract, ContractKind, ContractSection } from '../contracts/contract.model'
@@ -52,6 +52,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   error$: Observable<string>
 
   member$: Observable<Member>
+  canBeDeleted$: Observable<boolean>
   contracts$: Observable<Contract[]>
   trialBaskets$: Observable<TrialBasket[]>
 
@@ -75,6 +76,11 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.member$ = this.route.data.pipe(
       switchMap(data => data.member$ as Observable<Member>),
+    )
+
+    this.canBeDeleted$ = this.member$.pipe(
+      switchMap(m => this.memberService.memberHasRecentContracts(m)),
+      map(v => !v)
     )
 
     this.contracts$ = this.member$.pipe(
@@ -118,6 +124,20 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
 
   canEdit() {
     return this.user && this.user.hasRole(Roles.ADMINISTRATOR)
+  }
+
+  deleteMember() {
+    this.dialogs.showAlert$({
+      header: this.translateService.instant('DIALOGS.CONFIRM_DELETION'),
+      message: this.translateService.instant('MEMBER.CONFIRM_DELETE_TEXT'),
+      buttons: [
+        { text: this.translateService.instant('DIALOGS.CANCEL'), role: 'cancel' },
+        { text: this.translateService.instant('DIALOGS.DELETE') },
+      ],
+    }).pipe(
+      switchMapTo(this.member$),
+      switchMap(m => this.memberService.removeMember$(m)),
+    ).subscribe()
   }
 
   createPerson() {

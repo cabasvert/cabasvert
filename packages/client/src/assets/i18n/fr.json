@@ -110,7 +110,10 @@
     "CREATION_TITLE": "Nouvel adhérent",
     "DISCARD_CREATION_TITLE": "Abandonner la création ?",
     "DISCARD_CREATION_TEXT": "Cet adhérent ne sera pas sauvegardé",
-    "SEARCH": "Rechercher"
+    "SEARCH": "Rechercher",
+    "DELETE_QUESTION": "Supprimer l'adhérent ?",
+    "DELETABLE_TEXT": "Cet adhérent peut être supprimé.",
+    "CONFIRM_DELETE_TEXT": "Êtes-vous sûr de vouloir supprimer cet adhérent ?"
   },
   "CONTRACT": {
     "SINGULAR_TITLE": "Contrat",
