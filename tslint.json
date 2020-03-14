@@ -78,7 +78,8 @@
     "prefer-const": false,
     "quotemark": [
       true,
-      "single"
+      "single",
+      "jsx-double"
     ],
     "radix": true,
     "semicolon": [
