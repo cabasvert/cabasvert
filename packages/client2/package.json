@@ -1,6 +1,6 @@
 {
   "name": "@cabasvert/client2",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": "Cabas Vert",
   "description": "Cabas Vert: A vegetable basket manager app",
   "license": "GPL-3.0",
@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "#clean": "rm -rf coverage www artifacts",
-    "start": "parcel serve src/index.html -p 8000",
+    "start": "parcel serve src/index.html src/assets/**/*.svg -p 8000",
     "#start": "scripts/start.js",
     "start:watch": "scripts/start.js --watch",
     "start:prod": "scripts/start.js --prod",
@@ -39,7 +39,7 @@
     "@ionic/react": "^5.0.5",
     "@ionic/react-hooks": "^0.0.6",
     "@ionic/react-router": "^5.0.5",
-    "cordova-plugin-secure-storage": "^3.0.2",
+    "capacitor-secure-storage-plugin": "^0.3.1",
     "i18next": "^19.3.2",
     "pouchdb-adapter-http": "^7.0.0",
     "pouchdb-adapter-idb": "^7.0.0",
@@ -60,6 +60,7 @@
   "devDependencies": {
     "@ionic/react-test-utils": "^0.0.3",
     "@parcel/core": "nightly",
+    "@parcel/transformer-svgo": "nightly",
     "@parcel/transformer-typescript-tsc": "nightly",
     "@parcel/validator-typescript": "nightly",
     "@testing-library/react": "^9.5.0",

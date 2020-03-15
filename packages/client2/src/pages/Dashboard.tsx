@@ -1,14 +1,5 @@
 import {
-  IonButtons,
-  IonContent,
-  IonHeader,
-  IonMenu,
-  IonMenuButton,
-  IonPage,
-  IonSplitPane,
-  IonText,
-  IonTitle,
-  IonToolbar,
+  IonButtons, IonContent, IonHeader, IonMenu, IonMenuButton, IonPage, IonSplitPane, IonText, IonTitle, IonToolbar,
 } from '@ionic/react'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -20,16 +11,16 @@ export const Dashboard: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar color="primary">
           <IonButtons slot="start">
-            <IonMenuButton/>
+            <IonMenuButton />
           </IonButtons>
           <IonTitle>{t('TITLE')}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        <Counter/>
-        <ThemeChooser/>
+        <Counter />
+        <ThemeChooser />
       </IonContent>
     </IonPage>
   )
@@ -45,4 +36,3 @@ const Counter: React.FC = () => {
   })
   return <IonText color={counter % 2 === 0 ? 'danger' : undefined}>{counter}</IonText>
 }
-
