@@ -8,7 +8,7 @@ import { useAuth } from '../hooks/auth'
 
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation('LOGIN')
-  const { login } = useAuth()
+  const { hasPasswordStorage, login } = useAuth()
   const history = useHistory()
 
   const [userName, setUsername] = useState<string | null | undefined>(undefined)
@@ -18,7 +18,6 @@ export const LoginPage: React.FC = () => {
   const [loadingText, setLoadingText] = useState<string | undefined>(undefined)
   const [toastMessage, setToastMessage] = useState<string | undefined>(undefined)
 
-  const hasPasswordStorage = true
   const canLogin = !!userName && !!password
 
   const forgotPassword = () => {
@@ -31,6 +30,7 @@ export const LoginPage: React.FC = () => {
       await login(userName, password, storePassword)
       setLoadingText(undefined)
       history.replace(`/`)
+      console.log("Logged")
     } catch (e) {
       setToastMessage(t('ACCESS_DENIED'))
     }

@@ -1,18 +1,23 @@
 import 'capacitor-secure-storage-plugin'
 import { Plugins } from '@capacitor/core'
+import { isPlatform } from '@ionic/react'
 
 const { SecureStoragePlugin } = Plugins
 
 export function useSecureStorage() {
-  const isSecure = false
+  const isSecure = isPlatform('capacitor') && (isPlatform('android') || isPlatform('ios'))
 
-  async function get(key: string) {
-    return SecureStoragePlugin.get({ key })
+  async function getJson<T>(key: string): Promise<T | undefined> {
+    if (!isSecure) return undefined
+
+    const data = await SecureStoragePlugin.get({ key })
+    console.log('Data', data)
+    return data ? JSON.parse(data) : undefined
   }
 
-  async function set(key: string, value: string): Promise<boolean> {
-    return SecureStoragePlugin.set({ key, value })
+  async function setJson<T>(key: string, value: T): Promise<boolean> {
+    return isSecure && SecureStoragePlugin.set({ key, value: JSON.stringify(value) })
   }
 
-  return { isSecure, get, set }
+  return { isSecure, getJson, setJson }
 }

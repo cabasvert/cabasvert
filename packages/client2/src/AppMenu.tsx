@@ -44,7 +44,7 @@ export const AppMenu: React.FC = () => {
           </IonItem>
           <IonButtons slot="end">
             <IonButton slot="icon-only" data-testid="logout-button" onClick={doLogout}>
-              <IonIcon name="log-out" />
+              <IonIcon icon="log-out" />
             </IonButton>
           </IonButtons>
         </IonToolbar>
@@ -59,7 +59,7 @@ export const AppMenu: React.FC = () => {
                   <IonItem lines="none" button data-testid={`menu-${p.path}`}
                            color={isCurrentLocation(p) ? 'primary' : undefined}
                            onClick={() => navigateToPage(p)}>
-                    <IonIcon slot="start" name={p.icon} />
+                    <IonIcon slot="start" icon={p.icon} />
                     <IonLabel>{t(p.title)}</IonLabel>
                   </IonItem>
                 </IonMenuToggle>,

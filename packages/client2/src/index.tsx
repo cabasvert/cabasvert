@@ -10,6 +10,7 @@ import { App } from './App'
 
 import translationEN from './assets/i18n/en.json'
 import translationFR from './assets/i18n/fr.json'
+import { initializeDatabase } from './utils/database-helper'
 
 function initTranslations() {
   return i18n
@@ -24,6 +25,7 @@ function initTranslations() {
     })
 }
 
+initializeDatabase()
 initTranslations().then(() => {
-  render(<App/>, document.getElementById('root'))
+  render(<App />, document.getElementById('root'))
 })
