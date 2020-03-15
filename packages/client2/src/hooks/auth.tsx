@@ -34,7 +34,7 @@ export interface AuthContext {
   user: User | undefined
 }
 
-const AuthContext = createContext<AuthContext | null>(null)
+const AuthContext = createContext<AuthContext | undefined>(undefined)
 
 export function useAuth(): AuthContext {
   const context = useContext(AuthContext)

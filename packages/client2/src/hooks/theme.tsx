@@ -18,7 +18,7 @@
  */
 
 import { Plugins } from '@capacitor/core'
-import { useCallback, useEffect, useState } from 'react'
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 const { Storage } = Plugins
 
@@ -26,7 +26,20 @@ export type Theme = 'light' | 'dark' | undefined
 
 const THEME_STORAGE_KEY = 'user_prefs_theme'
 
+interface ThemeControl {
+  theme: Theme
+  changeTheme: (newTheme: Theme) => void
+}
+
+const ThemeContext = createContext<ThemeControl | undefined>(undefined)
+
 export function useTheme() {
+  const context = useContext(ThemeContext)
+  if (!context) throw new Error('No ThemeProvider in context')
+  return context
+}
+
+export const ThemeProvider: React.FC = ({ children }) => {
   const [theme, setTheme] = useState<Theme>()
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
 
@@ -62,5 +75,7 @@ export function useTheme() {
     applyTheme()
   }, [theme])
 
-  return { theme, changeTheme }
+  const themeControl = useMemo(() => ({ theme, changeTheme }), [theme, changeTheme])
+
+  return <ThemeContext.Provider value={themeControl}>{children}</ThemeContext.Provider>
 }

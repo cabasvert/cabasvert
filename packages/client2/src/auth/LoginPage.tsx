@@ -6,10 +6,10 @@ import { useTranslation } from 'react-i18next'
 import { RouteComponentProps, useHistory } from 'react-router'
 import { useAuth } from '../hooks/auth'
 
-export const Login: React.FC<RouteComponentProps> = ({ history }) => {
+export const LoginPage: React.FC = () => {
   const { t } = useTranslation('LOGIN')
   const { login } = useAuth()
-  // const history = useHistory()
+  const history = useHistory()
 
   const [userName, setUsername] = useState<string | null | undefined>(undefined)
   const [password, setPassword] = useState<string | null | undefined>(undefined)
@@ -20,8 +20,10 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
 
   const hasPasswordStorage = true
   const canLogin = !!userName && !!password
+
   const forgotPassword = () => {
   }
+
   const doLogin = async () => {
     if (!userName || !password) return
     setLoadingText(t('LOGGING_IN'))

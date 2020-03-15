@@ -3,9 +3,8 @@ import {
 } from '@ionic/react'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ThemeChooser } from './profile/ThemeChooser'
 
-export const Dashboard: React.FC = () => {
+export const DashboardPage: React.FC = () => {
   const { t } = useTranslation('DASHBOARD')
 
   return (
@@ -20,7 +19,6 @@ export const Dashboard: React.FC = () => {
       </IonHeader>
       <IonContent className="ion-padding">
         <Counter />
-        <ThemeChooser />
       </IonContent>
     </IonPage>
   )
