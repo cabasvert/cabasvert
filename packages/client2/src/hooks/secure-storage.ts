@@ -11,7 +11,6 @@ export function useSecureStorage() {
     if (!isSecure) return undefined
 
     const data = await SecureStoragePlugin.get({ key })
-    console.log('Data', data)
     return data ? JSON.parse(data) : undefined
   }
 

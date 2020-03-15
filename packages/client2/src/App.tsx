@@ -25,7 +25,7 @@ export const App: React.FC = () => {
 
 const PublicAppRoutes: React.FC = () => {
   const { isLoggedIn } = useAuth()
-  console.log('isLoggedIn', isLoggedIn)
+
   // @ts-ignore
   return <IonRouterOutlet id="root">
     <Route exact path="/login" component={LoginPage} />

@@ -36,7 +36,7 @@ export const AppMenu: React.FC = () => {
       <IonHeader>
         <IonToolbar color="primary">
           <IonItem color="inherit" lines="none" slot="start">
-            <IonIcon size="large" name="person" className="ion-margin-end" />
+            <IonIcon size="large" icon="person" className="ion-margin-end" />
             <IonLabel>
               <p>{user.name}</p>
               <p style={{ fontSize: 'xx-small', lineHeight: '1' }}>{user.email}</p>

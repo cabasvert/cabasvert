@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { newRemoteDatabase } from '../utils/database-helper'
 import { Logger } from '../utils/logger'
 import { useSecureStorage } from './secure-storage'
@@ -47,8 +47,8 @@ const SESSION_STORAGE_KEY = 'user_session'
 
 export const AuthProvider: React.FC = ({ children }) => {
   const { isSecure, getJson, setJson } = useSecureStorage()
-  const log = new Logger('Auth')
-  const userDatabase = newRemoteDatabase('_users')
+  const log = useMemo(() => new Logger('Auth'), [])
+  const userDatabase = useMemo(() => newRemoteDatabase('_users'), [])
   const [session, setSession] = useState<UserSession | undefined>(undefined)
 
   const hasPasswordStorage = isSecure

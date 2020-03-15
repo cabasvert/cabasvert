@@ -21,7 +21,7 @@ export const logConfiguration: LogConfiguration = {
   'Auth': defaultLogLevel,
 }
 
-console.group('Configuration:')
+console.groupCollapsed('Configuration')
 console.log('environment:', environment)
 console.log('databaseUrl:', databaseUrl)
 console.log('serverUrl:', serverUrl)
