@@ -79,7 +79,7 @@
     "@angular/compiler": "^7.2.15",
     "@angular/compiler-cli": "^7.2.15",
     "@angular/language-service": "^7.2.15",
-    "@angular/pwa": "^0.13.9",
+    "@angular/pwa": "^0.900.7",
     "@ionic/angular-toolkit": "^1.5.1",
     "codelyzer": "^4.5.0",
     "command-exists": "^1.2.8",
