@@ -17,8 +17,6 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Symbol } from 'typescript'
-
 export const Services = {
   Config: Symbol.for('Configuration'),
   Logger: Symbol.for('Logger'),
