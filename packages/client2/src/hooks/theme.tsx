@@ -17,10 +17,8 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Plugins } from '@capacitor/core'
+import { useStorage } from '@ionic/react-hooks/storage'
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-
-const { Storage } = Plugins
 
 export type Theme = 'light' | 'dark' | undefined
 
@@ -40,12 +38,13 @@ export function useTheme() {
 }
 
 export const ThemeProvider: React.FC = ({ children }) => {
+  const { get, set, remove } = useStorage()
   const [theme, setTheme] = useState<Theme>()
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
 
   const retrieveThemeSetting = useCallback(async () => {
-    const storedTheme = await Storage.get({ key: THEME_STORAGE_KEY })
-    setTheme((storedTheme.value || undefined) as Theme)
+    const storedTheme = await get(THEME_STORAGE_KEY)
+    setTheme((storedTheme || undefined) as Theme)
   }, [])
 
   const applyTheme = useCallback(() => {
@@ -56,8 +55,8 @@ export const ThemeProvider: React.FC = ({ children }) => {
   const changeTheme = useCallback(async (newTheme: Theme) => {
     setTheme(newTheme)
 
-    if (newTheme) await Storage.set({ key: THEME_STORAGE_KEY, value: newTheme })
-    else await Storage.remove({ key: THEME_STORAGE_KEY })
+    if (newTheme) await set(THEME_STORAGE_KEY, newTheme)
+    else await remove(THEME_STORAGE_KEY)
   }, [])
 
   useEffect(() => {
