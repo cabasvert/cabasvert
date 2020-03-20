@@ -15,6 +15,20 @@
     "lib": [
       "es2018",
       "dom"
-    ]
-  }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@cabasvert/data": [
+        "../data/src"
+      ]
+    }
+  },
+  "include": [
+    "scripts",
+    "src"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
 }
