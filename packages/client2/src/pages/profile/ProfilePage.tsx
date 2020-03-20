@@ -1,8 +1,7 @@
-import {
-  IonButtons, IonContent, IonHeader, IonMenu, IonMenuButton, IonPage, IonSplitPane, IonText, IonTitle, IonToolbar,
-} from '@ionic/react'
-import React, { useEffect, useState } from 'react'
+import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { LanguageChooser } from './LanguageChooser'
 import { ThemeChooser } from './ThemeChooser'
 
 export const ProfilePage: React.FC = () => {
@@ -19,6 +18,7 @@ export const ProfilePage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
+        <LanguageChooser />
         <ThemeChooser />
       </IonContent>
     </IonPage>

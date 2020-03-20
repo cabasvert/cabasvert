@@ -83,8 +83,13 @@
   "PROFILE": {
     "TITLE": "Profile",
     "SETTINGS": "Settings",
-    "DARK_THEME": "Dark theme",
+    "THEME": "Theme",
+    "THEME_system": "Automatic",
+    "THEME_light": "Light",
+    "THEME_dark": "Dark",
     "LANGUAGE": "Language",
+    "LANGUAGE_system": "Automatic",
+    "LANGUAGE_NAME": "English (US)",
     "SECURITY": "Security",
     "PASSWORD": "Password",
     "CHANGE_PASSWORD": "Change"
