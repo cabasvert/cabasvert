@@ -4,7 +4,7 @@ import {
 import React, { FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router'
-import { useAuth } from '../hooks/auth'
+import { useAuth } from '../toolkit/auth'
 
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation('LOGIN')

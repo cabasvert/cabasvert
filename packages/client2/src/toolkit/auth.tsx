@@ -29,8 +29,9 @@ export class Roles {
 
 export interface AuthContext {
   hasPasswordStorage: boolean
-  login: (userName: string, password: string, storePassword?: boolean) => Promise<void>
+  login: (userName: string, password: string, storePassword: boolean) => Promise<void>
   logout: () => Promise<void>
+  changePassword: (oldPassword: string, newPassword: string, storePassword: boolean) => Promise<void>
   isLoggedIn: boolean
   user: User | undefined
 }
@@ -75,7 +76,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
   }
 
-  const login = async (userName: string, password: string, storePassword: boolean = false): Promise<void> => {
+  const login = async (userName: string, password: string, storePassword: boolean): Promise<void> => {
     const storedSession = await loadSession()
     const grantedLocally = storedSession && storedSession.userName === userName && storedSession.password === password
 
@@ -88,6 +89,10 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   const logout = async () => {
     setSession(undefined)
+  }
+
+  const changePassword = async (oldPassword: string, newPassword: string, storePassword: boolean): Promise<void> => {
+
   }
 
   const tryLogin = async () => {
@@ -104,7 +109,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   const user = session && { ...session.data, hasRole }
   const isLoggedIn = user !== undefined
 
-  const context: AuthContext = { hasPasswordStorage, login, logout, isLoggedIn, user }
+  const context: AuthContext = { hasPasswordStorage, login, logout, changePassword, isLoggedIn, user }
 
   return <AuthContext.Provider value={context}>{children}</AuthContext.Provider>
 }

@@ -1,4 +1,4 @@
-import { Roles } from './hooks/auth'
+import { Roles } from './toolkit/auth'
 
 export interface PageGroup {
   title?: string

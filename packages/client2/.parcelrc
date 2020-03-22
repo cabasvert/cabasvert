@@ -2,6 +2,7 @@
   "extends": "@parcel/config-default",
   "transformers": {
     "*.{ts,tsx}": ["@parcel/transformer-typescript-tsc"],
+    "*.{sass,scss}": ["@parcel/transformer-sass"],
     "*.svg": ["@parcel/transformer-svgo"]
   },
   "validators": {

@@ -6,7 +6,7 @@ import {
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory, useLocation } from 'react-router-dom'
-import { useAuth } from './hooks/auth'
+import { useAuth } from './toolkit/auth'
 import { PageDescription, PAGES } from './pages'
 import { APP_VERSION } from './version'
 
