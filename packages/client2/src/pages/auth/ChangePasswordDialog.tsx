@@ -42,25 +42,23 @@ export const ChangePasswordDialog: React.FC<Props> = ({ ...props }) => {
   return (
     <ModalDialog title={t('TITLE')} {...props}>
       <IonForm<ChangePasswordData> onSubmit={doChangePassword} {...methods}>
-        <IonList className="ion-margin">
+        <IonList className="ion-margin field-set">
 
-          <IonItem style={{ '--background': 'var(--ion-color-step-100)', '--border-color': 'var(--ion-color-step-300)', '--border-radius': '4px 4px 0 0' }}>
+          <IonItem>
             <IonFieldLabel text={t('OLD_PASSWORD')} position="floating" errors={errors.oldPassword} />
-            <IonField name="oldPassword" as={<IonPasswordInput data-testid="oldPassword-input" {/*disabled*/} />} />
+            <IonField name="oldPassword" as={<IonPasswordInput data-testid="oldPassword-input" />} />
             <IonTrailingIndicator errors={errors.oldPassword} />
           </IonItem>
           <IonHelperText errors={errors.oldPassword} />
 
-          <IonItem className="ion-margin-top"
-                   style={{ '--background': 'var(--ion-color-step-100)', '--border-radius': '4px 4px 0 0' }}>
+          <IonItem className="ion-margin-top">
             <IonFieldLabel text={t('NEW_PASSWORD')} position="floating" errors={errors.newPassword} />
             <IonField name="newPassword" as={<IonPasswordInput data-testid="newPassword-input" />} />
             <IonTrailingIndicator errors={errors.newPassword} />
           </IonItem>
           <IonHelperText errors={errors.newPassword} />
 
-          <IonItem lines="full" className="ion-margin-top"
-                   style={{ '--background': 'var(--ion-color-step-100)', '--border-radius': '4px 4px 0 0' }}>
+          <IonItem lines="full" className="ion-margin-top">
             <IonFieldLabel text={t('CONFIRMED_PASSWORD')} position="floating" errors={errors.confirmedPassword} />
             <IonField name="confirmedPassword" as={<IonPasswordInput data-testid="confirmedPassword-input" />} />
             <IonTrailingIndicator errors={errors.confirmedPassword} />

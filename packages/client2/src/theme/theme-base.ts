@@ -13,5 +13,7 @@ import '@ionic/react/css/flex-utils.css'
 import '@ionic/react/css/display.css'
 
 /* My theme */
+import './theme-base.scss'
 import './theme-light.scss'
 import './theme-dark.scss'
+import './theme-tweaks.scss'

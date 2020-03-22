@@ -3,76 +3,83 @@
  * -------------------------------------------
  */
 
-body {
-    /** primary **/
-    --ion-color-primary: #11801a;
-    --ion-color-primary-rgb: 17, 128, 26;
-    --ion-color-primary-contrast: #ffffff;
-    --ion-color-primary-contrast-rgb: 255, 255, 255;
-    --ion-color-primary-shade: #0f7117;
-    --ion-color-primary-tint: #298d31;
+$text-md-color: #121212;
+$background-md-color: #ffffff;
 
-    /** secondary **/
-    --ion-color-secondary: #96620d;
-    --ion-color-secondary-rgb: 150, 98, 13;
-    --ion-color-secondary-contrast: #ffffff;
-    --ion-color-secondary-contrast-rgb: 255, 255, 255;
-    --ion-color-secondary-shade: #84560b;
-    --ion-color-secondary-tint: #a17225;
+$text-ios-color: #000000;
+$background-ios-color: #ffffff;
 
-    /** tertiary **/
-    --ion-color-tertiary: #cfcf47;
-    --ion-color-tertiary-rgb: 207, 207, 71;
-    --ion-color-tertiary-contrast: #000000;
-    --ion-color-tertiary-contrast-rgb: 0, 0, 0;
-    --ion-color-tertiary-shade: #b6b63e;
-    --ion-color-tertiary-tint: #d4d459;
+/*
+ * iOS Light Theme
+ */
 
-    /** success **/
-    --ion-color-success: #10dc60;
-    --ion-color-success-rgb: 16, 220, 96;
-    --ion-color-success-contrast: #ffffff;
-    --ion-color-success-contrast-rgb: 255, 255, 255;
-    --ion-color-success-shade: #0ec254;
-    --ion-color-success-tint: #28e070;
+.ios body {
+  --ion-background-color: #{$background-ios-color};
+  --ion-background-color-rgb: #{color-to-rgb-list($background-ios-color)};
 
-    /** warning **/
-    --ion-color-warning: #ff9d0d;
-    --ion-color-warning-rgb: 255, 157, 13;
-    --ion-color-warning-contrast: #ffffff;
-    --ion-color-warning-contrast-rgb: 255, 255, 255;
-    --ion-color-warning-shade: #e08a0b;
-    --ion-color-warning-tint: #ffa725;
+  --ion-text-color: #{$text-ios-color};
+  --ion-text-color-rgb: #{color-to-rgb-list($text-ios-color)};
 
-    /** danger **/
-    --ion-color-danger: #f04141;
-    --ion-color-danger-rgb: 245, 61, 61;
-    --ion-color-danger-contrast: #ffffff;
-    --ion-color-danger-contrast-rgb: 255, 255, 255;
-    --ion-color-danger-shade: #d33939;
-    --ion-color-danger-tint: #f25454;
+  --ion-border-color: var(--ion-color-step-100);
 
-    /** dark **/
-    --ion-color-dark: #222428;
-    --ion-color-dark-rgb: 34, 34, 34;
-    --ion-color-dark-contrast: #ffffff;
-    --ion-color-dark-contrast-rgb: 255, 255, 255;
-    --ion-color-dark-shade: #1e2023;
-    --ion-color-dark-tint: #383a3e;
+  --ion-color-step-50: #{mix($text-ios-color, $background-ios-color, 5%)};
+  --ion-color-step-100: #{mix($text-ios-color, $background-ios-color, 10%)};
+  --ion-color-step-150: #{mix($text-ios-color, $background-ios-color, 15%)};
+  --ion-color-step-200: #{mix($text-ios-color, $background-ios-color, 20%)};
+  --ion-color-step-250: #{mix($text-ios-color, $background-ios-color, 25%)};
+  --ion-color-step-300: #{mix($text-ios-color, $background-ios-color, 30%)};
+  --ion-color-step-350: #{mix($text-ios-color, $background-ios-color, 35%)};
+  --ion-color-step-400: #{mix($text-ios-color, $background-ios-color, 40%)};
+  --ion-color-step-450: #{mix($text-ios-color, $background-ios-color, 45%)};
+  --ion-color-step-500: #{mix($text-ios-color, $background-ios-color, 50%)};
+  --ion-color-step-550: #{mix($text-ios-color, $background-ios-color, 55%)};
+  --ion-color-step-600: #{mix($text-ios-color, $background-ios-color, 60%)};
+  --ion-color-step-650: #{mix($text-ios-color, $background-ios-color, 65%)};
+  --ion-color-step-700: #{mix($text-ios-color, $background-ios-color, 70%)};
+  --ion-color-step-750: #{mix($text-ios-color, $background-ios-color, 75%)};
+  --ion-color-step-800: #{mix($text-ios-color, $background-ios-color, 80%)};
+  --ion-color-step-850: #{mix($text-ios-color, $background-ios-color, 85%)};
+  --ion-color-step-900: #{mix($text-ios-color, $background-ios-color, 90%)};
+  --ion-color-step-950: #{mix($text-ios-color, $background-ios-color, 95%)};
 
-    /** medium **/
-    --ion-color-medium: #989aa2;
-    --ion-color-medium-rgb: 152, 154, 162;
-    --ion-color-medium-contrast: #ffffff;
-    --ion-color-medium-contrast-rgb: 255, 255, 255;
-    --ion-color-medium-shade: #86888f;
-    --ion-color-medium-tint: #a2a4ab;
+  --ion-toolbar-background: var(--ion-color-step-50);
 
-    /** light **/
-    --ion-color-light: #f4f5f8;
-    --ion-color-light-rgb: 244, 244, 244;
-    --ion-color-light-contrast: #000000;
-    --ion-color-light-contrast-rgb: 0, 0, 0;
-    --ion-color-light-shade: #d7d8da;
-    --ion-color-light-tint: #f5f6f9;
+  --ion-item-background: var(--ion-color-step-100);
+  --ion-item-background-activated: var(--ion-color-step-200);
+}
+
+/*
+ * Material Design Light Theme
+ */
+
+.md body {
+  --ion-background-color: #{$background-md-color};
+  --ion-background-color-rgb: #{color-to-rgb-list($background-md-color)};
+
+  --ion-text-color: #{$text-md-color};
+  --ion-text-color-rgb: #{color-to-rgb-list($text-md-color)};
+
+  --ion-border-color: var(--ion-color-step-100);
+
+  --ion-color-step-50: #{mix($text-md-color, $background-md-color, 5%)};
+  --ion-color-step-100: #{mix($text-md-color, $background-md-color, 10%)};
+  --ion-color-step-150: #{mix($text-md-color, $background-md-color, 15%)};
+  --ion-color-step-200: #{mix($text-md-color, $background-md-color, 20%)};
+  --ion-color-step-250: #{mix($text-md-color, $background-md-color, 25%)};
+  --ion-color-step-300: #{mix($text-md-color, $background-md-color, 30%)};
+  --ion-color-step-350: #{mix($text-md-color, $background-md-color, 35%)};
+  --ion-color-step-400: #{mix($text-md-color, $background-md-color, 40%)};
+  --ion-color-step-450: #{mix($text-md-color, $background-md-color, 45%)};
+  --ion-color-step-500: #{mix($text-md-color, $background-md-color, 50%)};
+  --ion-color-step-550: #{mix($text-md-color, $background-md-color, 55%)};
+  --ion-color-step-600: #{mix($text-md-color, $background-md-color, 60%)};
+  --ion-color-step-650: #{mix($text-md-color, $background-md-color, 65%)};
+  --ion-color-step-700: #{mix($text-md-color, $background-md-color, 70%)};
+  --ion-color-step-750: #{mix($text-md-color, $background-md-color, 75%)};
+  --ion-color-step-800: #{mix($text-md-color, $background-md-color, 80%)};
+  --ion-color-step-850: #{mix($text-md-color, $background-md-color, 85%)};
+  --ion-color-step-900: #{mix($text-md-color, $background-md-color, 90%)};
+  --ion-color-step-950: #{mix($text-md-color, $background-md-color, 95%)};
+
+  --ion-item-background: var(--ion-background-color);
 }

@@ -1,9 +1,10 @@
-import React, { HTMLAttributes, PropsWithChildren, useState } from 'react'
 import { JSX } from '@ionic/core'
-import { IonIcon, IonInput, IonLabel, IonNote } from '@ionic/react'
+import { IonCheckbox, IonIcon, IonInput, IonLabel, IonNote } from '@ionic/react'
 import { IonicReactProps } from '@ionic/react/dist/types/components/IonicReactProps'
+import React, { HTMLAttributes, PropsWithChildren, useCallback, useMemo, useState } from 'react'
 import {
-  Controller, FieldError, FieldValues, FormContext, FormContextValues, OnSubmit, useFormContext, Validate,
+  Controller, EventFunction, FieldError, FieldValues, FormContext, FormContextValues, OnSubmit, useFormContext,
+  Validate,
 } from 'react-hook-form'
 import { FieldName } from 'react-hook-form/dist/types'
 
@@ -14,7 +15,7 @@ interface IonFieldLabelProps {
 }
 
 export const IonFieldLabel: React.FC<IonFieldLabelProps> = ({ text, position, errors }) => <>
-  <IonLabel color={errors ? 'danger' : undefined} position={position}>
+  <IonLabel color={errors ? 'danger' : 'dark'} position={position}>
     {text}
   </IonLabel>
 </>
@@ -49,7 +50,7 @@ export function IonForm<FormValues extends FieldValues = FieldValues>({
   children,
   ...methods
 }: PropsWithChildren<IonFormProps<FormValues>>): React.ReactElement<IonFormProps<FormValues>> {
-  const { handleSubmit } = methods
+  const { handleSubmit, getValues } = methods
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -113,12 +114,17 @@ export function IonField<FormValues extends FieldValues = FieldValues>({
   rules,
   as,
 }: IonFieldProps<FormValues>): React.ReactElement<IonFormProps<FormValues>> {
-  const { control } = useFormContext<FormValues>()
+  const { control, formState: { dirty } } = useFormContext<FormValues>()
 
-  return (
-    <Controller
-      as={as} name={name} control={control} rules={rules}
-      onChangeName="onIonChange" onChange={([selected]) => selected.detail.value}
-    />
+  const onBlur: EventFunction = useCallback(([event]) => event?.target?.value, [])
+  const onChange: EventFunction = useCallback(([event]) => event?.detail?.value, [])
+
+  return useMemo(() =>
+      <Controller
+        as={as} name={name} control={control} rules={rules}
+        onBlurName="onIonBlur" onBlur={onBlur}
+        onChangeName="onIonChange" onChange={onChange}
+      />,
+    [dirty],
   )
 }
