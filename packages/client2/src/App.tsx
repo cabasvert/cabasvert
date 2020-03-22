@@ -5,6 +5,7 @@ import { Redirect, Route } from 'react-router-dom'
 import { AppMenu } from './AppMenu'
 import { LoginPage } from './auth/LoginPage'
 import { AuthProvider, useAuth } from './toolkit/auth'
+import { DatabaseProvider } from './toolkit/database'
 import { FeedbackProvider } from './toolkit/feedback'
 import { ThemeProvider } from './toolkit/theme'
 import { DashboardPage } from './pages/DashboardPage'
@@ -38,12 +39,14 @@ const PublicAppRoutes: React.FC = () => {
 
 const AppContent: React.FC = () => {
   return (
-    <IonContent>
-      <IonSplitPane contentId="main">
-        <AppMenu />
-        <AppRoutes />
-      </IonSplitPane>
-    </IonContent>
+    <DatabaseProvider>
+      <IonContent>
+        <IonSplitPane contentId="main">
+          <AppMenu />
+          <AppRoutes />
+        </IonSplitPane>
+      </IonContent>
+    </DatabaseProvider>
   )
 }
 

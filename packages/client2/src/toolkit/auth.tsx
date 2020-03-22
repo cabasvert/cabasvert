@@ -79,6 +79,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   const login = async (userName: string, password: string, storePassword: boolean): Promise<void> => {
     const storedSession = await loadSession()
     const grantedLocally = storedSession && storedSession.userName === userName && storedSession.password === password
+    setSession(storedSession)
 
     if (!grantedLocally) await remoteLogin(userName, password, storePassword)
     else {
