@@ -92,7 +92,30 @@ export const AuthProvider: React.FC = ({ children }) => {
   }
 
   const changePassword = async (oldPassword: string, newPassword: string, storePassword: boolean): Promise<void> => {
+    if (!session) throw new Error('Not connected.')
+    const { userName } = session
+    console.log(userName)
 
+    try {
+      await remoteLogin(userName, oldPassword, false)
+    } catch (e) {
+      throw new Error('Invalid old password.')
+    }
+
+    try {
+      if (await userDatabase.changePassword(userName, oldPassword, newPassword)) {
+        log.info(`Successfully changed password for user '${userName}'`)
+
+        // Log in with new credentials
+        await login(userName, newPassword, storePassword)
+        return
+      }
+    } catch (e) {
+      log.error(`Failed to change password for user '${userName}': ${e}`)
+      if (e.status === 404) throw new Error('Remote database not found.')
+      throw e
+    }
+    throw new Error('Password change failed.')
   }
 
   const tryLogin = async () => {

@@ -1,13 +1,15 @@
 import { IonButton, IonCheckbox, IonItem, IonLabel, IonList } from '@ionic/react'
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import * as Yup from 'yup'
 import { useAuth } from '../../toolkit/auth'
 import { DialogProps, ModalDialog } from '../../toolkit/dialogs'
+import { useFeedback } from '../../toolkit/feedback'
 import {
   IonField, IonFieldLabel, IonForm, IonHelperText, IonPasswordInput, IonTrailingIndicator,
 } from '../../toolkit/forms'
+import { useLog } from '../../toolkit/log'
 
 interface Props extends DialogProps {
 }
@@ -19,9 +21,12 @@ interface ChangePasswordData {
   storePassword?: boolean
 }
 
-export const ChangePasswordDialog: React.FC<Props> = ({ ...props }) => {
+export const ChangePasswordDialog: React.FC<Props> = (props) => {
+  const { onDismiss } = props
   const { t } = useTranslation('CHANGE_PASSWORD')
   const { t: tDialogs } = useTranslation('DIALOGS')
+  const log = useLog()
+  const { showToast, showLoading, dismissLoading } = useFeedback()
   const { hasPasswordStorage, changePassword } = useAuth()
 
   const methods = useForm<ChangePasswordData>({
@@ -30,17 +35,31 @@ export const ChangePasswordDialog: React.FC<Props> = ({ ...props }) => {
       oldPassword: Yup.string().required(tDialogs('REQUIRED')),
       newPassword: Yup.string().required(tDialogs('REQUIRED')),
       confirmedPassword: Yup.string().required(tDialogs('REQUIRED'))
-        .oneOf([Yup.ref('newPassword'), null], t('PASSWORDS_DO_NOT_MATCH'))
+        .oneOf([Yup.ref('newPassword'), null], t('PASSWORDS_DO_NOT_MATCH')),
     }),
   })
   const { errors, formState } = methods
 
-  const doChangePassword = async ({oldPassword, newPassword, storePassword}: ChangePasswordData) => {
-    await changePassword(oldPassword, newPassword, storePassword || false)
-  }
+  const doChangePassword = useCallback(
+    async ({ oldPassword, newPassword, storePassword }: ChangePasswordData) => {
+      showLoading(t('CHANGING_PASSWORD'))
+      try {
+        await changePassword(oldPassword, newPassword, storePassword || false)
+        onDismiss()
+        dismissLoading()
+        showToast({ message: t('PASSWORD_CHANGED'), color: 'success' })
+      } catch (e) {
+        log.error('Failed to change password:', e)
+        dismissLoading()
+        showToast({ header: t('CHANGE_PASSWORD_FAILED'), message: e.message, color: 'danger' })
+      }
+    },
+    [changePassword, onDismiss],
+  )
 
   return (
     <ModalDialog title={t('TITLE')} {...props}>
+
       <IonForm<ChangePasswordData> onSubmit={doChangePassword} {...methods}>
         <IonList className="ion-margin field-set">
 

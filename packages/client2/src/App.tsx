@@ -5,6 +5,7 @@ import { Redirect, Route } from 'react-router-dom'
 import { AppMenu } from './AppMenu'
 import { LoginPage } from './auth/LoginPage'
 import { AuthProvider, useAuth } from './toolkit/auth'
+import { FeedbackProvider } from './toolkit/feedback'
 import { ThemeProvider } from './toolkit/theme'
 import { DashboardPage } from './pages/DashboardPage'
 import { ProfilePage } from './pages/profile/ProfilePage'
@@ -13,11 +14,13 @@ export const App: React.FC = () => {
   return (
     <IonApp>
       <ThemeProvider>
-        <AuthProvider>
-          <IonReactRouter>
-            <PublicAppRoutes />
-          </IonReactRouter>
-        </AuthProvider>
+        <FeedbackProvider>
+          <AuthProvider>
+            <IonReactRouter>
+              <PublicAppRoutes />
+            </IonReactRouter>
+          </AuthProvider>
+        </FeedbackProvider>
       </ThemeProvider>
     </IonApp>
   )

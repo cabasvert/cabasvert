@@ -1,14 +1,15 @@
 import {
-  IonButton, IonCheckbox, IonCol, IonContent, IonGrid, IonInput, IonItem, IonLabel, IonList, IonLoading, IonPage,
-  IonRow, IonToast,
+  IonButton, IonCheckbox, IonCol, IonContent, IonGrid, IonInput, IonItem, IonLabel, IonList, IonPage, IonRow,
 } from '@ionic/react'
-import React, { FormEvent, useCallback, useState } from 'react'
+import React, { useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router'
 import * as Yup from 'yup'
 import { useAuth } from '../toolkit/auth'
+import { useFeedback } from '../toolkit/feedback'
 import { IonField, IonFieldLabel, IonForm, IonPasswordInput } from '../toolkit/forms'
+import { useLog } from '../toolkit/log'
 
 interface LoginData {
   email: string
@@ -18,6 +19,8 @@ interface LoginData {
 
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation('LOGIN')
+  const log = useLog()
+  const { showToast, showLoading, dismissLoading } = useFeedback()
   const { hasPasswordStorage, login } = useAuth()
   const history = useHistory()
 
@@ -30,21 +33,20 @@ export const LoginPage: React.FC = () => {
   })
   const { errors, formState, register } = methods
 
-  const [loadingText, setLoadingText] = useState<string | undefined>(undefined)
-  const [toastMessage, setToastMessage] = useState<string | undefined>(undefined)
-
   const forgotPassword = () => {
   }
 
-  const doLogin = useCallback(async ({ email, password, storePassword }: LoginData) => {
-      setLoadingText(t('LOGGING_IN'))
+  const doLogin = useCallback(
+    async ({ email, password, storePassword }: LoginData) => {
+      showLoading(t('LOGGING_IN'))
       try {
         await login(email, password, storePassword || false)
-        setLoadingText(undefined)
         history.replace(`/`)
+        dismissLoading()
       } catch (e) {
-        setLoadingText(undefined)
-        setToastMessage(t('ACCESS_DENIED'))
+        log.error('Failed to log in:', e)
+        dismissLoading()
+        showToast({ message: t('ACCESS_DENIED'), color: 'danger' })
       }
     },
     [login, history],
@@ -63,23 +65,29 @@ export const LoginPage: React.FC = () => {
               </IonRow>
               <IonRow className="ion-justify-content-center">
                 <IonCol sizeLg="6" sizeMd="8" sizeSm="10" sizeXs="12">
+
                   <IonForm<LoginData> onSubmit={doLogin} {...methods}>
                     <IonList className="ion-margin field-set">
+
                       <IonItem>
                         <IonFieldLabel text={t('USERNAME')} position="floating" errors={errors.email} />
                         <IonField name="email"
                                   as={<IonInput type="email" autocomplete="on" data-testid="email-input" />} />
                       </IonItem>
+
                       <IonItem className="ion-margin-top">
                         <IonFieldLabel text={t('PASSWORD')} position="floating" errors={errors.password} />
                         <IonField name="password"
                                   as={<IonPasswordInput autocomplete="on" data-testid="password-input" />} />
                       </IonItem>
+
                       {hasPasswordStorage && <IonItem>
                         <IonLabel>{t('STORE_PASSWORD')}</IonLabel>
                         <IonField name="storePassword" as={<IonCheckbox />} />
                       </IonItem>}
+
                     </IonList>
+
                     <IonButton className="ion-margin" expand="block" type="submit" data-testid="login-button"
                                disabled={!formState.isValid}>
                       {t('LOGIN')}
@@ -89,13 +97,12 @@ export const LoginPage: React.FC = () => {
                       {t('FORGOT_PASSWORD')}
                     </IonButton>
                   </IonForm>
+
                 </IonCol>
               </IonRow>
             </IonCol>
           </IonRow>
         </IonGrid>
-        <IonLoading isOpen={!!loadingText} message={loadingText} />
-        <IonToast isOpen={!!toastMessage} message={toastMessage} duration={5000} />
       </IonContent>
     </IonPage>
   )
