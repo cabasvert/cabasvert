@@ -38,7 +38,7 @@
     "@cabasvert/tools": "^0.1.1-beta.2",
     "@octokit/rest": "~16.28.7",
     "@types/jest": "^24.0.6",
-    "@types/node": "^11.9.4",
+    "@types/node": "^13.9.6",
     "add-cors-to-couchdb": "^0.0.6",
     "chalk": "^2.4.1",
     "codecov": "^3.1.0",
