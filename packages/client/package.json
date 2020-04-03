@@ -44,7 +44,7 @@
     "@capacitor/android": "^1.2.1",
     "@capacitor/cli": "^1.2.1",
     "@capacitor/core": "^1.2.1",
-    "@capacitor/ios": "^1.2.1",
+    "@capacitor/ios": "^2.0.0",
     "@ionic-native/core": "^5.15.0",
     "@ionic-native/secure-storage": "^5.15.0",
     "@ionic/angular": "^4.10.0",
