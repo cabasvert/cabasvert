@@ -42,7 +42,7 @@
     "@angular/service-worker": "^7.2.15",
     "@cabasvert/data": "^0.1.0-rc.1",
     "@capacitor/android": "^1.2.1",
-    "@capacitor/cli": "^1.2.1",
+    "@capacitor/cli": "^2.0.1",
     "@capacitor/core": "^1.2.1",
     "@capacitor/ios": "^1.2.1",
     "@ionic-native/core": "^5.15.0",
