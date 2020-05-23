@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@cabasvert/data": "^0.1.0-rc.1",
-    "@types/crypto-js": "^3.1.38",
+    "@types/crypto-js": "^3.1.47",
     "@types/mz": "^0.0.32",
     "@types/pouchdb": "^6.3.2",
     "@types/pouchdb-find": "^6.3.2",
