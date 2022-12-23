@@ -34,6 +34,7 @@ import './controllers/status.controller'
 
 import { DatabaseService } from './services/database.service'
 import { Services } from './types'
+import * as request from 'request'
 
 export async function initializeServer(containerPromise: Promise<Container>): Promise<http.Server> {
 
@@ -50,6 +51,33 @@ export async function initializeServer(containerPromise: Promise<Container>): Pr
   let server = new InversifyExpressServer(container)
 
   server.setConfig((app) => {
+    // TODO proxy $DATABASE_URL/_session and $DATABASE_URL/cabasvert in /db
+
+    app.use((req, res, next) => {
+      const match = req.path.match(/^\/_session$/)
+      if (match) {
+        req.pipe(
+          request({
+            uri: config.database.url + '_session',
+            method: req.method,
+          })
+        ).pipe(res)
+      }
+    })
+
+    app.get((req, res, ) => {
+      const match = req.path.match(/^\/_user$/)
+      if (match) {
+        console.log(req.headers)
+        req.pipe(
+          request({
+            uri: config.database.url + '_session',
+            method: req.method,
+          })
+        ).pipe(res)
+      }
+    })
+
     // convert http post data to json automatically
     app.use(bodyParser.urlencoded({
       extended: true,

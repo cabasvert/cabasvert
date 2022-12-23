@@ -37,6 +37,8 @@ import '../../utils/arrays'
 import { SyncState, SyncStateListener } from '../components/sync-state-listener'
 import { LogService } from './log-service'
 import { Logger } from './logger'
+import { HttpClient } from '@angular/common/http'
+import * as http from 'http'
 
 @Injectable()
 export class DatabaseHelper {
@@ -51,7 +53,8 @@ export class DatabaseHelper {
   }
 
   constructor(private logService: LogService,
-              private config: ConfigurationService) {
+              private config: ConfigurationService,
+              private http: HttpClient) {
   }
 
   initialize() {
@@ -80,7 +83,7 @@ export class DatabaseHelper {
         return fetch(url, opts)
       },
     }
-    const pouchDB = new PouchDB(this.config.base.databaseUrl + '/' + dbName, pouchOpts)
+    const pouchDB = new PouchDB(this.config.base.serverUrl + '/' + dbName, pouchOpts)
     const maxLimit = this.config.base.remoteDBOnly ? Number.MAX_SAFE_INTEGER : null
     return new Database(pouchDB, this.log.subLogger('Remote'), maxLimit)
   }
