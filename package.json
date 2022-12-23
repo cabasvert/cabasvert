@@ -20,8 +20,9 @@
     "posttest:ci": "codecov -f coverage/lcov.info",
     "e2e": "FIXTURES=fixtures/sample DATABASE=couchdb scripts/run-with-database.js scripts/start-all.js jest --projects='packages/e2e'",
     "e2e:ci": "FIXTURES=fixtures/sample DATABASE=couchdb scripts/run-with-database.js scripts/start-all.js jest --projects='packages/e2e' --verbose --maxWorkers=$(nproc)",
-    "start-client": "npm-run-all start --prefix packages/client",
-    "start-server": "npm-run-all start --prefix packages/server",
+    "start-client": "(cd packages/client && yarn run start)",
+    "start-server": "(cd packages/server && yarn run start)",
+    "start-database": "FIXTURES=fixtures/sample DATABASE=couchdb:2.3.1 scripts/start-database.js",
     "prerelease": "npm-run-all build",
     "release:alpha": "yarn run release prerelease --preid alpha",
     "release:beta": "yarn run release prerelease --preid beta",
@@ -52,14 +53,15 @@
     "node-cleanup": "^2.1.2",
     "npm-run-all": "^4.1.3",
     "nyc": "^13.1.0",
+    "sass": "^1.57.1",
     "source-map-support": "^0.5.9",
     "stream-line-wrapper": "^0.1.1",
     "ts-jest": "^24.1.0",
     "ts-node": "^8.0.2",
     "ts-node-dev": "^1.0.0-pre.32",
     "tslint": "5.11.0",
-    "typescript": "~3.1.6",
-    "yarn": "^1.10.1"
+    "typescript": "~3.1.8",
+    "yarn": "^1.22.19"
   },
   "jest": {
     "projects": [

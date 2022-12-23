@@ -20,15 +20,17 @@
 import { Injectable } from '@angular/core'
 import { SecureStorage, SecureStorageObject } from '@ionic-native/secure-storage/ngx'
 import { Platform } from '@ionic/angular'
-import { BehaviorSubject, Observable, Subject } from 'rxjs'
+import { BehaviorSubject, EMPTY, Observable, Subject } from 'rxjs'
 import { ConfigurationService } from '../../config/configuration.service'
 import { AppBridge } from './app-bridge'
 
 import { Database, DatabaseHelper } from './database-helper'
 import { LogService } from './log-service'
 import { Logger } from './logger'
+import { HttpClient } from '@angular/common/http'
+import { catchError, take, tap } from 'rxjs/operators'
 
-interface UserData {
+export interface UserData {
   roles: string[]
   name: string
   email: string
@@ -116,7 +118,8 @@ export class AuthService {
               private secureStorage: SecureStorage,
               private logService: LogService,
               private config: ConfigurationService,
-              private dbHelper: DatabaseHelper) {
+              private dbHelper: DatabaseHelper,
+              private http: HttpClient) {
   }
 
   initialize() {
@@ -242,11 +245,12 @@ export class AuthService {
 
     try {
       // Try to authenticate with remote
-      const ok = await this.userDatabase.login(credentials.username, credentials.password)
+      const userData = await this.userDatabase.login2(credentials.username, credentials.password)
 
-      if (ok) {
+      if (userData) {
         this.log.info(`Successfully logged in user '${credentials.username}' to remote`)
-        let user = await this.retrieveUser(credentials.username)
+        // let user = await this.retrieveUser(credentials.username)
+        let user = new User(credentials.username, userData)
 
         // Copy metadata for offline use
         credentials.data = user.data
@@ -267,13 +271,12 @@ export class AuthService {
   }
 
   private async retrieveUser(username: any) {
-    const userData = await this.userDatabase.getUser(username)
-    return new User(username, {
-      roles: userData.roles,
-      name: userData.metadata.name,
-      email: userData.metadata.email,
-      database: userData.metadata.database,
-    })
+    const userData = await this.http.get<UserData>(this.config.base.serverUrl + '/_user')
+      .pipe(take(1), tap(v => console.log('>>>>>>>>>>>>>>>>>>>>>>', v)))
+      .toPromise()
+
+    // const userData = await this.userDatabase.getUser(username)
+    return new User(username, userData)
   }
 
   public async tryRestoreSessionOrLoadCredentialsAndLogin(): Promise<boolean> {

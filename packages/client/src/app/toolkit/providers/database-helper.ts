@@ -17,26 +17,28 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core'
+import { Injectable } from "@angular/core"
 
-import PouchHttp from 'pouchdb-adapter-http'
-import PouchIdb from 'pouchdb-adapter-idb'
-import PouchAuth from 'pouchdb-authentication'
-import PouchDB from 'pouchdb-core'
-import PouchDebug from 'pouchdb-debug'
-import { fetch } from 'pouchdb-fetch'
-import PouchFind from 'pouchdb-find'
-import PouchSync from 'pouchdb-replication'
+import PouchHttp from "pouchdb-adapter-http"
+import PouchIdb from "pouchdb-adapter-idb"
+import PouchAuth from "pouchdb-authentication"
+import PouchDB from "pouchdb-core"
+import PouchDebug from "pouchdb-debug"
+import { fetch } from "pouchdb-fetch"
+import PouchFind from "pouchdb-find"
+import PouchSync from "pouchdb-replication"
 
-import { combineLatest, EMPTY, from, merge, Observable, of } from 'rxjs'
-import { catchError, map, mapTo, mergeMap, publishReplay, refCount, startWith, switchMap } from 'rxjs/operators'
+import { combineLatest, EMPTY, from, merge, Observable, of } from "rxjs"
+import { catchError, map, mapTo, mergeMap, publishReplay, refCount, startWith, switchMap } from "rxjs/operators"
 
-import { ConfigurationService } from '../../config/configuration.service'
+import { ConfigurationService } from "../../config/configuration.service"
 
-import '../../utils/arrays'
-import { SyncState, SyncStateListener } from '../components/sync-state-listener'
-import { LogService } from './log-service'
-import { Logger } from './logger'
+import "../../utils/arrays"
+import { SyncState, SyncStateListener } from "../components/sync-state-listener"
+import { LogService } from "./log-service"
+import { Logger } from "./logger"
+import { HttpClient } from "@angular/common/http"
+import { UserData } from "app/toolkit/providers/auth-service"
 
 @Injectable()
 export class DatabaseHelper {
@@ -45,29 +47,30 @@ export class DatabaseHelper {
 
   private get log() {
     if (this._logger == null) {
-      this._logger = this.logService.logger('Database')
+      this._logger = this.logService.logger("Database")
     }
     return this._logger
   }
 
   constructor(private logService: LogService,
-              private config: ConfigurationService) {
+              private config: ConfigurationService,
+              private http: HttpClient) {
   }
 
   initialize() {
     PouchDB
-      .plugin(PouchHttp)
-      .plugin(PouchDebug)
-      .plugin(PouchIdb)
-      .plugin(PouchAuth)
-      .plugin(PouchFind)
-      .plugin(PouchSync)
+    .plugin(PouchHttp)
+    .plugin(PouchDebug)
+    .plugin(PouchIdb)
+    .plugin(PouchAuth)
+    .plugin(PouchFind)
+    .plugin(PouchSync)
 
-    window['PouchDB'] = PouchDB
+    window["PouchDB"] = PouchDB
 
     if (this.config.base.debugPouch) {
       PouchDB.plugin(PouchDebug as any)
-      PouchDB.debug.enable('*')
+      PouchDB.debug.enable("*")
     }
   }
 
@@ -75,21 +78,21 @@ export class DatabaseHelper {
     this.log.debug(`Creating remote database '${dbName}'`)
     const pouchOpts = {
       skip_setup: true,
-      fetch: function (url, opts) {
-        opts.credentials = 'include'
+      fetch: function(url, opts) {
+        opts.credentials = "include"
         return fetch(url, opts)
       },
     }
-    const pouchDB = new PouchDB(this.config.base.databaseUrl + '/' + dbName, pouchOpts)
+    const pouchDB = new PouchDB(this.config.base.serverUrl + "/" + dbName, pouchOpts)
     const maxLimit = this.config.base.remoteDBOnly ? Number.MAX_SAFE_INTEGER : null
-    return new Database(pouchDB, this.log.subLogger('Remote'), maxLimit)
+    return new Database(pouchDB, this.log.subLogger("Remote"), maxLimit)
   }
 
   newLocalDatabase(dbName: string): Database {
     this.log.debug(`Creating local database '${dbName}'`)
     const pouchOpts = {}
     const pouchDB = new PouchDB(dbName, pouchOpts)
-    return new Database(pouchDB, this.log.subLogger('Local'))
+    return new Database(pouchDB, this.log.subLogger("Local"))
   }
 }
 
@@ -151,14 +154,14 @@ export class Database {
         if (!e) {
           return Promise.resolve()
         }
-        return Promise.reject(new PouchError(e, 'destroy'))
+        return Promise.reject(new PouchError(e, "destroy"))
       })
     })
   }
 
   public signUp(username: string, password: string, options?: PouchDB.Authentication.PutUserOptions) {
     return this.db.signUp(username, password, options).catch((e) => {
-      return Promise.reject(new PouchError(e, 'signUp'))
+      return Promise.reject(new PouchError(e, "signUp"))
     })
   }
 
@@ -172,7 +175,28 @@ export class Database {
       }
       return r.ok
     }).catch((e) => {
-      const error = new PouchError(e, 'login')
+      const error = new PouchError(e, "login")
+      this.log.error(`Failed to log user: ${error}`)
+      return Promise.reject(error)
+    })
+  }
+
+  public login2(username: string, password: string, options: {} = {}): Promise<UserData | undefined> {
+    this.log.debug(`Attempting to log user '${username}' in...`)
+    return this.db.logIn(username, password, options || {}).then((r) => {
+      if (r.ok) {
+        this.log.info(`Successfully logged user '${username}' in.`)
+        return {
+          name: username,
+          email: username,
+          roles: r.roles ? r.roles : [],
+        }
+      } else {
+        this.log.error(`Failed to log user '${username}' in.`)
+        return undefined
+      }
+    }).catch((e) => {
+      const error = new PouchError(e, "login")
       this.log.error(`Failed to log user: ${error}`)
       return Promise.reject(error)
     })
@@ -183,26 +207,26 @@ export class Database {
       if (r.ok) {
         this.log.info(`Successfully changed password.`)
       } else {
-        this.log.error('Failed to change password.')
+        this.log.error("Failed to change password.")
       }
       return r.ok
     }).catch((e) => {
-      const error = new PouchError(e, 'changePassword')
+      const error = new PouchError(e, "changePassword")
       this.log.error(`Failed to change password: ${error}`)
       return Promise.reject(error)
     })
   }
 
   public getUser(username: string): Promise<any> {
-    return this.wrapErrors('getUser', this.db.getUser(username))
+    return this.wrapErrors("getUser", this.db.getUser(username))
   }
 
   public getSession(): Promise<any> {
-    return this.wrapErrors('getSession', this.db.getSession())
+    return this.wrapErrors("getSession", this.db.getSession())
   }
 
   public logout(): Promise<boolean> {
-    return this.wrapErrors('logout', this.db.logOut()).then((r) => {
+    return this.wrapErrors("logout", this.db.logOut()).then((r) => {
       if (r.ok) {
         this.log.info(`Successfully logged user out.`)
       } else {
@@ -246,20 +270,20 @@ export class Database {
 
     this.addCancelable(this.sync)
 
-    this.sync.on('change', change => {
-      this.log.debug('Sync with remote [change]', Database.filterDocs(change))
-    }).on('paused', error => {
-      this.log.debug('Sync with remote [paused]', error)
-    }).on('denied', error => {
-      this.log.error('Sync with remote [denied]', error)
-    }).on('error', error => {
-      this.log.error('Sync with remote [error]', error)
+    this.sync.on("change", change => {
+      this.log.debug("Sync with remote [change]", Database.filterDocs(change))
+    }).on("paused", error => {
+      this.log.debug("Sync with remote [paused]", error)
+    }).on("denied", error => {
+      this.log.error("Sync with remote [denied]", error)
+    }).on("error", error => {
+      this.log.error("Sync with remote [error]", error)
       this.removeCancelable(this.sync)
       this.sync = null
-    }).on('active', () => {
-      this.log.debug('Sync with remote [active]')
-    }).on('complete', info => {
-      this.log.debug('Sync with remote [complete]', info)
+    }).on("active", () => {
+      this.log.debug("Sync with remote [active]")
+    }).on("complete", info => {
+      this.log.debug("Sync with remote [complete]", info)
       this.removeCancelable(this.sync)
       this.sync = null
     })
@@ -279,9 +303,9 @@ export class Database {
 
     this.addCancelable(changes)
 
-    changes.on('complete', info => {
+    changes.on("complete", info => {
       this.removeCancelable(changes)
-    }).on('error', error => {
+    }).on("error", error => {
       this.removeCancelable(changes)
     })
 
@@ -289,15 +313,15 @@ export class Database {
   }
 
   public withIndex(index: PouchDB.Find.CreateIndexOptions): Promise<Database> {
-    return this.wrapErrors('createIndex', this.db.createIndex(index).then(() => this))
+    return this.wrapErrors("createIndex", this.db.createIndex(index).then(() => this))
   }
 
   public find(query: PouchDB.Find.FindRequest<any>): Promise<PouchDB.Find.FindResponse<any>> {
     if (this.maxLimit && !query.limit) {
       query.limit = this.maxLimit
     }
-    return this.wrapErrors('find', this.db.find(query).then(result => {
-      const warning = result['warning']
+    return this.wrapErrors("find", this.db.find(query).then(result => {
+      const warning = result["warning"]
       if (warning) {
         this.log.warn(`Warning message "${warning}" while processing find: ${JSON.stringify(query)}`)
       }
@@ -306,22 +330,22 @@ export class Database {
   }
 
   public get<T>(docId: string) {
-    return this.wrapErrors('get', this.db.get<T>(docId))
+    return this.wrapErrors("get", this.db.get<T>(docId))
   }
 
   public put(doc: any): Promise<PouchDB.Core.Response> {
-    this.log.info('Put doc: ' + JSON.stringify({ _id: doc._id, _rev: doc._rev }))
+    this.log.info("Put doc: " + JSON.stringify({ _id: doc._id, _rev: doc._rev }))
     return this._doPut(doc)
   }
 
   public remove(doc: any): Promise<PouchDB.Core.Response> {
-    this.log.info('Remove doc: ' + JSON.stringify({ _id: doc._id, _rev: doc._rev }))
+    this.log.info("Remove doc: " + JSON.stringify({ _id: doc._id, _rev: doc._rev }))
     doc._deleted = true
     return this._doPut(doc)
   }
 
   private _doPut(doc: any) {
-    return this.wrapErrors('put', this.db.put(doc))
+    return this.wrapErrors("put", this.db.put(doc))
   }
 
   private wrapErrors<T>(methodName: string, promise: Promise<T>): Promise<T> {
@@ -337,10 +361,10 @@ export class Database {
                      defaultValue: () => T = () => null): Observable<T> {
     // TODO Not sure it is the correct way to handle sort's presence...
     if (query.sort) {
-      throw new Error('Sort not supported here !')
+      throw new Error("Sort not supported here !")
     }
     if (!query.limit || query.limit !== 1) {
-      query['limit'] = 1
+      query["limit"] = 1
     }
 
     const found$ = this.doFind$(query).pipe(
@@ -349,8 +373,8 @@ export class Database {
     )
 
     const changes$ = this.dbChanges$({
-      since: 'now', live: true, include_docs: true,
-      filter: '_selector',
+      since: "now", live: true, include_docs: true,
+      filter: "_selector",
       selector: query.selector,
     }).pipe(
       map(change => change.deleted ? null : mapper(change.doc)),
@@ -415,8 +439,8 @@ export class Database {
     )
 
     const changes$ = this.dbChanges$({
-      since: 'now', live: true, include_docs: true,
-      filter: '_selector',
+      since: "now", live: true, include_docs: true,
+      filter: "_selector",
       selector: query.selector,
     })
 
@@ -456,7 +480,7 @@ export class Database {
   private withChanges$(doc$: Observable<any>) {
     const changes$ = doc$.pipe(
       map(d => ({
-        since: 'now', live: true, include_docs: true,
+        since: "now", live: true, include_docs: true,
         doc_ids: [d._id],
       })),
       switchMap(o => this.dbChanges$(o)),
@@ -472,20 +496,20 @@ export class Database {
   private dbChanges$(options?: {}): Observable<Change> {
     return new Observable(observer => {
       const changes = this.changes(options)
-        .on('change', change => {
-          observer.next(change as Change)
-        })
-        .on('complete', info => {
-          if (info.results) {
-            info.results.forEach(change => {
-              observer.next(change as Change)
-            })
-          }
-          observer.complete()
-        })
-        .on('error', error => {
-          observer.error(error)
-        })
+      .on("change", change => {
+        observer.next(change as Change)
+      })
+      .on("complete", info => {
+        if (info.results) {
+          info.results.forEach(change => {
+            observer.next(change as Change)
+          })
+        }
+        observer.complete()
+      })
+      .on("error", error => {
+        observer.error(error)
+      })
 
       return () => {
         if (changes) {
@@ -510,7 +534,7 @@ export class PouchError extends Error {
 
   public constructor(opts: any, methodName: string = null) {
     super(
-      (methodName ? `While calling ${methodName}(): ` : '')
+      (methodName ? `While calling ${methodName}(): ` : "")
       + `[${opts.status || opts.error}] ${opts.reason || opts.message}`,
     )
     this.status = opts.status

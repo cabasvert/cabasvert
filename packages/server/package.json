@@ -57,14 +57,15 @@
     "pouchdb-core": "^6.4.3",
     "pouchdb-find": "^6.4.3",
     "reflect-metadata": "^0.1.10",
+    "request": "^2.83.0",
     "uid-generator": "^1.0.0",
     "winston": "^3.2.1"
   },
   "devDependencies": {
     "@cabasvert/tools": "^0.1.1",
+    "@types/request": "^2.48.8",
     "@types/supertest": "^2.0.6",
     "pouchdb-security-helper": "^1.1.1",
-    "request": "^2.83.0",
     "supertest": "^4.0.2"
   },
   "// greenkeeper": [
