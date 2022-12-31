@@ -30,7 +30,7 @@ import { Logger } from './logger'
 import { HttpClient } from '@angular/common/http'
 import { catchError, take, tap } from 'rxjs/operators'
 
-interface UserData {
+export interface UserData {
   roles: string[]
   name: string
   email: string
@@ -245,11 +245,12 @@ export class AuthService {
 
     try {
       // Try to authenticate with remote
-      const ok = await this.userDatabase.login(credentials.username, credentials.password)
+      const userData = await this.userDatabase.login2(credentials.username, credentials.password)
 
-      if (ok) {
+      if (userData) {
         this.log.info(`Successfully logged in user '${credentials.username}' to remote`)
-        let user = await this.retrieveUser(credentials.username)
+        // let user = await this.retrieveUser(credentials.username)
+        let user = new User(credentials.username, userData)
 
         // Copy metadata for offline use
         credentials.data = user.data

@@ -17,24 +17,24 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as bodyParser from 'body-parser'
-import * as cors from 'cors'
-import * as express from 'express'
-import * as helmet from 'helmet'
-import * as http from 'http'
+import * as bodyParser from "body-parser"
+import * as cors from "cors"
+import * as express from "express"
+import * as helmet from "helmet"
+import * as http from "http"
 
-import { Container } from 'inversify'
-import { InversifyExpressServer } from 'inversify-express-utils'
-import * as morgan from 'morgan'
-import { Logger } from 'winston'
-import { Configuration } from './config'
+import { Container } from "inversify"
+import { InversifyExpressServer } from "inversify-express-utils"
+import * as morgan from "morgan"
+import { Logger } from "winston"
+import { Configuration } from "./config"
 
-import './controllers/user.controller'
-import './controllers/status.controller'
+import "./controllers/user.controller"
+import "./controllers/status.controller"
 
-import { DatabaseService } from './services/database.service'
-import { Services } from './types'
-import * as request from 'request'
+import { DatabaseService } from "./services/database.service"
+import { Services } from "./types"
+import * as request from "request"
 
 export async function initializeServer(containerPromise: Promise<Container>): Promise<http.Server> {
 
@@ -54,28 +54,26 @@ export async function initializeServer(containerPromise: Promise<Container>): Pr
     // TODO proxy $DATABASE_URL/_session and $DATABASE_URL/cabasvert in /db
 
     app.use((req, res, next) => {
+      if (req.path === "/_session") {
+        req.pipe(request({ url: config.database.url + "/_session" })).pipe(res)
+      } else {
+        const match = req.path.match(/^\/db\/(.*)$/)
+        if (match) {
+          const path = match[1]
+          req.pipe(request({ url: "/cabasvert/" + path })).pipe(res)
+        } else next()
+      }
+    })
+
+    app.use((req, res, next) => {
       const match = req.path.match(/^\/_session$/)
       if (match) {
         req.pipe(
           request({
-            uri: config.database.url + '_session',
-            method: req.method,
-          })
+            url: config.database.url + "/_session",
+          }),
         ).pipe(res)
-      }
-    })
-
-    app.get((req, res, ) => {
-      const match = req.path.match(/^\/_user$/)
-      if (match) {
-        console.log(req.headers)
-        req.pipe(
-          request({
-            uri: config.database.url + '_session',
-            method: req.method,
-          })
-        ).pipe(res)
-      }
+      } else next()
     })
 
     // convert http post data to json automatically
@@ -91,14 +89,14 @@ export async function initializeServer(containerPromise: Promise<Container>): Pr
     app.use(helmet())
 
     // configure morgan to use the app's logger for http request logging
-    app.use(morgan('combined', {
+    app.use(morgan("combined", {
       stream: {
         write: (str) => logger.info(str),
       },
     }))
 
     // configure serving client as static files
-    app.use(express.static('public'))
+    app.use(express.static("public"))
   })
 
   let application = server.build()
