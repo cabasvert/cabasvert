@@ -8,6 +8,9 @@
   },
   "exclude": [
     "test.ts",
+    "setupJest.ts",
+    "jestGlobalMocks.ts",
+    "app/utils/testbed.ts",
     "**/*.spec.ts",
     "node_modules",
     "../../node_modules"
