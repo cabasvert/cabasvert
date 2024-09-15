@@ -23,7 +23,7 @@ import { Season } from '@cabasvert/data'
 import { PopoverController } from '@ionic/angular'
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { mdRightEnterAnimation } from '../../../toolkit/utils/md.right-enter'
+// import { mdRightEnterAnimation } from '../../../toolkit/utils/md.right-enter'
 import { WeekSelectorComponent } from './week-selector.component'
 
 @Component({
@@ -75,7 +75,7 @@ export class WeekSelectControl implements ControlValueAccessor, OnInit, OnDestro
       map(week => this.nullAllowed ? !week : !week || week === 1),
     )
 
-    this.incrementDisabled$ = combineLatest(this.week$, this.season$).pipe(
+    this.incrementDisabled$ = combineLatest([this.week$, this.season$]).pipe(
       map(([week, season]) => !!week && week === season.weekCount),
     )
 
@@ -89,7 +89,7 @@ export class WeekSelectControl implements ControlValueAccessor, OnInit, OnDestro
   async showWeekSelector($event) {
     let popover = await this.popoverCtrl.create({
       event: $event,
-      enterAnimation: mdRightEnterAnimation,
+      // enterAnimation: mdRightEnterAnimation,
       component: WeekSelectorComponent,
       componentProps: {
         season$: this.season$,
