@@ -12,7 +12,6 @@
     ]
   },
   "scripts": {
-    "postinstall": "scripts/patch-angular.js",
     "clean": "rm -rf coverage www artifacts",
     "start": "scripts/start.js",
     "start:watch": "scripts/start.js --watch",
