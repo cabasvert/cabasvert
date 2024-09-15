@@ -18,8 +18,8 @@
 -->
 
 <ion-app [ngClass]="'theme-' + (theme$ | async)" data-testid="app">
-  <ion-split-pane [disabled]="!(user$ | async)">
-    <ion-menu class="split-pane-side" side="start" [swipeGesture]="true">
+  <ion-split-pane [disabled]="!(user$ | async)" contentId="content">
+    <ion-menu class="split-pane-side" side="start" [swipeGesture]="true" contentId="content">
       <div class="ion-page" *ngIf="user$ | async as user">
 
         <ion-header>
@@ -75,6 +75,6 @@
       </div>
     </ion-menu>
 
-    <ion-router-outlet main></ion-router-outlet>
+    <ion-router-outlet id="content"></ion-router-outlet>
   </ion-split-pane>
 </ion-app>

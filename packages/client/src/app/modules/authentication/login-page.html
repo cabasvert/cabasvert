@@ -23,14 +23,14 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="login-content" padding>
+<ion-content class="login-content ion-padding">
   <ion-grid fixed>
-    <ion-row class="logo-row" justify-content-center>
-      <ion-col size="12" text-center>
+    <ion-row class="logo-row ion-justify-content-center">
+      <ion-col size="12" class="ion-text-center">
         <img width="128" height="128" src="assets/img/icon.svg"/>
       </ion-col>
     </ion-row>
-    <ion-row class="login-box" justify-content-center>
+    <ion-row class="login-box ion-justify-content-center">
       <ion-col size-lg="6" size-md="8" size-sm="12">
         <form [formGroup]="form" (ngSubmit)="login()" data-testid="login-form">
 
