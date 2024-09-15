@@ -103,7 +103,7 @@ import { UidService } from './providers/uid-service'
 })
 export class ToolkitModule {
 
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<ToolkitModule> {
     return {
       ngModule: ToolkitModule,
       providers: [
