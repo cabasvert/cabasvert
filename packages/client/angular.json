@@ -17,6 +17,12 @@
               "path": "./extra-webpack.config.ts",
               "replaceDuplicatePlugins": true
             },
+            "allowedCommonJsDependencies": [
+              "url-parse",
+              "uuid",
+              "@cabasvert/data",
+              "uid-generator"
+            ],
             "progress": true,
             "outputPath": "www",
             "index": "src/index.html",
