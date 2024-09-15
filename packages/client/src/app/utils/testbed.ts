@@ -17,5 +17,20 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'jest-preset-angular'
-import './jestGlobalMocks'
+import { TestBed, TestModuleMetadata } from '@angular/core/testing'
+
+export function setupTestBed(moduleDef: TestModuleMetadata) {
+
+  beforeAll(async () => {
+    TestBed.resetTestingModule()
+
+    const compilerConfig = { preserveWhitespaces: false } as any
+    TestBed.configureCompiler(compilerConfig).configureTestingModule(moduleDef)
+
+    await TestBed.compileComponents()
+  })
+
+  afterAll(() => {
+    TestBed.resetTestingModule()
+  })
+}

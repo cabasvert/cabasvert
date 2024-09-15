@@ -22,6 +22,7 @@ import { of } from 'rxjs'
 import { SeasonService } from '../season.service'
 
 import { WeekViewComponent } from './week-view.component'
+import { setupTestBed } from '../../../utils/testbed'
 
 describe('WeekViewComponent', () => {
 

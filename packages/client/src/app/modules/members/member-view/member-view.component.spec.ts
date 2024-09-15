@@ -19,10 +19,8 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { Member } from '../member.model'
-import { SeasonService } from '../season.service'
 import { MemberView } from './member-view'
-
-import { WeekViewComponent } from './week-view.component'
+import { setupTestBed } from '../../../utils/testbed'
 
 describe('MemberViewComponent', () => {
 

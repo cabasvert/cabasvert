@@ -35,9 +35,3 @@ declare module '*'
 declare const Zone: {
   current: { name: string };
 }
-
-declare namespace NodeJS {
-  export interface Global {
-    setupTestBed: any
-  }
-}
