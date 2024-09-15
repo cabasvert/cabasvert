@@ -20,8 +20,8 @@
 import { Component, ElementRef, HostBinding, NgZone, OnDestroy, OnInit } from '@angular/core'
 import { IonContent } from '@ionic/angular'
 import { ScrollDetail } from '@ionic/core'
-import { defer, merge, Subscription, timer } from 'rxjs'
-import { filter, switchMap, switchMapTo } from 'rxjs/operators'
+import { defer, merge, of, Subscription, timer } from 'rxjs'
+import { filter, switchMap, switchMapTo, tap } from 'rxjs/operators'
 
 const VISIBILITY_DURATION = 2000
 
@@ -50,17 +50,17 @@ export class ScrollToTop implements OnInit, OnDestroy {
   }
 
   private async setupScrollListener() {
-    let show$ = defer(() => this._setVisible(true))
-    let hide$ = defer(() => this._setVisible(false))
+    let show$ = defer(() => of(null).pipe(tap(_ => this._setVisible(true))))
+    let hide$ = defer(() => of(null).pipe(tap(_ => this._setVisible(false))))
     let ionScroll = this.content.ionScroll
 
     this.content.scrollEvents = true
     this.subscription.add(
       ionScroll.pipe(
-        filter(e => !this._scrollSelfInitiated),
+        filter(_ => !this._scrollSelfInitiated),
         switchMap((e: CustomEvent<ScrollDetail>) =>
           e.detail.scrollTop === 0 ? hide$ :
-            merge(show$, timer(VISIBILITY_DURATION).pipe(switchMapTo(hide$))),
+            merge(show$, timer(VISIBILITY_DURATION).pipe(switchMap(() => hide$))),
         ),
       ).subscribe(),
     )

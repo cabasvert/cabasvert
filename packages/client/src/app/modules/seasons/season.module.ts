@@ -35,7 +35,7 @@ import { WeekViewComponent } from './week-view/week-view.component'
   imports: [
     CommonModule,
     IonicModule,
-    TranslateModule,
+    TranslateModule.forChild(),
     ReactiveFormsModule,
     DynamicFormModule,
     ToolkitModule,
@@ -45,10 +45,6 @@ import { WeekViewComponent } from './week-view/week-view.component'
     WeekSelectControl,
     DynamicWeekSelectComponent,
     WeekViewComponent,
-  ],
-  entryComponents: [
-    WeekSelectorComponent,
-    DynamicWeekSelectComponent,
   ],
   exports: [
     WeekSelectorComponent,

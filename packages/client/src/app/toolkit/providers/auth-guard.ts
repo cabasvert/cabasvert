@@ -19,9 +19,8 @@
 
 import { Injectable } from '@angular/core'
 import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, CanLoad, Route, Router, RouterStateSnapshot } from '@angular/router'
-import { Observable, of } from 'rxjs'
-import { fromPromise } from 'rxjs/internal-compatibility'
-import { map, switchMap, take, tap } from 'rxjs/operators'
+import { from, Observable, of } from 'rxjs'
+import { map, switchMap, take } from 'rxjs/operators'
 import { AuthService } from './auth-service'
 import { LogService } from './log-service'
 import { Logger } from './logger'
@@ -48,7 +47,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
     return this.authService.loggedInUser$.pipe(
       take(1),
       switchMap(user =>
-        user ? of(user) : fromPromise(this.authService.tryRestoreSessionOrLoadCredentialsAndLogin()).pipe(
+        user ? of(user) : from(this.authService.tryRestoreSessionOrLoadCredentialsAndLogin()).pipe(
           switchMap(granted => granted ? this.authService.loggedInUser$ : of(null)),
           take(1),
         ),

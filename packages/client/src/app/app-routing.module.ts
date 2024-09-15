@@ -29,7 +29,6 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes, {
     preloadingStrategy: PreloadAllModules,
     enableTracing: environment.enableRouteTracing, // For debugging purposes
-    relativeLinkResolution: 'corrected',
   })],
   exports: [RouterModule],
 })

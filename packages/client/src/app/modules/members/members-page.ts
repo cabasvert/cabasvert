@@ -21,21 +21,8 @@ import { AfterViewInit, Component, NgZone, OnDestroy, OnInit, ViewChild } from '
 import { ActivatedRoute } from '@angular/router'
 import { Season } from '@cabasvert/data'
 import { IonContent, NavController } from '@ionic/angular'
-import { combineLatest, Observable, of, Subject, Subscription } from 'rxjs'
-import {
-  distinctUntilChanged,
-  filter,
-  map,
-  mapTo,
-  publishReplay,
-  refCount,
-  scan,
-  skipWhile,
-  startWith,
-  switchMap,
-  take,
-  tap,
-} from 'rxjs/operators'
+import { combineLatest, Observable, of, ReplaySubject, share, Subject, Subscription } from 'rxjs'
+import { distinctUntilChanged, filter, map, mapTo, scan, skipWhile, startWith, switchMap, take, tap, } from 'rxjs/operators'
 
 import { IndexedScroller } from '../../toolkit/components/indexed-scroller'
 import { Dialogs } from '../../toolkit/dialogs/dialogs.service'
@@ -113,8 +100,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.seasons$ = this.seasons.latestSeasons$(2).pipe(
       map(ss => ss.reverse()),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     const filters$ = this.seasons$.pipe(
@@ -149,15 +135,13 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
         ),
       )),
       filter(fs => fs.every(f => !!f)),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     this.filter$ = this.filterToggle$.pipe(
       scan<string, Filter>((acc, id) => acc.toggle(id), new Filter()),
       startWith(new Filter()),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     const seasonMemberFilter$ =
@@ -173,14 +157,12 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
           )),
         startWith(null),
         distinctUntilChanged(),
-        publishReplay(1),
-        refCount(),
+        share({ connector: () => new ReplaySubject(1) }),
       )
 
     const allMembers$ = this.members.allMembers$.pipe(
       observeOutsideAngular(this.ngZone),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
     const filteredMembers$ =
       combineLatest(allMembers$, seasonMemberFilter$).pipe(
@@ -191,8 +173,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
             return ms
           }
         }),
-        publishReplay(1),
-        refCount(),
+        share({ connector: () => new ReplaySubject(1) }),
       )
 
     this.members$ =
@@ -209,8 +190,7 @@ export class MembersPage implements OnInit, AfterViewInit, OnDestroy {
         map(ms => groupBy(ms, m => MembersPage.firstLastnameLetter(m))),
         observeInsideAngular(this.ngZone),
         startWith(null),
-        publishReplay(1),
-        refCount(),
+        share({ connector: () => new ReplaySubject(1) }),
       )
 
     this.subscription.add(

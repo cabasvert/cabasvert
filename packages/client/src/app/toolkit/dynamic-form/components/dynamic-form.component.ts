@@ -38,8 +38,8 @@ import { DynamicControlComponent } from './dynamic-control.component'
 })
 export class DynamicFormComponent extends DynamicControlComponent<FormConfig & ComponentConfig> implements OnInit {
 
-  @Input() config: FormConfig & ComponentConfig
-  @Input() form: DynamicGroup
+  @Input() declare config: FormConfig & ComponentConfig
+  @Input() declare form: DynamicGroup
   @Output() submit: EventEmitter<any> = new EventEmitter<any>()
 
   get dynamicControl() {

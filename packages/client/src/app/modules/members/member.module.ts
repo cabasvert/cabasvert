@@ -59,7 +59,7 @@ let routes: Routes = [
   imports: [
     CommonModule,
     IonicModule,
-    TranslateModule,
+    TranslateModule.forChild(),
     ReactiveFormsModule,
     DynamicFormModule,
     ToolkitModule,
@@ -70,11 +70,6 @@ let routes: Routes = [
     MembersPage,
     MemberDetailsPage,
     MemberView,
-    PersonEditForm,
-  ],
-  entryComponents: [
-    MembersPage,
-    MemberDetailsPage,
     PersonEditForm,
   ],
   exports: [

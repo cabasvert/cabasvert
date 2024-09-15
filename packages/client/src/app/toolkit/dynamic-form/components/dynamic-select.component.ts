@@ -18,8 +18,8 @@
  */
 
 import { Component, OnInit } from '@angular/core'
-import { Observable, of } from 'rxjs'
-import { map, publishReplay, refCount } from 'rxjs/operators'
+import { Observable, of, ReplaySubject, share } from 'rxjs'
+import { map } from 'rxjs/operators'
 import { ComponentConfig, SelectConfig } from '../models/form-config.interface'
 import { DynamicChildControlComponent } from './dynamic-child-control.component'
 
@@ -53,8 +53,7 @@ export class DynamicSelectComponent extends DynamicChildControlComponent<SelectC
         }
         return os
       }),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
   }
 

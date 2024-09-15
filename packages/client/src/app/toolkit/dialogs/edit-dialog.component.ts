@@ -17,7 +17,7 @@
  * along with CabasVert.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, ComponentFactoryResolver, OnInit, Type, ViewChild } from '@angular/core'
+import { AfterViewInit, Component, ComponentFactoryResolver, OnInit, Type, ViewChild } from '@angular/core'
 
 import { AlertController, ModalController, NavParams } from '@ionic/angular'
 import { TranslateService } from '@ngx-translate/core'
@@ -45,14 +45,13 @@ export class EditDialogComponent implements OnInit {
 
   private editFormOptions: EditFormOptions
 
-  @ViewChild(EditFormHostDirective) host: EditFormHostDirective
+  @ViewChild(EditFormHostDirective, { static: true }) host: EditFormHostDirective
   editFormInstance: EditFormComponent
 
   constructor(private navParams: NavParams,
               private modalCtrl: ModalController,
               private alertCtrl: AlertController,
-              private translate: TranslateService,
-              private componentFactoryResolver: ComponentFactoryResolver) {
+              private translate: TranslateService) {
   }
 
   ngOnInit() {
@@ -64,12 +63,10 @@ export class EditDialogComponent implements OnInit {
   }
 
   loadFormComponent(editFormOptions: EditFormOptions) {
-    let componentFactory = this.componentFactoryResolver.resolveComponentFactory(editFormOptions.component)
-
     let viewContainerRef = this.host.viewContainerRef
     viewContainerRef.clear()
 
-    let componentRef = viewContainerRef.createComponent(componentFactory)
+    let componentRef = viewContainerRef.createComponent(editFormOptions.component)
     this.editFormInstance = <EditFormComponent> componentRef.instance
     this.editFormInstance.data = editFormOptions.data
 

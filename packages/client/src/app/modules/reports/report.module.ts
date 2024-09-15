@@ -52,16 +52,12 @@ let routes: Routes = [
   imports: [
     CommonModule,
     IonicModule,
-    TranslateModule,
+    TranslateModule.forChild(),
     ReactiveFormsModule,
     ToolkitModule,
     RouterModule.forChild(routes),
   ],
   declarations: [
-    ReportsPage,
-    ReportResultPage,
-  ],
-  entryComponents: [
     ReportsPage,
     ReportResultPage,
   ],

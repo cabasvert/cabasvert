@@ -18,7 +18,7 @@
  */
 
 import { Observable } from 'rxjs'
-import { DynamicGroup } from '../dynamic-form.service'
+import { DynamicControl, DynamicGroup } from '../dynamic-form.service'
 import { ComponentConfig, ConfigFn, ControlConfig } from '../models/form-config.interface'
 
 export abstract class DynamicControlComponent<C extends ControlConfig & ComponentConfig> {
@@ -34,7 +34,7 @@ export abstract class DynamicControlComponent<C extends ControlConfig & Componen
     this.form = form
   }
 
-  abstract get dynamicControl()
+  abstract get dynamicControl(): DynamicControl
 
   get control() {
     return this.dynamicControl.control

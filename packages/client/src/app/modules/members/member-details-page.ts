@@ -23,8 +23,8 @@ import { Season, SeasonWeek } from '@cabasvert/data'
 import { Plugins } from '@capacitor/core'
 import { NavController, Platform } from '@ionic/angular'
 import { TranslateService } from '@ngx-translate/core'
-import { Observable, Subscription } from 'rxjs'
-import { filter, map, publishReplay, refCount, switchMap, take, withLatestFrom } from 'rxjs/operators'
+import { Observable, ReplaySubject, share, Subscription } from 'rxjs'
+import { map, switchMap, take, withLatestFrom } from 'rxjs/operators'
 
 import { AuthService, Roles, User } from '../../toolkit/providers/auth-service'
 import { Dialogs } from '../../toolkit/dialogs/dialogs.service'
@@ -81,15 +81,13 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
       switchMap(m => this.contractService.contractsByMember$(m)),
       map(cs => cs.sort((c1, c2) => -c1.season.localeCompare(c2.season))),
       observeInsideAngular(this.ngZone),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     this.trialBaskets$ = this.member$.pipe(
       map(m => m.trialBaskets || []),
       map(tbs => tbs.sort((tb1, tb2) => -this.trialBasketCompare(tb1, tb2))),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     this.subscription = this.authService.loggedInUser$.subscribe(user => this.user = user)

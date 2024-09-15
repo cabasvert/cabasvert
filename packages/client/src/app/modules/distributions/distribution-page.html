@@ -31,12 +31,12 @@
 
     <ion-buttons slot="primary">
       <ion-button icon-only
-                  (click)="previousWeekClicks$.next()"
+                  (click)="previousWeekClicks$.next(null)"
                   [disabled]="previousDisablement$ | async">
         <ion-icon name="arrow-back"></ion-icon>
       </ion-button>
       <ion-button icon-only
-                  (click)="nextWeekClicks$.next()"
+                  (click)="nextWeekClicks$.next(null)"
                   [disabled]="nextDisablement$ | async">
         <ion-icon name="arrow-forward"></ion-icon>
       </ion-button>
@@ -291,7 +291,7 @@
 
 <ng-template #noDistribution>
   <ion-row fixed style="margin-top: 50%;">
-    <ion-col text-center>
+    <ion-col class="ion-text-center">
       <ion-label>
         <ion-spinner icon="dots"></ion-spinner>
       </ion-label>

@@ -47,10 +47,10 @@ let routes: Routes = [
     LoginPage,
     ResetPasswordPage,
   ],
-  entryComponents: [
-    LoginPage,
-    ResetPasswordPage,
-  ],
+  // entryComponents: [
+  //   LoginPage,
+  //   ResetPasswordPage,
+  // ],
   exports: [],
   providers: [],
 })

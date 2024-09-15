@@ -22,7 +22,6 @@ import { APP_INITIALIZER, NgModule } from '@angular/core'
 import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser'
 import { RouteReuseStrategy } from '@angular/router'
 import { ServiceWorkerModule } from '@angular/service-worker'
-import { AppVersion } from '@ionic-native/app-version/ngx'
 import { SecureStorage } from '@ionic-native/secure-storage/ngx'
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular'
@@ -56,7 +55,6 @@ registerLocales()
 
 @NgModule({
   declarations: [AppComponent],
-  entryComponents: [],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),

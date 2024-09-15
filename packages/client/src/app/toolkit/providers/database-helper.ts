@@ -28,8 +28,8 @@ import { fetch } from 'pouchdb-fetch'
 import PouchFind from 'pouchdb-find'
 import PouchSync from 'pouchdb-replication'
 
-import { combineLatest, EMPTY, from, merge, Observable, of } from 'rxjs'
-import { catchError, map, mapTo, mergeMap, publishReplay, refCount, startWith, switchMap } from 'rxjs/operators'
+import { combineLatest, EMPTY, from, merge, Observable, of, ReplaySubject, share } from 'rxjs'
+import { catchError, map, mapTo, mergeMap, startWith, switchMap } from 'rxjs/operators'
 
 import { ConfigurationService } from '../../config/configuration.service'
 
@@ -357,8 +357,7 @@ export class Database {
     )
 
     return merge(found$, changes$).pipe(
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
   }
 
@@ -427,8 +426,7 @@ export class Database {
       map(([docs, change]) =>
         change == null ? docs : merger(docs, change.id, mapper(change.doc), change.deleted),
       ),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
   }
 
@@ -464,8 +462,7 @@ export class Database {
     )
 
     return merge(doc$, changes$).pipe(
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
   }
 

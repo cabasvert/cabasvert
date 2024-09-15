@@ -19,8 +19,8 @@
 
 import { Injectable, NgZone, OnDestroy } from '@angular/core'
 import { SeasonWeek } from '@cabasvert/data'
-import { combineLatest, Observable, of, Subscription } from 'rxjs'
-import { map, publishReplay, refCount, switchMap } from 'rxjs/operators'
+import { combineLatest, Observable, of, ReplaySubject, share, Subscription } from 'rxjs'
+import { map, switchMap } from 'rxjs/operators'
 
 import { DatabaseService } from '../../toolkit/providers/database-service'
 import { observeInsideAngular } from '../../utils/observables'
@@ -51,15 +51,13 @@ export class DistributionService implements OnDestroy {
 
     this.todaysBaskets$ = this.seasons.todaysSeasonWeek$.pipe(
       switchMap(week => !!week ? this.basketsForWeek$(week) : of(null)),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     this.todaysTotals$ = this.todaysBaskets$.pipe(
       map(bs => !!bs ? DistributionService.totals(bs) : null),
       observeInsideAngular(this.ngZone),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     this._subscription.add(this.todaysTotals$.subscribe())
@@ -106,8 +104,7 @@ export class DistributionService implements OnDestroy {
         map(ms =>
           ms.filter(m => MemberService.memberHasTrialBasketForWeek(m, week)),
         ),
-        publishReplay(1),
-        refCount(),
+        share({ connector: () => new ReplaySubject(1) }),
       )
 
       return combineLatest(membersIndexed$, contracts$, membersWithTrialBasket$).pipe(

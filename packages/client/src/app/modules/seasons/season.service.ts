@@ -20,8 +20,8 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core'
 import { Season, SeasonWeek } from '@cabasvert/data'
 
-import { Observable, of, Subscription, timer } from 'rxjs'
-import { distinctUntilChanged, map, publishReplay, refCount, switchMap } from 'rxjs/operators'
+import { Observable, of, ReplaySubject, share, Subscription, timer } from 'rxjs'
+import { distinctUntilChanged, map, switchMap } from 'rxjs/operators'
 
 import { DatabaseService } from '../../toolkit/providers/database-service'
 import { observeInsideAngular } from '../../utils/observables'
@@ -33,8 +33,7 @@ export class SeasonService implements OnDestroy {
     timer(0, 60 * 1000).pipe(
       map(() => Date.today()),
       distinctUntilChanged((d1, d2) => d1.getDate() === d2.getDate()),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
   private _seasonMapper = doc => new Season(doc)
@@ -46,14 +45,12 @@ export class SeasonService implements OnDestroy {
   public readonly latestSeason$: Observable<Season>
 
   // FIXME Rename to currentSeason$ and currentSeasonWeek$
-  public readonly todaysSeason$: Observable<Season>
-  public readonly todaysSeasonWeek$: Observable<SeasonWeek>
+  public readonly todaysSeason$: Observable<Season | undefined>
+  public readonly todaysSeasonWeek$: Observable<SeasonWeek | undefined>
 
   private _subscription = new Subscription()
 
-  constructor(private mainDatabase: DatabaseService,
-              private ngZone: NgZone) {
-
+  constructor(private mainDatabase: DatabaseService, private ngZone: NgZone) {
     this.createIndexes()
 
     // All seasons
@@ -75,15 +72,13 @@ export class SeasonService implements OnDestroy {
     this.todaysSeason$ = SeasonService.today$.pipe(
       switchMap(today => this.seasonForDate$(today)),
       observeInsideAngular(this.ngZone),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     this.todaysSeasonWeek$ = SeasonService.today$.pipe(
       switchMap(today => this.seasonWeekForDate$(today)),
       observeInsideAngular(this.ngZone),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     this._subscription.add(this.todaysSeasonWeek$.subscribe())
@@ -111,12 +106,12 @@ export class SeasonService implements OnDestroy {
   private _bySeasonId = (s1, s2) => s1.id.localeCompare(s2.id)
   private _byDescendingSeasonId = (s1, s2) => -this._bySeasonId(s1, s2)
 
-  seasonForDate$(date: Date = new Date()): Observable<Season> {
+  seasonForDate$(date: Date = new Date()): Observable<Season | undefined> {
     return this.allSeasons$.pipe(map(ss => ss.find(s => s.contains(date))))
   }
 
-  seasonWeekForDate$(date: Date = new Date()): Observable<SeasonWeek> {
-    return this.seasonForDate$(date).pipe(map(s => !!s ? s.seasonWeek(date) : null))
+  seasonWeekForDate$(date: Date = new Date()): Observable<SeasonWeek | undefined> {
+    return this.seasonForDate$(date).pipe(map(s => !!s ? s.seasonWeek(date) : undefined))
   }
 
   seasonsForPeriod$(from: Date, to: Date): Observable<Season[]> {

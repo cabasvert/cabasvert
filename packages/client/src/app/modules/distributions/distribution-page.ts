@@ -22,8 +22,8 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { SeasonWeek } from '@cabasvert/data'
 
 import { IonContent, ModalController, NavController } from '@ionic/angular'
-import { combineLatest, merge, Observable, of, Subject, Subscription } from 'rxjs'
-import { map, mapTo, mergeScan, publishReplay, refCount, startWith, switchAll, switchMap, withLatestFrom } from 'rxjs/operators'
+import { combineLatest, merge, Observable, of, ReplaySubject, share, Subject, Subscription } from 'rxjs'
+import { map, mapTo, mergeScan, startWith, switchAll, switchMap, withLatestFrom } from 'rxjs/operators'
 import { IndexedScroller } from '../../toolkit/components/indexed-scroller'
 import { ItemExpanding } from '../../toolkit/components/item-expanding'
 import { SlidingPanes } from '../../toolkit/components/sliding-panes'
@@ -132,14 +132,12 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
           return this.seasonService.nextWeekOf$(w)
         }
       }, null),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     let baskets$ = this.week$.pipe(
       switchMap(week => this.distributionService.basketsForWeek$(week)),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     let basketsAndDistribution$ = baskets$.pipe(
@@ -149,8 +147,7 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
         ),
       ),
       switchAll(),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     let allBaskets$ = basketsAndDistribution$.pipe(map(({ baskets, ..._ }) => baskets))
@@ -168,36 +165,31 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
           .filter(b => !!b),
       ),
       observeInsideAngular(this.ngZone),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     let distributedBasketsCount$ = distributedBaskets$.pipe(
       map(bs => bs.length),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     let allRemainingBaskets$ = combineLatest(allBaskets$, distribution$).pipe(
       map(([bs, distribution]) =>
         bs.filter(b => !distribution.isBasketDistributed(b) && !distribution.isBasketDelayed(b)),
       ),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     this._groupedRemainingBaskets$ = allRemainingBaskets$.pipe(
       map((bs: Basket[]) => groupBy(bs, b => DistributionPage.firstLastnameLetter(b.member))),
       observeInsideAngular(this.ngZone),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     let remainingBasketsCount$ = allRemainingBaskets$.pipe(
       map(bs => bs.length),
       observeInsideAngular(this.ngZone),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     let delayedBaskets$ = combineLatest(allBaskets$, distribution$).pipe(
@@ -205,14 +197,12 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
         bs.filter(b => !distribution.isBasketDistributed(b) && distribution.isBasketDelayed(b)),
       ),
       observeInsideAngular(this.ngZone),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     let delayedBasketsCount$ = delayedBaskets$.pipe(
       map(bs => bs.length),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     let moves$ = previousNextClicks$.pipe(mapTo(null))
@@ -273,8 +263,7 @@ export class DistributionPage implements OnInit, AfterViewInit, OnDestroy {
             map(cs => ContractService.computePerMemberIdProblemSeverity(cs)),
           ),
         ),
-        publishReplay(1),
-        refCount(),
+        share({ connector: () => new ReplaySubject(1) }),
       ).subscribe(perIdSeverity => {
         this.perMemberIdProblemSeverity = perIdSeverity
       }),

@@ -35,12 +35,13 @@ export class ReportsPage implements OnInit, OnDestroy {
   user: User
   private subscription: Subscription
 
-  reports = this.reportsGenerator.reports
+  reports: ReportDescription[]
 
   constructor(public navCtrl: NavController,
               public authService: AuthService,
               public reportsGenerator: ReportService,
               private platform: Platform) {
+    this.reports = this.reportsGenerator.reports
   }
 
   ngOnInit() {

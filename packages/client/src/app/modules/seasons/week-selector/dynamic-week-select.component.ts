@@ -19,11 +19,9 @@
 
 import { Component, OnInit } from '@angular/core'
 import { Season } from '@cabasvert/data'
-import { Observable } from 'rxjs'
-import { publishReplay, refCount } from 'rxjs/operators'
+import { Observable, ReplaySubject, share } from 'rxjs'
 import { DynamicChildControlComponent } from '../../../toolkit/dynamic-form/components/dynamic-child-control.component'
 import { ComponentConfig } from '../../../toolkit/dynamic-form/models/form-config.interface'
-import { Forms } from '../../utils/forms'
 import { WeekSelectConfig } from './dynamic-week-select'
 
 @Component({
@@ -43,8 +41,7 @@ export class DynamicWeekSelectComponent extends DynamicChildControlComponent<Wee
 
   ngOnInit() {
     this.season$ = this.applyConfigFn(this.config.season).pipe(
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
   }
 }

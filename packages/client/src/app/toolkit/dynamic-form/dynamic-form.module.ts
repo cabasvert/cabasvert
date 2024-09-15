@@ -40,7 +40,7 @@ import { DynamicFormService } from './dynamic-form.service'
   imports: [
     CommonModule,
     IonicModule,
-    TranslateModule,
+    TranslateModule.forChild(),
     ReactiveFormsModule,
   ],
   declarations: [
@@ -60,15 +60,6 @@ import { DynamicFormService } from './dynamic-form.service'
   exports: [
     DynamicFormComponent,
     DynamicItemComponent,
-  ],
-  entryComponents: [
-    DynamicArrayComponent,
-    DynamicGroupComponent,
-    DynamicCheckboxComponent,
-    DynamicHiddenInputComponent,
-    DynamicInputComponent,
-    DynamicSelectComponent,
-    DynamicTextareaComponent,
   ],
   providers: [
     DynamicFormService,

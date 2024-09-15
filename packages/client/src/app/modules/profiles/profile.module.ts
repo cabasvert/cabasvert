@@ -43,16 +43,12 @@ let routes: Routes = [
   imports: [
     CommonModule,
     IonicModule,
-    TranslateModule,
+    TranslateModule.forChild(),
     ReactiveFormsModule,
     ToolkitModule,
     RouterModule.forChild(routes),
   ],
   declarations: [
-    ProfilePage,
-    ChangePasswordPage,
-  ],
-  entryComponents: [
     ProfilePage,
     ChangePasswordPage,
   ],

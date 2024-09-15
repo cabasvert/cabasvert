@@ -20,9 +20,8 @@
 import { Injectable } from '@angular/core'
 import { AppState, NetworkStatus, PluginListenerHandle, Plugins } from '@capacitor/core'
 import { Platform } from '@ionic/angular'
-import { merge, Observable, of } from 'rxjs'
-import { fromPromise } from 'rxjs/internal-compatibility'
-import { map, publishReplay, refCount, tap } from 'rxjs/operators'
+import { from, merge, Observable, of, ReplaySubject, share } from 'rxjs'
+import { map, tap } from 'rxjs/operators'
 import { LogService } from './log-service'
 import { Logger } from './logger'
 
@@ -37,7 +36,7 @@ export class AppBridge {
     return this._logger || (this._logger = this.logService.logger('App'))
   }
 
-  private isHybrid = this.platform.is('hybrid')
+  private readonly isHybrid: boolean = false
 
   public readonly appIsActive$: Observable<boolean>
   public readonly networkStatus$: Observable<NetworkStatus>
@@ -46,38 +45,36 @@ export class AppBridge {
   constructor(private logService: LogService,
               private platform: Platform) {
 
+    this.isHybrid = this.platform.is('hybrid')
+
     this.appIsActive$ = this.isHybrid ?
       fromEvent<AppState>(App, 'appStateChange').pipe(
         map((state: AppState) => state.isActive),
         tap(active => this.logger.info(`Went to ${active ? 'foreground' : 'background'}`)),
-        publishReplay(1),
-        refCount(),
+        share({ connector: () => new ReplaySubject(1) }),
       ) :
       of(true).pipe(
-        publishReplay(1),
-        refCount(),
+        share({ connector: () => new ReplaySubject(1) }),
       )
 
     this.networkStatus$ = this.isHybrid ?
       merge(
-        fromPromise(Network.getStatus()),
+        from(Network.getStatus()),
         fromEvent<NetworkStatus>(Network, 'networkStatusChange'),
       ).pipe(
-        publishReplay(1),
-        refCount(),
+        share({ connector: () => new ReplaySubject(1) }),
       ) :
       of<NetworkStatus>({ connected: true, connectionType: 'wifi' }).pipe(
-        publishReplay(1),
-        refCount(),
+        share({ connector: () => new ReplaySubject(1) }),
       )
 
     this.networkIsConnected$ = this.networkStatus$.pipe(
       map((status: NetworkStatus) => status.connected),
       tap(connected => this.logger.info(`Network is ${connected ? 'connected' : 'disconnected'}`)),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
   }
+
 
   get networkStatus(): Promise<NetworkStatus> {
     return this.isHybrid ? Network.getStatus() :

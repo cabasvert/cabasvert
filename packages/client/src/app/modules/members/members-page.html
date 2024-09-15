@@ -105,7 +105,7 @@
   </ion-list>
   <ng-template #noMembers>
     <ion-row fixed style="margin-top: 50%;">
-      <ion-col text-center>
+      <ion-col class="ion-text-center">
         <ion-label>
           <ion-spinner icon="dots"></ion-spinner>
         </ion-label>
@@ -113,10 +113,10 @@
     </ion-row>
   </ng-template>
 
-  <ion-fab class="add-member" slot="fixed" vertical="bottom" horizontal="end"
-           [class.hidden]="scroller.scrolling$ | async">
-    <ion-fab-button color="primary" (click)="createAndGoToMember()">
-      <ion-icon name="person-add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+<!--  <ion-fab class="add-member" slot="fixed" vertical="bottom" horizontal="end"-->
+<!--           [class.hidden]="scroller.scrolling$ | async">-->
+<!--    <ion-fab-button color="primary" (click)="createAndGoToMember()">-->
+<!--      <ion-icon name="person-add"></ion-icon>-->
+<!--    </ion-fab-button>-->
+<!--  </ion-fab>-->
 </ion-content>

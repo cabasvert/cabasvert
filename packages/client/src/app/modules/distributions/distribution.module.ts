@@ -56,7 +56,7 @@ let routes: Routes = [
   imports: [
     CommonModule,
     IonicModule,
-    TranslateModule,
+    TranslateModule.forChild(),
     ReactiveFormsModule,
     ToolkitModule,
     RouterModule.forChild(routes),
@@ -64,10 +64,6 @@ let routes: Routes = [
     AutosizeModule,
   ],
   declarations: [
-    DistributionPage,
-    NotePopup,
-  ],
-  entryComponents: [
     DistributionPage,
     NotePopup,
   ],

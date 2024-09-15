@@ -18,6 +18,7 @@
  */
 
 import { Component, Input } from '@angular/core'
+import { FormGroup, ValidationErrors } from '@angular/forms'
 
 @Component({
   selector: 'dynamic-item',
@@ -39,7 +40,7 @@ import { Component, Input } from '@angular/core'
 })
 export class DynamicItemComponent {
 
-  @Input() formGroup
-  @Input() label
-  @Input() problems
+  @Input() formGroup: FormGroup
+  @Input() label: string
+  @Input() problems: ValidationErrors | null
 }

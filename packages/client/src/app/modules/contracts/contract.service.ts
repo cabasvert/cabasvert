@@ -19,8 +19,8 @@
 
 import { Injectable, OnDestroy } from '@angular/core'
 import { Season } from '@cabasvert/data'
-import { combineLatest, Observable, Subscription } from 'rxjs'
-import { map, publishReplay, refCount } from 'rxjs/operators'
+import { combineLatest, Observable, ReplaySubject, share, Subscription } from 'rxjs'
+import { map } from 'rxjs/operators'
 
 import { DatabaseService } from '../../toolkit/providers/database-service'
 
@@ -51,8 +51,7 @@ export class ContractService implements OnDestroy {
     // Per member problem severity on all contracts
     this.perMemberIdProblemSeverity$ = this.allContracts$.pipe(
       map(cs => ContractService.computePerMemberIdProblemSeverity(cs)),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     this._subscription.add(this.allContracts$.subscribe())

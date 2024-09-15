@@ -35,7 +35,7 @@ import { TrialBasketView } from './trial-basket-view'
   imports: [
     CommonModule,
     IonicModule,
-    TranslateModule,
+    TranslateModule.forChild(),
     ReactiveFormsModule,
     DynamicFormModule,
     SeasonModule,
@@ -44,10 +44,6 @@ import { TrialBasketView } from './trial-basket-view'
     ContractsView,
     ContractsEditForm,
     TrialBasketView,
-    TrialBasketEditForm,
-  ],
-  entryComponents: [
-    ContractsEditForm,
     TrialBasketEditForm,
   ],
   exports: [

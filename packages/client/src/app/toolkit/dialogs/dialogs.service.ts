@@ -20,8 +20,7 @@
 import { Injectable } from '@angular/core'
 import { AlertController, ModalController } from '@ionic/angular'
 import { AlertOptions, ModalOptions, OverlayEventDetail } from '@ionic/core'
-import { defer, Observable } from 'rxjs'
-import { fromPromise } from 'rxjs/internal-compatibility'
+import { defer, from, Observable } from 'rxjs'
 import { filter, map } from 'rxjs/operators'
 import { EditDialogComponent, EditFormOptions } from './edit-dialog.component'
 
@@ -64,7 +63,7 @@ export class Dialogs {
   }
 
   showModal$(opts?: ModalOptions): Observable<OverlayEventDetail<any>> {
-    return defer(() => fromPromise(this.showModal(opts)))
+    return defer(() => from(this.showModal(opts)))
   }
 
   async showModal(opts?: ModalOptions): Promise<OverlayEventDetail<any>> {
@@ -75,7 +74,7 @@ export class Dialogs {
 
   showEditDialog$(opts?: EditFormOptions): Observable<any> {
     return defer(() =>
-      fromPromise(this.showEditDialog(opts)).pipe(
+      from(this.showEditDialog(opts)).pipe(
         filter(r => r.role === 'save'),
         map(r => r.data),
       ),

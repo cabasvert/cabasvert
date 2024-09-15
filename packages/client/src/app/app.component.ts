@@ -25,8 +25,8 @@ import { Plugins, StatusBarStyle } from '@capacitor/core'
 import { IonRouterOutlet, MenuController, NavController, Platform, ToastController } from '@ionic/angular'
 import { BackButtonEvent } from '@ionic/core'
 import { TranslateService } from '@ngx-translate/core'
-import { interval, Observable } from 'rxjs'
-import { filter, map, publishReplay, refCount, startWith, take } from 'rxjs/operators'
+import { interval, Observable, ReplaySubject, share } from 'rxjs'
+import { filter, map, startWith, take } from 'rxjs/operators'
 import { environment } from '../environments/environment'
 import { APP_VERSION } from '../version'
 
@@ -36,7 +36,7 @@ import { LocaleManagerService } from './toolkit/providers/locale-manager.service
 import { LogService } from './toolkit/providers/log-service'
 import { Logger } from './toolkit/providers/logger'
 import { Theme, ThemeManagerService } from './toolkit/providers/theme-manager.service'
-import {debugObservable, filterNotNull} from './utils/observables'
+import { filterNotNull } from './utils/observables'
 
 const { SplashScreen, StatusBar } = Plugins
 
@@ -92,8 +92,8 @@ export class AppComponent implements OnInit {
 
     if (this.swUpdate.isEnabled) {
       // Show the update toast if an update is available
-      this.swUpdate.available.subscribe(async () => {
-        await this.showUpdateToast()
+      this.swUpdate.versionUpdates.subscribe(async (event) => {
+        if (event.type === 'VERSION_READY') await this.showUpdateToast()
       })
 
       // Check every 6 hours whether there is an update
@@ -116,8 +116,8 @@ export class AppComponent implements OnInit {
         filter(e => e instanceof Scroll),
         take(1),
       ).subscribe(() => {
-          this.log.debug('Hiding splash screen')
-          SplashScreen.hide()
+        this.log.debug('Hiding splash screen')
+        SplashScreen.hide()
       })
     }
 
@@ -128,8 +128,7 @@ export class AppComponent implements OnInit {
       startWith(this.location.path()),
       // FIXME This is fragile
       map(path => path === '' ? '/dashboard' : path),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     // Override Ionic's default behavior

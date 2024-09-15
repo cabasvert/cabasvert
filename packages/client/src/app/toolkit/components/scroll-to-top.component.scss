@@ -38,7 +38,7 @@ $ion-fab-mini-margin: 10px;
   }
 
   &[center] {
-    margin-left: calc(-$ion-fab-mini-size / 2);
+    margin-left: calc($ion-fab-mini-size * -1 / 2);
   }
 
   ion-fab-button {

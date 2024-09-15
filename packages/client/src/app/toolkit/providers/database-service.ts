@@ -20,20 +20,8 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core'
 import PouchDB from 'pouchdb-core'
 
-import { BehaviorSubject, combineLatest, defer, EMPTY, from, Observable, of, Subscription, throwError } from 'rxjs'
-import {
-  delay,
-  distinctUntilChanged,
-  map,
-  publishReplay,
-  refCount,
-  retryWhen,
-  switchAll,
-  switchMap,
-  switchMapTo,
-  take,
-  withLatestFrom,
-} from 'rxjs/operators'
+import { BehaviorSubject, combineLatest, defer, EMPTY, from, Observable, of, ReplaySubject, share, Subscription, throwError } from 'rxjs'
+import { delay, distinctUntilChanged, map, retryWhen, switchAll, switchMap, switchMapTo, take, withLatestFrom, } from 'rxjs/operators'
 
 import { environment } from '../../../environments/environment'
 import { ConfigurationService } from '../../config/configuration.service'
@@ -114,8 +102,7 @@ export class DatabaseService implements OnDestroy {
         return this.createLocalDatabase$(dbName)
       }),
       switchAll(),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     this._subscription.add(
@@ -152,8 +139,7 @@ export class DatabaseService implements OnDestroy {
         )
       }),
       switchAll(),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     this._subscription.add(
@@ -243,8 +229,7 @@ export class DatabaseService implements OnDestroy {
     return this.ngZone.runOutsideAngular(
       () => this.database$.pipe(
         switchMap(db => db.findOne$(query, mapper, defaultValue)),
-        publishReplay(1),
-        refCount(),
+        share({ connector: () => new ReplaySubject(1) }),
       ),
     )
   }
@@ -258,8 +243,7 @@ export class DatabaseService implements OnDestroy {
     return this.ngZone.runOutsideAngular(
       () => this.database$.pipe(
         switchMap(db => db.findAll$(query, mapper, indexer)),
-        publishReplay(1),
-        refCount(),
+        share({ connector: () => new ReplaySubject(1) }),
       ),
     )
   }
@@ -273,8 +257,7 @@ export class DatabaseService implements OnDestroy {
     return this.ngZone.runOutsideAngular(
       () => this.database$.pipe(
         switchMap(db => db.findAllIndexed$(query, mapper, indexer)),
-        publishReplay(1),
-        refCount(),
+        share({ connector: () => new ReplaySubject(1) }),
       ),
     )
   }
@@ -290,8 +273,7 @@ export class DatabaseService implements OnDestroy {
   public get$<T>(id: string): Observable<T> {
     return this.database$.pipe(
       switchMap(db => db.get$<T>(id)),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
   }
 }

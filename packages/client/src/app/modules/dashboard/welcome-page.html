@@ -78,15 +78,15 @@
         </ion-item>
       </ng-container>
       <ng-template #noTotals>
-        <ion-item text-center lines="none">
+        <ion-item class="ion-text-center" lines="none">
           <ion-label>
             <ion-spinner icon="dots"></ion-spinner>
           </ion-label>
         </ion-item>
       </ng-template>
 
-      <ion-row no-padding *ngIf="isDistributor()">
-        <ion-col text-center>
+      <ion-row class="ion-no-padding" *ngIf="isDistributor()">
+        <ion-col class="ion-text-center">
           <ion-button fill="clear" size="small" (click)="openDistributionPage()">
             <ion-icon name="checkmark" slot="start"></ion-icon>
             {{ 'DASHBOARD.CHECK_DISTRIBUTION' | translate }}
@@ -96,7 +96,7 @@
 
     </ng-container>
     <ng-template #noDistributionWeek>
-      <ion-item text-center lines="none">
+      <ion-item class="ion-text-center" lines="none">
         <ion-label>
           <ion-spinner icon="dots"></ion-spinner>
         </ion-label>

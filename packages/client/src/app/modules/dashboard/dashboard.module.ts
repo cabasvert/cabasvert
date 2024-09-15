@@ -42,15 +42,12 @@ let routes: Routes = [
   imports: [
     CommonModule,
     IonicModule,
-    TranslateModule,
+    TranslateModule.forChild(),
     ReactiveFormsModule,
     ToolkitModule,
     RouterModule.forChild(routes),
   ],
   declarations: [
-    WelcomePage,
-  ],
-  entryComponents: [
     WelcomePage,
   ],
   exports: [],

@@ -42,14 +42,12 @@ export class DynamicControlHostDirective implements OnChanges {
 
   component: ComponentRef<DynamicControlComponent<any>>
 
-  constructor(private resolver: ComponentFactoryResolver,
-              private container: ViewContainerRef) {
+  constructor(private container: ViewContainerRef) {
   }
 
   ngOnChanges() {
     let type = this.config.component
-    const factory = this.resolver.resolveComponentFactory<DynamicControlComponent<any>>(type)
-    this.component = this.container.createComponent(factory)
+    this.component = this.container.createComponent(type)
     this.component.instance.initialize(this.config, this.group, this.form)
   }
 }

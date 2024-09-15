@@ -21,8 +21,8 @@ import { AfterContentInit, Component, ElementRef, HostBinding, HostListener, Inp
 import { IonContent } from '@ionic/angular'
 
 import Hammer from 'hammerjs'
-import { combineLatest, Observable, Subject } from 'rxjs'
-import { distinctUntilChanged, filter, map, publishReplay, refCount, startWith } from 'rxjs/operators'
+import { combineLatest, Observable, ReplaySubject, share, Subject } from 'rxjs'
+import { distinctUntilChanged, filter, map, startWith } from 'rxjs/operators'
 import { observeInsideAngular } from '../../utils/observables'
 
 const MARGIN = 15
@@ -173,22 +173,19 @@ export class IndexedScroller implements OnInit, OnDestroy, AfterContentInit {
         return { scrolling, immediate, index, fabTop, barTop }
       }),
       observeInsideAngular(this.zone),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     this.scrolling$ = this._data$.pipe(
       distinctUntilChanged((d1, d2) => d1.scrolling === d2.scrolling || d1.immediate || d2.immediate),
       map(d => d.scrolling),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     this.scrollToIndex$ = this._data$.pipe(
       distinctUntilChanged((d1, d2) => d1.index === d2.index && !(d1.immediate || d2.immediate)),
       map(d => d.index),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     this.scrollToLabel$ = this.scrollToIndex$.pipe(

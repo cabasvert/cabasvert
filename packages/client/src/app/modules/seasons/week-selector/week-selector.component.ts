@@ -19,8 +19,8 @@
 
 import { Component, Input, OnDestroy, OnInit } from '@angular/core'
 import { Season, SeasonWeek } from '@cabasvert/data'
-import { merge, Observable, Subject, Subscription } from 'rxjs'
-import { map, publishReplay, refCount } from 'rxjs/operators'
+import { merge, Observable, ReplaySubject, share, Subject, Subscription } from 'rxjs'
+import { map } from 'rxjs/operators'
 import { SeasonService } from '../season.service'
 
 interface WeekInfo {
@@ -55,12 +55,10 @@ export class WeekSelectorComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.weekGroups$ = this.season$.pipe(
       map(season => this.computeWeekGroups(season)),
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
     this.selectedWeek$ = merge(this.week$, this.weekChange$).pipe(
-      publishReplay(1),
-      refCount(),
+      share({ connector: () => new ReplaySubject(1) }),
     )
 
     if (this.handler) {

@@ -54,7 +54,7 @@ import { UidService } from './providers/uid-service'
   imports: [
     CommonModule,
     IonicModule,
-    TranslateModule,
+    TranslateModule.forChild(),
     ReactiveFormsModule,
   ],
   declarations: [
@@ -78,9 +78,6 @@ import { UidService } from './providers/uid-service'
     // Pipes
     DatePipeProxy,
     SafeUrlPipe,
-  ],
-  entryComponents: [
-    EditDialogComponent,
   ],
   exports: [
     // Components
