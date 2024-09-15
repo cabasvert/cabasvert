@@ -149,17 +149,19 @@ export class AppComponent implements OnInit {
     let toast = await this.toastCtrl.create({
       position: 'top',
       message: this.translate.instant('PWA.UPDATE_AVAILABLE'),
-      closeButtonText: this.translate.instant('PWA.RELOAD'),
-      showCloseButton: true,
       duration: 5000,
+      buttons: [
+        {
+          text: this.translate.instant('PWA.RELOAD'),
+          role: 'cancel',
+          handler: async () => {
+            await this.swUpdate.activateUpdate()
+            document.location.reload()
+          }
+        }
+      ]
     })
     await toast.present()
-
-    let detail = await toast.onDidDismiss()
-    if (detail.role === 'cancel') {
-      await this.swUpdate.activateUpdate()
-      document.location.reload()
-    }
   }
 
   async navigateToPage(page) {
