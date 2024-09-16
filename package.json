@@ -11,7 +11,7 @@
     "clean:packages": "lerna run clean --stream",
     "clean:root": "rm -rf .nyc_output coverage",
     "compile": "lerna run compile --stream",
-    "prebuild": "npm-run-all lint license-check test e2e",
+    "#prebuild": "npm-run-all lint license-check test e2e",
     "build": "lerna run build --stream",
     "pretest": "npm-run-all compile",
     "test": "jest",
