@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.1](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0...@cabasvert/client@0.3.1) (2024-09-16)
+
+
+### Bug Fixes
+
+* **client:** disable popover interface for selects ([4dfd058](https://github.com/cabasvert/cabasvert/commit/4dfd058))
+* **client:** use sass instead of node-sass ([0f97fed](https://github.com/cabasvert/cabasvert/commit/0f97fed))
+
+
+
+
+
 # [0.3.0](https://github.com/cabasvert/cabasvert/compare/@cabasvert/client@0.3.0-rc.4...@cabasvert/client@0.3.0) (2019-10-07)
 
 **Note:** Version bump only for package @cabasvert/client
