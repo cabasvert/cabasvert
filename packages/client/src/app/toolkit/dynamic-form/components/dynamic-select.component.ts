@@ -29,7 +29,7 @@ import { DynamicChildControlComponent } from './dynamic-child-control.component'
     <dynamic-item [formGroup]="group.control" [label]="config.label" [problems]="problems">
       <ion-select [formControlName]="config.name"
                   [placeholder]="config.placeholder"
-                  [interface]="config.interface || 'popover'">
+                  [interface]="(config.interface !== 'popover' && config.interface) || 'action-sheet'">
         <ion-select-option *ngFor="let option of (options$ | async); let index=index;"
                            [value]="optionValue(option, index)">
           {{ optionLabel(option, index) }}
