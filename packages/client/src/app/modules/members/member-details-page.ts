@@ -39,6 +39,7 @@ import { SeasonService } from '../seasons/season.service'
 import { Member, Person, TrialBasket } from './member.model'
 import { MemberService } from './member.service'
 import { PersonEditForm } from './person-edit-form.component'
+import {DomSanitizer} from '@angular/platform-browser'
 
 const { App } = Plugins
 
@@ -69,7 +70,8 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
               private seasonService: SeasonService,
               private memberService: MemberService,
               private contractService: ContractService,
-              private ngZone: NgZone) {
+              private ngZone: NgZone,
+              private sanitizer: DomSanitizer) {
   }
 
   ngOnInit() {
@@ -113,7 +115,7 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   }
 
   conctactPerson(person: Person, type: 'sms' | 'tel') {
-    App.openUrl({ url: type + ':' + person.phoneNumber })
+    App.openUrl({ url: this.sanitizer.bypassSecurityTrustUrl(type + ':' + person.phoneNumber).toString() })
   }
 
   canEdit() {
