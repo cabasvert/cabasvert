@@ -28,8 +28,34 @@ describe('TokenService', () => {
   it('produces correct token and hash', async () => {
     let { token, hash } = await tokenService.generateToken()
 
-    let rehashedToken = await tokenService.hashToken(token)
+    let isValid = await tokenService.verifyToken(token, hash)
 
-    expect(rehashedToken).toEqual(hash)
+    expect(isValid).toEqual(true)
+  })
+
+  it('rejects invalid token', async () => {
+    let { token, hash } = await tokenService.generateToken()
+
+    let isValid = await tokenService.verifyToken(token + 'a', hash)
+
+    expect(isValid).toEqual(false)
+  })
+
+  it('verifies legacy token', async () => {
+    let token = 'legacy-token'
+    let legacyHash = await tokenService.hashToken(token)
+
+    let isValid = await tokenService.verifyToken(token, legacyHash)
+
+    expect(isValid).toEqual(true)
+  })
+
+  it('rejects invalid legacy token', async () => {
+    let token = 'legacy-token'
+    let legacyHash = await tokenService.hashToken(token)
+
+    let isValid = await tokenService.verifyToken(token + 'a', legacyHash)
+
+    expect(isValid).toEqual(false)
   })
 })

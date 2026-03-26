@@ -18,6 +18,7 @@
  */
 
 import { enc, PBKDF2 } from 'crypto-js'
+import * as crypto from 'crypto'
 import { injectable } from 'inversify'
 import * as UIDGenerator from 'uid-generator'
 
@@ -34,9 +35,33 @@ export class TokenService {
   async generateToken(): Promise<{ token: string, hash: string }> {
 
     let token = await this.uidGenerator.generate()
-    let hash = await this.hashToken(token)
+    let salt = crypto.randomBytes(16).toString('hex')
+    let hash = enc.Base64.stringify(PBKDF2(token, salt, { keySize: KEY_SIZE, iterations: ITERATION_COUNT }))
 
-    return { token, hash }
+    return { token, hash: `${salt}:${hash}` }
+  }
+
+  async verifyToken(token: string, storedHash: string): Promise<boolean> {
+    let salt: string
+    let expectedHash: string
+
+    if (storedHash.includes(':')) {
+      [salt, expectedHash] = storedHash.split(':')
+    } else {
+      salt = HARDCODED_SALT
+      expectedHash = storedHash
+    }
+
+    let hash = enc.Base64.stringify(PBKDF2(token, salt, { keySize: KEY_SIZE, iterations: ITERATION_COUNT }))
+
+    let hashBuffer = Buffer.from(hash)
+    let expectedHashBuffer = Buffer.from(expectedHash)
+
+    if (hashBuffer.length !== expectedHashBuffer.length) {
+      return false
+    }
+
+    return crypto.timingSafeEqual(hashBuffer, expectedHashBuffer)
   }
 
   async hashToken(token: string): Promise<string> {
