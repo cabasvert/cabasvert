@@ -135,15 +135,16 @@ export class UserController {
       let expectedHash = tokenData.hash
       let expiryDate = new Date(tokenData.expiryDate)
 
-      let hash = await this.tokenGenerator.hashToken(token)
-
       if (expiryDate < new Date()) {
         res.status(400).json({ code: 'EXPIRED_TOKEN', message: 'Token has expired' })
         this.logger.warn(`Failed processing request: Token has expired for ${userId}`)
         await this.clearPasswordResetToken(userId, doc)
         return
       }
-      if (expectedHash !== hash) {
+
+      let isValidToken = await this.tokenGenerator.verifyToken(token, expectedHash)
+
+      if (!isValidToken) {
         res.status(400).json({ code: 'INVALID_TOKEN', message: 'Token is invalid' })
         this.logger.warn(`Failed processing request: Token is invalid for ${userId}`)
         await this.clearPasswordResetToken(userId, doc)

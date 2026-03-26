@@ -76,7 +76,7 @@ describe('UserController', () => {
 
   let tokenServiceMock = {
     generateToken: jest.fn(),
-    hashToken: jest.fn(),
+    verifyToken: jest.fn(),
   }
 
   let mailServiceMock = {
@@ -96,7 +96,7 @@ describe('UserController', () => {
     databaseServiceMock.changePassword.mockResolvedValue(true)
 
     tokenServiceMock.generateToken.mockResolvedValue({ token: 'fake-token', hash: 'fake-hash' })
-    tokenServiceMock.hashToken.mockResolvedValue('fake-hash')
+    tokenServiceMock.verifyToken.mockResolvedValue(true)
 
     mailServiceMock.sendMail.mockResolvedValue(null)
 
@@ -211,7 +211,7 @@ describe('UserController', () => {
         expiryDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString(),
       }),
     )
-    tokenServiceMock.hashToken.mockResolvedValueOnce('some-other-hash')
+    tokenServiceMock.verifyToken.mockResolvedValueOnce(false)
 
     await sendConfirmBadRequest(
       { username: fakeUserId, token: 'invalid-token', 'new-password': 'newPassword' },
