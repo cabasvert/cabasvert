@@ -110,7 +110,7 @@ export class UserController {
 
     if (!userId || !token || !newPassword) {
       res.status(400).json({ code: 'MISSING_DATA', message: 'Missing data for password reset' })
-      this.logger.warn(`Failed processing request: Missing data for password reset in '${JSON.stringify(body)}'`)
+      this.logger.warn(`Failed processing request: Missing data for password reset for user '${userId}'`)
       return
     }
 
