@@ -33,6 +33,7 @@ type UserWithPassword = User & { password?: string }
 
 interface TokenData {
   hash: string,
+  salt: string,
   expiryDate: string
 }
 
@@ -95,7 +96,7 @@ describe('UserController', () => {
     databaseServiceMock.updateUser.mockResolvedValue(true)
     databaseServiceMock.changePassword.mockResolvedValue(true)
 
-    tokenServiceMock.generateToken.mockResolvedValue({ token: 'fake-token', hash: 'fake-hash' })
+    tokenServiceMock.generateToken.mockResolvedValue({ token: 'fake-token', hash: 'fake-hash', salt: 'fake-salt' })
     tokenServiceMock.hashToken.mockResolvedValue('fake-hash')
 
     mailServiceMock.sendMail.mockResolvedValue(null)
@@ -136,6 +137,7 @@ describe('UserController', () => {
         metadata: expect.objectContaining({
           'password-reset-token': expect.objectContaining({
             hash: 'fake-hash',
+            salt: 'fake-salt',
           }),
         }),
       }))
@@ -189,6 +191,7 @@ describe('UserController', () => {
     databaseServiceMock.getUser.mockResolvedValueOnce(
       fakeUserWithToken({
         hash: 'fake-hash',
+        salt: 'fake-salt',
         expiryDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString(),
       }),
     )
@@ -208,6 +211,7 @@ describe('UserController', () => {
     databaseServiceMock.getUser.mockResolvedValueOnce(
       fakeUserWithToken({
         hash: 'fake-hash',
+        salt: 'fake-salt',
         expiryDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString(),
       }),
     )
@@ -229,6 +233,7 @@ describe('UserController', () => {
     databaseServiceMock.getUser.mockResolvedValueOnce(
       fakeUserWithToken({
         hash: 'fake-hash',
+        salt: 'fake-salt',
         expiryDate: new Date().toISOString(),
       }),
     )

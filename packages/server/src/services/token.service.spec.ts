@@ -26,9 +26,9 @@ describe('TokenService', () => {
   let tokenService = new TokenService()
 
   it('produces correct token and hash', async () => {
-    let { token, hash } = await tokenService.generateToken()
+    let { token, hash, salt } = await tokenService.generateToken()
 
-    let rehashedToken = await tokenService.hashToken(token)
+    let rehashedToken = await tokenService.hashToken(token, salt)
 
     expect(rehashedToken).toEqual(hash)
   })
