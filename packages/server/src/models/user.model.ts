@@ -30,6 +30,7 @@ export interface UserMetadata {
   email: string
   'password-reset-token'?: {
     hash: string
+    salt: string
     expiryDate: string
   }
 }

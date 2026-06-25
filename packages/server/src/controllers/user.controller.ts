@@ -69,18 +69,18 @@ export class UserController {
 
       let metadata: UserMetadata = doc.metadata
 
-      let { token, hash } = await this.tokenGenerator.generateToken()
+      let { token, hash, salt } = await this.tokenGenerator.generateToken()
       let expiryDate = new Date(new Date().getTime() + EXPIRY_TIME * 60 * 60 * 1000).toISOString()
 
       // Send an email with token
       await this.sendPasswordResetMail(metadata, userId, token)
       this.logger.debug(`Sent email to '${metadata.email}' for '${userId}' to confirm password reset`)
 
-      // Store hash in database along to userId and expiryDate
+      // Store hash and salt in database along to userId and expiryDate
       await this.userDatabase.updateUser(userId, {
         metadata: {
           ...metadata,
-          [PASSWORD_RESET_TOKEN_KEY]: { hash, expiryDate },
+          [PASSWORD_RESET_TOKEN_KEY]: { hash, salt, expiryDate },
         },
       })
       this.logger.debug(`Updated user '${userId}' to store password reset token`)
@@ -133,9 +133,10 @@ export class UserController {
       // Get expected hash and expiryDate in database based on userId
       let tokenData = doc.metadata[PASSWORD_RESET_TOKEN_KEY]
       let expectedHash = tokenData.hash
+      let salt = tokenData.salt
       let expiryDate = new Date(tokenData.expiryDate)
 
-      let hash = await this.tokenGenerator.hashToken(token)
+      let hash = await this.tokenGenerator.hashToken(token, salt)
 
       if (expiryDate < new Date()) {
         res.status(400).json({ code: 'EXPIRED_TOKEN', message: 'Token has expired' })
