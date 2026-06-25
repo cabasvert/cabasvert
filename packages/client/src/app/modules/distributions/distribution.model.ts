@@ -60,10 +60,19 @@ export class Distribution {
     return 'distribution:' + week.season.id.substring('season:'.length) + '-' + week.seasonWeek
   }
 
+  private _basketsByMember = new Map<string, any>()
+
   constructor(doc: any, week: SeasonWeek, private mainDatabase: DatabaseService) {
     this._doc = doc
     this.week = week
     this.baskets = this._doc.baskets
+
+    // Initialize the cache for O(1) lookups
+    if (this.baskets) {
+      for (const basket of this.baskets) {
+        this._basketsByMember.set(basket.member, basket)
+      }
+    }
   }
 
   updateDatabase() {
@@ -139,8 +148,7 @@ export class Distribution {
 
   private findByBasket(basket: Basket) {
     let id = basket.member._id
-    let found = this.baskets.find((b) => b.member === id)
-    return found
+    return this._basketsByMember.get(id)
   }
 
   private addForBasket(basket: Basket, distributed: boolean, delayed: boolean, date?: Date, note?: { content: string }) {
@@ -153,6 +161,7 @@ export class Distribution {
     if (date) item['date'] = date.toISOString()
     if (note) item['note'] = note
     this.baskets.push(item)
+    this._basketsByMember.set(item.member, item)
   }
 
   distributedCount() {
