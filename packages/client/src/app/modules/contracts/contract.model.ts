@@ -114,6 +114,18 @@ export class ContractFormulas {
 
   static readonly formulas: ContractFormula[] = [
     new ContractFormula(
+      '44',
+      4,
+      null,
+      'CONTRACT.FORMULA_4_EVERY_WEEK',
+    ),
+    new ContractFormula(
+      '33',
+      3,
+      null,
+      'CONTRACT.FORMULA_3_EVERY_WEEK',
+    ),
+    new ContractFormula(
       '22',
       2,
       null,
@@ -136,6 +148,12 @@ export class ContractFormulas {
       1,
       null,
       'CONTRACT.FORMULA_1_EVERY_WEEK',
+    ),
+    new ContractFormula(
+      '40',
+      [4, 0],
+      null,
+      'CONTRACT.FORMULA_4_EVERY_OTHER_WEEK',
     ),
     new ContractFormula(
       '30',
@@ -164,12 +182,21 @@ export class ContractFormulas {
   ]
 
   static formulaForId(id: string): ContractFormula {
-    return ContractFormulas.formulas.find(f => f.id === id)
+    const found = ContractFormulas.formulas.find(f => f.id === id)
+    if (found) return found
+    return new ContractFormula(id || '0', 0, null, 'CONTRACT.FORMULA_NONE')
   }
 
   static formulaFor(value: number | [number, number]): ContractFormula {
-    return ContractFormulas.formulas.find(f => f.hasValue(value),
-    )
+    if (value === undefined || value === null) {
+      return ContractFormulas.formulaForId('0')
+    }
+    const found = ContractFormulas.formulas.find(f => f.hasValue(value))
+    if (found) return found
+
+    const id = isArray(value) ? `${value[0]}${value[1]}` : `${value}`
+    const label = isArray(value) ? `${value[0]}/${value[1]}` : `${value}`
+    return new ContractFormula(id, value, null, label)
   }
 
   static hasNoneFormula(value: number | [number, number]) {

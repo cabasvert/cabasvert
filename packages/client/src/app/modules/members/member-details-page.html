@@ -76,13 +76,13 @@
             <ion-row *ngIf="canContactPerson() && person.phoneNumber as phoneNumber">
               <ion-col>
                 <ion-button size="small" fill="outline" color="primary"
-                            (click)="conctactPerson(person, 'sms')">
+                            (click)="contactPerson(person, 'sms')">
                   <ion-icon name="text"></ion-icon>
                 </ion-button>
               </ion-col>
               <ion-col>
                 <ion-button size="small" fill="outline" color="primary"
-                            (click)="conctactPerson(person, 'tel')">
+                            (click)="contactPerson(person, 'tel')">
                   <ion-icon name="call"></ion-icon>
                 </ion-button>
               </ion-col>

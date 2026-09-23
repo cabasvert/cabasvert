@@ -109,11 +109,24 @@ export class MemberDetailsPage implements OnInit, OnDestroy {
   }
 
   canContactPerson() {
-    return this.platform.is('android')
+    return true
+  }
+
+  contactPerson(person: Person, type: 'sms' | 'tel') {
+    if (!person || !person.phoneNumber) return
+
+    const cleanedNumber = encodeURI(person.phoneNumber.trim())
+    const url = `${type}:${cleanedNumber}`
+
+    if (this.platform.is('hybrid')) {
+      App.openUrl({ url })
+    } else {
+      window.open(url, '_system')
+    }
   }
 
   conctactPerson(person: Person, type: 'sms' | 'tel') {
-    App.openUrl({ url: type + ':' + person.phoneNumber })
+    this.contactPerson(person, type)
   }
 
   canEdit() {
